@@ -7,11 +7,15 @@
 
 import UIKit
 import FirebaseFirestore
-import Kingfisher
+
 
 private let reuseIdentifier = "CategoryCell"
 
 class MenuCollectionViewController: UICollectionViewController {
+    
+    struct PropertyKeys {
+        static let categoryToDrinksSegue = "CategoryToDrinksSegue"
+    }
     
     
     var categories: [Category] = []
@@ -21,7 +25,8 @@ class MenuCollectionViewController: UICollectionViewController {
         super.viewDidLoad()
         
         loadCategoriesFromFirestore()
-        collectionView.collectionViewLayout = generateGridLayout() 
+        collectionView.collectionViewLayout = CollectionViewLayoutProvider.generateGridLayout()
+
     }
     
     
@@ -40,32 +45,6 @@ class MenuCollectionViewController: UICollectionViewController {
         }
     }
     
-    
-    /// 生成網格布局
-    func generateGridLayout() -> UICollectionViewLayout {
-        /// 設定元素的間距
-        let padding: CGFloat = 20
-        
-        /// 創建佈局項目
-        let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0)))
-        
-        /// 創建水平布局群組
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1/4)), subitem: item, count: 2)
-        
-        // 為群組設置間距和內邊距
-        group.interItemSpacing = .fixed(padding)
-        group.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: padding, bottom: 0, trailing: padding)
-        
-        // 用這個群組創建一個NSCollectionLayoutSection，設置群組間的間距，並調整上下的內邊距。
-        let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = padding
-        section.contentInsets = NSDirectionalEdgeInsets(top: padding, leading: 0, bottom: padding, trailing: 0)
-        
-        // 回傳基於這個新部分的 UICollectionViewCompositionalLayout
-        return UICollectionViewCompositionalLayout(section: section)
-        
-    }
-    
 
     // MARK: - UICollectionViewDataSource
 
@@ -76,13 +55,26 @@ class MenuCollectionViewController: UICollectionViewController {
 
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! CategoryCollectionViewCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? CategoryCollectionViewCell else {
+            fatalError("Cannot create CategoryCollectionViewCell")
+        }
     
         let category = categories[indexPath.row]
         cell.update(with: category)
         
         return cell
     }
-
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == PropertyKeys.categoryToDrinksSegue,
+           let destinationVC = segue.destination as? DrinksCategoryCollectionViewController,
+           let indexPath = collectionView.indexPathsForSelectedItems?.first {
+            let selectedCategory = categories[indexPath.row]
+            destinationVC.categoryId = selectedCategory.id
+        }
+    }
+    
 }
+
 

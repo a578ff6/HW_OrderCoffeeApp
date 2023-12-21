@@ -78,6 +78,48 @@ class FirebaseController {
     }
     
     
+    
+    /// 讀取飲品類別和子類別的資料。
+    func loadDrinksForCategory(categoryId: String, completion: @escaping (Result<[SubcategoryDrinks], Error>) -> Void) {
+        let db = Firestore.firestore()
+        
+        var subcategoryDrinksList: [SubcategoryDrinks] = []
+        
+        db.collection("Categories").document(categoryId)
+            .collection("Subcategories").getDocuments { subcategorySnapshot, error in
+                guard let subcategoryDocuments = subcategorySnapshot?.documents else {
+                    if let error = error {
+                        completion(.failure(error))
+                    }
+                    return
+                }
+                
+                let group = DispatchGroup()
+                
+                for subcategoryDocument in subcategoryDocuments {
+                    let subcategoryId = subcategoryDocument.documentID
+                    let subcategory = try? subcategoryDocument.data(as: Subcategory.self)
+                    
+                    group.enter()
+                    db.collection("Categories").document(categoryId)
+                        .collection("Subcategories").document(subcategoryId)
+                        .collection("Drinks").getDocuments { (drinkSnapshot, error) in
+                            if let drinkDocuments = drinkSnapshot?.documents {
+                                let drinks = drinkDocuments.compactMap { document -> Drink? in
+                                    return try? document.data(as: Drink.self)
+                                }
+                                if let subcategory = subcategory {
+                                    subcategoryDrinksList.append(SubcategoryDrinks(subcategory: subcategory, drinks: drinks))
+                                }
+                            }
+                            group.leave()
+                        }
+                }
+                
+                group.notify(queue: .main) {
+                    completion(.success(subcategoryDrinksList))
+                }
+            }
+    }
+    
 }
-
-
