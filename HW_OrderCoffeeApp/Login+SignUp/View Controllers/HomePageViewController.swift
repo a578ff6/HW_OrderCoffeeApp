@@ -8,7 +8,7 @@
 import UIKit
 
 
-/// 登入、註冊頁面
+/// 選擇登入、註冊頁面
 class HomePageViewController: UIViewController {
 
     
