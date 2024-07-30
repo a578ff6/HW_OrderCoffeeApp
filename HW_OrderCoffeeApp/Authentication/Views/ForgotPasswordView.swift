@@ -7,6 +7,7 @@
 
 import UIKit
 
+/// 處理 ForgotPasswordViewController 相關 UI元件 佈局
 class ForgotPasswordView: UIView {
 
     // MARK: - UI Elements

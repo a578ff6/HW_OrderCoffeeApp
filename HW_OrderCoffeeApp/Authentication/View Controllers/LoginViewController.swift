@@ -261,8 +261,29 @@ class LoginViewController: UIViewController {
     
     // MARK: - 處理Apple登入
     @objc private func appleLoginButtonTapped() {
-        // Apple 登錄邏輯
+        ActivityIndicatorManager.shared.startLoading(on: view, backgroundColor: UIColor.black.withAlphaComponent(0.5))
+        
+        AppleSignInController.shared.signInWithApple(presentingViewController: self) { [weak self] result in
+            DispatchQueue.main.async {
+                ActivityIndicatorManager.shared.stopLoading()
+                switch result {
+                case .success(let authResult):
+                    FirebaseController.shared.getCurrentUserDetails { userDetailsResult in
+                        switch userDetailsResult {
+                        case .success(let userDetails):
+                            NavigationHelper.navigateToMainTabBar(from: self!, with: userDetails)
+                            print(userDetails)
+                        case .failure(let error):
+                            AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self!)
+                        }
+                    }
+                case .failure(let error):
+                    AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self!)
+                }
+            }
+        }
     }
+    
     
     // MARK: - Private Methods
 

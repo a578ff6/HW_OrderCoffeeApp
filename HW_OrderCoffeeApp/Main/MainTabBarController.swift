@@ -31,6 +31,7 @@
 
 import UIKit
 
+/// 用戶註冊、登入成功後，將用戶資訊傳遞給 UITabBarController
 class MainTabBarController: UITabBarController {
     
     var userDetails: UserDetails?

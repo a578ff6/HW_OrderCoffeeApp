@@ -140,6 +140,7 @@
 import UIKit
 import Firebase
 
+/// 處理 Firebase 資料庫相關
 class FirebaseController {
     
     static let shared = FirebaseController()
