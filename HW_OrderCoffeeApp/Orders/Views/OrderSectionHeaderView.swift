@@ -50,6 +50,7 @@ class OrderSectionHeaderView: UICollectionReusableView {
 // MARK: - SectionHeader、分格線
 import UIKit
 
+/// OrderViewController 佈局使用
 class OrderSectionHeaderView: UICollectionReusableView {
     
     static let headerIdentifier = "OrderSectionHeaderView"

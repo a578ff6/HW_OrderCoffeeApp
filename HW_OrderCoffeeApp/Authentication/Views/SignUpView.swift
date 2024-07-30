@@ -19,6 +19,7 @@
 // MARK: - 備份（已經完成確認框）
 import UIKit
 
+/// 處理 SignUpViewController 相關 UI元件 佈局
 class SignUpView: UIView {
     
     // MARK: - UI Elements

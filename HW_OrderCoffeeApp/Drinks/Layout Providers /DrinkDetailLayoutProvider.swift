@@ -7,6 +7,7 @@
 
 import UIKit
 
+/// DrinkDetailViewControler 佈局使用
 class DrinkDetailLayoutProvider {
     
     /// 創建 collectionView 的布局
