@@ -164,6 +164,8 @@ class LoginViewController: UIViewController {
 
 // MARK: - 視圖佈局分離版本
 import UIKit
+import FirebaseAuth
+
 
 /// 登入介面
 class LoginViewController: UIViewController {
@@ -229,7 +231,7 @@ class LoginViewController: UIViewController {
         }
         
     }
-    
+ 
     
     // MARK: - 處理Google登入
     @objc private func googleLoginButtonTapped() {

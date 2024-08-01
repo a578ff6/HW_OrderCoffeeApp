@@ -24,7 +24,15 @@
  
  3. 將 loadUserOrders 與 getCurrentUserDetails 整合在一起，藉此减少重複調用。
 
- 4. 歷史訂單由 FirebaseController 獲取。
+ 4. 避免覆蓋現有資料並區分不同登入來源的方法：
+    * 避免覆蓋現有資料：
+        - 在更新資料庫中的使用者資料時，應檢查是否有必要更新每個欄位。例如，只有在該欄位為空或有特定更新需求時才更新。
+    * 儲存登入來源：
+        - 儲存登入來源（如 Google、Apple 等）有助於後續對使用者行為的分析和管理。
+    * 資料合併：
+        - 當需要更新使用者資料時，使用合併操作（如 Firebase 的 merge: true）來確保新資料不會覆蓋掉已有的重要資料。
+    * 唯一識別符（UID）：
+        - 使用唯一識別符（如 Firebase 的 UID）來管理使用者資料，確保每個使用者都有一個唯一的標識符。
  */
 
 
@@ -32,6 +40,7 @@
  import UIKit
  import Firebase
 
+ /// 處理 Firebase 資料庫相關
  class FirebaseController {
      
      static let shared = FirebaseController()
@@ -54,7 +63,7 @@
      }
      
      // MARK: - Email登入、註冊相關
-
+     
      /// 創建新用戶，並將用戶資料儲存到 Firestore。
      func registerUser(withEmail email: String, password: String, fullName: String, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
          Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
@@ -65,7 +74,8 @@
                  db.collection("users").document(result.user.uid).setData([
                      "email": email,
                      "fullName": fullName,
-                     "uid": result.user.uid
+                     "uid": result.user.uid,
+                     "loginProvider": "email"
                  ], merge: true) { error in
                      if let error = error {
                          completion(.failure(error))
@@ -76,7 +86,6 @@
              }
          }
      }
-     
      
      /// 使用電子郵件和密碼進行用戶登入
      func loginUser(withEmail email: String, password: String, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
@@ -136,7 +145,6 @@
 
 
 // MARK: - 測試修改用
-
 import UIKit
 import Firebase
 
@@ -163,7 +171,7 @@ class FirebaseController {
     }
     
     // MARK: - Email登入、註冊相關
-
+    
     /// 創建新用戶，並將用戶資料儲存到 Firestore。
     func registerUser(withEmail email: String, password: String, fullName: String, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
         Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
@@ -174,7 +182,8 @@ class FirebaseController {
                 db.collection("users").document(result.user.uid).setData([
                     "email": email,
                     "fullName": fullName,
-                    "uid": result.user.uid
+                    "uid": result.user.uid,
+                    "loginProvider": "email"
                 ], merge: true) { error in
                     if let error = error {
                         completion(.failure(error))
@@ -240,6 +249,15 @@ class FirebaseController {
     }
     
 }
+
+
+
+
+
+
+
+
+
 
 
 // MARK: - 先移除掉（目前用不到）
