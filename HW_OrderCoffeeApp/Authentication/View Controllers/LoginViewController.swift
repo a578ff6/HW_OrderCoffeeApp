@@ -210,7 +210,7 @@ class LoginViewController: UIViewController {
         }
         
         ActivityIndicatorManager.shared.startLoading(on: view, backgroundColor: UIColor.black.withAlphaComponent(0.5)) // 啟動活動指示器
-        FirebaseController.shared.loginUser(withEmail: email, password: password) { [weak self] result in
+        EmailSignInController.shared.loginUser(withEmail: email, password: password) { [weak self] result in
             DispatchQueue.main.async {
                 ActivityIndicatorManager.shared.stopLoading()               // 停止活動指示器
                 switch result {

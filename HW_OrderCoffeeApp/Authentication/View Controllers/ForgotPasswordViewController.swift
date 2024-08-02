@@ -124,14 +124,14 @@ class ForgotPasswordViewController: UIViewController {
         }
         
         // 檢查電子郵件格式是否有效
-        if !FirebaseController.isEmailvalid(email) {
+        if !EmailSignInController.isEmailvalid(email) {
             AlertService.showAlert(withTitle: "錯誤", message: "無效的電子郵件格式", inViewController: self)
             return
         }
         
         ActivityIndicatorManager.shared.startLoading(on: view, backgroundColor: UIColor.black.withAlphaComponent(0.5)) // 啟動活動指示器
-        // 使用 FirebaseController 發送密碼重置郵件
-        FirebaseController.shared.resetPassword(forEmail: email) { [weak self] result in
+        // 使用 EmailSignInController 發送密碼重置郵件
+        EmailSignInController.shared.resetPassword(forEmail: email) { [weak self] result in
             DispatchQueue.main.async {
                 ActivityIndicatorManager.shared.stopLoading()            // 停止活動指示器
                 switch result {

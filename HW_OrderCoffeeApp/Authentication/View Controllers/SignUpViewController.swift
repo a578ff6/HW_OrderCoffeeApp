@@ -100,13 +100,13 @@ class SignUpViewController: UIViewController {
         }
         
         // 檢查電子郵件格式是否有效
-        if !FirebaseController.isEmailvalid(email) {
+        if !EmailSignInController.isEmailvalid(email) {
             AlertService.showAlert(withTitle: "錯誤", message: "請輸入有效的電子郵件地址，例如：example@example.com", inViewController: self)
             return
         }
           
         // 檢查密碼是否符合規範
-        if !FirebaseController.isPasswordValid(password) {
+        if !EmailSignInController.isPasswordValid(password) {
             AlertService.showAlert(withTitle: "錯誤", message: "密碼需至少包含8位字符，並包括至少一個小寫字母和一個特殊字符", inViewController: self)
             return
         }
@@ -119,8 +119,8 @@ class SignUpViewController: UIViewController {
    
         ActivityIndicatorManager.shared.startLoading(on: view, backgroundColor: UIColor.black.withAlphaComponent(0.5)) // 啟動活動指示器
 
-        // 調用 FirebaseController 進行用戶註冊
-        FirebaseController.shared.registerUser(withEmail: email, password: password, fullName: fullName) { [weak self] result in
+        // 調用 EmailSignInController 進行用戶註冊
+        EmailSignInController.shared.registerUser(withEmail: email, password: password, fullName: fullName) { [weak self] result in
             DispatchQueue.main.async {
                 ActivityIndicatorManager.shared.stopLoading()            // 停止活動指示器
 
