@@ -43,10 +43,21 @@
     - 當使用者透過不同方式登入時，只更新 fullName 欄位為空的情況，避免覆蓋之前已儲存的全名。
     - 這樣可以避免使用者的全名在不同登入方式間被覆蓋，同時保留每次登入時的唯一識別資訊。
  
+ ---------------------------------------- ---------------------------------------- ----------------------------------------
+ 
+ D. Apple Sign-In 也需要處理將身份驗證提供者（如 Apple、Google、電子郵件和密碼等）憑證與現有的 Firebase 使用者帳號進行關聯。
+    - 使用戶可以通過任何已關聯的身份驗證方式登入同一個 Firebase 帳號。這樣可以確保用戶在切換身份驗證方式時，仍然能夠訪問同一個帳號和數據。
+    - 這樣可以確保用戶無論使用哪種身份驗證方式登入，都能訪問到同一個 Firebase 帳戶和數據。
+ 
+ * 流程：（雖然我解決完 Google 憑證處理的時候，就發現 apple 登入也沒問題。但是卻無法處理 loginProvider 的部分，因此決定完善。）
+    -  signInWithApple： 發起 Apple 登入請求。
+    -  linkAppleCredential： 將 Apple 憑證與現有帳戶關聯，或者如果連結失敗，則使用 Apple 憑證進行登入。
+    -  signInWithAppleCredential： 使用 Apple 憑證進行登入。
+    -  storeAppleUserData： 將 Apple 使用者資料儲存到 Firestore 中，並且僅在需要時更新全名。
  */
 
 
-// MARK: - 首次登入可以存取姓名資訊，再次登入也可行備用
+// MARK: - 首次登入可以存取姓名資訊，再次登入也可行備用，並且完善身份驗證提供者（如 Apple、Google、電子郵件和密碼等）憑證與現有的 Firebase 使用者帳號進行關聯，以便用戶可以通過任何已關聯的身份驗證方式登入同一個 Firebase 帳號。（但還未處理隱藏帳號資訊部分）
 
 /*
  import UIKit
@@ -69,7 +80,7 @@
      ///   - completion: 登入或註冊結果的回調
      func signInWithApple(presentingViewController: UIViewController, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
          self.signInCompletion = completion
-         let request = creatAppleIDRequest()
+         let request = createAppleIDRequest()
          let authorizationController = ASAuthorizationController(authorizationRequests: [request])
          authorizationController.delegate = self
          authorizationController.presentationContextProvider = self
@@ -77,7 +88,7 @@
      }
      
      /// 建立 Apple ID 請求
-     private func creatAppleIDRequest() -> ASAuthorizationAppleIDRequest {
+     private func createAppleIDRequest() -> ASAuthorizationAppleIDRequest {
          let appleIDProvider = ASAuthorizationAppleIDProvider()
          let request = appleIDProvider.createRequest()
          request.requestedScopes = [.fullName, .email]
@@ -86,26 +97,68 @@
          request.nonce = sha256(nonce)
          return request
      }
-
+     
+     /// 將 Apple 憑證與現有帳號關聯
+     private func linkAppleCredential(_ credential: AuthCredential, fullName: PersonNameComponents?, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
+         if let currentUser = Auth.auth().currentUser {
+             currentUser.link(with: credential) { authResult, error in
+                 if let error = error {
+                     // 如果連結失敗，嘗試登入並合併數據
+                     self.signInWithAppleCredential(credential, fullName: fullName, completion: completion)
+                 } else if let authResult = authResult {
+                     self.storeAppleUserData(authResult: authResult, fullName: fullName) { result in
+                         switch result {
+                         case .success:
+                             completion(.success(authResult))
+                         case .failure(let error):
+                             completion(.failure(error))
+                         }
+                     }
+                 }
+             }
+         } else {
+             // 如果不存在相同電子郵件的帳戶，則透過 signInWithAppleCredential 建立一個新的 Apple 憑證帳戶。
+             self.signInWithAppleCredential(credential, fullName: fullName, completion: completion)
+         }
+     }
+     
+     /// 使用 Apple 憑證登入
+     private func signInWithAppleCredential(_ credential: AuthCredential, fullName: PersonNameComponents?, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
+         Auth.auth().signIn(with: credential) { authResult, error in
+             if let error = error {
+                 completion(.failure(error))
+             } else if let authResult = authResult {
+                 self.storeAppleUserData(authResult: authResult, fullName: fullName) { result in
+                     switch result {
+                     case .success:
+                         completion(.success(authResult))
+                     case .failure(let error):
+                         completion(.failure(error))
+                     }
+                 }
+             }
+         }
+     }
      
      /// 儲存 Apple 使用者資料
      /// - Parameters:
      ///   - authResult: Firebase 驗證結果
      ///   - fullName: 使用者的全名
      ///   - completion: 資料儲存結果的回調
-     private func storeAppleUserData(authResult: AuthDataResult,fullName: PersonNameComponents?, completion: @escaping (Result<Void, Error>) -> Void) {
+     private func storeAppleUserData(authResult: AuthDataResult, fullName: PersonNameComponents?, completion: @escaping (Result<Void, Error>) -> Void) {
          let db = Firestore.firestore()
          let user = authResult.user
          let userRef = db.collection("users").document(user.uid)
          
          userRef.getDocument { (document, error) in
              if let document = document, document.exists, var userData = document.data() {
-                 // 如果 document 已存在，則更新非空白的全名
+                 // 如果 document 已存在，則僅在 fullName 欄位為空時更新全名
                  if let fullName = fullName, let givenName = fullName.givenName, let familyName = fullName.familyName {
-                     if !givenName.isEmpty && !familyName.isEmpty {
-                         userData["fullName"] = "\(givenName) \(familyName)"
+                     if userData["fullName"] as? String == "" {
+                         userData["fullName"] = "\(familyName) \(givenName)"
                      }
                  }
+                 userData["loginProvider"] = "apple"
                  userRef.setData(userData, merge: true) { error in
                      if let error = error {
                          completion(.failure(error))
@@ -113,15 +166,17 @@
                          completion(.success(()))
                      }
                  }
+                 
              } else {
                  // 如果 document 不存在，則建立新的資料
                  var userData: [String: Any] = [
                      "uid": user.uid,
-                     "email": user.email ?? ""
+                     "email": user.email ?? "",
+                     "loginProvider": "apple"
                  ]
                  
                  if let fullName = fullName, let givenName = fullName.givenName, let familyName = fullName.familyName {
-                     userData["fullName"] = "\(givenName) \(familyName)"
+                     userData["fullName"] = "\(familyName) \(givenName)"
                  }
                  
                  userRef.setData(userData, merge: true) { error in
@@ -135,6 +190,7 @@
              }
          }
      }
+     
      
  }
 
@@ -177,7 +233,7 @@
          
          return hashString
      }
-
+     
  }
 
  // MARK: - ASAuthorizationControllerDelegate
@@ -197,28 +253,16 @@
                  print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
                  return
              }
-             
-             let credential = OAuthProvider.appleCredential(withIDToken: idTokenString, rawNonce: nonce, fullName: appleIDCredential.fullName)
-             Auth.auth().signIn(with: credential) { authResult, error in
-                 if let error = error {
-                     self.signInCompletion?(.failure(error))
-                 } else if let authResult = authResult {
-                     self.storeAppleUserData(authResult: authResult, fullName: appleIDCredential.fullName) { result in
-                         switch result {
-                         case .success:
-                             self.signInCompletion?(.success(authResult))
-                         case .failure(let error):
-                             self.signInCompletion?(.failure(error))
-                         }
-                     }
-                 }
-             }
+                         
+             let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: idTokenString, rawNonce: nonce)
+             self.linkAppleCredential(credential, fullName: appleIDCredential.fullName, completion: self.signInCompletion!)
          }
      }
      
      /// Apple 登入失敗的回調
      func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: any Error) {
          print("Sign in with Apple errored: \(error)")
+         self.signInCompletion?(.failure(error))
      }
      
  }
@@ -226,6 +270,7 @@
 
 
 // MARK: - 測試用
+
 import UIKit
 import Firebase
 import AuthenticationServices
@@ -246,7 +291,7 @@ class AppleSignInController: NSObject {
     ///   - completion: 登入或註冊結果的回調
     func signInWithApple(presentingViewController: UIViewController, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
         self.signInCompletion = completion
-        let request = creatAppleIDRequest()
+        let request = createAppleIDRequest()
         let authorizationController = ASAuthorizationController(authorizationRequests: [request])
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = self
@@ -254,7 +299,7 @@ class AppleSignInController: NSObject {
     }
     
     /// 建立 Apple ID 請求
-    private func creatAppleIDRequest() -> ASAuthorizationAppleIDRequest {
+    private func createAppleIDRequest() -> ASAuthorizationAppleIDRequest {
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
         request.requestedScopes = [.fullName, .email]
@@ -263,14 +308,55 @@ class AppleSignInController: NSObject {
         request.nonce = sha256(nonce)
         return request
     }
-
+    
+    /// 將 Apple 憑證與現有帳號關聯
+    private func linkAppleCredential(_ credential: AuthCredential, fullName: PersonNameComponents?, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
+        if let currentUser = Auth.auth().currentUser {
+            currentUser.link(with: credential) { authResult, error in
+                if let error = error {
+                    // 如果連結失敗，嘗試登入並合併數據
+                    self.signInWithAppleCredential(credential, fullName: fullName, completion: completion)
+                } else if let authResult = authResult {
+                    self.storeAppleUserData(authResult: authResult, fullName: fullName) { result in
+                        switch result {
+                        case .success:
+                            completion(.success(authResult))
+                        case .failure(let error):
+                            completion(.failure(error))
+                        }
+                    }
+                }
+            }
+        } else {
+            // 如果不存在相同電子郵件的帳戶，則透過 signInWithAppleCredential 建立一個新的 Apple 憑證帳戶。
+            self.signInWithAppleCredential(credential, fullName: fullName, completion: completion)
+        }
+    }
+    
+    /// 使用 Apple 憑證登入
+    private func signInWithAppleCredential(_ credential: AuthCredential, fullName: PersonNameComponents?, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
+        Auth.auth().signIn(with: credential) { authResult, error in
+            if let error = error {
+                completion(.failure(error))
+            } else if let authResult = authResult {
+                self.storeAppleUserData(authResult: authResult, fullName: fullName) { result in
+                    switch result {
+                    case .success:
+                        completion(.success(authResult))
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
+                }
+            }
+        }
+    }
     
     /// 儲存 Apple 使用者資料
     /// - Parameters:
     ///   - authResult: Firebase 驗證結果
     ///   - fullName: 使用者的全名
     ///   - completion: 資料儲存結果的回調
-    private func storeAppleUserData(authResult: AuthDataResult,fullName: PersonNameComponents?, completion: @escaping (Result<Void, Error>) -> Void) {
+    private func storeAppleUserData(authResult: AuthDataResult, fullName: PersonNameComponents?, completion: @escaping (Result<Void, Error>) -> Void) {
         let db = Firestore.firestore()
         let user = authResult.user
         let userRef = db.collection("users").document(user.uid)
@@ -378,29 +464,17 @@ extension AppleSignInController: ASAuthorizationControllerDelegate {
                 print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
                 return
             }
-            
-            let credential = OAuthProvider.appleCredential(withIDToken: idTokenString, rawNonce: nonce, fullName: appleIDCredential.fullName)
-            Auth.auth().signIn(with: credential) { authResult, error in
-                if let error = error {
-                    self.signInCompletion?(.failure(error))
-                } else if let authResult = authResult {
-                    self.storeAppleUserData(authResult: authResult, fullName: appleIDCredential.fullName) { result in
-                        switch result {
-                        case .success:
-                            self.signInCompletion?(.success(authResult))
-                        case .failure(let error):
-                            self.signInCompletion?(.failure(error))
-                        }
-                    }
-                }
-            }
+                        
+            let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: idTokenString, rawNonce: nonce)
+            self.linkAppleCredential(credential, fullName: appleIDCredential.fullName, completion: self.signInCompletion!)
         }
     }
-    
     
     /// Apple 登入失敗的回調
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: any Error) {
         print("Sign in with Apple errored: \(error)")
+        self.signInCompletion?(.failure(error))
     }
     
 }
+

@@ -5,9 +5,10 @@
 //  Created by 曹家瑋 on 2023/12/14.
 //
 
-// MARK: - 備份（還未修改註冊版本）
 /*
- 1. 使用 addDocument
+ A. addDocument 與 setData
+ 
+ * 使用 addDocument
     - 優點：
         - addDocument 方法會自動生成一個唯一的文檔 ID，無需手動指定 ID。
         - 適用於不關心文檔 ID 的場景。
@@ -15,16 +16,16 @@
         - 無法直接使用 uid 作為文檔 ID，因為 addDocument 會生成一個隨機 ID。
         - 如果想要使用用戶的 uid 作為文檔 ID，需要在其他地方額外存取或檢索文檔ID。
 
- 2. 使用 setData
+ * 使用 setData
     - 優點：
         - 使用 setData 可以手動指定文檔 ID，使用用戶的 uid 最為文檔 ID。
         - 便於以後通過 uid 快速檢索用戶文檔。
     - 缺點：
         - 如果 uid 已經存在，會覆蓋原有資料（可通過 merge 參數控制是否覆蓋））。
  
- 3. 將 loadUserOrders 與 getCurrentUserDetails 整合在一起，藉此减少重複調用。
+ ----------------------------------- ----------------------------------- -----------------------------------
 
- 4. 避免覆蓋現有資料並區分不同登入來源的方法：
+ B. 避免覆蓋現有資料並區分不同登入來源的方法：
     * 避免覆蓋現有資料：
         - 在更新資料庫中的使用者資料時，應檢查是否有必要更新每個欄位。例如，只有在該欄位為空或有特定更新需求時才更新。
     * 儲存登入來源：
@@ -33,9 +34,27 @@
         - 當需要更新使用者資料時，使用合併操作（如 Firebase 的 merge: true）來確保新資料不會覆蓋掉已有的重要資料。
     * 唯一識別符（UID）：
         - 使用唯一識別符（如 Firebase 的 UID）來管理使用者資料，確保每個使用者都有一個唯一的標識符。
+ 
+ ----------------------------------- ----------------------------------- -----------------------------------
+
+C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件、Google、Apple）登入同一個 Firebase 帳戶。
+    - 我這邊在電子郵件/密碼登入部分也進行憑證關聯處理。這樣用戶可以在使用不同的身份驗證方式時，仍然能夠訪問同一個帳戶和數據。
+ 
+    * 處理流程：
+        - registerUser： 創建新用戶並儲存用戶資料到 Firestore。
+        - loginUser： 使用電子郵件和密碼進行用戶登入，並且處理將電子郵件憑證與現有帳號關聯。
+        - linkEmailCredential： 將電子郵件憑證與現有帳號關聯，或者如果連結失敗，則使用電子郵件憑證進行登入。
+        - signInWithEmailCredential： 使用電子郵件憑證進行登入。
+        - storeUserData： 將用戶數據保存到 Firestore，確保用戶無論使用哪種身份驗證方式登入，都能訪問到同一個 Firebase 帳戶和數據。
+ 
+ ----------------------------------- ----------------------------------- -----------------------------------
+ 
+ D. 將 loadUserOrders 與 getCurrentUserDetails 整合在一起，藉此减少重複調用。(暫時改掉)
+
  */
 
 
+// MARK: - 備用
 /*
  import UIKit
  import Firebase
@@ -89,15 +108,53 @@
      
      /// 使用電子郵件和密碼進行用戶登入
      func loginUser(withEmail email: String, password: String, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
-         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
-             if let error = error {
-                 completion(.failure(error))
-             } else if let result = result {
-                 completion(.success(result))
+         let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+         self.linkEmailCredential(credential, loginProvider: "email", completion: completion)
+     }
+     
+     /// 將電子郵件憑證與現有帳號關聯
+     private func linkEmailCredential(_ credential: AuthCredential, loginProvider: String, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
+         if let currentUser = Auth.auth().currentUser {
+             currentUser.link(with: credential) { authResult, error in
+                 if let error = error {
+                     // 如果連結失敗，嘗試登入並合併數據
+                     self.signInWithEmailCredential(credential, loginProvider: loginProvider, completion: completion)
+                 } else if let authResult = authResult {
+                     // 連結成功，保存用戶數據
+                     self.storeUserData(authResult: authResult, loginProvider: loginProvider) { result in
+                         switch result {
+                         case .success:
+                             completion(.success(authResult))
+                         case .failure(let error):
+                             completion(.failure(error))
+                         }
+                     }
+                 }
              }
+         } else {
+             // 如果沒有當前用戶，則使用電子郵件憑證登入
+             self.signInWithEmailCredential(credential, loginProvider: loginProvider, completion: completion)
          }
      }
      
+     /// 使用電子郵件憑證登入
+     private func signInWithEmailCredential(_ credential: AuthCredential, loginProvider: String, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
+         Auth.auth().signIn(with: credential) { authResult, error in
+             if let error = error {
+                 completion(.failure(error))
+             } else if let authResult = authResult {
+                 // 登入成功，保存用戶數據
+                 self.storeUserData(authResult: authResult, loginProvider: loginProvider) { result in
+                     switch result {
+                     case .success:
+                         completion(.success(authResult))
+                     case .failure(let error):
+                         completion(.failure(error))
+                     }
+                 }
+             }
+         }
+     }
      
      /// 發送密碼重置郵件
      func resetPassword(forEmail email: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -140,11 +197,53 @@
          }
      }
      
+     /// 保存用戶數據到 Firestore
+     private func storeUserData(authResult: AuthDataResult, loginProvider: String, completion: @escaping (Result<Void, Error>) -> Void) {
+         let db = Firestore.firestore()
+         let user = authResult.user
+         let userRef = db.collection("users").document(user.uid)
+         
+         userRef.getDocument { (document, error) in
+             if let document = document, document.exists, var userData = document.data() {
+                 // 更新現有資料
+                 userData["email"] = user.email ?? ""
+                 userData["loginProvider"] = loginProvider
+                 userRef.setData(userData, merge: true) { error in
+                     if let error = error {
+                         completion(.failure(error))
+                     } else {
+                         completion(.success(()))
+                     }
+                 }
+             } else {
+                 // 建立新的資料
+                 var userData: [String: Any] = [
+                     "uid": user.uid,
+                     "email": user.email ?? "",
+                     "loginProvider": loginProvider
+                 ]
+                 
+                 if let displayName = user.displayName {
+                     userData["fullName"] = displayName
+                 }
+                 
+                 userRef.setData(userData, merge: true) { error in
+                     if let error = error {
+                         completion(.failure(error))
+                     } else {
+                         completion(.success(()))
+                     }
+                 }
+             }
+         }
+     }
+     
  }
 */
 
 
 // MARK: - 測試修改用
+
 import UIKit
 import Firebase
 
@@ -197,15 +296,53 @@ class FirebaseController {
     
     /// 使用電子郵件和密碼進行用戶登入
     func loginUser(withEmail email: String, password: String, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
-        Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
-            if let error = error {
-                completion(.failure(error))
-            } else if let result = result {
-                completion(.success(result))
+        let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+        self.linkEmailCredential(credential, loginProvider: "email", completion: completion)
+    }
+    
+    /// 將電子郵件憑證與現有帳號關聯
+    private func linkEmailCredential(_ credential: AuthCredential, loginProvider: String, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
+        if let currentUser = Auth.auth().currentUser {
+            currentUser.link(with: credential) { authResult, error in
+                if let error = error {
+                    // 如果連結失敗，嘗試登入並合併數據
+                    self.signInWithEmailCredential(credential, loginProvider: loginProvider, completion: completion)
+                } else if let authResult = authResult {
+                    // 連結成功，保存用戶數據
+                    self.storeUserData(authResult: authResult, loginProvider: loginProvider) { result in
+                        switch result {
+                        case .success:
+                            completion(.success(authResult))
+                        case .failure(let error):
+                            completion(.failure(error))
+                        }
+                    }
+                }
             }
+        } else {
+            // 如果沒有當前用戶，則使用電子郵件憑證登入
+            self.signInWithEmailCredential(credential, loginProvider: loginProvider, completion: completion)
         }
     }
     
+    /// 使用電子郵件憑證登入
+    private func signInWithEmailCredential(_ credential: AuthCredential, loginProvider: String, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
+        Auth.auth().signIn(with: credential) { authResult, error in
+            if let error = error {
+                completion(.failure(error))
+            } else if let authResult = authResult {
+                // 登入成功，保存用戶數據
+                self.storeUserData(authResult: authResult, loginProvider: loginProvider) { result in
+                    switch result {
+                    case .success:
+                        completion(.success(authResult))
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
+                }
+            }
+        }
+    }
     
     /// 發送密碼重置郵件
     func resetPassword(forEmail email: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -248,11 +385,48 @@ class FirebaseController {
         }
     }
     
+    /// 保存用戶數據到 Firestore
+    private func storeUserData(authResult: AuthDataResult, loginProvider: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        let db = Firestore.firestore()
+        let user = authResult.user
+        let userRef = db.collection("users").document(user.uid)
+        
+        userRef.getDocument { (document, error) in
+            if let document = document, document.exists, var userData = document.data() {
+                // 更新現有資料
+                userData["email"] = user.email ?? ""
+                userData["loginProvider"] = loginProvider
+                userRef.setData(userData, merge: true) { error in
+                    if let error = error {
+                        completion(.failure(error))
+                    } else {
+                        completion(.success(()))
+                    }
+                }
+            } else {
+                // 建立新的資料
+                var userData: [String: Any] = [
+                    "uid": user.uid,
+                    "email": user.email ?? "",
+                    "loginProvider": loginProvider
+                ]
+                
+                if let displayName = user.displayName {
+                    userData["fullName"] = displayName
+                }
+                
+                userRef.setData(userData, merge: true) { error in
+                    if let error = error {
+                        completion(.failure(error))
+                    } else {
+                        completion(.success(()))
+                    }
+                }
+            }
+        }
+    }
+    
 }
-
-
-
-
 
 
 

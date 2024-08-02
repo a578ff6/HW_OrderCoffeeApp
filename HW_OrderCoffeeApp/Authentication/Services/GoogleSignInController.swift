@@ -168,7 +168,7 @@ class GoogleSignInController {
 */
 
 
-// 測試（不同的身份驗證提供方（如 Google、Facebook、電子郵件和密碼等）憑證與現有的 Firebase 使用者帳號進行關聯）
+// MARK: -測試（不同的身份驗證提供方（如 Google、Facebook、電子郵件和密碼等）憑證與現有的 Firebase 使用者帳號進行關聯）
 
 import UIKit
 import Firebase
