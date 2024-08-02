@@ -78,6 +78,7 @@
 		93B9DC892C368DA80050BC3F /* OrderItemCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9DC882C368DA80050BC3F /* OrderItemCollectionViewCell.swift */; };
 		93BD48B02C57CABF00144E7F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 93BD48AF2C57CABF00144E7F /* GoogleService-Info.plist */; };
 		93BD48B22C57CB9000144E7F /* AppleSignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD48B12C57CB9000144E7F /* AppleSignInController.swift */; };
+		93BD48C32C5CE5B500144E7F /* EmailSignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD48C22C5CE5B500144E7F /* EmailSignInController.swift */; };
 		93DB1D2B2C439F8900BA2CC1 /* NavigationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DB1D2A2C439F8900BA2CC1 /* NavigationHelper.swift */; };
 		93DB1D2D2C43D82200BA2CC1 /* OrderSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DB1D2C2C43D82200BA2CC1 /* OrderSectionHeaderView.swift */; };
 		93DB1D2F2C461F9D00BA2CC1 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DB1D2E2C461F9D00BA2CC1 /* KeychainManager.swift */; };
@@ -140,6 +141,7 @@
 		93BD48AE2C57CA3100144E7F /* HW_OrderCoffeeApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HW_OrderCoffeeApp.entitlements; sourceTree = "<group>"; };
 		93BD48AF2C57CABF00144E7F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		93BD48B12C57CB9000144E7F /* AppleSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInController.swift; sourceTree = "<group>"; };
+		93BD48C22C5CE5B500144E7F /* EmailSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSignInController.swift; sourceTree = "<group>"; };
 		93DB1D2A2C439F8900BA2CC1 /* NavigationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationHelper.swift; sourceTree = "<group>"; };
 		93DB1D2C2C43D82200BA2CC1 /* OrderSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderSectionHeaderView.swift; sourceTree = "<group>"; };
 		93DB1D2E2C461F9D00BA2CC1 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
@@ -349,6 +351,7 @@
 			children = (
 				937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */,
 				93BD48B12C57CB9000144E7F /* AppleSignInController.swift */,
+				93BD48C22C5CE5B500144E7F /* EmailSignInController.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -660,6 +663,7 @@
 				93F9BB4E2C27F91400355A87 /* DottedLineView.swift in Sources */,
 				93B9DC7A2C3181910050BC3F /* UIView+SpringAnimation.swift in Sources */,
 				934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */,
+				93BD48C32C5CE5B500144E7F /* EmailSignInController.swift in Sources */,
 				93B9DC892C368DA80050BC3F /* OrderItemCollectionViewCell.swift in Sources */,
 				939BDA852B32AD5200616D1C /* UIImageView+Styles.swift in Sources */,
 				939BD9E42B2A1B4E00616D1C /* HomePageViewController.swift in Sources */,
