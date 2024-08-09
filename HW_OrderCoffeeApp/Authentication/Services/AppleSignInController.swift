@@ -785,71 +785,100 @@ extension AppleSignInController: ASAuthorizationControllerPresentationContextPro
 // MARK: - ASAuthorizationControllerDelegate
 extension AppleSignInController: ASAuthorizationControllerDelegate {
     
+    
+    // MARK: - Authorization Handling
+    // 將 authorizationController 方法中處理憑證的部分抽取到 handleAppleIDCredential 方法中。
+    // 將「登入成功」和「失敗」的處理分別抽取到 handleSignInSuccess 和 handleSignInError 方法中。
+    // 將「映射結果」和「保存用戶數據結果」的處理分別抽取到 handleMappingResult 和 handleStoreUserDataResult 方法中。
+    
     /// 進行身份驗證
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
-            guard let nonce = currentNonce else {
-                fatalError("Invalid state: A login callback was received, but no login request was sent.")
-            }
-            guard let appleIDToken = appleIDCredential.identityToken else {
-                print("Unable to fetch identity token")
-                return
-            }
-            guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
-                print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
-                return
-            }
-                        
-            let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: idTokenString, rawNonce: nonce)
-            Auth.auth().signIn(with: credential) { authResult, error in
-                if let error = error {
-                    print("Apple SignIn Error: \(error.localizedDescription)")
-                    self.signInCompletion?(.failure(error))
-                } else if let authResult = authResult {
-                    print("Apple SignIn Success: \(authResult.user.uid)")
-                    // 如果 appleIDCredential.email 不為空，表示這是首次登入，提示輸入真實電子郵件
-                    if let email = appleIDCredential.email {
-                        print("Apple SignIn with Hidden Email: \(authResult.user.email ?? "")")
-                        self.promptForRealEmail(hiddenEmail: authResult.user.email ?? "", fullName: appleIDCredential.fullName) { realEmail in
-                            print("User entered real email: \(realEmail)")
-                            self.mapHiddenEmailToRealEmail(hiddenEmail: authResult.user.email ?? "", realEmail: realEmail) { result in
-                                switch result {
-                                case .success:
-                                    print("Mapping hidden email to real email success")
-                                    self.storeAppleUserData(authResult: authResult, fullName: appleIDCredential.fullName) { result in
-                                        switch result {
-                                        case .success:
-                                            print("Storing user data success")
-                                            self.signInCompletion?(.success(authResult))
-                                        case .failure(let error):
-                                            print("Error storing user data: \(error.localizedDescription)")
-                                            self.signInCompletion?(.failure(error))
-                                        }
-                                    }
-                                case .failure(let error):
-                                    print("Error mapping hidden email: \(error.localizedDescription)")
-                                    self.signInCompletion?(.failure(error))
-                                }
-                            }
-                        }
-                    } else {
-                        print("Apple SignIn without email: \(authResult.user.uid)")
-                        self.storeAppleUserData(authResult: authResult, fullName: appleIDCredential.fullName) { result in
-                            switch result {
-                            case .success:
-                                print("Storing user data success")
-                                self.signInCompletion?(.success(authResult))
-                            case .failure(let error):
-                                print("Error storing user data: \(error.localizedDescription)")
-                                self.signInCompletion?(.failure(error))
-                            }
-                        }
-                    }
-                }
+            handleAppleIDCredential(appleIDCredential)
+        }
+    }
+    
+    /// 處理 Apple ID 憑證
+    private func handleAppleIDCredential(_ appleIDCredential: ASAuthorizationAppleIDCredential) {
+        guard let nonce = currentNonce else {
+            fatalError("Invalid state: A login callback was received, but no login request was sent.")
+        }
+        guard let appleIDToken = appleIDCredential.identityToken else {
+            print("Unable to fetch identity token")
+            return
+        }
+        guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+            print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
+            return
+        }
+
+        let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: idTokenString, rawNonce: nonce)
+        Auth.auth().signIn(with: credential) { authResult, error in
+            if let error = error {
+                self.handleSignInError(error)
+            } else if let authResult = authResult {
+                self.handleSignInSuccess(authResult, appleIDCredential)
             }
         }
     }
     
+    // MARK: - SignIn Success/Error Handling
+
+    /// 處理登入成功
+    private func handleSignInSuccess(_ authResult: AuthDataResult, _ appleIDCredential: ASAuthorizationAppleIDCredential) {
+        print("Apple SignIn Success: \(authResult.user.uid)")
+        if let email = appleIDCredential.email {
+            print("Apple SignIn with Hidden Email: \(authResult.user.email ?? "")")
+            self.promptForRealEmail(hiddenEmail: authResult.user.email ?? "", fullName: appleIDCredential.fullName) { realEmail in
+                print("User entered real email: \(realEmail)")
+                self.mapHiddenEmailToRealEmail(hiddenEmail: authResult.user.email ?? "", realEmail: realEmail) { result in
+                    self.handleMappingResult(result, authResult, appleIDCredential.fullName)
+                }
+            }
+        } else {
+            print("Apple SignIn without email: \(authResult.user.uid)")
+            self.storeAppleUserData(authResult: authResult, fullName: appleIDCredential.fullName) { result in
+                self.handleStoreUserDataResult(result, authResult)
+            }
+        }
+    }
+    
+    /// 處理登入錯誤
+    private func handleSignInError(_ error: Error) {
+        print("Apple SignIn Error: \(error.localizedDescription)")
+        self.signInCompletion?(.failure(error))
+    }
+    
+    // MARK: - Mapping and Data Storage Handling
+
+    /// 處理映射結果
+    private func handleMappingResult(_ result: Result<Void, Error>, _ authResult: AuthDataResult, _ fullName: PersonNameComponents?) {
+        switch result {
+        case .success:
+            print("Mapping hidden email to real email success")
+            self.storeAppleUserData(authResult: authResult, fullName: fullName) { result in
+                self.handleStoreUserDataResult(result, authResult)
+            }
+        case .failure(let error):
+            print("Error mapping hidden email: \(error.localizedDescription)")
+            self.signInCompletion?(.failure(error))
+        }
+    }
+    
+    /// 處理存取用戶數據的結果
+    private func handleStoreUserDataResult(_ result: Result<Void, Error>, _ authResult: AuthDataResult) {
+        switch result {
+        case .success:
+            print("Storing user data success")
+            self.signInCompletion?(.success(authResult))
+        case .failure(let error):
+            print("Error storing user data: \(error.localizedDescription)")
+            self.signInCompletion?(.failure(error))
+        }
+    }
+
+    // MARK: - Real Email Handling
+
     /// 提示使用者輸入真實電子郵件
     private func promptForRealEmail(hiddenEmail: String, fullName: PersonNameComponents?, completion: @escaping (String) -> Void) {
         let alertController = UIAlertController(title: "輸入真實電子郵件", message: "請輸入您的真實電子郵件地址，以便我們可以更好地為您提供服務。", preferredStyle: .alert)
@@ -899,6 +928,8 @@ extension AppleSignInController: ASAuthorizationControllerDelegate {
             print("確認按鈕已禁用")
         }
     }
+    
+    // MARK: - Helper Methods
     
     /// 查找包含指定視圖的 UIAlertController
     private func findAlertController(for view: UIView) -> UIAlertController? {
