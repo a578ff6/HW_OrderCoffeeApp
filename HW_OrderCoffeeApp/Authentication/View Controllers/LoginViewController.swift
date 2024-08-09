@@ -93,6 +93,10 @@
     
     * 更新 UI：
         - 根據獲取的用戶詳細資訊，調用 NavigationHelper.navigateToMainTabBar ，導航到主介面。
+ 
+ ---------------------------------------- ---------------------------------------- ----------------------------------------
+ 
+ 
  */
 
 // MARK: - 原版storyboard
@@ -186,7 +190,6 @@ class LoginViewController: UIViewController {
         setupActions()
         loadRememberedUser()
     }
-    
     
     /// 設置 Action
     private func setupActions() {

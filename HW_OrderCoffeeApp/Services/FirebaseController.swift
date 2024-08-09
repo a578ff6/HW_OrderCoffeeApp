@@ -49,7 +49,65 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
  
  ----------------------------------- ----------------------------------- -----------------------------------
  
- D. 將 loadUserOrders 與 getCurrentUserDetails 整合在一起，藉此减少重複調用。(暫時改掉)
+ D. 三者登入流程模式：
+    * Apple 第一次登入註冊時的處理
+        - 獲取 Apple 憑證：Apple 返回用戶的憑證，包括用戶的名稱和郵箱地址。
+        - 鏈接憑證：使用 linkAppleCredential 方法將 Apple 憑證與當前 Firebase 用戶帳戶關聯。
+        - 保存用戶數據：在 storeAppleUserData 方法中，將用戶的名稱、郵箱和其他數據保存到 Firestore。
+    
+    * 電子郵件註冊
+        - 創建新用戶：使用 registerUser 方法創建新用戶，並獲取用戶的認證結果。
+        - 保存用戶數據：使用 storeUserData 方法將用戶的名稱、郵箱和其他數據保存到 Firestore。
+    
+    * Google 註冊
+        - Google 登入或註冊：通過 signInWithGoogle 方法進行 Google 登入或註冊。
+        - 鏈接憑證：使用 linkGoogleCredential 方法將 Google 憑證與當前 Firebase 用戶帳戶關聯。
+        - 保存用戶數據：在 storeGoogleUserData 方法中，將用戶的名稱、郵箱和其他數據保存到 Firestore。
+    
+    * 總結
+        - Apple 登入註冊：在 linkAppleCredential 和 signInWithAppleCredential 中處理，用戶的名稱和郵箱在 storeAppleUserData 方法中保存。
+        - 電子郵件註冊：在 registerUser 和 loginUser 中處理，用戶的名稱和郵箱在 storeUserData 方法中保存。
+        - Google 登入註冊：在 signInWithGoogle 和 linkGoogleCredential 中處理，用戶的名稱和郵箱在 storeGoogleUserData 方法中保存。
+ 
+ ---------------------------------------- ---------------------------------------- ----------------------------------------
+
+ E. 不同的身份驗證提供者（Apple、Google、Email）在處理有用戶數據時：
+    * 電子郵件身份驗證（Email）
+        1.電子郵件註冊
+            - 若用戶使用電子郵件註冊，會調用 registerUser 方法。
+            - 該方法會創建新用戶並保存用戶數據（包括 fullName 和 email）到 Firestore。
+            - 如果用戶數據已存在，則更新該數據。
+        2. 電子郵件登入
+            - 若用戶使用電子郵件登入，會調用 loginUser 方法。
+            - 該方法會生成憑證並嘗試將憑證與現有帳號關聯。如果失敗，則使用憑證直接登入。
+            - 登入成功後，會更新用戶數據。
+ 
+    * Google 身份驗證
+        1. Google 登入或註冊
+            - 若用戶使用 Google 登入或註冊，會調用 signInWithGoogle 方法。
+            - 該方法會生成 Google 憑證，並嘗試將憑證與現有帳號關聯。如果失敗，則使用憑證直接登入。
+            - 登入成功後，會調用 storeGoogleUserData 方法保存或更新用戶數據（包括 fullName 和 email）。
+ 
+    * Apple 身份驗證
+        1. Apple 登入或註冊
+            - 若用戶使用 Apple 登入或註冊，會調用 signInWithApple 方法。
+            - 該方法會生成 Apple 憑證，並嘗試將憑證與現有帳號關聯。如果失敗，則使用憑證直接登入。
+            - 登入成功後，會調用 storeAppleUserData 方法保存或更新用戶數據（包括 fullName 和 email）。
+ 
+    * 處理有用戶數據的情況：當用戶數據已存在時，不同身份驗證提供者會按以下步驟處理：
+        1. 檢查現有數據
+            - 在保存用戶數據之前，會檢查 Firestore 中是否已存在用戶數據（通過 userRef.getDocument 方法）。
+            - 如果已存在數據，會根據不同的身份驗證提供者更新相關欄位（如 loginProvider 和 fullName）。
+        2. 更新數據
+            - 如果數據已存在，且某些欄位需要更新（例如使用新的身份驗證提供者登入），則會更新這些欄位。
+        3. 保存數據
+            - 最後，會將更新後的數據保存到 Firestore（通過 userRef.setData 方法）。
+ 
+ ---------------------------------------- ---------------------------------------- ----------------------------------------
+
+ 
+ 
+ F. 將 loadUserOrders 與 getCurrentUserDetails 整合在一起，藉此减少重複調用。(暫時改掉)
 
  */
 

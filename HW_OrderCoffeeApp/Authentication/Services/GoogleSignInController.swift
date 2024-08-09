@@ -8,8 +8,7 @@
 /*
  
  當初最一開始的寫法只有處理登入部分，沒注意到因為登入與註冊在這部分是一樣的概念，所以必須存取用戶資料到 userDetails 裡面。導致找不到使用者資料。
- 那這樣每次登入就等於再次註冊嗎？那這樣會不會影響到使用者的資料呢？
- 
+ 於是開始思考這樣每次登入就等於再次註冊嗎？那這樣會不會影響到使用者的資料呢？
  
  A. 原先的寫法只處理了登入部分，沒注意到對於 Google 登入，註冊和登入實際上是使用相同的邏輯。
     - 由於 Google 登入後，Firebase 會自動建立用戶帳號，因此需要確保在首次登入時將用戶資料存取到 Firestore 中，這樣在之後獲取用戶資料時就不會出現「User data not found」。
@@ -69,12 +68,13 @@
  
  ------------------------- ------------------------- ------------------------- -------------------------
 
-
+ C. 與 Apple 隱藏帳號的關聯性：
+    - 現階段 Google 登入並不需要進行與 Apple 隱藏信箱相關的特殊處理。因為 Google 使用者資料會提供實際的電子郵件地址，所以不會像 Apple 隱藏信箱那樣出現電子郵件地址衝突的問題。
+ 
  */
 
 
-// 備用
-/*
+// MARK: -（不同的身份驗證提供方（ Google、Facebook、電子郵件和密碼）憑證與現有的 Firebase 使用者帳號進行關聯）
 import UIKit
 import Firebase
 import GoogleSignIn
@@ -84,102 +84,7 @@ class GoogleSignInController {
     
     static let shared = GoogleSignInController()
     
-    /// 使用google 登入 或 註冊
-    func signInWithGoogle(presentingViewController: UIViewController, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
-        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
-        
-        let config = GIDConfiguration(clientID: clientID)
-        GIDSignIn.sharedInstance.configuration = config
-        
-        GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController) { result, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            
-            guard let user = result?.user, let idToken = user.idToken?.tokenString else {
-                completion(.failure(NSError(domain: "GoogleSignInError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Google sign-in failed."])))
-                return
-            }
-            
-            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: user.accessToken.tokenString)
-            Auth.auth().signIn(with: credential) { authResult, error in
-                if let error = error {
-                    completion(.failure(error))
-                } else if let authResult = authResult {
-                    self.storeGoogleUserData(authResult: authResult) { result in
-                        switch result {
-                        case .success:
-                            completion(.success(authResult))
-                        case .failure(let error):
-                            completion(.failure(error))
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    
-    /// 存取 Google 使用者資料
-    private func storeGoogleUserData(authResult: AuthDataResult, completion: @escaping (Result<Void, Error>) -> Void) {
-        let db = Firestore.firestore()
-        let user = authResult.user
-        let userRef = db.collection("users").document(user.uid)
-        
-        userRef.getDocument { (document, error) in
-            if let document = document, document.exists, var userData = document.data() {
-                // 如果 document 已存在，則僅在 fullName 欄位為空時更新全名
-                if let displayName = user.displayName, userData["fullName"] as? String == "" {
-                    userData["fullName"] = displayName
-                }
-                userData["loginProvider"] = "google"
-                userRef.setData(userData, merge: true) { error in
-                    if let error = error {
-                        completion(.failure(error))
-                    } else {
-                        completion(.success(()))
-                    }
-                }
-            } else {
-                // 如果 document 不存在，則建立新的資料
-                var userData: [String: Any] = [
-                    "uid": user.uid,
-                    "email": user.email ?? "",
-                    "loginProvider": "google"
-                ]
-                
-                if let displayName = user.displayName {
-                    userData["fullName"] = displayName
-                }
-                
-                userRef.setData(userData, merge: true) { error in
-                    if let error = error {
-                        completion(.failure(error))
-                    } else {
-                        completion(.success(()))
-                    }
-                }
-            }
-        }
-    }
-
-}
-*/
-
-
-// MARK: -測試（不同的身份驗證提供方（如 Google、Facebook、電子郵件和密碼等）憑證與現有的 Firebase 使用者帳號進行關聯）
-
-import UIKit
-import Firebase
-import GoogleSignIn
-
-/// 處理 Google 相關部分
-class GoogleSignInController {
-    
-    static let shared = GoogleSignInController()
-    
-    /// 使用google 登入 或 註冊
+    /// 使用 google 登入 或 註冊
     func signInWithGoogle(presentingViewController: UIViewController, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
         
