@@ -337,6 +337,7 @@ class FirebaseController {
             completion(.success(userDetails))
         }
     }
+    
 }
 
 

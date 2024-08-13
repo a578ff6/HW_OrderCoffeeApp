@@ -8,11 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */; };
+		936CFFBD2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */; };
+		936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */; };
 		937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937605982C4A6B0300B1316C /* BottomLineTextField.swift */; };
 		9376059B2C4AAA9C00B1316C /* UIColor+CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */; };
 		937605A02C4BB6BD00B1316C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9376059F2C4BB6BD00B1316C /* GoogleSignIn */; };
 		937605A22C4BB6BD00B1316C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 937605A12C4BB6BD00B1316C /* GoogleSignInSwift */; };
 		937605A82C4BFA9F00B1316C /* GoogleSignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */; };
+		9388FCE82C6B5A7000128B2F /* FirestoreMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9388FCE72C6B5A7000128B2F /* FirestoreMock.swift */; };
 		939BD9D02B2A1B1700616D1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9CF2B2A1B1700616D1C /* AppDelegate.swift */; };
 		939BD9D22B2A1B1700616D1C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9D12B2A1B1700616D1C /* SceneDelegate.swift */; };
 		939BD9D72B2A1B1700616D1C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 939BD9D52B2A1B1700616D1C /* Main.storyboard */; };
@@ -79,6 +82,8 @@
 		93BD48B02C57CABF00144E7F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 93BD48AF2C57CABF00144E7F /* GoogleService-Info.plist */; };
 		93BD48B22C57CB9000144E7F /* AppleSignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD48B12C57CB9000144E7F /* AppleSignInController.swift */; };
 		93BD48C32C5CE5B500144E7F /* EmailSignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD48C22C5CE5B500144E7F /* EmailSignInController.swift */; };
+		93BD48CD2C662A9700144E7F /* HW_OrderCoffeeAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD48CC2C662A9700144E7F /* HW_OrderCoffeeAppTests.swift */; };
+		93BD48D62C6751BB00144E7F /* FirebaseControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD48D52C6751BB00144E7F /* FirebaseControllerTests.swift */; };
 		93DB1D2B2C439F8900BA2CC1 /* NavigationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DB1D2A2C439F8900BA2CC1 /* NavigationHelper.swift */; };
 		93DB1D2D2C43D82200BA2CC1 /* OrderSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DB1D2C2C43D82200BA2CC1 /* OrderSectionHeaderView.swift */; };
 		93DB1D2F2C461F9D00BA2CC1 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DB1D2E2C461F9D00BA2CC1 /* KeychainManager.swift */; };
@@ -96,11 +101,32 @@
 		93F9BB602C2FEF1500355A87 /* ThickSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F9BB5F2C2FEF1500355A87 /* ThickSeparatorView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		936CFFC02C6BBBED004B8724 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 939BD9C42B2A1B1700616D1C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 939BD9CB2B2A1B1700616D1C;
+			remoteInfo = HW_OrderCoffeeApp;
+		};
+		93BD48CE2C662A9700144E7F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 939BD9C42B2A1B1700616D1C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 939BD9CB2B2A1B1700616D1C;
+			remoteInfo = HW_OrderCoffeeApp;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailViewController.swift; sourceTree = "<group>"; };
+		936CFFBA2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HW_OrderCoffeeAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITests.swift; sourceTree = "<group>"; };
+		936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		937605982C4A6B0300B1316C /* BottomLineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
 		9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+CustomColors.swift"; sourceTree = "<group>"; };
 		937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInController.swift; sourceTree = "<group>"; };
+		9388FCE72C6B5A7000128B2F /* FirestoreMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreMock.swift; sourceTree = "<group>"; };
 		939BD9CC2B2A1B1700616D1C /* HW_OrderCoffeeApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HW_OrderCoffeeApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		939BD9CF2B2A1B1700616D1C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		939BD9D12B2A1B1700616D1C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -142,6 +168,9 @@
 		93BD48AF2C57CABF00144E7F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		93BD48B12C57CB9000144E7F /* AppleSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInController.swift; sourceTree = "<group>"; };
 		93BD48C22C5CE5B500144E7F /* EmailSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSignInController.swift; sourceTree = "<group>"; };
+		93BD48CA2C662A9700144E7F /* HW_OrderCoffeeAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HW_OrderCoffeeAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		93BD48CC2C662A9700144E7F /* HW_OrderCoffeeAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppTests.swift; sourceTree = "<group>"; };
+		93BD48D52C6751BB00144E7F /* FirebaseControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseControllerTests.swift; sourceTree = "<group>"; };
 		93DB1D2A2C439F8900BA2CC1 /* NavigationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationHelper.swift; sourceTree = "<group>"; };
 		93DB1D2C2C43D82200BA2CC1 /* OrderSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderSectionHeaderView.swift; sourceTree = "<group>"; };
 		93DB1D2E2C461F9D00BA2CC1 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
@@ -160,6 +189,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		936CFFB72C6BBBED004B8724 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		939BD9C92B2A1B1700616D1C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -197,13 +233,40 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		93BD48C72C662A9700144E7F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		936CFFB32C6BA81F004B8724 /* FirebaseTests */ = {
+			isa = PBXGroup;
+			children = (
+				93BD48D52C6751BB00144E7F /* FirebaseControllerTests.swift */,
+				9388FCE72C6B5A7000128B2F /* FirestoreMock.swift */,
+			);
+			path = FirebaseTests;
+			sourceTree = "<group>";
+		};
+		936CFFBB2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests */ = {
+			isa = PBXGroup;
+			children = (
+				936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */,
+				936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */,
+			);
+			path = HW_OrderCoffeeAppUITests;
+			sourceTree = "<group>";
+		};
 		939BD9C32B2A1B1700616D1C = {
 			isa = PBXGroup;
 			children = (
 				939BD9CE2B2A1B1700616D1C /* HW_OrderCoffeeApp */,
+				93BD48CB2C662A9700144E7F /* HW_OrderCoffeeAppTests */,
+				936CFFBB2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests */,
 				939BD9CD2B2A1B1700616D1C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -212,6 +275,8 @@
 			isa = PBXGroup;
 			children = (
 				939BD9CC2B2A1B1700616D1C /* HW_OrderCoffeeApp.app */,
+				93BD48CA2C662A9700144E7F /* HW_OrderCoffeeAppTests.xctest */,
+				936CFFBA2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -388,6 +453,15 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		93BD48CB2C662A9700144E7F /* HW_OrderCoffeeAppTests */ = {
+			isa = PBXGroup;
+			children = (
+				93BD48CC2C662A9700144E7F /* HW_OrderCoffeeAppTests.swift */,
+				936CFFB32C6BA81F004B8724 /* FirebaseTests */,
+			);
+			path = HW_OrderCoffeeAppTests;
+			sourceTree = "<group>";
+		};
 		93F9BB4F2C2916C400355A87 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -485,6 +559,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		936CFFB92C6BBBED004B8724 /* HW_OrderCoffeeAppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 936CFFC22C6BBBED004B8724 /* Build configuration list for PBXNativeTarget "HW_OrderCoffeeAppUITests" */;
+			buildPhases = (
+				936CFFB62C6BBBED004B8724 /* Sources */,
+				936CFFB72C6BBBED004B8724 /* Frameworks */,
+				936CFFB82C6BBBED004B8724 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				936CFFC12C6BBBED004B8724 /* PBXTargetDependency */,
+			);
+			name = HW_OrderCoffeeAppUITests;
+			productName = HW_OrderCoffeeAppUITests;
+			productReference = 936CFFBA2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		939BD9CB2B2A1B1700616D1C /* HW_OrderCoffeeApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 939BD9E02B2A1B1900616D1C /* Build configuration list for PBXNativeTarget "HW_OrderCoffeeApp" */;
@@ -535,6 +627,24 @@
 			productReference = 939BD9CC2B2A1B1700616D1C /* HW_OrderCoffeeApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		93BD48C92C662A9700144E7F /* HW_OrderCoffeeAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 93BD48D02C662A9700144E7F /* Build configuration list for PBXNativeTarget "HW_OrderCoffeeAppTests" */;
+			buildPhases = (
+				93BD48C62C662A9700144E7F /* Sources */,
+				93BD48C72C662A9700144E7F /* Frameworks */,
+				93BD48C82C662A9700144E7F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				93BD48CF2C662A9700144E7F /* PBXTargetDependency */,
+			);
+			name = HW_OrderCoffeeAppTests;
+			productName = HW_OrderCoffeeAppTests;
+			productReference = 93BD48CA2C662A9700144E7F /* HW_OrderCoffeeAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -542,11 +652,19 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1500;
+				LastSwiftUpdateCheck = 1540;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
+					936CFFB92C6BBBED004B8724 = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = 939BD9CB2B2A1B1700616D1C;
+					};
 					939BD9CB2B2A1B1700616D1C = {
 						CreatedOnToolsVersion = 15.0.1;
+					};
+					93BD48C92C662A9700144E7F = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = 939BD9CB2B2A1B1700616D1C;
 					};
 				};
 			};
@@ -569,11 +687,20 @@
 			projectRoot = "";
 			targets = (
 				939BD9CB2B2A1B1700616D1C /* HW_OrderCoffeeApp */,
+				93BD48C92C662A9700144E7F /* HW_OrderCoffeeAppTests */,
+				936CFFB92C6BBBED004B8724 /* HW_OrderCoffeeAppUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		936CFFB82C6BBBED004B8724 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		939BD9CA2B2A1B1700616D1C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -582,6 +709,13 @@
 				93BD48B02C57CABF00144E7F /* GoogleService-Info.plist in Resources */,
 				939BD9D92B2A1B1900616D1C /* Assets.xcassets in Resources */,
 				939BD9D72B2A1B1700616D1C /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		93BD48C82C662A9700144E7F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -614,6 +748,15 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		936CFFB62C6BBBED004B8724 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */,
+				936CFFBD2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		939BD9C82B2A1B1700616D1C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -674,7 +817,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		93BD48C62C662A9700144E7F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				93BD48D62C6751BB00144E7F /* FirebaseControllerTests.swift in Sources */,
+				9388FCE82C6B5A7000128B2F /* FirestoreMock.swift in Sources */,
+				93BD48CD2C662A9700144E7F /* HW_OrderCoffeeAppTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		936CFFC12C6BBBED004B8724 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 939BD9CB2B2A1B1700616D1C /* HW_OrderCoffeeApp */;
+			targetProxy = 936CFFC02C6BBBED004B8724 /* PBXContainerItemProxy */;
+		};
+		93BD48CF2C662A9700144E7F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 939BD9CB2B2A1B1700616D1C /* HW_OrderCoffeeApp */;
+			targetProxy = 93BD48CE2C662A9700144E7F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		939BD9D52B2A1B1700616D1C /* Main.storyboard */ = {
@@ -696,6 +862,42 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		936CFFC32C6BBBED004B8724 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P8FCS2FB8Z;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.tonytsao.HW-OrderCoffeeAppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HW_OrderCoffeeApp;
+			};
+			name = Debug;
+		};
+		936CFFC42C6BBBED004B8724 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P8FCS2FB8Z;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.tonytsao.HW-OrderCoffeeAppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HW_OrderCoffeeApp;
+			};
+			name = Release;
+		};
 		939BD9DE2B2A1B1900616D1C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -876,9 +1078,56 @@
 			};
 			name = Release;
 		};
+		93BD48D12C662A9700144E7F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P8FCS2FB8Z;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.tonytsao.HW-OrderCoffeeAppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HW_OrderCoffeeApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HW_OrderCoffeeApp";
+			};
+			name = Debug;
+		};
+		93BD48D22C662A9700144E7F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P8FCS2FB8Z;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.tonytsao.HW-OrderCoffeeAppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HW_OrderCoffeeApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HW_OrderCoffeeApp";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		936CFFC22C6BBBED004B8724 /* Build configuration list for PBXNativeTarget "HW_OrderCoffeeAppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				936CFFC32C6BBBED004B8724 /* Debug */,
+				936CFFC42C6BBBED004B8724 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		939BD9C72B2A1B1700616D1C /* Build configuration list for PBXProject "HW_OrderCoffeeApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -893,6 +1142,15 @@
 			buildConfigurations = (
 				939BD9E12B2A1B1900616D1C /* Debug */,
 				939BD9E22B2A1B1900616D1C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		93BD48D02C662A9700144E7F /* Build configuration list for PBXNativeTarget "HW_OrderCoffeeAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				93BD48D12C662A9700144E7F /* Debug */,
+				93BD48D22C662A9700144E7F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
