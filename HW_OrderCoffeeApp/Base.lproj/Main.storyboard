@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="hQI-nO-bJh">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="1sl-7f-Pun">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
@@ -237,7 +237,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zvm-m0-EJm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4036" y="-1268"/>
+            <point key="canvasLocation" x="2610" y="-292"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="k2y-sj-BxC">
@@ -256,7 +256,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0DA-IT-vvz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3680" y="-503"/>
+            <point key="canvasLocation" x="1708" y="-292"/>
         </scene>
         <!--Sign Up View Controller-->
         <scene sceneID="n0f-gY-hqa">
@@ -272,7 +272,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EIM-3D-1KN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3318" y="464"/>
+            <point key="canvasLocation" x="1709" y="443"/>
         </scene>
         <!--Main Tab Bar Controller-->
         <scene sceneID="mlL-nw-umJ">
@@ -288,6 +288,7 @@
                     <connections>
                         <segue destination="AAo-x4-dm0" kind="relationship" relationship="viewControllers" id="fFa-l2-cyH"/>
                         <segue destination="Usc-9l-3QK" kind="relationship" relationship="viewControllers" id="ZC7-dC-Wof"/>
+                        <segue destination="IbG-RH-B1n" kind="relationship" relationship="viewControllers" id="nLk-pP-s17"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tbN-Dz-tsX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -351,6 +352,22 @@
             </objects>
             <point key="canvasLocation" x="6767" y="1039"/>
         </scene>
+        <!--User Profile View Controller-->
+        <scene sceneID="db4-xi-11o">
+            <objects>
+                <viewController id="PWQ-fX-J0m" customClass="UserProfileViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Frp-k7-s9m">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="EfW-2G-Wtt"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="HmT-80-9F0"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="EN4-G6-JTk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="6766" y="1777"/>
+        </scene>
         <!--Order-->
         <scene sceneID="d9b-ck-ATS">
             <objects>
@@ -370,11 +387,31 @@
             </objects>
             <point key="canvasLocation" x="5929" y="1039"/>
         </scene>
+        <!--Profile-->
+        <scene sceneID="gNt-Hs-zGb">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="IbG-RH-B1n" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Profile" image="person.crop.circle" catalog="system" id="RFR-HG-Ixk"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="DlE-SB-bTC">
+                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="PWQ-fX-J0m" kind="relationship" relationship="rootViewController" id="1A2-nN-w32"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vYg-qI-Nql" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5927" y="1777"/>
+        </scene>
     </scenes>
     <resources>
         <image name="basket" catalog="system" width="128" height="108"/>
         <image name="heart" catalog="system" width="128" height="107"/>
         <image name="list.bullet" catalog="system" width="128" height="87"/>
+        <image name="person.crop.circle" catalog="system" width="128" height="123"/>
         <image name="square.and.arrow.up" catalog="system" width="108" height="128"/>
         <image name="square.grid.2x2" catalog="system" width="128" height="114"/>
         <image name="starbucksLogo" width="1024" height="1024"/>
