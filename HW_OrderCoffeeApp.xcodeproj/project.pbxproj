@@ -10,6 +10,8 @@
 		934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */; };
 		936CFFBD2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */; };
 		936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */; };
+		936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */; };
+		936CFFC92C6C74DE004B8724 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC82C6C74DE004B8724 /* UserProfileView.swift */; };
 		937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937605982C4A6B0300B1316C /* BottomLineTextField.swift */; };
 		9376059B2C4AAA9C00B1316C /* UIColor+CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */; };
 		937605A02C4BB6BD00B1316C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9376059F2C4BB6BD00B1316C /* GoogleSignIn */; };
@@ -123,6 +125,8 @@
 		936CFFBA2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HW_OrderCoffeeAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITests.swift; sourceTree = "<group>"; };
 		936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
+		936CFFC82C6C74DE004B8724 /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
 		937605982C4A6B0300B1316C /* BottomLineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
 		9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+CustomColors.swift"; sourceTree = "<group>"; };
 		937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInController.swift; sourceTree = "<group>"; };
@@ -261,6 +265,15 @@
 			path = HW_OrderCoffeeAppUITests;
 			sourceTree = "<group>";
 		};
+		936CFFC72C6C73F2004B8724 /* User Profile */ = {
+			isa = PBXGroup;
+			children = (
+				936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */,
+				936CFFC82C6C74DE004B8724 /* UserProfileView.swift */,
+			);
+			path = "User Profile";
+			sourceTree = "<group>";
+		};
 		939BD9C32B2A1B1700616D1C = {
 			isa = PBXGroup;
 			children = (
@@ -295,11 +308,12 @@
 				93BD48AF2C57CABF00144E7F /* GoogleService-Info.plist */,
 				939BD9DD2B2A1B1900616D1C /* Info.plist */,
 				939BD9D52B2A1B1700616D1C /* Main.storyboard */,
+				93BD48AE2C57CA3100144E7F /* HW_OrderCoffeeApp.entitlements */,
+				936CFFC72C6C73F2004B8724 /* User Profile */,
 				93BD48B92C58DE3A00144E7F /* Main */,
 				93BD48B82C58DE1C00144E7F /* Security */,
 				93F9BB4F2C2916C400355A87 /* Models */,
 				939BDA702B2C25E400616D1C /* Services */,
-				93BD48AE2C57CA3100144E7F /* HW_OrderCoffeeApp.entitlements */,
 			);
 			path = HW_OrderCoffeeApp;
 			sourceTree = "<group>";
@@ -801,9 +815,11 @@
 				93F9BB4A2C269AC600355A87 /* DrinkDetailSeparatorView.swift in Sources */,
 				93DB1D352C47EE1900BA2CC1 /* ForgotPasswordView.swift in Sources */,
 				93B9DC7D2C32B0BB0050BC3F /* OrderViewController.swift in Sources */,
+				936CFFC92C6C74DE004B8724 /* UserProfileView.swift in Sources */,
 				93DB1D332C47696000BA2CC1 /* LoginView.swift in Sources */,
 				939BD9D22B2A1B1700616D1C /* SceneDelegate.swift in Sources */,
 				93F9BB4E2C27F91400355A87 /* DottedLineView.swift in Sources */,
+				936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */,
 				93B9DC7A2C3181910050BC3F /* UIView+SpringAnimation.swift in Sources */,
 				934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */,
 				93BD48C32C5CE5B500144E7F /* EmailSignInController.swift in Sources */,
