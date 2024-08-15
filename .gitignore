@@ -27,7 +27,6 @@ Carthage/Build/
 
 # Ignore Swift Package Manager
 .build/
-Package.resolved
 
 # Ignore fastlane
 fastlane/report.xml
