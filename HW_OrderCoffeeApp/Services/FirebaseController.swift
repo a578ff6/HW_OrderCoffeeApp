@@ -333,7 +333,12 @@ class FirebaseController {
             let email = userData["email"] as? String ?? ""
             let fullName = userData["fullName"] as? String ?? ""
             
-            let userDetails = UserDetails(uid: user.uid, email: email, fullName: fullName)
+            let profileImageURL = userData["profileImageURL"] as? String
+
+            
+            //let userDetails = UserDetails(uid: user.uid, email: email, fullName: fullName)
+            
+            let userDetails = UserDetails(uid: user.uid, email: email, fullName: fullName, profileImageURL: profileImageURL, orders: nil)
             completion(.success(userDetails))
         }
     }

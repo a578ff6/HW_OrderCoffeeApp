@@ -12,6 +12,7 @@
 		936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */; };
 		936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */; };
 		936CFFC92C6C74DE004B8724 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC82C6C74DE004B8724 /* UserProfileView.swift */; };
+		936CFFCB2C6E24AD004B8724 /* UserDetailsReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFCA2C6E24AD004B8724 /* UserDetailsReceiver.swift */; };
 		937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937605982C4A6B0300B1316C /* BottomLineTextField.swift */; };
 		9376059B2C4AAA9C00B1316C /* UIColor+CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */; };
 		937605A02C4BB6BD00B1316C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9376059F2C4BB6BD00B1316C /* GoogleSignIn */; };
@@ -127,6 +128,7 @@
 		936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		936CFFC82C6C74DE004B8724 /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
+		936CFFCA2C6E24AD004B8724 /* UserDetailsReceiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsReceiver.swift; sourceTree = "<group>"; };
 		937605982C4A6B0300B1316C /* BottomLineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
 		9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+CustomColors.swift"; sourceTree = "<group>"; };
 		937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInController.swift; sourceTree = "<group>"; };
@@ -411,6 +413,7 @@
 			children = (
 				93B9DC862C3661DF0050BC3F /* MainTabBarController.swift */,
 				93DB1D2A2C439F8900BA2CC1 /* NavigationHelper.swift */,
+				936CFFCA2C6E24AD004B8724 /* UserDetailsReceiver.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -821,6 +824,7 @@
 				93F9BB4E2C27F91400355A87 /* DottedLineView.swift in Sources */,
 				936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */,
 				93B9DC7A2C3181910050BC3F /* UIView+SpringAnimation.swift in Sources */,
+				936CFFCB2C6E24AD004B8724 /* UserDetailsReceiver.swift in Sources */,
 				934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */,
 				93BD48C32C5CE5B500144E7F /* EmailSignInController.swift in Sources */,
 				93B9DC892C368DA80050BC3F /* OrderItemCollectionViewCell.swift in Sources */,
