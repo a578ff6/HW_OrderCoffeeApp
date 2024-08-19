@@ -194,7 +194,7 @@ class UserProfileView: UIView {
         stackView.spacing = 10
         stackView.alignment = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.isUserInteractionEnabled = false                      // 禁止 stackView 攔截互動事件（因為 stackView 再按鈕的上方，讓按鈕本身接收所有的互動事件。）
+        stackView.isUserInteractionEnabled = false                      // 禁止 stackView 攔截互動事件（因為 stackView 再按鈕圖層上方，讓按鈕本身接收所有的互動事件。）
         
         // 清除按鈕標題，並將自定義的堆疊視圖作為按鈕的子視圖
         button.setTitle(nil, for: .normal)

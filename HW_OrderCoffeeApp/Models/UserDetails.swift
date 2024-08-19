@@ -34,6 +34,7 @@ struct UserDetails: Codable {
     var uid: String
     var email: String
     var fullName: String
+    var profileImageURL: String? // 儲存大頭照的 URL
     var orders: [OrderItem]?
 }
 
