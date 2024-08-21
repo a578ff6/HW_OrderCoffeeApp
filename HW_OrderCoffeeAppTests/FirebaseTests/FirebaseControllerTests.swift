@@ -6,54 +6,66 @@
 //
 
 import XCTest
+import Firebase
 @testable import HW_OrderCoffeeApp
 
-
-// 測試 FirebaseController 類別的單元測試
 class FirebaseControllerTests: XCTestCase {
-    
-    var firebaseController: FirebaseController!
-    var firestoreMock: FirestoreMock!
 
-    override func setUp() {
+    override class func setUp() {
         super.setUp()
-        firebaseController = FirebaseController.shared
-        firestoreMock = FirestoreMock()
+        
+        // 配置 Firebase 使用模擬器
+        let firestoreSettings = Firestore.firestore().settings
+        firestoreSettings.host = "127.0.0.1:8080"
+        firestoreSettings.cacheSettings = MemoryCacheSettings()
+        firestoreSettings.isSSLEnabled = false
+        Firestore.firestore().settings = firestoreSettings
+        
+        let authSettings = Auth.auth().settings
+        authSettings?.isAppVerificationDisabledForTesting = true
+        Auth.auth().useEmulator(withHost: "127.0.0.1", port: 9099)
+        
+        // 初始化 Firebase
+        if FirebaseApp.app() == nil {
+            FirebaseApp.configure()
+        }
+    }
+
+    override func tearDown() {
+        // 清理 Firebase 狀態
+        try? Auth.auth().signOut()
+        super.tearDown()
     }
     
-    // 測試成功獲取用戶資料的情況
-    func testGetCurrentUserDetails_shouldReturnUserDetails() {
-        // 設置模擬數據，用來模擬從 Firestore 返回的用戶數據
-        firestoreMock.documentData = [
-            "email": "test@example.com",
-            "fullName": "Test User"
-        ]
-        
-        let expectation = self.expectation(description: "Should return user details")        // 創建 expectation，用來處理異步測試
-        
-        // 模擬獲取文檔的操作
-        firestoreMock.getDocument { document, error in
-            guard let document = document else {
-                XCTFail("Document should not be nil")
+    func testGetCurrentUserDetails_withLoggedInUser_shouldSucceed() {
+        let email = "test@example.com"
+        let password = "Test@1234"
+        let fullName = "Test User"
+
+          let expectation = self.expectation(description: "Should successfully get user details")
+          
+        // 登錄用戶
+        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
+            guard let _ = authResult?.user else {
+                XCTFail("Failed to sign in user")
                 return
             }
             
-            // 根據模擬文檔數據創建 UserDetails 對象
-            let userDetails = UserDetails(
-                uid: "mockUID",
-                email: document.data?["email"] as? String ?? "",
-                fullName: document.data?["fullName"] as? String ?? ""
-            )
-            
-            XCTAssertEqual(userDetails.email, "test@example.com")
-            XCTAssertEqual(userDetails.fullName, "Test User")
-            
-            expectation.fulfill()
+            // 測試 FirebaseController 的 getCurrentUserDetails 方法
+            FirebaseController.shared.getCurrentUserDetails { result in
+                switch result {
+                case .success(let userDetails):
+                    XCTAssertEqual(userDetails.email, email)
+                    XCTAssertEqual(userDetails.fullName, fullName)
+                    expectation.fulfill()
+                case .failure(let error):
+                    XCTFail("Failed to get user details: \(error.localizedDescription)")
+                }
+            }
         }
-
-        waitForExpectations(timeout: 2, handler: nil)
-    }
-
+          
+          waitForExpectations(timeout: 10, handler: nil)
+      }
+    
 }
-
 

@@ -13,12 +13,12 @@
 		936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */; };
 		936CFFC92C6C74DE004B8724 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC82C6C74DE004B8724 /* UserProfileView.swift */; };
 		936CFFCB2C6E24AD004B8724 /* UserDetailsReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFCA2C6E24AD004B8724 /* UserDetailsReceiver.swift */; };
+		93755BF52C738D77002570A5 /* EmailSignInControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BF42C738D77002570A5 /* EmailSignInControllerTests.swift */; };
 		937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937605982C4A6B0300B1316C /* BottomLineTextField.swift */; };
 		9376059B2C4AAA9C00B1316C /* UIColor+CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */; };
 		937605A02C4BB6BD00B1316C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9376059F2C4BB6BD00B1316C /* GoogleSignIn */; };
 		937605A22C4BB6BD00B1316C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 937605A12C4BB6BD00B1316C /* GoogleSignInSwift */; };
 		937605A82C4BFA9F00B1316C /* GoogleSignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */; };
-		9388FCE82C6B5A7000128B2F /* FirestoreMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9388FCE72C6B5A7000128B2F /* FirestoreMock.swift */; };
 		939BD9D02B2A1B1700616D1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9CF2B2A1B1700616D1C /* AppDelegate.swift */; };
 		939BD9D22B2A1B1700616D1C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9D12B2A1B1700616D1C /* SceneDelegate.swift */; };
 		939BD9D72B2A1B1700616D1C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 939BD9D52B2A1B1700616D1C /* Main.storyboard */; };
@@ -129,10 +129,10 @@
 		936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		936CFFC82C6C74DE004B8724 /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
 		936CFFCA2C6E24AD004B8724 /* UserDetailsReceiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsReceiver.swift; sourceTree = "<group>"; };
+		93755BF42C738D77002570A5 /* EmailSignInControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSignInControllerTests.swift; sourceTree = "<group>"; };
 		937605982C4A6B0300B1316C /* BottomLineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
 		9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+CustomColors.swift"; sourceTree = "<group>"; };
 		937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInController.swift; sourceTree = "<group>"; };
-		9388FCE72C6B5A7000128B2F /* FirestoreMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreMock.swift; sourceTree = "<group>"; };
 		939BD9CC2B2A1B1700616D1C /* HW_OrderCoffeeApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HW_OrderCoffeeApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		939BD9CF2B2A1B1700616D1C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		939BD9D12B2A1B1700616D1C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -253,7 +253,6 @@
 			isa = PBXGroup;
 			children = (
 				93BD48D52C6751BB00144E7F /* FirebaseControllerTests.swift */,
-				9388FCE72C6B5A7000128B2F /* FirestoreMock.swift */,
 			);
 			path = FirebaseTests;
 			sourceTree = "<group>";
@@ -274,6 +273,14 @@
 				936CFFC82C6C74DE004B8724 /* UserProfileView.swift */,
 			);
 			path = "User Profile";
+			sourceTree = "<group>";
+		};
+		93755BF62C738DA3002570A5 /* AuthenticationTests */ = {
+			isa = PBXGroup;
+			children = (
+				93755BF42C738D77002570A5 /* EmailSignInControllerTests.swift */,
+			);
+			path = AuthenticationTests;
 			sourceTree = "<group>";
 		};
 		939BD9C32B2A1B1700616D1C = {
@@ -475,6 +482,7 @@
 			children = (
 				93BD48CC2C662A9700144E7F /* HW_OrderCoffeeAppTests.swift */,
 				936CFFB32C6BA81F004B8724 /* FirebaseTests */,
+				93755BF62C738DA3002570A5 /* AuthenticationTests */,
 			);
 			path = HW_OrderCoffeeAppTests;
 			sourceTree = "<group>";
@@ -841,8 +849,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93755BF52C738D77002570A5 /* EmailSignInControllerTests.swift in Sources */,
 				93BD48D62C6751BB00144E7F /* FirebaseControllerTests.swift in Sources */,
-				9388FCE82C6B5A7000128B2F /* FirestoreMock.swift in Sources */,
 				93BD48CD2C662A9700144E7F /* HW_OrderCoffeeAppTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

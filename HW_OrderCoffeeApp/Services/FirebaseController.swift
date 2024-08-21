@@ -482,3 +482,6 @@ func getCurrentUserDetails(completion: @escaping (Result<UserDetails, Error>) ->
  }
 
  */
+
+
+
