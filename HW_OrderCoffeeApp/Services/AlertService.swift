@@ -7,7 +7,6 @@
 
 import UIKit
 
-
 /// 警告視窗
 class AlertService {
     

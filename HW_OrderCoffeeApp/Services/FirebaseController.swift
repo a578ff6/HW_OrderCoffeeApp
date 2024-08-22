@@ -104,11 +104,20 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
             - 最後，會將更新後的數據保存到 Firestore（通過 userRef.setData 方法）。
  
  ---------------------------------------- ---------------------------------------- ----------------------------------------
+ 
+ F. 上傳圖片到 Firebase Storage 並更新 Firestore 中的資料。
+
+    * 上傳圖片至 Firebase Storage：
+        - 使用 uploadProfileImage 方法將用戶選擇的照片上傳至 Firebase Storage。
+        - 使用 updateUserProfileImageURL 方法將照片的下載 URL 更新到 Firestore 中的 UserDetails 資料結構。
+ 
+    * 使用使用者的 uid 作為照片的檔名：
+        - 每個使用者都有一個唯一的 uid，將其作為檔名可以保證每個使用者的照片檔名都是唯一的，不會與其他使用者的照片發生衝突。
+        - 使用 uid 作為檔名可以很容易地將照片與特定的使用者關聯起來，方便在需要時進行管理或查找。
+        - 直接使用 uid 作為檔名可以省去生成新的唯一識別碼的步驟，簡化了上傳和存儲照片的流程。
+        - 這樣，上傳的照片將存儲在 profile_images 資料夾下，並以 uid.jpg 為檔名。當需要更新或替換使用者的照片時，只需覆蓋相同的檔名即可，無需再為每張新照片生成新的檔名。
 
  
- 
- F. 將 loadUserOrders 與 getCurrentUserDetails 整合在一起，藉此减少重複調用。(暫時改掉)
-
  */
 
 
@@ -116,115 +125,12 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
 /*
  import UIKit
  import Firebase
+ import FirebaseStorage
 
  /// 處理 Firebase 資料庫相關
  class FirebaseController {
      
      static let shared = FirebaseController()
-     
-     // MARK: - 郵件、密碼檢查
-
-     /// 檢查電子郵件格式是否有效
-     static func isEmailvalid(_ email: String) -> Bool {
-         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-         let emailTest = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
-         return emailTest.evaluate(with: email)
-     }
-     
-     
-     /// 檢查密碼是否符合要求（至少8位，包含小寫字母和特殊字符）
-     static func isPasswordValid(_ password: String) -> Bool {
-         let passwordRegEx = "^(?=.*[a-z])(?=.*[$@$#!%*?&])[A-Za-z\\d$@$#!%*?&]{8,}"
-         let passwordTest = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
-         return passwordTest.evaluate(with: password)
-     }
-     
-     // MARK: - Email登入、註冊相關
-     
-     /// 創建新用戶，並將用戶資料儲存到 Firestore。
-     func registerUser(withEmail email: String, password: String, fullName: String, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
-         Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
-             if let error = error {
-                 completion(.failure(error))
-             } else if let result = result {
-                 let db = Firestore.firestore()
-                 db.collection("users").document(result.user.uid).setData([
-                     "email": email,
-                     "fullName": fullName,
-                     "uid": result.user.uid,
-                     "loginProvider": "email"
-                 ], merge: true) { error in
-                     if let error = error {
-                         completion(.failure(error))
-                     } else {
-                         completion(.success(result))
-                     }
-                 }
-             }
-         }
-     }
-     
-     /// 使用電子郵件和密碼進行用戶登入
-     func loginUser(withEmail email: String, password: String, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
-         let credential = EmailAuthProvider.credential(withEmail: email, password: password)
-         self.linkEmailCredential(credential, loginProvider: "email", completion: completion)
-     }
-     
-     /// 將電子郵件憑證與現有帳號關聯
-     private func linkEmailCredential(_ credential: AuthCredential, loginProvider: String, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
-         if let currentUser = Auth.auth().currentUser {
-             currentUser.link(with: credential) { authResult, error in
-                 if let error = error {
-                     // 如果連結失敗，嘗試登入並合併數據
-                     self.signInWithEmailCredential(credential, loginProvider: loginProvider, completion: completion)
-                 } else if let authResult = authResult {
-                     // 連結成功，保存用戶數據
-                     self.storeUserData(authResult: authResult, loginProvider: loginProvider) { result in
-                         switch result {
-                         case .success:
-                             completion(.success(authResult))
-                         case .failure(let error):
-                             completion(.failure(error))
-                         }
-                     }
-                 }
-             }
-         } else {
-             // 如果沒有當前用戶，則使用電子郵件憑證登入
-             self.signInWithEmailCredential(credential, loginProvider: loginProvider, completion: completion)
-         }
-     }
-     
-     /// 使用電子郵件憑證登入
-     private func signInWithEmailCredential(_ credential: AuthCredential, loginProvider: String, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
-         Auth.auth().signIn(with: credential) { authResult, error in
-             if let error = error {
-                 completion(.failure(error))
-             } else if let authResult = authResult {
-                 // 登入成功，保存用戶數據
-                 self.storeUserData(authResult: authResult, loginProvider: loginProvider) { result in
-                     switch result {
-                     case .success:
-                         completion(.success(authResult))
-                     case .failure(let error):
-                         completion(.failure(error))
-                     }
-                 }
-             }
-         }
-     }
-     
-     /// 發送密碼重置郵件
-     func resetPassword(forEmail email: String, completion: @escaping (Result<Void, Error>) -> Void) {
-         Auth.auth().sendPasswordReset(withEmail: email) { error in
-             if let error = error {
-                 completion(.failure(error))
-             } else {
-                 completion(.success(()))
-             }
-         }
-     }
-     
      
      /// 獲取當前用戶的詳細資料
      func getCurrentUserDetails(completion: @escaping (Result<UserDetails, Error>) -> Void) {
@@ -249,53 +155,52 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
              
              let email = userData["email"] as? String ?? ""
              let fullName = userData["fullName"] as? String ?? ""
+             let profileImageURL = userData["profileImageURL"] as? String
              
-             let userDetails = UserDetails(uid: user.uid, email: email, fullName: fullName)
+             let userDetails = UserDetails(uid: user.uid, email: email, fullName: fullName, profileImageURL: profileImageURL, orders: nil)
              completion(.success(userDetails))
          }
      }
      
-     /// 保存用戶數據到 Firestore
-     private func storeUserData(authResult: AuthDataResult, loginProvider: String, completion: @escaping (Result<Void, Error>) -> Void) {
-         let db = Firestore.firestore()
-         let user = authResult.user
-         let userRef = db.collection("users").document(user.uid)
+     /// 上傳圖片到 Firebase Storage 並獲取下載 URL
+     func uploadProfileImage(_ image: UIImage, for uid: String, completion: @escaping (Result<String, Error>) -> Void) {
+         let storageRef = Storage.storage().reference().child("profile_images/\(uid).jpg")
+         guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Image conversion failed"])))
+             return
+         }
          
-         userRef.getDocument { (document, error) in
-             if let document = document, document.exists, var userData = document.data() {
-                 // 更新現有資料
-                 userData["email"] = user.email ?? ""
-                 userData["loginProvider"] = loginProvider
-                 userRef.setData(userData, merge: true) { error in
-                     if let error = error {
-                         completion(.failure(error))
-                     } else {
-                         completion(.success(()))
-                     }
+         let metadata = StorageMetadata()
+         metadata.contentType = "image/jpeg"
+         
+         storageRef.putData(imageData, metadata: metadata) { _, error in
+             guard error == nil else {
+                 completion(.failure(error!))
+                 return
+             }
+             
+             storageRef.downloadURL { url, error in
+                 guard let downloadURL = url else {
+                     completion(.failure(error!))
+                     return
                  }
-             } else {
-                 // 建立新的資料
-                 var userData: [String: Any] = [
-                     "uid": user.uid,
-                     "email": user.email ?? "",
-                     "loginProvider": loginProvider
-                 ]
-                 
-                 if let displayName = user.displayName {
-                     userData["fullName"] = displayName
-                 }
-                 
-                 userRef.setData(userData, merge: true) { error in
-                     if let error = error {
-                         completion(.failure(error))
-                     } else {
-                         completion(.success(()))
-                     }
-                 }
+                 completion(.success(downloadURL.absoluteString))
              }
          }
      }
      
+     /// 更新 Firestore 中的用戶圖片 URL
+     func updateUserProfileImageURL(_ url: String, for uid: String, completion: @escaping (Result<Void, Error>) -> Void) {
+         let db = Firestore.firestore()
+         db.collection("users").document(uid).updateData(["profileImageURL": url]) { error in
+             if let error = error {
+                 completion(.failure(error))
+             } else {
+                 completion(.success(()))
+             }
+         }
+     }
+
  }
 */
 
@@ -303,6 +208,7 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
 // MARK: - 測試修改用
 import UIKit
 import Firebase
+import FirebaseStorage
 
 /// 處理 Firebase 資料庫相關
 class FirebaseController {
@@ -332,17 +238,52 @@ class FirebaseController {
             
             let email = userData["email"] as? String ?? ""
             let fullName = userData["fullName"] as? String ?? ""
-            
             let profileImageURL = userData["profileImageURL"] as? String
-
-            
-            //let userDetails = UserDetails(uid: user.uid, email: email, fullName: fullName)
             
             let userDetails = UserDetails(uid: user.uid, email: email, fullName: fullName, profileImageURL: profileImageURL, orders: nil)
             completion(.success(userDetails))
         }
     }
     
+    /// 上傳圖片到 Firebase Storage 並獲取下載 URL
+    func uploadProfileImage(_ image: UIImage, for uid: String, completion: @escaping (Result<String, Error>) -> Void) {
+        let storageRef = Storage.storage().reference().child("profile_images/\(uid).jpg")
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Image conversion failed"])))
+            return
+        }
+        
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpeg"
+        
+        storageRef.putData(imageData, metadata: metadata) { _, error in
+            guard error == nil else {
+                completion(.failure(error!))
+                return
+            }
+            
+            storageRef.downloadURL { url, error in
+                guard let downloadURL = url else {
+                    completion(.failure(error!))
+                    return
+                }
+                completion(.success(downloadURL.absoluteString))
+            }
+        }
+    }
+    
+    /// 更新 Firestore 中的用戶圖片 URL
+    func updateUserProfileImageURL(_ url: String, for uid: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        let db = Firestore.firestore()
+        db.collection("users").document(uid).updateData(["profileImageURL": url]) { error in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                completion(.success(()))
+            }
+        }
+    }
+
 }
 
 

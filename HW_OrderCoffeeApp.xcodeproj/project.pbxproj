@@ -14,6 +14,7 @@
 		936CFFC92C6C74DE004B8724 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC82C6C74DE004B8724 /* UserProfileView.swift */; };
 		936CFFCB2C6E24AD004B8724 /* UserDetailsReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFCA2C6E24AD004B8724 /* UserDetailsReceiver.swift */; };
 		93755BF52C738D77002570A5 /* EmailSignInControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BF42C738D77002570A5 /* EmailSignInControllerTests.swift */; };
+		93755BFA2C7700FD002570A5 /* PhotoPickerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */; };
 		937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937605982C4A6B0300B1316C /* BottomLineTextField.swift */; };
 		9376059B2C4AAA9C00B1316C /* UIColor+CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */; };
 		937605A02C4BB6BD00B1316C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9376059F2C4BB6BD00B1316C /* GoogleSignIn */; };
@@ -130,6 +131,7 @@
 		936CFFC82C6C74DE004B8724 /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
 		936CFFCA2C6E24AD004B8724 /* UserDetailsReceiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsReceiver.swift; sourceTree = "<group>"; };
 		93755BF42C738D77002570A5 /* EmailSignInControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSignInControllerTests.swift; sourceTree = "<group>"; };
+		93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerManager.swift; sourceTree = "<group>"; };
 		937605982C4A6B0300B1316C /* BottomLineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
 		9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+CustomColors.swift"; sourceTree = "<group>"; };
 		937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInController.swift; sourceTree = "<group>"; };
@@ -354,6 +356,7 @@
 				939BDA642B2ACBA200616D1C /* FirebaseController.swift */,
 				939BDA682B2B82BC00616D1C /* AlertService.swift */,
 				939BDA6A2B2B97ED00616D1C /* ActivityIndicatorManager.swift */,
+				93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -834,6 +837,7 @@
 				93B9DC7A2C3181910050BC3F /* UIView+SpringAnimation.swift in Sources */,
 				936CFFCB2C6E24AD004B8724 /* UserDetailsReceiver.swift in Sources */,
 				934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */,
+				93755BFA2C7700FD002570A5 /* PhotoPickerManager.swift in Sources */,
 				93BD48C32C5CE5B500144E7F /* EmailSignInController.swift in Sources */,
 				93B9DC892C368DA80050BC3F /* OrderItemCollectionViewCell.swift in Sources */,
 				939BDA852B32AD5200616D1C /* UIImageView+Styles.swift in Sources */,
