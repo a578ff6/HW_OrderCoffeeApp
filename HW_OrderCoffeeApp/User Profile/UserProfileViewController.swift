@@ -37,7 +37,6 @@
     * 協議實現 (UserDetailsReceiver):
         - receiveUserDetails(_:)：接收使用者資訊，並將其存儲在 userDetails 屬性中。接收到資料後，會調用 configureUserData() 更新 UI 顯示。
  
- 
  ------------------------- ------------------------- ------------------------- -------------------------
  
  B. 「receiveUserDetails 中的 configureUserData」 和 「viewDidLoad 中的 configureUserData」 兩者的觸發時機和使用情境差異。
@@ -65,6 +64,26 @@
  
     * 錯誤處理：
         - 在照片上傳或URL更新失敗的情況下，可以使用 AlertService 顯示錯誤訊息給用戶。
+ 
+ ------------------------- ------------------------- ------------------------- -------------------------
+
+ D. 登出功能相關邏輯：
+ 
+    * 確認登出：
+        - 當用戶點擊登出按鈕時，先顯示一個確認提示框，以防止錯誤操作。
+    
+    * 執行登出：
+        - 在用戶確認登出後，顯示活動指示器，並調用 FirebaseController 進行登出操作。
+
+    * 處理結果：
+        - 如果登出成功，則通過 NavigationHelper 重設 App 的根視圖控制器並返回到登入頁面。
+        - 如果登出失敗，則顯示錯誤訊息，通知用戶稍後再試。
+ 
+    * 總結流程：
+        - 用戶點擊登出按鈕後，UserProfileViewController 會先顯示確認提示框。
+        - 用戶確認登出後，UserProfileViewController 調用 FirebaseController 進行登出操作，並顯示活動指示器。
+        - 如果登出成功，NavigationHelper 會重設 App 的根視圖控制器為 HomePageViewController，清除所有之前的狀態。
+        - 如果登出失敗，則顯示錯誤訊息，通知用戶稍後再試。
  
  ------------------------- ------------------------- ------------------------- -------------------------
 
@@ -102,6 +121,7 @@ class UserProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupChangePhotoButtonAction()
+        setupLogoutButtonAction()
         photoPickerManager = PhotoPickerManager(viewController: self)
         ActivityIndicatorManager.shared.startLoading(on: view)          // 開始活動指示器
         configureUserData()                                             // 配置使用者資料
@@ -117,7 +137,7 @@ class UserProfileViewController: UIViewController {
         guard let userDetails = userDetails else {
             userProfileView.nameLabel.text = "userName"
             userProfileView.emailLabel.text = "user@example.com"
-            userProfileView.profileImageView.image = UIImage(systemName: "person.fill")
+            userProfileView.profileImageView.image = UIImage(named: "UserSymbol")
             ActivityIndicatorManager.shared.stopLoading()
             return
         }
@@ -129,7 +149,7 @@ class UserProfileViewController: UIViewController {
         if let profileImageURL = userDetails.profileImageURL {
             userProfileView.profileImageView.kf.setImage(
                 with: URL(string: profileImageURL),
-                placeholder: UIImage(systemName: "person.fill"),
+                placeholder: UIImage(named: "UserSymbol"),
                 options: nil,
                 completionHandler: { result in
                     // 無論成功或失敗，停止活動指示器
@@ -137,10 +157,11 @@ class UserProfileViewController: UIViewController {
                 }
             )
         } else {
-            userProfileView.profileImageView.image = UIImage(systemName: "person.fill")
+            userProfileView.profileImageView.image = UIImage(named: "UserSymbol")
             ActivityIndicatorManager.shared.stopLoading()
         }
     }
+
     
     // MARK: - Setup Button Actions
     
@@ -149,7 +170,11 @@ class UserProfileViewController: UIViewController {
         userProfileView.changePhotoButton.addTarget(self, action: #selector(changePhotoButtonTapped), for: .touchUpInside)
     }
     
-    
+    /// 設置登出按鈕的點擊事件
+    private func setupLogoutButtonAction() {
+        userProfileView.logoutButton.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
+    }
+ 
     // MARK: - Actions
     
     /// 處理更改大頭照按鈕的點擊事件
@@ -182,8 +207,32 @@ class UserProfileViewController: UIViewController {
         }
     }
     
+    /// 處理登出按鈕的點擊事件
+    @objc private func logoutButtonTapped() {
+        AlertService.showAlert(withTitle: "登出", message: "您確定要登出嗎？", inViewController: self, showCancelButton: true) {
+            [weak self] in self?.executeLogout()
+        }
+    }
+    
+    /// 處理登出邏輯
+    ///
+    /// 在用戶確認登出後，應該執行登出操作並顯示活動指示器。這樣可以告知用戶正在處理登出的過程。
+    private func executeLogout() {
+        ActivityIndicatorManager.shared.startLoading(on: view)
+        
+        FirebaseController.shared.signOut { [weak self] result in
+            ActivityIndicatorManager.shared.stopLoading()
+            switch result {
+            case .success:
+                NavigationHelper.navigateToLogin(from: self!) // 登出成功後，返回到登入頁面
+            case .failure(let error):
+                AlertService.showAlert(withTitle: "登出失敗", message: "無法登出，請稍後再試。", inViewController: self!)
+            }
+        }
+    }
 
 }
+
 
 // MARK: - UserDetailsReceiver Delegate
 
