@@ -20,8 +20,7 @@ struct Constants {
     /// 定義結構 Storyboard，用於存放與 Storyboard 相關的常數
     struct Storyboard {
         
-        // static let homePageViewController = "HomePageViewController"
-        
+        static let homePageViewController = "HomePageViewController"
         static let loginViewController = "LoginViewController"
         static let signUpViewController = "SignUpViewController"
         static let forgotPasswordViewController = "ForgotPasswordViewController"

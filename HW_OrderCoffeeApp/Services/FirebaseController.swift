@@ -117,7 +117,15 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
         - 直接使用 uid 作為檔名可以省去生成新的唯一識別碼的步驟，簡化了上傳和存儲照片的流程。
         - 這樣，上傳的照片將存儲在 profile_images 資料夾下，並以 uid.jpg 為檔名。當需要更新或替換使用者的照片時，只需覆蓋相同的檔名即可，無需再為每張新照片生成新的檔名。
 
+ ---------------------------------------- ---------------------------------------- ----------------------------------------
+
+ G. 登出功能相關邏輯：
  
+    * 登出操作：
+        - 調用 Firebase 的登出方法，並將結果以成功或失敗的方式返回給調用者。
+
+ ---------------------------------------- ---------------------------------------- ----------------------------------------
+
  */
 
 
@@ -201,6 +209,16 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
          }
      }
 
+     /// 執行登出操作
+     func signOut(completion: @escaping (Result<Void, Error>) -> Void) {
+         do {
+             try Auth.auth().signOut()
+             completion(.success(()))
+         } catch let signOutError as NSError {
+             completion(.failure(signOutError))
+         }
+     }
+     
  }
 */
 
@@ -284,145 +302,17 @@ class FirebaseController {
         }
     }
 
-}
-
-
-
-
-
-// MARK: - 先移除掉（目前用不到）
-/// 獲取當前用戶的詳細資料和訂單歷史（將歷史訂單給移除掉，給從歷史訂單單例模式去處理）
-/*
-func getCurrentUserDetails(completion: @escaping (Result<UserDetails, Error>) -> Void) {
-    guard let user = Auth.auth().currentUser else {
-        completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User not logged in"])))
-        return
+    /// 執行登出操作
+    func signOut(completion: @escaping (Result<Void, Error>) -> Void) {
+        do {
+            try Auth.auth().signOut()
+            completion(.success(()))
+        } catch let signOutError as NSError {
+            completion(.failure(signOutError))
+        }
     }
     
-    let db = Firestore.firestore()
-    let userRef = db.collection("users").document(user.uid)
-    
-    userRef.getDocument { (document, error) in
-        if let error = error {
-            completion(.failure(error))
-            return
-        }
-        
-        guard let document = document, document.exists, let userData = document.data() else {
-            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User data not found"])))
-            return
-        }
-        
-        let email = userData["email"] as? String ?? ""
-        let fullName = userData["fullName"] as? String ?? ""
-        
-        userRef.collection("orders").getDocuments { snapshot, error in
-            if let error = error {
-                completion(.failure(error))
-            } else {
-                let orders = snapshot?.documents.compactMap { document -> OrderItem? in
-                    return try? document.data(as: OrderItem.self)
-                } ?? []
-                let userDetails = UserDetails(uid: user.uid, email: email, fullName: fullName, orders: orders.isEmpty ? nil : orders)
-                completion(.success(userDetails))
-            }
-        }
-        
-    }
 }
- */
-
-
-// MARK: - 歷史訂單的視圖控制器（先移除，要更改流程）
-/*
- // 單獨設置一個歷史訂單的視圖控制器來顯示歷史訂單：
- 
-
- import UIKit
-
- class HistoryOrderViewController: UIViewController {
-
-     @IBOutlet weak var historyOrderCollectionView: UICollectionView!
-     
-     var historyOrders: [OrderItem] = []
-     
-     override func viewDidLoad() {
-         super.viewDidLoad()
-         setupCollectionView()
-         loadHistoryOrders()
-     }
-     
-     private func setupCollectionView() {
-         historyOrderCollectionView.delegate = self
-         historyOrderCollectionView.dataSource = self
-         historyOrderCollectionView.register(OrderItemCollectionViewCell.self, forCellWithReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier)
-     }
-     
-     private func loadHistoryOrders() {
-         FirebaseController.shared.getUserOrderHistory { [weak self] result in
-             switch result {
-             case .success(let orders):
-                 self?.historyOrders = orders
-                 self?.historyOrderCollectionView.reloadData()
-             case .failure(let error):
-                 print("Error loading history orders: \(error)")
-                 AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self!)
-             }
-         }
-     }
- }
-
- // MARK: - UICollectionViewDelegate, UICollectionViewDataSource
- extension HistoryOrderViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-         return historyOrders.count
-     }
-     
-     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier, for: indexPath) as? OrderItemCollectionViewCell else {
-             fatalError("Cannot create OrderItemCollectionViewCell")
-         }
-         
-         let orderItem = historyOrders[indexPath.row]
-         cell.configure(with: orderItem)
-         return cell
-     }
- }
-
- // FirebaseController 中添加獲取歷史訂單的方法
-
- import Foundation
- import FirebaseFirestore
- import FirebaseAuth
-
- class FirebaseController {
-     
-     static let shared = FirebaseController()
-     
-     /// 獲取用戶歷史訂單
-     func getUserOrderHistory(completion: @escaping (Result<[OrderItem], Error>) -> Void) {
-         guard let user = Auth.auth().currentUser else {
-             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User not logged in"])))
-             return
-         }
-         
-         let db = Firestore.firestore()
-         let ordersRef = db.collection("users").document(user.uid).collection("orders")
-         
-         ordersRef.getDocuments { snapshot, error in
-             if let error = error {
-                 completion(.failure(error))
-             } else {
-                 let orders = snapshot?.documents.compactMap { document -> OrderItem? in
-                     return try? document.data(as: OrderItem.self)
-                 } ?? []
-                 completion(.success(orders))
-             }
-         }
-     }
- }
-
- */
 
 
 

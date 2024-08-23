@@ -36,13 +36,20 @@
     * 但我又希望在 ViewController 中顯示 NavigtaionBar 和關閉按鈕，因此需要將其嵌入 NavigtaionController 中。
     * 即使嵌入 NavigtaionController，仍然可以使用 dismiss 來關閉 modallypresent 視圖，避免堆棧問題。
  
+ ------------------------- ------------------------- ------------------------- -------------------------
+
+ A.登出功能相關邏輯：
+ 
+    * 重設根視圖控制器：
+        - 在用戶成功登出後，重設 App 的根視圖控制器為 HomePageViewController，這樣可以完全清除 MainTabBarController 及其子視圖控制器的狀態，避免它們在後台繼續存在。
+
+ 
 */
-  
-  
 
 
 import UIKit
 
+/// 負責處理 App 內的各種導航操作，如登入、登出、頁面跳轉等。
 class NavigationHelper {
     
     /// 登入、註冊成功後，進行跳轉頁面
@@ -56,7 +63,7 @@ class NavigationHelper {
             mainTabBarController.userDetails = userDetails
             mainTabBarController.modalPresentationStyle = .fullScreen
             
-            // 取得目前活躍的UIWindowScene，並設置 rootViewController
+            // 取得目前的 UIWindowScene，並設置 rootViewController
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first {
                 let transition = CATransition()
                 transition.duration = 0.3
@@ -69,7 +76,6 @@ class NavigationHelper {
             }
         }
     }
-    
     
     /// 跳轉到 ForgotPasswordViewController （使用 present ）
     /// 將其坎 入NavigtaionController，因為有設置關閉按鈕在 Navigationbar
@@ -85,8 +91,6 @@ class NavigationHelper {
         }
     }
     
-
-    
     /// 跳轉到 signUpViewController（ 使用 push 進行導航，確保顯示返回按鈕）
     static func navigateToSignUp(from viewController: UIViewController) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -94,14 +98,26 @@ class NavigationHelper {
             viewController.navigationController?.pushViewController(signUpViewController, animated: true)
         }
     }
-     
-    /// 到 LoginViewController（使用 present ）
+    
+    /// 登出後，將 App 的根視圖控制器完全重設為 HomePageViewController
+    ///
+    /// - Parameters:
+    ///   - viewController: 當前的視圖控制器
     static func navigateToLogin(from viewController: UIViewController) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        if let loginViewController = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.loginViewController) as?
-            LoginViewController {
-            loginViewController.modalPresentationStyle = .fullScreen
-            viewController.present(loginViewController, animated: true, completion: nil)
+        if let homePageViewController = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.homePageViewController) as? HomePageViewController {
+            
+            let navigationController = UINavigationController(rootViewController: homePageViewController)
+            
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let window = windowScene.windows.first else {
+                return
+            }
+            
+            // 設置根視圖控制器為包含 HomePageViewController 的導航控制器
+            window.rootViewController = navigationController
+            window.makeKeyAndVisible()
+            UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
         }
     }
     
