@@ -34,8 +34,10 @@ struct UserDetails: Codable {
     var uid: String
     var email: String
     var fullName: String
-    var profileImageURL: String? // 儲存大頭照的 URL
+    var profileImageURL: String?     // 儲存大頭照的 URL
+    var phoneNumber: String?         // 電話號碼
+    var birthday: Date?              // 生日
+    var address: String?             // 地址
+    var gender: String?              // 性別
     var orders: [OrderItem]?
 }
-
-

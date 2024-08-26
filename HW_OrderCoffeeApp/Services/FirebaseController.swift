@@ -164,8 +164,23 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
              let email = userData["email"] as? String ?? ""
              let fullName = userData["fullName"] as? String ?? ""
              let profileImageURL = userData["profileImageURL"] as? String
+             let phoneNumber = userData["phoneNumber"] as? String
+             let birthday = (userData["birthday"] as? Timestamp)?.dateValue()
+             let address = userData["address"] as? String
+             let gender = userData["gender"] as? String
+
+             let userDetails = UserDetails(
+                 uid: user.uid,
+                 email: email,
+                 fullName: fullName,
+                 profileImageURL: profileImageURL,
+                 phoneNumber: phoneNumber,
+                 birthday: birthday,
+                 address: address,
+                 gender: gender,
+                 orders: nil
+             )
              
-             let userDetails = UserDetails(uid: user.uid, email: email, fullName: fullName, profileImageURL: profileImageURL, orders: nil)
              completion(.success(userDetails))
          }
      }
@@ -218,7 +233,7 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
              completion(.failure(signOutError))
          }
      }
-     
+   
  }
 */
 
@@ -257,8 +272,23 @@ class FirebaseController {
             let email = userData["email"] as? String ?? ""
             let fullName = userData["fullName"] as? String ?? ""
             let profileImageURL = userData["profileImageURL"] as? String
+            let phoneNumber = userData["phoneNumber"] as? String
+            let birthday = (userData["birthday"] as? Timestamp)?.dateValue()
+            let address = userData["address"] as? String
+            let gender = userData["gender"] as? String
+
+            let userDetails = UserDetails(
+                uid: user.uid,
+                email: email,
+                fullName: fullName,
+                profileImageURL: profileImageURL,
+                phoneNumber: phoneNumber,
+                birthday: birthday,
+                address: address,
+                gender: gender,
+                orders: nil
+            )
             
-            let userDetails = UserDetails(uid: user.uid, email: email, fullName: fullName, profileImageURL: profileImageURL, orders: nil)
             completion(.success(userDetails))
         }
     }
@@ -311,7 +341,7 @@ class FirebaseController {
             completion(.failure(signOutError))
         }
     }
-    
+  
 }
 
 
