@@ -89,7 +89,7 @@
 
  */
 
-
+/*
 import UIKit
 import Kingfisher
 import Firebase
@@ -121,7 +121,7 @@ class UserProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupChangePhotoButtonAction()
-        setupLogoutButtonAction()
+        setupEditProfileButtonAction()  // 設置 Edit Profile 按鈕的動作
         photoPickerManager = PhotoPickerManager(viewController: self)
         ActivityIndicatorManager.shared.startLoading(on: view)          // 開始活動指示器
         configureUserData()                                             // 配置使用者資料
@@ -170,10 +170,11 @@ class UserProfileViewController: UIViewController {
         userProfileView.changePhotoButton.addTarget(self, action: #selector(changePhotoButtonTapped), for: .touchUpInside)
     }
     
-    /// 設置登出按鈕的點擊事件
-    private func setupLogoutButtonAction() {
-        userProfileView.logoutButton.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
+    /// 設置 Edit Profile 按鈕的點擊事件
+    private func setupEditProfileButtonAction() {
+        userProfileView.editProfileButton.addTarget(self, action: #selector(editProfileButtonTapped), for: .touchUpInside)
     }
+    
  
     // MARK: - Actions
     
@@ -207,11 +208,11 @@ class UserProfileViewController: UIViewController {
         }
     }
     
-    /// 處理登出按鈕的點擊事件
-    @objc private func logoutButtonTapped() {
-        AlertService.showAlert(withTitle: "登出", message: "您確定要登出嗎？", inViewController: self, showCancelButton: true) {
-            [weak self] in self?.executeLogout()
-        }
+    /// 處理「Edit Profile」按鈕點擊事件，推送到 EditProfileViewController
+    @objc private func editProfileButtonTapped() {
+        let editProfileVC = EditProfileViewController()
+        editProfileVC.receiveUserDetails(userDetails) // 傳遞 userDetails 給 EditProfileViewController
+        navigationController?.pushViewController(editProfileVC, animated: true)
     }
     
     /// 處理登出邏輯
@@ -245,3 +246,184 @@ extension UserProfileViewController: UserDetailsReceiver {
     }
     
 }
+*/
+
+
+// MARK: - 已經使用push到編輯頁面
+ import UIKit
+ import Kingfisher
+ import Firebase
+
+
+ /// 個人資訊頁面
+ ///
+ /// `UserProfileViewController` 顯示使用者的個人資訊，包括名字、電子郵件和頭像。會在載入時設置使用者資料，並且實現 `UserDetailsReceiver` 協議來接收來自其他視圖控制器的使用者資訊。
+ class UserProfileViewController: UIViewController {
+
+     // MARK: - Properties
+     
+     /// 用來顯示個人資訊的自定義視圖
+     private let userProfileView = UserProfileView()
+     
+     /// 保存使用者詳細資訊
+     private var userDetails: UserDetails?
+     
+     /// 處理照片選擇與上傳的管理器
+     private var photoPickerManager: PhotoPickerManager!
+
+     
+     // MARK: - Lifecycle Methods
+     
+     override func loadView() {
+         view = userProfileView
+     }
+     
+     override func viewDidLoad() {
+         super.viewDidLoad()
+         setupChangePhotoButtonAction()
+         setupLogoutButtonAction()
+         
+         setupEditProfileButtonAction()  // 設置 Edit Profile 按鈕的動作
+         
+         photoPickerManager = PhotoPickerManager(viewController: self)
+         ActivityIndicatorManager.shared.startLoading(on: view)          // 開始活動指示器
+         configureUserData()                                             // 配置使用者資料
+     }
+     
+     
+     // MARK: - Configuration
+
+     /// 設置使用者資料顯示在視圖上
+     ///
+     /// 若 `userDetails` 有值，則使用其資料填充 `userProfileView` 的相關 UI 元件。否則，顯示預設圖片或文字。
+     private func configureUserData() {
+         guard let userDetails = userDetails else {
+             userProfileView.nameLabel.text = "userName"
+             userProfileView.emailLabel.text = "user@example.com"
+             userProfileView.profileImageView.image = UIImage(named: "UserSymbol")
+             ActivityIndicatorManager.shared.stopLoading()
+             return
+         }
+         
+         userProfileView.nameLabel.text = userDetails.fullName
+         userProfileView.emailLabel.text = userDetails.email
+         
+         // 加載大頭照
+         if let profileImageURL = userDetails.profileImageURL {
+             userProfileView.profileImageView.kf.setImage(
+                 with: URL(string: profileImageURL),
+                 placeholder: UIImage(named: "UserSymbol"),
+                 options: nil,
+                 completionHandler: { result in
+                     // 無論成功或失敗，停止活動指示器
+                     ActivityIndicatorManager.shared.stopLoading()
+                 }
+             )
+         } else {
+             userProfileView.profileImageView.image = UIImage(named: "UserSymbol")
+             ActivityIndicatorManager.shared.stopLoading()
+         }
+     }
+
+     
+     // MARK: - Setup Button Actions
+     
+     /// 設置變更大頭照按鈕的點擊事件
+     private func setupChangePhotoButtonAction() {
+         userProfileView.changePhotoButton.addTarget(self, action: #selector(changePhotoButtonTapped), for: .touchUpInside)
+     }
+     
+     /// 設置登出按鈕的點擊事件
+     private func setupLogoutButtonAction() {
+         userProfileView.logoutButton.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
+     }
+     
+     
+     /// 設置 Edit Profile 按鈕的點擊事件
+     private func setupEditProfileButtonAction() {
+         userProfileView.editProfileButton.addTarget(self, action: #selector(editProfileButtonTapped), for: .touchUpInside)
+     }
+     
+  
+     // MARK: - Actions
+     
+     /// 處理更改大頭照按鈕的點擊事件
+     ///
+     /// 當用戶點擊按鈕時，顯示選擇照片的選項，然後上傳選擇的圖片並更新大頭照。
+     @objc private func changePhotoButtonTapped() {
+         photoPickerManager.presentPhotoOptions { [weak self] selectedImage in
+             guard let image = selectedImage, let uid = self?.userDetails?.uid else { return }
+             self?.userProfileView.profileImageView.image = image
+             
+             ActivityIndicatorManager.shared.startLoading(on: self!.view)
+             FirebaseController.shared.uploadProfileImage(image, for: uid) { result in
+                 switch result {
+                 case .success(let url):
+                     FirebaseController.shared.updateUserProfileImageURL(url, for: uid) { updateResult in
+                         ActivityIndicatorManager.shared.stopLoading()
+                         switch updateResult {
+                         case .success:
+                             self?.userDetails?.profileImageURL = url
+                             print("Profile image updated successfully")
+                         case .failure(let error):
+                             print("Failed to update profile image URL: \(error)")
+                         }
+                     }
+                 case .failure(let error):
+                     ActivityIndicatorManager.shared.stopLoading()
+                     print("Failed to upload image: \(error)")
+                 }
+             }
+         }
+     }
+     
+     
+     /// 處理「Edit Profile」按鈕點擊事件，推送到 EditProfileViewController
+     @objc private func editProfileButtonTapped() {
+         let editProfileVC = EditProfileViewController()
+         editProfileVC.receiveUserDetails(userDetails) // 傳遞 userDetails 給 EditProfileViewController
+         navigationController?.pushViewController(editProfileVC, animated: true)
+     }
+     
+     
+     
+     
+     /// 處理登出按鈕的點擊事件
+     @objc private func logoutButtonTapped() {
+         AlertService.showAlert(withTitle: "登出", message: "您確定要登出嗎？", inViewController: self, showCancelButton: true) {
+             [weak self] in self?.executeLogout()
+         }
+     }
+     
+     /// 處理登出邏輯
+     ///
+     /// 在用戶確認登出後，應該執行登出操作並顯示活動指示器。這樣可以告知用戶正在處理登出的過程。
+     private func executeLogout() {
+         ActivityIndicatorManager.shared.startLoading(on: view)
+         
+         FirebaseController.shared.signOut { [weak self] result in
+             ActivityIndicatorManager.shared.stopLoading()
+             switch result {
+             case .success:
+                 NavigationHelper.navigateToLogin(from: self!) // 登出成功後，返回到登入頁面
+             case .failure(let error):
+                 AlertService.showAlert(withTitle: "登出失敗", message: "無法登出，請稍後再試。", inViewController: self!)
+             }
+         }
+     }
+
+ }
+
+
+ // MARK: - UserDetailsReceiver Delegate
+
+ extension UserProfileViewController: UserDetailsReceiver {
+     
+     /// 實現 `UserDetailsReceiver` 協議來接收使用者詳細資訊並更新 UI
+     func receiveUserDetails(_ userDetails: UserDetails?) {
+         self.userDetails = userDetails
+         configureUserData()
+     }
+     
+ }
+ 

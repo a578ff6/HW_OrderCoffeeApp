@@ -352,7 +352,7 @@
             </objects>
             <point key="canvasLocation" x="6767" y="1039"/>
         </scene>
-        <!--User Profile View Controller-->
+        <!--User Profile-->
         <scene sceneID="db4-xi-11o">
             <objects>
                 <viewController id="PWQ-fX-J0m" customClass="UserProfileViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -362,11 +362,26 @@
                         <viewLayoutGuide key="safeArea" id="EfW-2G-Wtt"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" id="HmT-80-9F0"/>
+                    <navigationItem key="navigationItem" title="User Profile" id="HmT-80-9F0"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EN4-G6-JTk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="6766" y="1777"/>
+        </scene>
+        <!--Edit Profile View Controller-->
+        <scene sceneID="Uy3-K9-fOu">
+            <objects>
+                <viewController storyboardIdentifier="EditProfileViewController" id="C4n-ya-Mjs" customClass="EditProfileViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="uqe-Ay-JaE">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="K2g-sI-wOf"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ztg-lP-4vy" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7682" y="1777"/>
         </scene>
         <!--Order-->
         <scene sceneID="d9b-ck-ATS">

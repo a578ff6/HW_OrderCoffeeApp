@@ -15,6 +15,12 @@
 		936CFFCB2C6E24AD004B8724 /* UserDetailsReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFCA2C6E24AD004B8724 /* UserDetailsReceiver.swift */; };
 		93755BF52C738D77002570A5 /* EmailSignInControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BF42C738D77002570A5 /* EmailSignInControllerTests.swift */; };
 		93755BFA2C7700FD002570A5 /* PhotoPickerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */; };
+		93755BFC2C79D20C002570A5 /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BFB2C79D20C002570A5 /* EditProfileViewController.swift */; };
+		93755BFE2C79DEAA002570A5 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BFD2C79DEAA002570A5 /* EditProfileView.swift */; };
+		93755C002C79E454002570A5 /* ProfileTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BFF2C79E454002570A5 /* ProfileTextFieldCell.swift */; };
+		93755C022C7B179C002570A5 /* GenderSelectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C012C7B179C002570A5 /* GenderSelectionCell.swift */; };
+		93755C042C7B28AE002570A5 /* BirthdaySelectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C032C7B28AE002570A5 /* BirthdaySelectionCell.swift */; };
+		93755C0A2C7B844D002570A5 /* EditProfileTableHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */; };
 		937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937605982C4A6B0300B1316C /* BottomLineTextField.swift */; };
 		9376059B2C4AAA9C00B1316C /* UIColor+CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */; };
 		937605A02C4BB6BD00B1316C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9376059F2C4BB6BD00B1316C /* GoogleSignIn */; };
@@ -132,6 +138,12 @@
 		936CFFCA2C6E24AD004B8724 /* UserDetailsReceiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsReceiver.swift; sourceTree = "<group>"; };
 		93755BF42C738D77002570A5 /* EmailSignInControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSignInControllerTests.swift; sourceTree = "<group>"; };
 		93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerManager.swift; sourceTree = "<group>"; };
+		93755BFB2C79D20C002570A5 /* EditProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
+		93755BFD2C79DEAA002570A5 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
+		93755BFF2C79E454002570A5 /* ProfileTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTextFieldCell.swift; sourceTree = "<group>"; };
+		93755C012C7B179C002570A5 /* GenderSelectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenderSelectionCell.swift; sourceTree = "<group>"; };
+		93755C032C7B28AE002570A5 /* BirthdaySelectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthdaySelectionCell.swift; sourceTree = "<group>"; };
+		93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileTableHandler.swift; sourceTree = "<group>"; };
 		937605982C4A6B0300B1316C /* BottomLineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
 		9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+CustomColors.swift"; sourceTree = "<group>"; };
 		937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInController.swift; sourceTree = "<group>"; };
@@ -273,6 +285,12 @@
 			children = (
 				936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */,
 				936CFFC82C6C74DE004B8724 /* UserProfileView.swift */,
+				93755BFB2C79D20C002570A5 /* EditProfileViewController.swift */,
+				93755BFD2C79DEAA002570A5 /* EditProfileView.swift */,
+				93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */,
+				93755BFF2C79E454002570A5 /* ProfileTextFieldCell.swift */,
+				93755C012C7B179C002570A5 /* GenderSelectionCell.swift */,
+				93755C032C7B28AE002570A5 /* BirthdaySelectionCell.swift */,
 			);
 			path = "User Profile";
 			sourceTree = "<group>";
@@ -789,6 +807,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93755BFC2C79D20C002570A5 /* EditProfileViewController.swift in Sources */,
 				939BDA762B2FC08300616D1C /* CategoryCollectionViewCell.swift in Sources */,
 				939BDA7D2B30EB6400616D1C /* DrinksCategoryCollectionViewController.swift in Sources */,
 				939BDA692B2B82BC00616D1C /* AlertService.swift in Sources */,
@@ -824,6 +843,7 @@
 				93F9BB602C2FEF1500355A87 /* ThickSeparatorView.swift in Sources */,
 				93F9BB3A2C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift in Sources */,
 				939BDA742B2FB3E400616D1C /* MenuModels.swift in Sources */,
+				93755C0A2C7B844D002570A5 /* EditProfileTableHandler.swift in Sources */,
 				93DB1D2B2C439F8900BA2CC1 /* NavigationHelper.swift in Sources */,
 				93F9BB5A2C2A566D00355A87 /* DrinkOrderOptionsCollectionViewCell.swift in Sources */,
 				93F9BB4A2C269AC600355A87 /* DrinkDetailSeparatorView.swift in Sources */,
@@ -831,7 +851,10 @@
 				93B9DC7D2C32B0BB0050BC3F /* OrderViewController.swift in Sources */,
 				936CFFC92C6C74DE004B8724 /* UserProfileView.swift in Sources */,
 				93DB1D332C47696000BA2CC1 /* LoginView.swift in Sources */,
+				93755C002C79E454002570A5 /* ProfileTextFieldCell.swift in Sources */,
+				93755BFE2C79DEAA002570A5 /* EditProfileView.swift in Sources */,
 				939BD9D22B2A1B1700616D1C /* SceneDelegate.swift in Sources */,
+				93755C022C7B179C002570A5 /* GenderSelectionCell.swift in Sources */,
 				93F9BB4E2C27F91400355A87 /* DottedLineView.swift in Sources */,
 				936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */,
 				93B9DC7A2C3181910050BC3F /* UIView+SpringAnimation.swift in Sources */,
@@ -842,6 +865,7 @@
 				93B9DC892C368DA80050BC3F /* OrderItemCollectionViewCell.swift in Sources */,
 				939BDA852B32AD5200616D1C /* UIImageView+Styles.swift in Sources */,
 				939BD9E42B2A1B4E00616D1C /* HomePageViewController.swift in Sources */,
+				93755C042C7B28AE002570A5 /* BirthdaySelectionCell.swift in Sources */,
 				93BD48B22C57CB9000144E7F /* AppleSignInController.swift in Sources */,
 				93B492972C416C0100E7B947 /* NoOrdersViewCell.swift in Sources */,
 				93F9BB402C1C0DEA00355A87 /* DrinkSizeSelectionCollectionViewCell.swift in Sources */,
