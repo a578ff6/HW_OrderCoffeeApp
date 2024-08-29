@@ -8,21 +8,24 @@
 
 /*
  ## BirthdaySelectionCell
-    - 專門用於顯示使用者生日選擇的界面。這個 Cell 主要包含兩個元素：一個「標題標籤」和一個「日期標籤」。
+    
+    * 用途：BirthdaySelectionCell 專門用於顯示使用者選擇生日的界面。這個 Cell 包含兩個主要元素：「標題標籤」和「日期標籤」。
 
  ## 主要功能包括：
  
     * UI 顯示：
-        - titleLabel 用於顯示「選擇生日」的提示，並固定在 Cell 的左側。
-        - dateLabel 用於顯示已選擇的日期，或者顯示「未選擇」來提示使用者尚未選擇日期。
+        - titleLabel：顯示「Select Birthday」的提示文字，固定在 Cell 的左側。
+        - dateLabel：顯示已選擇的日期；如果尚未選擇日期，則顯示「Not Selected」提示使用者進行選擇。
 
     * 配置與更新：
-        - configure(with:) 方法允許傳入一個 Date 物件，並將其格式化為人類可讀的日期格式顯示在 dateLabel 上。如果未傳入日期，dateLabel 則顯示「未選擇」以提示使用者進行選擇。
+        - configure(with:) 方法允許傳入一個 Date 物件，並將其格式化日期格式顯示在 dateLabel 上。如果沒有傳入日期，dateLabel 則顯示「Not Selected」來提示使用者尚未選擇日期。
  */
 
 
+// MARK: - 已經完善
 import UIKit
 
+/// 用於選擇生日的 UITableViewCell
 class BirthdaySelectionCell: UITableViewCell {
     
     // MARK: - Static Properties
@@ -31,6 +34,7 @@ class BirthdaySelectionCell: UITableViewCell {
     
     // MARK: - UI Elements
 
+    /// 用於顯示標題 "Select Birthday"
     let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -38,6 +42,7 @@ class BirthdaySelectionCell: UITableViewCell {
         return label
     }()
     
+    /// 用於顯示選擇的日期
     let dateLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -46,7 +51,6 @@ class BirthdaySelectionCell: UITableViewCell {
         return label
     }()
         
-    
     // MARK: - Initializer
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -91,3 +95,11 @@ class BirthdaySelectionCell: UITableViewCell {
         }
     }
 }
+
+
+
+
+
+
+
+

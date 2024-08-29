@@ -6,45 +6,60 @@
 //
 
 /*
- 在處理像「編輯個人資料」這類的表單頁面時，使用 UITableViewCell 來管理每個表單欄位是非常常見且有效的做法。以下是為什麼 UITableViewCell 是一個不錯選擇的原因：
 
- 為什麼使用 UITableViewCell？
- 靈活性：使用 UITableViewCell 可以讓你輕鬆管理多個表單欄位，每個欄位可以是一個 UITableViewCell，這樣即使未來需要增加或修改欄位也可以很方便地操作。
+ 使用 UITableViewCell 而不是直接使用 UITextField：
+    
+    * 與 UITableView 的整合性：
+        - 使用 UITableViewCell 可以讓 UITextField 更容易與 UITableView 進行整合。
+        - UITableViewCell 提供的佈局和配置方式可以讓 UITextField 更加符合表單中的欄位需求，且容易管理整個表單的顯示與互動。
+ 
+    * 支援複雜佈局：
+        - UITableViewCell 可以輕鬆地擴展，例如在單個 cell 中添加其他 UI 元件（如標籤、按鈕等），以滿足複雜的佈局需求。
+        - 這使得每一個「表單欄位」可以有更多的自定義選項，而不只是單純的文字輸入。
+ 
+    * 一致性：
+        - 使用 UITableViewCell 可以保持整個 App 中表單欄位的樣式和行為一致，減少重複代碼，提高可維護性。
 
- 可重用性：UITableViewCell 支援重用機制，能夠有效地管理記憶體和提升性能。當表單欄位較多時，這點尤為重要。
+ ------------------------- ------------------------- ------------------------- -------------------------
+ 
+ ## ProfileTextFieldCell：
+        - 是一個自定義的 UITableViewCell，專門用於顯示表單中的文字輸入欄位。
 
- 自定義：你可以輕鬆地自定義每一個 UITableViewCell，例如你可以為每個欄位設置不同的輸入框、標籤或按鈕，這樣更有助於實現具體的 UI 需求。
+    * 配置方法：
+        - configure(textFieldText:placeholder:)：用來配置 textField 的顯示內容與鍵盤類型。根據 placeholder 的內容動態設定鍵盤類型。
 
- 分隔欄位：UITableView 自帶的分隔線可以幫助清晰地分隔每個表單欄位，使頁面更有條理和易於閱讀。
+    * 事件處理：
+        - textFieldDidChange()：當 textField 內容變更時觸發。如果 textField 的 fullName的布且內容為空，會顯示紅色邊框提示。
+ ------------------------- ------------------------- ------------------------- -------------------------
 
- 使用 UITableViewCell 的情境：
- 姓名欄位：一個標籤和一個輸入框。
- 電話欄位：一個標籤和一個輸入框。
- 生日欄位：一個標籤和一個日期選擇器。
- 性別欄位：一個標籤和一個性別選擇按鈕（例如選擇男或女）。
- 地址欄位：一個標籤和一個多行的文字輸入框。
- 每個這樣的欄位都可以是一個 UITableViewCell，讓整個表單結構非常清晰且易於管理。
-
- 如何實現：
- 自定義 UITableViewCell：你可以為每個欄位創建自定義的 UITableViewCell，設置標籤和輸入框的佈局。
-
- 在 UITableView 中顯示表單：在 EditProfileViewController 中的 UITableView 內，為每個欄位配置對應的 UITableViewCell。
  */
 
 
+// MARK: - 已經完善
 
-
-
-// MARK: - 保留
-/*
 import UIKit
 
 /// 是表單中每一個欄位的 UITableViewCell，它負責顯示標籤和輸入框的佈局。
 class ProfileTextFieldCell: UITableViewCell {
     
-    // MARK: - Static Properties
+    // MARK: - Properties
 
     static let reuseIdentifier = "ProfileTextFieldCell"
+    
+    var onTextChanged: ((String?) -> Void)?
+    
+    // MARK: - Initializer
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupLayout()
+        textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - UI Elements
 
@@ -55,21 +70,8 @@ class ProfileTextFieldCell: UITableViewCell {
         return textField
     }()
     
-    // MARK: - Initializer
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupLayout()
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     // MARK: - Layout Setup
 
-    /// 設定 Cell 的佈局
     private func setupLayout() {
         contentView.addSubview(textField)
         
@@ -89,67 +91,36 @@ class ProfileTextFieldCell: UITableViewCell {
     func configure(textFieldText: String?, placeholder: String? = nil) {
         textField.text = textFieldText
         textField.placeholder = placeholder
-    }
-
-}
-*/
-
-
-
-// MARK: - 修改用
-
-import UIKit
-
-/// 是表單中每一個欄位的 UITableViewCell，它負責顯示標籤和輸入框的佈局。
-class ProfileTextFieldCell: UITableViewCell {
-    
-    // MARK: - Static Properties
-
-    static let reuseIdentifier = "ProfileTextFieldCell"
-    
-    // MARK: - UI Elements
-
-    let textField: UITextField = {
-        let textField = UITextField()
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.borderStyle = .roundedRect
-        return textField
-    }()
-    
-    // MARK: - Initializer
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupLayout()
+        configureKeyboardType(for: placeholder)
     }
     
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: - Layout Setup
-
-    /// 設定 Cell 的佈局
-    private func setupLayout() {
-        contentView.addSubview(textField)
-        
-        NSLayoutConstraint.activate([
-            textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            textField.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
-        ])
-    }
-    
-    // MARK: - Configuration Method
-
-    /// 配置 textField 的顯示內容
+    /// 鍵盤樣是設置
     ///
-    /// - Parameter textFieldText: 用來設定 textField 的文本內容
-    /// - Parameter placeholder: 設定 textField 的 placeholder 提示文字
-    func configure(textFieldText: String?, placeholder: String? = nil) {
-        textField.text = textFieldText
-        textField.placeholder = placeholder
+    /// - Parameter placeholder: 根據 TextField 的 placeholder 設置鍵盤樣式
+    private func configureKeyboardType(for placeholder: String?) {
+        if placeholder == "Enter your phone number" {
+            textField.keyboardType = .phonePad
+        } else {
+            textField.keyboardType = .default
+        }
+    }
+    
+    // MARK: - Actions
+    
+    @objc private func textFieldDidChange() {
+        onTextChanged?(textField.text)
+        updateTextFieldAppearance()
+    }
+    
+    /// 當 fullName 欄位為空時，顯示紅色邊框
+    private func updateTextFieldAppearance() {
+        if textField.placeholder == "Enter your full name", textField.text?.isEmpty == true {
+            textField.layer.borderColor = UIColor.red.cgColor
+            textField.layer.borderWidth = 1.0
+        } else {
+            textField.layer.borderColor = UIColor.clear.cgColor
+            textField.layer.borderWidth = 0.0
+        }
     }
 
 }

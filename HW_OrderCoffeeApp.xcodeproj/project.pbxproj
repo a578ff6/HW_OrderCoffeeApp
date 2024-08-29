@@ -21,6 +21,8 @@
 		93755C022C7B179C002570A5 /* GenderSelectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C012C7B179C002570A5 /* GenderSelectionCell.swift */; };
 		93755C042C7B28AE002570A5 /* BirthdaySelectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C032C7B28AE002570A5 /* BirthdaySelectionCell.swift */; };
 		93755C0A2C7B844D002570A5 /* EditProfileTableHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */; };
+		93755C122C7E5542002570A5 /* UIViewController+KeyboardHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C112C7E5541002570A5 /* UIViewController+KeyboardHandling.swift */; };
+		93755C162C7F2F49002570A5 /* DatePickerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C152C7F2F49002570A5 /* DatePickerHandler.swift */; };
 		937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937605982C4A6B0300B1316C /* BottomLineTextField.swift */; };
 		9376059B2C4AAA9C00B1316C /* UIColor+CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */; };
 		937605A02C4BB6BD00B1316C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9376059F2C4BB6BD00B1316C /* GoogleSignIn */; };
@@ -144,6 +146,8 @@
 		93755C012C7B179C002570A5 /* GenderSelectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenderSelectionCell.swift; sourceTree = "<group>"; };
 		93755C032C7B28AE002570A5 /* BirthdaySelectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthdaySelectionCell.swift; sourceTree = "<group>"; };
 		93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileTableHandler.swift; sourceTree = "<group>"; };
+		93755C112C7E5541002570A5 /* UIViewController+KeyboardHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+KeyboardHandling.swift"; sourceTree = "<group>"; };
+		93755C152C7F2F49002570A5 /* DatePickerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerHandler.swift; sourceTree = "<group>"; };
 		937605982C4A6B0300B1316C /* BottomLineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
 		9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+CustomColors.swift"; sourceTree = "<group>"; };
 		937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInController.swift; sourceTree = "<group>"; };
@@ -286,11 +290,12 @@
 				936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */,
 				936CFFC82C6C74DE004B8724 /* UserProfileView.swift */,
 				93755BFB2C79D20C002570A5 /* EditProfileViewController.swift */,
-				93755BFD2C79DEAA002570A5 /* EditProfileView.swift */,
 				93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */,
+				93755BFD2C79DEAA002570A5 /* EditProfileView.swift */,
 				93755BFF2C79E454002570A5 /* ProfileTextFieldCell.swift */,
 				93755C012C7B179C002570A5 /* GenderSelectionCell.swift */,
 				93755C032C7B28AE002570A5 /* BirthdaySelectionCell.swift */,
+				93755C152C7F2F49002570A5 /* DatePickerHandler.swift */,
 			);
 			path = "User Profile";
 			sourceTree = "<group>";
@@ -593,6 +598,7 @@
 			children = (
 				939BDA6E2B2C211200616D1C /* Constants.swift */,
 				939BDA2B2B2AC53700616D1C /* UIViewController+HideKeyboard.swift */,
+				93755C112C7E5541002570A5 /* UIViewController+KeyboardHandling.swift */,
 				937605982C4A6B0300B1316C /* BottomLineTextField.swift */,
 				939BD9EA2B2A7FB200616D1C /* UIButton+Styles.swift */,
 				9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */,
@@ -838,7 +844,9 @@
 				939BD9D02B2A1B1700616D1C /* AppDelegate.swift in Sources */,
 				93B9DC872C3661DF0050BC3F /* MainTabBarController.swift in Sources */,
 				93B9DC762C3042710050BC3F /* MenuLayoutProvider.swift in Sources */,
+				93755C162C7F2F49002570A5 /* DatePickerHandler.swift in Sources */,
 				939BD9EB2B2A7FB200616D1C /* UIButton+Styles.swift in Sources */,
+				93755C122C7E5542002570A5 /* UIViewController+KeyboardHandling.swift in Sources */,
 				93F9BB422C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift in Sources */,
 				93F9BB602C2FEF1500355A87 /* ThickSeparatorView.swift in Sources */,
 				93F9BB3A2C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift in Sources */,
