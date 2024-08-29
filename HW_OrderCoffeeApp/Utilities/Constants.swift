@@ -27,8 +27,8 @@ struct Constants {
     
         static let mainTabBarController = "MainTabBarController"
         static let menuCollectionViewController = "MenuCollectionViewController"
-        
         static let drinkDetailViewController = "DrinkDetailViewController"
-
+        
+        static let editProfileViewController = "EditProfileViewController"
     }
 }

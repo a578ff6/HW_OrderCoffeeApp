@@ -25,166 +25,7 @@
  */
 
 
-// MARK: - 保留
-/*
-
- import UIKit
-
- /// 表格處理類別，用於管理 UITableView 的 DataSource 與 Delegate
- class EditProfileTableHandler: NSObject, UITableViewDelegate, UITableViewDataSource {
-     
-     // MARK: - Properties
-     
-     var userDetails: UserDetails?
-     var isDatePickerVisible = false
-     let datePicker: UIDatePicker
-     
-     /// 當日期改變時的回調
-     var onDateChanged: ((Date) -> Void)?
-     
-     // MARK: - Initialize
-     
-     init(userDetails: UserDetails?, isDatePickerVisible: Bool, datePicker: UIDatePicker) {
-         self.userDetails = userDetails
-         self.isDatePickerVisible = isDatePickerVisible
-         self.datePicker = datePicker
-     }
-     
-     // MARK: - UITableViewDataSource
-
-     func numberOfSections(in tableView: UITableView) -> Int {
-         return 5
-     }
-     
-     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-         return section == 2 && isDatePickerVisible ? 2 : 1
-     }
-     
-     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-         return (indexPath.section == 2 && indexPath.row == 1) ? 216 : 60
-     }
-     
-     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-         switch section {
-         case 0: return "Name"
-         case 1: return "Phone Number"
-         case 2: return "Birthday"
-         case 3: return "Address"
-         case 4: return "Gender"
-         default: return nil
-         }
-     }
-     
-     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-         if indexPath.section == 2 && indexPath.row == 1 {
-             return configureDatePickerCell()
-         }
-         return configureCell(for: indexPath)
-     }
-     
-     // MARK: - 設定每一個 cell
-
-     ///配置顯示日期選擇器的 UITableViewCell
-     private func configureDatePickerCell() -> UITableViewCell {
-         let cell = UITableViewCell()
-         cell.contentView.addSubview(datePicker)
-         datePicker.translatesAutoresizingMaskIntoConstraints = false
-         NSLayoutConstraint.activate([
-             datePicker.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor),
-             datePicker.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor),
-             datePicker.topAnchor.constraint(equalTo: cell.contentView.topAnchor),
-             datePicker.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor)
-         ])
-         if let birthday = userDetails?.birthday {
-             datePicker.date = birthday
-         }
-         return cell
-     }
-     
-     /// 根據區塊和行配置對應的 UITableViewCell
-     private func configureCell(for indexPath: IndexPath) -> UITableViewCell {
-         switch indexPath.section {
-         case 0:
-             return configureProfileTextFieldCell(text: userDetails?.fullName, placeholder: "Enter your full name")
-         case 1:
-             return configureProfileTextFieldCell(text: userDetails?.phoneNumber, placeholder: "Enter your phone number")
-         case 2:
-             return configureBirthdaySelectionCell()
-         case 3:
-             return configureProfileTextFieldCell(text: userDetails?.address, placeholder: "Enter your address")
-         case 4:
-             return configureGenderSelectionCell()
-         default:
-             return UITableViewCell()
-         }
-     }
-     
-     // MARK: - 各類型的 cell 設定方法
-
-     /// 配置顯示輸入框的 UITableViewCell
-     private func configureProfileTextFieldCell(text: String?, placeholder: String?) -> ProfileTextFieldCell {
-         let cell = ProfileTextFieldCell()
-         cell.configure(textFieldText: text, placeholder: placeholder)
-         return cell
-     }
-     
-     /// 配置顯示生日選擇的 UITableViewCell
-     private func configureBirthdaySelectionCell() -> BirthdaySelectionCell {
-         let cell = BirthdaySelectionCell()
-         cell.configure(with: userDetails?.birthday)
-         return cell
-     }
-     
-     /// 配置顯示性別選擇的 UITableViewCell
-     private func configureGenderSelectionCell() -> GenderSelectionCell {
-         let cell = GenderSelectionCell()
-         cell.configure(withGender: userDetails?.gender)
-         cell.onGenderChanged = { [weak self] newGender in
-             self?.userDetails?.gender = newGender
-         }
-         return cell
-     }
-     
-     // MARK: - UITableViewDelegate
-
-     /// 處理行選擇時的操作
-     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-         if indexPath.section == 2 && indexPath.row == 0 {
-             isDatePickerVisible.toggle()
-             tableView.beginUpdates()
-             tableView.reloadSections(IndexSet(integer: 2), with: .automatic)
-             tableView.endUpdates()
-         }
-     }
-     
-     /// 根據 indexPath 來判斷哪些 Cell 是可以被選取的，並返回 nil 來使某些 Cell 不可選取。
-     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-         if indexPath.section == 2 && indexPath.row == 0 {
-             return indexPath
-         } else {
-             return nil
-         }
-     }
-
-     /// 調整 Header Height
-     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-         return 30
-     }
-
-     
-     // MARK: - Helper Method
-
-     /// 返回「生日選擇行」的 IndexPath
-     func indexPathForBirthdaySelectionCell() -> IndexPath {
-         return IndexPath(row: 0, section: 2)
-     }
-     
- }
-
-*/
-
-
-// MARK: - 修改用
+// MARK: - 已經完善
 
 import UIKit
 
@@ -193,110 +34,117 @@ class EditProfileTableHandler: NSObject, UITableViewDelegate, UITableViewDataSou
     
     // MARK: - Properties
     
+    // 定義用戶詳細資料與日期選擇器的處理程序
     var userDetails: UserDetails?
+    let datePickerHandler: DatePickerHandler
     var isDatePickerVisible = false
-    let datePicker: UIDatePicker
-    
-    /// 當日期改變時的回調
-    var onDateChanged: ((Date) -> Void)?
-    
+
     // MARK: - Initialize
     
-    init(userDetails: UserDetails?, isDatePickerVisible: Bool, datePicker: UIDatePicker) {
+    // 初始化，接收用戶詳細資料與日期選擇器
+    init(userDetails: UserDetails?, datePickerHandler: DatePickerHandler) {
         self.userDetails = userDetails
-        self.isDatePickerVisible = isDatePickerVisible
-        self.datePicker = datePicker
+        self.datePickerHandler = datePickerHandler
     }
     
     // MARK: - UITableViewDataSource
 
+    // 設定表格的 section 數量
     func numberOfSections(in tableView: UITableView) -> Int {
         return 5
     }
     
+    // 設定每個 section 的列數
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 2 && isDatePickerVisible ? 2 : 1
+        return section == 3 && isDatePickerVisible ? 2 : 1
     }
-    
+
+    // 設定每個列的高度
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return (indexPath.section == 2 && indexPath.row == 1) ? 216 : 60
+        return (indexPath.section == 3 && indexPath.row == 1) ? 216 : 60
     }
     
+    // 設定每個 section 的標題
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0: return "Name"
         case 1: return "Phone Number"
-        case 2: return "Birthday"
-        case 3: return "Address"
+        case 2: return "Address"
+        case 3: return "Birthday"
         case 4: return "Gender"
         default: return nil
         }
     }
     
+    // 設定每個列顯示的 Cell
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 2 && indexPath.row == 1 {
-            return configureDatePickerCell()
+        if indexPath.section == 3 && indexPath.row == 1 {
+            return datePickerHandler.configureDatePickerCell()
         }
         return configureCell(for: indexPath)
     }
-    
-    // MARK: - 設定每一個 cell
 
-    ///配置顯示日期選擇器的 UITableViewCell
-    private func configureDatePickerCell() -> UITableViewCell {
-        let cell = UITableViewCell()
-        cell.contentView.addSubview(datePicker)
-        datePicker.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            datePicker.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor),
-            datePicker.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor),
-            datePicker.topAnchor.constraint(equalTo: cell.contentView.topAnchor),
-            datePicker.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor)
-        ])
-        if let birthday = userDetails?.birthday {
-            datePicker.date = birthday
-        }
-        return cell
-    }
     
-    /// 根據區塊和行配置對應的 UITableViewCell
+    // MARK: - Cell Configuration Methods
+
+    /// 根據 section 與 row 建立對應的 Cell
     private func configureCell(for indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:
-            return configureProfileTextFieldCell(text: userDetails?.fullName, placeholder: "Enter your full name")
+            return createProfileTextFieldCell(text: userDetails?.fullName, placeholder: "Enter your full name")
         case 1:
-            return configureProfileTextFieldCell(text: userDetails?.phoneNumber, placeholder: "Enter your phone number")
+            return createProfileTextFieldCell(text: userDetails?.phoneNumber, placeholder: "Enter your phone number")
         case 2:
-            return configureBirthdaySelectionCell()
+            return createProfileTextFieldCell(text: userDetails?.address, placeholder: "Enter your address")
         case 3:
-            return configureProfileTextFieldCell(text: userDetails?.address, placeholder: "Enter your address")
+            return createBirthdaySelectionCell()
         case 4:
-            return configureGenderSelectionCell()
+            return createGenderSelectionCell()
         default:
             return UITableViewCell()
         }
     }
     
-    // MARK: - 各類型的 cell 設定方法
-
-    /// 配置顯示輸入框的 UITableViewCell
-    private func configureProfileTextFieldCell(text: String?, placeholder: String?) -> ProfileTextFieldCell {
+    /// 建立 ProfileTextFieldCell 並設定其內容
+    private func createProfileTextFieldCell(text: String?, placeholder: String?) -> ProfileTextFieldCell {
         let cell = ProfileTextFieldCell()
         cell.configure(textFieldText: text, placeholder: placeholder)
+        cell.backgroundColor = .lightWhiteGray
+
+        cell.onTextChanged = { [weak self] updatedText in
+            self?.updateUserDetail(for: placeholder, with: updatedText)
+        }
+        
         return cell
     }
     
-    /// 配置顯示生日選擇的 UITableViewCell
-    private func configureBirthdaySelectionCell() -> BirthdaySelectionCell {
+    /// 根據 placeholder 更新對應的使用者資料
+    private func updateUserDetail(for placeholder: String?, with updatedText: String?) {
+        switch placeholder {
+        case "Enter your full name":
+            userDetails?.fullName = updatedText ?? ""
+        case "Enter your phone number":
+            userDetails?.phoneNumber = updatedText
+        case "Enter your address":
+            userDetails?.address = updatedText
+        default:
+            break
+        }
+    }
+
+    // 建立 BirthdaySelectionCell 並設定其內容
+    private func createBirthdaySelectionCell() -> BirthdaySelectionCell {
         let cell = BirthdaySelectionCell()
         cell.configure(with: userDetails?.birthday)
+        cell.backgroundColor = .lightWhiteGray
         return cell
     }
     
-    /// 配置顯示性別選擇的 UITableViewCell
-    private func configureGenderSelectionCell() -> GenderSelectionCell {
+    // 建立 GenderSelectionCell 並設定其內容
+    private func createGenderSelectionCell() -> GenderSelectionCell {
         let cell = GenderSelectionCell()
         cell.configure(withGender: userDetails?.gender)
+        cell.backgroundColor = .lightWhiteGray
         cell.onGenderChanged = { [weak self] newGender in
             self?.userDetails?.gender = newGender
         }
@@ -305,36 +153,32 @@ class EditProfileTableHandler: NSObject, UITableViewDelegate, UITableViewDataSou
     
     // MARK: - UITableViewDelegate
 
-    /// 處理行選擇時的操作
+    /// 處理 Cell 的選取事件，控制 DatePicker 的顯示與隱藏
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 2 && indexPath.row == 0 {
+        if indexPath.section == 3 && indexPath.row == 0 {
             isDatePickerVisible.toggle()
+            datePickerHandler.selectedDate = isDatePickerVisible ? userDetails?.birthday : nil
             tableView.beginUpdates()
-            tableView.reloadSections(IndexSet(integer: 2), with: .automatic)
+            tableView.reloadSections(IndexSet(integer: 3), with: .automatic)
             tableView.endUpdates()
         }
     }
     
-    /// 根據 indexPath 來判斷哪些 Cell 是可以被選取的，並返回 nil 來使某些 Cell 不可選取。
+    /// 決定是否允許選取指定的 Cell
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        if indexPath.section == 2 && indexPath.row == 0 {
+        if indexPath.section == 3 && indexPath.row == 0 {
             return indexPath
         } else {
             return nil
         }
     }
 
-    /// 調整 Header Height
+    /// 設定每個 section 標題的高度
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 30
     }
-
-    
-    // MARK: - Helper Method
-
-    /// 返回「生日選擇行」的 IndexPath
-    func indexPathForBirthdaySelectionCell() -> IndexPath {
-        return IndexPath(row: 0, section: 2)
-    }
     
 }
+
+
+

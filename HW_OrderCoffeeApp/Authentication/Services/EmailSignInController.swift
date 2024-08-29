@@ -7,6 +7,24 @@
 
 /*
  
+ Email 部分：
+ - [v] 先 Email 註冊，基本上要有資料。（資料修改沒問題）
+
+ * Email 與 Apple 不隱藏
+ - [v] 先使用 Apple （a578ff6@gmail.com） 不隱藏，在使用 Email （a1202@gmail.com） 不同信箱註冊，各自登入。（資料修改沒問題）
+ - [v] 先使用 Apple （a578ff6@gmail.com） 不隱藏，在使用 Email （a578ff6@gmail.com） 相同的信箱不能註冊。（資料修改沒問題）
+
+ * Email 與 Apple 隱藏
+ - [v] 先使用 Apple 隱藏，在使用 Email （a578ff6@gmail.com） 與 Apple 原先的信箱註冊。（資料修改沒問題）
+     - [x] 基本上是可以註冊，因為 Apple 是中繼信箱！因此不會覆蓋。（資料修改沒問題）
+ - [v] 先使用 Apple 隱藏，在使用 Email 不同信箱註冊，基本上是完全可以註冊，且各自登入沒問題。（資料修改沒問題）
+
+ * Email 與 Google
+ - [v] 先使用 Google 註冊，在使用不同的 Email ，基本各自登入。（資料修改沒問題）
+ - [v] 先使用 Google 註冊，在使用相同的 Email ，基本上不能註冊。（資料修改沒問題）
+ 
+ ---------------------------------------- ---------------------------------------- ----------------------------------------
+
  A. EmailSignInController 流程分析
     - 負責處理使用者透過電子郵件註冊和登入的邏輯。主要提供了電子郵件格式驗證、密碼檢查、新使用者註冊、使用者登入、密碼重置，以及保存使用者數據到 Firebase Firestore 的功能。
  
@@ -63,27 +81,6 @@
     5. 處理用戶創建成功的情況:
         * 如果用戶創建成功，createNewUser 方法會呼叫 handleUserCreationSuccess 方法。
         * 該方法會將新創建的用戶數據（包括 fullName 和 loginProvider）存儲到 Firestore 中，然後將成功的結果透過 completion 回傳給呼叫者。
-
- 
- ---------------------------------------- ---------------------------------------- ----------------------------------------
-
- * 測試 Email 部分：
-
- * Email部分：
- - [v] 先 Email 註冊，基本上要有資料。
-
- * Email 與 Apple 不隱藏
- - [v] 先不隱藏 Apple （a578ff6@gmail.com） 註冊，在使用 Email （a1202@gmail.com） 不同信箱註冊，基本上不能鏈接，只能各自登入。
- - [v] 先不隱藏 Apple （a578ff6@gmail.com） 註冊，在使用 Email （a578ff6@gmail.com） 相同的信箱註冊。基本 上Email 是不能註冊、登入註冊。
-
- * Email 與 Apple 隱藏
- - [v] 先隱藏 Apple （a578ff6@gmail.com） 註冊，在使用 Email （a578ff6@gmail.com） 相同的信箱註冊。基本上是可以註冊，因為 Apple 是中繼信箱！因此不會鏈結並覆蓋，同時會不會有重複帳號錯誤的問題。
- - [v] 先隱藏 Apple （a578ff6@gmail.com） 註冊，在使用 Email （a1202@gmail.com） 不同信箱註冊，基本上是完全可以註冊，且各自登入沒問題。
- 
- * Email 與 Google
- - [v] 先使用 Google （a578ff6@gmail.com） 註冊，在使用不同的 Email （a1202@gmail.com）註冊 ，基本上不會鏈接，可以各自登入。
- - [v] 先使用 Google （a578ff6@gmail.com） 註冊，在使用相同的 Email （a578ff6@gmail.com） ，基本上不能註冊。
-  
  
  ---------------------------------------- ---------------------------------------- ----------------------------------------
  
@@ -108,7 +105,7 @@
 
 // MARK: -  負責處理與 Email 登入及註冊相關的 Controller
 
-// 在已經先使用 Email 電子信箱註冊時，可以被相同的 Apple 、 Google 信箱鏈接。
+// 在已經先使用 Email 電子信箱註冊時，可以被相同的 Apple 、 Google 覆蓋提供者。
 // 而當先使用 Apple 、 Google 信箱註冊時，則無法使用 Email 電子信箱註冊。（這是在 Apple 未隱藏的情境）
 
 import UIKit
@@ -339,38 +336,3 @@ class EmailSignInController {
     }
  
 }
-
-
-// MARK: - 未重構的 registerUser
-/*
- func registerUser(withEmail email: String, password: String, fullName: String, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
-     print("開始檢查電子郵件是否存在：\(email)")
-     checkIfEmailExists(email) { emailExists in
-         if emailExists {
-             print("電子郵件地址已被另一個帳戶使用：\(email)")
-             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "The email address is already in use by another account."])))
-         } else {
-             print("電子郵件地址可用於註冊：\(email)")
-             Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
-                 if let error = error {
-                     print("註冊失敗：\(error.localizedDescription)")
-                     completion(.failure(error))
-                 } else if let result = result {
-                     print("註冊成功，保存用戶數據：\(result.user.uid)")
-                     self.storeUserData(authResult: result, fullName: fullName, loginProvider: "email") { storeResult in
-                         switch storeResult {
-                         case .success:
-                             print("用戶數據保存成功")
-                             completion(.success(result))
-                         case .failure(let error):
-                             print("用戶數據保存失敗：\(error.localizedDescription)")
-                             completion(.failure(error))
-                         }
-                     }
-                 }
-             }
-         }
-     }
- }
-
- */

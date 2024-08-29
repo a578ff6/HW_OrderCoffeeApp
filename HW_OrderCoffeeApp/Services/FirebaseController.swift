@@ -332,6 +332,29 @@ class FirebaseController {
         }
     }
 
+    /// 更新 Firestore 中的用戶資料
+    func updateUserDetails(_ userDetails: UserDetails, completion: @escaping (Result<Void, Error>) -> Void) {
+        let db = Firestore.firestore()
+        let userRef = db.collection("users").document(userDetails.uid)
+        
+        let userData: [String: Any] = [
+            "fullName": userDetails.fullName,
+            "phoneNumber": userDetails.phoneNumber ?? "",
+            "birthday": userDetails.birthday != nil ? Timestamp(date: userDetails.birthday!) : NSNull(),
+            "address": userDetails.address ?? "",
+            "gender": userDetails.gender ?? "",
+            "profileImageURL": userDetails.profileImageURL ?? ""
+        ]
+        
+        userRef.updateData(userData) { error in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                completion(.success(()))
+            }
+        }
+    }
+    
     /// 執行登出操作
     func signOut(completion: @escaping (Result<Void, Error>) -> Void) {
         do {

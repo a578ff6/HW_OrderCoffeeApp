@@ -8,7 +8,7 @@
 import UIKit
 
 
-/// UIViewController 的擴展，添加點擊背景收起鍵盤的功能
+// UIViewController 的擴展，添加點擊背景收起鍵盤的功能
 extension UIViewController {
     
     /// 設置點擊背景收起鍵盤
