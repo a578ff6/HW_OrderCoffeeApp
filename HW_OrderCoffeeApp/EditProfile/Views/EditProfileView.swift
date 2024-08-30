@@ -44,7 +44,6 @@ class EditProfileView: UIView {
         super.init(frame: frame)
         setupLayout()
         setupTableHeaderView()
-        backgroundColor = .white
     }
     
     required init?(coder: NSCoder) {

@@ -7,7 +7,6 @@
 
 /*
  
- 
  ## EditProfileViewController
  
     - 是負責處理個人資料編輯頁面的主視圖控制器。它管理使用者資料的顯示與更新，並與多個輔助管理器協作來處理具體功能，如照片選擇、表格顯示等。
@@ -73,11 +72,49 @@
         - EditProfileView: 包含 UITableView 和大頭照的頭部視圖 (tableHeaderView)。
         - EditProfileViewController: 管理編輯頁面的邏輯，包括大頭照的設定、更換行為，以及表格數據的更新。
         - EditProfileTableHandler: 專注於表格內部每個 cell 的配置與交互，不處理表格以外的視圖邏輯。
+ 
+ ------------------------- ------------------------- ------------------------- -------------------------
+ 
+ ## 使用 weak var delegate: 的適合與不適合情境整理 ##
+ 
+ 1. UserProfileViewController 與 UserProfileTableHandler
+
+    * 適合使用 weak var delegate: UserProfileViewController?
+ 
+    - 事件通知需求： UserProfileTableHandler 需要通知 UserProfileViewController 在用戶點擊某個選項時執行操作（如導航到編輯頁面、登出等）。
+ 
+    - 職責分離： UserProfileTableHandler 負責表格視圖的資料顯示與處理，而 UserProfileViewController 負責更高層次的控制邏輯（例如導航、顯示彈窗等）。
+ 
+    - 避免強耦合： 使用 delegate 可以避免兩個類別之間的強耦合，保持代碼的可維護性，並防止內存泄漏。
+ 
+    - 靈活性： 通過 delegate，UserProfileViewController 可以根據 UserProfileTableHandler 的事件觸發來決定執行哪些操作。
+
+ 
+ 2. EditProfileViewController 與 EditProfileTableHandler
+
+    * 不適合使用 weak var delegate: EditProfileViewController?
+ 
+    - 數據流的單向性： EditProfileTableHandler 的主要職責是根據 EditProfileViewController 提供的資料進行顯示，數據流是從 EditProfileViewController 到 EditProfileTableHandler 單向流動，並不需要反向通知。
+    
+    - 不需要事件通知： EditProfileTableHandler 的行為（如日期選擇、性別選擇）直接在內部處理，不需要通知 EditProfileViewController 來進行額外操作。
+ 
+    - 簡化設計： 保持 EditProfileTableHandler 的簡單性和專注性，不引入不必要的複雜性，有助於程式碼的清晰和。
+ 
+    - 資料更新邏輯： EditProfileViewController 可以直接從 EditProfileTableHandler 獲取更新的用戶資料，而不需要通過 delegate 進行傳遞。
+
+
+ 3. 結論
+
+ - 使用 delegate 的情境： 當子類別（如 TableHandler）需要通知父類別（如 ViewController）執行某些操作或更新 UI 時，適合使用 `weak var delegate:`。
+   這樣可以保持良好的職責分離，避免強耦合，並提高靈活性。
+   
+ - 不使用 delegate 的情境： 當資料流是單向的，且不需要反向通知父類別時，避免使用 delegate 可以簡化代碼結構，減少不必要的複雜性，保持代碼的簡單性和專注性。
+
+ ------------------------- ------------------------- ------------------------- -------------------------
 
  */
 
 // MARK: - 已經完善
-
 import UIKit
 
 /// 負責處理個人資料編輯頁面的主視圖控制器。它管理使用者資料的顯示與更新。
@@ -164,7 +201,6 @@ class EditProfileViewController: UIViewController {
     /// 保存按鈕的行為
     @objc private func saveButtonTapped() {
         guard var userDetails = userDetails else { return }
-
         guard validateUserDetails() else { return }
 
         // 從 tableHandler 中獲取用戶修改後的資料
@@ -172,10 +208,7 @@ class EditProfileViewController: UIViewController {
         userDetails.phoneNumber = tableHandler.userDetails?.phoneNumber
         userDetails.birthday = tableHandler.userDetails?.birthday
         userDetails.address = tableHandler.userDetails?.address
-        
         userDetails.gender = tableHandler.userDetails?.gender
-
-
         updateUserDetailsInFirebase(userDetails)
     }
 
@@ -210,9 +243,9 @@ class EditProfileViewController: UIViewController {
              switch result {
              case .success:
                  print("User details updated successfully")
-                 self?.userDetails = userDetails  // 更新本地 userDetails
-                 self?.delegate?.receiveUserDetails(userDetails) // 通知 UserProfileViewController 更新資料
-                 self?.dismiss(animated: true, completion: nil) // 關閉當前視圖
+                 self?.userDetails = userDetails                    // 更新本地 userDetails
+                 self?.delegate?.receiveUserDetails(userDetails)    // 通知 UserProfileViewController 更新資料
+                 self?.dismiss(animated: true, completion: nil)
              case .failure(let error):
                  print("Failed to update user details: \(error)")
              }
@@ -293,8 +326,6 @@ class EditProfileViewController: UIViewController {
         self.userDetails = userDetails
         configureUserData()
     }
+    
 }
-
-
-
 

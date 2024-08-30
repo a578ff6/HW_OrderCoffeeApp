@@ -24,13 +24,12 @@
         - 將 UITableViewDelegate 和 UITableViewDataSource 的邏輯與視圖控制器分開。
  */
 
-
 // MARK: - 已經完善
 
 import UIKit
 
 /// 表格處理類別，用於管理 UITableView 的 DataSource 與 Delegate
-class EditProfileTableHandler: NSObject, UITableViewDelegate, UITableViewDataSource {
+class EditProfileTableHandler: NSObject {
     
     // MARK: - Properties
     
@@ -46,44 +45,6 @@ class EditProfileTableHandler: NSObject, UITableViewDelegate, UITableViewDataSou
         self.userDetails = userDetails
         self.datePickerHandler = datePickerHandler
     }
-    
-    // MARK: - UITableViewDataSource
-
-    // 設定表格的 section 數量
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 5
-    }
-    
-    // 設定每個 section 的列數
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 3 && isDatePickerVisible ? 2 : 1
-    }
-
-    // 設定每個列的高度
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return (indexPath.section == 3 && indexPath.row == 1) ? 216 : 60
-    }
-    
-    // 設定每個 section 的標題
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch section {
-        case 0: return "Name"
-        case 1: return "Phone Number"
-        case 2: return "Address"
-        case 3: return "Birthday"
-        case 4: return "Gender"
-        default: return nil
-        }
-    }
-    
-    // 設定每個列顯示的 Cell
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 3 && indexPath.row == 1 {
-            return datePickerHandler.configureDatePickerCell()
-        }
-        return configureCell(for: indexPath)
-    }
-
     
     // MARK: - Cell Configuration Methods
 
@@ -151,8 +112,10 @@ class EditProfileTableHandler: NSObject, UITableViewDelegate, UITableViewDataSou
         return cell
     }
     
-    // MARK: - UITableViewDelegate
+}
 
+// MARK: - UITableViewDelegate
+extension EditProfileTableHandler: UITableViewDelegate {
     /// 處理 Cell 的選取事件，控制 DatePicker 的顯示與隱藏
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 3 && indexPath.row == 0 {
@@ -166,19 +129,50 @@ class EditProfileTableHandler: NSObject, UITableViewDelegate, UITableViewDataSou
     
     /// 決定是否允許選取指定的 Cell
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        if indexPath.section == 3 && indexPath.row == 0 {
-            return indexPath
-        } else {
-            return nil
-        }
+        return indexPath.section == 3 && indexPath.row == 0 ? indexPath : nil
     }
 
     /// 設定每個 section 標題的高度
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 30
     }
-    
 }
 
+// MARK: - UITableViewDataSource
+extension EditProfileTableHandler: UITableViewDataSource {
+    // 設定表格的 section 數量
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 5
+    }
+    
+    // 設定每個 section 的列數
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return section == 3 && isDatePickerVisible ? 2 : 1
+    }
 
-
+    // 設定每個列的高度
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return (indexPath.section == 3 && indexPath.row == 1) ? 216 : 60
+    }
+    
+    // 設定每個 section 的標題
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch section {
+        case 0: return "Name"
+        case 1: return "Phone Number"
+        case 2: return "Address"
+        case 3: return "Birthday"
+        case 4: return "Gender"
+        default: return nil
+        }
+    }
+    
+    // 設定每個列顯示的 Cell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.section == 3 && indexPath.row == 1 {
+            return datePickerHandler.configureDatePickerCell()
+        }
+        return configureCell(for: indexPath)
+    }
+    
+}

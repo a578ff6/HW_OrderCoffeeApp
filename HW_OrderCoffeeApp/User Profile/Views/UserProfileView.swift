@@ -5,6 +5,9 @@
 //  Created by 曹家瑋 on 2024/8/14.
 //
 
+
+// MARK: - 原先對於view的一般設置
+/*
 import UIKit
 
 /// 個人資訊頁面佈局
@@ -226,6 +229,55 @@ class UserProfileView: UIView {
 
     @objc private func buttonTouchedUp(_ sender: UIButton) {
         sender.backgroundColor = .lightGray.withAlphaComponent(0.3)
+    }
+
+}
+*/
+
+
+
+// MARK: - 處理tableView
+
+import UIKit
+
+/// 個人資訊頁面佈局
+class UserProfileView: UIView {
+    
+    // MARK: - UI Elements
+    let tableView = createTableView()
+    
+    // MARK: - Initializers
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupLayout()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Layout Setup
+    
+    /// 設置 TableView 的佈局
+    private func setupLayout() {
+        addSubview(tableView)
+        
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+    }
+    
+    /// 建立 UITableView
+    private static func createTableView() -> UITableView {
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.isScrollEnabled = false
+        return tableView
     }
 
 }
