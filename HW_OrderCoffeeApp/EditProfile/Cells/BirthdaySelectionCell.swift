@@ -34,22 +34,8 @@ class BirthdaySelectionCell: UITableViewCell {
     
     // MARK: - UI Elements
 
-    /// 用於顯示標題 "Select Birthday"
-    let titleLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Select Birthday"
-        return label
-    }()
-    
-    /// 用於顯示選擇的日期
-    let dateLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textAlignment = .right
-        label.textColor = .gray
-        return label
-    }()
+    let titleLabel: UILabel = createLabel(text: "Select Birthday", textColor: .black, textAlignment: .left)
+    let dateLabel: UILabel = createLabel(text: "Not Selected", textColor: .gray, textAlignment: .right)
         
     // MARK: - Initializer
     
@@ -80,6 +66,18 @@ class BirthdaySelectionCell: UITableViewCell {
         ])
     }
     
+    
+    // MARK: - Helper Function
+
+    private static func createLabel(text: String, textColor: UIColor, textAlignment: NSTextAlignment) -> UILabel {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = text
+        label.textColor = textColor
+        label.textAlignment = textAlignment
+        return label
+    }
+    
     // MARK: - Configuration Method
     
     /// 配置日期標籤的顯示內容
@@ -94,6 +92,7 @@ class BirthdaySelectionCell: UITableViewCell {
             dateLabel.text = "Not Selected"
         }
     }
+    
 }
 
 

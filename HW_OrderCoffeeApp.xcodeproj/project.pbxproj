@@ -23,6 +23,9 @@
 		93755C0A2C7B844D002570A5 /* EditProfileTableHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */; };
 		93755C122C7E5542002570A5 /* UIViewController+KeyboardHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C112C7E5541002570A5 /* UIViewController+KeyboardHandling.swift */; };
 		93755C162C7F2F49002570A5 /* DatePickerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C152C7F2F49002570A5 /* DatePickerHandler.swift */; };
+		93755C1B2C808202002570A5 /* UserProfileTableHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1A2C808202002570A5 /* UserProfileTableHandler.swift */; };
+		93755C1D2C8094D0002570A5 /* ProfileHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1C2C8094D0002570A5 /* ProfileHeaderCell.swift */; };
+		93755C1F2C80971F002570A5 /* ProfileOptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1E2C80971F002570A5 /* ProfileOptionCell.swift */; };
 		937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937605982C4A6B0300B1316C /* BottomLineTextField.swift */; };
 		9376059B2C4AAA9C00B1316C /* UIColor+CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */; };
 		937605A02C4BB6BD00B1316C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9376059F2C4BB6BD00B1316C /* GoogleSignIn */; };
@@ -148,6 +151,9 @@
 		93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileTableHandler.swift; sourceTree = "<group>"; };
 		93755C112C7E5541002570A5 /* UIViewController+KeyboardHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+KeyboardHandling.swift"; sourceTree = "<group>"; };
 		93755C152C7F2F49002570A5 /* DatePickerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerHandler.swift; sourceTree = "<group>"; };
+		93755C1A2C808202002570A5 /* UserProfileTableHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileTableHandler.swift; sourceTree = "<group>"; };
+		93755C1C2C8094D0002570A5 /* ProfileHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderCell.swift; sourceTree = "<group>"; };
+		93755C1E2C80971F002570A5 /* ProfileOptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileOptionCell.swift; sourceTree = "<group>"; };
 		937605982C4A6B0300B1316C /* BottomLineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
 		9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+CustomColors.swift"; sourceTree = "<group>"; };
 		937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInController.swift; sourceTree = "<group>"; };
@@ -287,15 +293,10 @@
 		936CFFC72C6C73F2004B8724 /* User Profile */ = {
 			isa = PBXGroup;
 			children = (
-				936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */,
-				936CFFC82C6C74DE004B8724 /* UserProfileView.swift */,
-				93755BFB2C79D20C002570A5 /* EditProfileViewController.swift */,
-				93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */,
-				93755BFD2C79DEAA002570A5 /* EditProfileView.swift */,
-				93755BFF2C79E454002570A5 /* ProfileTextFieldCell.swift */,
-				93755C012C7B179C002570A5 /* GenderSelectionCell.swift */,
-				93755C032C7B28AE002570A5 /* BirthdaySelectionCell.swift */,
-				93755C152C7F2F49002570A5 /* DatePickerHandler.swift */,
+				93755C212C81F535002570A5 /* ViewControllers */,
+				93755C222C81F546002570A5 /* Handlers */,
+				93755C232C81F576002570A5 /* Views */,
+				93755C202C81F4B7002570A5 /* Cells */,
 			);
 			path = "User Profile";
 			sourceTree = "<group>";
@@ -306,6 +307,85 @@
 				93755BF42C738D77002570A5 /* EmailSignInControllerTests.swift */,
 			);
 			path = AuthenticationTests;
+			sourceTree = "<group>";
+		};
+		93755C192C80658B002570A5 /* EditProfile */ = {
+			isa = PBXGroup;
+			children = (
+				93755C242C81F67A002570A5 /* ViewControllers */,
+				93755C252C81F685002570A5 /* Handlers */,
+				93755C262C81F692002570A5 /* Views */,
+				93755C272C81F6DE002570A5 /* Cells */,
+			);
+			path = EditProfile;
+			sourceTree = "<group>";
+		};
+		93755C202C81F4B7002570A5 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				93755C1C2C8094D0002570A5 /* ProfileHeaderCell.swift */,
+				93755C1E2C80971F002570A5 /* ProfileOptionCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		93755C212C81F535002570A5 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		93755C222C81F546002570A5 /* Handlers */ = {
+			isa = PBXGroup;
+			children = (
+				93755C1A2C808202002570A5 /* UserProfileTableHandler.swift */,
+			);
+			path = Handlers;
+			sourceTree = "<group>";
+		};
+		93755C232C81F576002570A5 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				936CFFC82C6C74DE004B8724 /* UserProfileView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		93755C242C81F67A002570A5 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				93755BFB2C79D20C002570A5 /* EditProfileViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		93755C252C81F685002570A5 /* Handlers */ = {
+			isa = PBXGroup;
+			children = (
+				93755C152C7F2F49002570A5 /* DatePickerHandler.swift */,
+				93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */,
+			);
+			path = Handlers;
+			sourceTree = "<group>";
+		};
+		93755C262C81F692002570A5 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				93755BFD2C79DEAA002570A5 /* EditProfileView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		93755C272C81F6DE002570A5 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				93755BFF2C79E454002570A5 /* ProfileTextFieldCell.swift */,
+				93755C012C7B179C002570A5 /* GenderSelectionCell.swift */,
+				93755C032C7B28AE002570A5 /* BirthdaySelectionCell.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 		939BD9C32B2A1B1700616D1C = {
@@ -344,6 +424,7 @@
 				939BD9D52B2A1B1700616D1C /* Main.storyboard */,
 				93BD48AE2C57CA3100144E7F /* HW_OrderCoffeeApp.entitlements */,
 				936CFFC72C6C73F2004B8724 /* User Profile */,
+				93755C192C80658B002570A5 /* EditProfile */,
 				93BD48B92C58DE3A00144E7F /* Main */,
 				93BD48B82C58DE1C00144E7F /* Security */,
 				93F9BB4F2C2916C400355A87 /* Models */,
@@ -825,6 +906,7 @@
 				93F9BB5E2C2E4EEA00355A87 /* GridItemCell.swift in Sources */,
 				93B492912C3E684700E7B947 /* OrderModificationDelegate.swift in Sources */,
 				93DB1D3A2C49618C00BA2CC1 /* SignUpView.swift in Sources */,
+				93755C1F2C80971F002570A5 /* ProfileOptionCell.swift in Sources */,
 				93B9DC782C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift in Sources */,
 				939BD9F32B2AC27700616D1C /* ForgotPasswordViewController.swift in Sources */,
 				93B9DC742C3017FB0050BC3F /* DrinksCategoryLayoutProvider.swift in Sources */,
@@ -849,6 +931,8 @@
 				93755C122C7E5542002570A5 /* UIViewController+KeyboardHandling.swift in Sources */,
 				93F9BB422C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift in Sources */,
 				93F9BB602C2FEF1500355A87 /* ThickSeparatorView.swift in Sources */,
+				93755C1B2C808202002570A5 /* UserProfileTableHandler.swift in Sources */,
+				93755C1D2C8094D0002570A5 /* ProfileHeaderCell.swift in Sources */,
 				93F9BB3A2C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift in Sources */,
 				939BDA742B2FB3E400616D1C /* MenuModels.swift in Sources */,
 				93755C0A2C7B844D002570A5 /* EditProfileTableHandler.swift in Sources */,
