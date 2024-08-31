@@ -221,7 +221,7 @@ class LoginView: UIView {
         return button
     }
     
-    ///分隔線（Or continue with）
+    /// 分隔線（Or continue with）
     private static func createSeparatorView() -> UIView {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false

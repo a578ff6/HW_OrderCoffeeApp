@@ -239,7 +239,9 @@ class EditProfileViewController: UIViewController {
     
     /// 更新 Firebase 中的使用者資料
      private func updateUserDetailsInFirebase(_ userDetails: UserDetails) {
+         HUDManager.shared.showLoading(in: view, text: "Saving...")
          FirebaseController.shared.updateUserDetails(userDetails) { [weak self] result in
+             HUDManager.shared.dismiss()
              switch result {
              case .success:
                  print("User details updated successfully")
@@ -255,10 +257,9 @@ class EditProfileViewController: UIViewController {
     /// 更新使用者的大頭照
     private func updateProfileImage(_ image: UIImage, for uid: String) {
         editProfileView.profileImageView.image = image
-        ActivityIndicatorManager.shared.startLoading(on: view)
-        
+        HUDManager.shared.showLoading(in: view, text: "Uploading image...")
         FirebaseController.shared.uploadProfileImage(image, for: uid) { [weak self] result in
-            ActivityIndicatorManager.shared.stopLoading()
+            HUDManager.shared.dismiss()
             switch result {
             case .success(let url):
                 self?.userDetails?.profileImageURL = url             // 更新本地的 userDetails，但不立即保存到 Firebase
@@ -268,7 +269,7 @@ class EditProfileViewController: UIViewController {
             }
         }
     }
-
+    
     /// 處理大頭照上傳錯誤
     private func handleImageUploadError(_ error: Error) {
         ActivityIndicatorManager.shared.stopLoading()
@@ -306,18 +307,12 @@ class EditProfileViewController: UIViewController {
     /// 加載使用者大頭照
     private func loadProfileImage(from url: String?) {
         if let profileImageURL = url {
-            editProfileView.profileImageView.kf.setImage(
-                with: URL(string: profileImageURL),
-                placeholder: UIImage(named: "UserSymbol"),
-                options: nil,
-                completionHandler: { _ in
-                    ActivityIndicatorManager.shared.stopLoading()
-                }
-            )
+            editProfileView.profileImageView.kf.setImage(with: URL(string: profileImageURL), placeholder: UIImage(named: "UserSymbol"), options: nil, completionHandler: nil)
         } else {
             displayDefaultUserProfileImage()
         }
     }
+
     
     // MARK: - User Details Setup
 

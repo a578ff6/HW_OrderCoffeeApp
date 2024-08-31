@@ -26,6 +26,8 @@
 		93755C1B2C808202002570A5 /* UserProfileTableHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1A2C808202002570A5 /* UserProfileTableHandler.swift */; };
 		93755C1D2C8094D0002570A5 /* ProfileHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1C2C8094D0002570A5 /* ProfileHeaderCell.swift */; };
 		93755C1F2C80971F002570A5 /* ProfileOptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1E2C80971F002570A5 /* ProfileOptionCell.swift */; };
+		93755C2F2C821F0F002570A5 /* JGProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 93755C2E2C821F0F002570A5 /* JGProgressHUD */; };
+		93755C312C82F6CF002570A5 /* HUDManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C302C82F6CF002570A5 /* HUDManager.swift */; };
 		937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937605982C4A6B0300B1316C /* BottomLineTextField.swift */; };
 		9376059B2C4AAA9C00B1316C /* UIColor+CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */; };
 		937605A02C4BB6BD00B1316C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9376059F2C4BB6BD00B1316C /* GoogleSignIn */; };
@@ -154,6 +156,7 @@
 		93755C1A2C808202002570A5 /* UserProfileTableHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileTableHandler.swift; sourceTree = "<group>"; };
 		93755C1C2C8094D0002570A5 /* ProfileHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderCell.swift; sourceTree = "<group>"; };
 		93755C1E2C80971F002570A5 /* ProfileOptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileOptionCell.swift; sourceTree = "<group>"; };
+		93755C302C82F6CF002570A5 /* HUDManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDManager.swift; sourceTree = "<group>"; };
 		937605982C4A6B0300B1316C /* BottomLineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
 		9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+CustomColors.swift"; sourceTree = "<group>"; };
 		937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInController.swift; sourceTree = "<group>"; };
@@ -259,6 +262,7 @@
 				939BDA452B2ACB8300616D1C /* FirebaseDynamicLinks in Frameworks */,
 				939BDA492B2ACB8300616D1C /* FirebaseFirestoreCombine-Community in Frameworks */,
 				939BDA592B2ACB8300616D1C /* FirebaseMessaging in Frameworks */,
+				93755C2F2C821F0F002570A5 /* JGProgressHUD in Frameworks */,
 				939BDA552B2ACB8300616D1C /* FirebaseInstallations in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -388,6 +392,13 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
+		93755C2D2C821E73002570A5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		939BD9C32B2A1B1700616D1C = {
 			isa = PBXGroup;
 			children = (
@@ -395,6 +406,7 @@
 				93BD48CB2C662A9700144E7F /* HW_OrderCoffeeAppTests */,
 				936CFFBB2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests */,
 				939BD9CD2B2A1B1700616D1C /* Products */,
+				93755C2D2C821E73002570A5 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -459,6 +471,7 @@
 			children = (
 				939BDA642B2ACBA200616D1C /* FirebaseController.swift */,
 				939BDA682B2B82BC00616D1C /* AlertService.swift */,
+				93755C302C82F6CF002570A5 /* HUDManager.swift */,
 				939BDA6A2B2B97ED00616D1C /* ActivityIndicatorManager.swift */,
 				93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */,
 			);
@@ -755,6 +768,7 @@
 				939BDA782B2FC90300616D1C /* Kingfisher */,
 				9376059F2C4BB6BD00B1316C /* GoogleSignIn */,
 				937605A12C4BB6BD00B1316C /* GoogleSignInSwift */,
+				93755C2E2C821F0F002570A5 /* JGProgressHUD */,
 			);
 			productName = HW_OrderCoffeeApp;
 			productReference = 939BD9CC2B2A1B1700616D1C /* HW_OrderCoffeeApp.app */;
@@ -814,6 +828,7 @@
 				939BDA2D2B2ACB8300616D1C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				939BDA772B2FC90300616D1C /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				9376059E2C4BB6BC00B1316C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				93755C2C2C821E23002570A5 /* XCRemoteSwiftPackageReference "JGProgressHUD" */,
 			);
 			productRefGroup = 939BD9CD2B2A1B1700616D1C /* Products */;
 			projectDirPath = "";
@@ -930,6 +945,7 @@
 				939BD9EB2B2A7FB200616D1C /* UIButton+Styles.swift in Sources */,
 				93755C122C7E5542002570A5 /* UIViewController+KeyboardHandling.swift in Sources */,
 				93F9BB422C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift in Sources */,
+				93755C312C82F6CF002570A5 /* HUDManager.swift in Sources */,
 				93F9BB602C2FEF1500355A87 /* ThickSeparatorView.swift in Sources */,
 				93755C1B2C808202002570A5 /* UserProfileTableHandler.swift in Sources */,
 				93755C1D2C8094D0002570A5 /* ProfileHeaderCell.swift in Sources */,
@@ -1306,6 +1322,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		93755C2C2C821E23002570A5 /* XCRemoteSwiftPackageReference "JGProgressHUD" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/JonasGessner/JGProgressHUD.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.2.0;
+			};
+		};
 		9376059E2C4BB6BC00B1316C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
@@ -1333,6 +1357,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		93755C2E2C821F0F002570A5 /* JGProgressHUD */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 93755C2C2C821E23002570A5 /* XCRemoteSwiftPackageReference "JGProgressHUD" */;
+			productName = JGProgressHUD;
+		};
 		9376059F2C4BB6BD00B1316C /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 9376059E2C4BB6BC00B1316C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
