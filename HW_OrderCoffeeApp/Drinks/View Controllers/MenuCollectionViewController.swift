@@ -21,6 +21,113 @@
 
 // MARK: - 程式碼處理部分
 
+/*
+ import UIKit
+ import FirebaseFirestore
+
+ private let categoryCellReuseIdentifier = "CategoryCell"
+
+ /// 菜單頁面，顯示Category的飲品
+ class MenuCollectionViewController: UICollectionViewController {
+     
+     @IBOutlet weak var MenuCollectionView: UICollectionView!
+     
+     // var userDetails: UserDetails?
+     
+     struct PropertyKeys {
+          /// 轉場ID，segue 到 DrinksCategoryCollectionViewController。
+          static let categoryToDrinksSegue = "CategoryToDrinksSegue"
+      }
+     
+      /// 用於存儲從 Firestore 加載的類別
+      var categories: [Category] = []
+      
+      let layoutProvider = MenuLayoutProvider()
+     
+      override func viewDidLoad() {
+          super.viewDidLoad()
+          loadCategories()       // 加載類別數據
+          
+          // 設置 Collection View 的佈局
+          MenuCollectionView.collectionViewLayout = layoutProvider.generateGridLayout()
+          MenuCollectionView.dataSource = self
+          MenuCollectionView.delegate = self
+          
+          // 註冊自定義的 cell
+          MenuCollectionView.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: categoryCellReuseIdentifier)
+      }
+      
+     // MARK: - Data Loading
+
+      /// 從 Firestore 加載類別數據。
+      func loadCategories() {
+          HUDManager.shared.showLoading(in: view, text: "Loading...")
+          // 加載類別數據
+          MenuController.shared.loadCategories { [weak self] result in
+              DispatchQueue.main.async {
+                  HUDManager.shared.dismiss()
+                  switch result {
+                  case .success(let categories):
+                      self?.categories = categories
+                      self?.MenuCollectionView.reloadData()
+                  case .failure(let error):
+                      print("Error loading categories: \(error)")
+                      AlertService.showAlert(withTitle: "Error", message: error.localizedDescription, inViewController: self!)
+                  }
+              }
+          }
+      }
+     
+ }
+
+
+ // MARK: - UICollectionViewDataSource
+ extension MenuCollectionViewController {
+     
+     /// 返回集合視圖中的項目數量。
+     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+         return categories.count
+     }
+     
+     /// 為每個集合視圖項目提供一個配置好的單元格。
+     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as? CategoryCollectionViewCell else {
+             fatalError("Cannot create CategoryCollectionViewCell")
+         }
+         
+         let category = categories[indexPath.row]
+         cell.update(with: category)
+         
+         return cell
+     }
+ }
+
+ // MARK: - Navigation
+
+ extension MenuCollectionViewController {
+     
+     /// 點擊 cell 時觸發 segue
+     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+         performSegue(withIdentifier: PropertyKeys.categoryToDrinksSegue, sender: indexPath)
+     }
+     
+     /// 為 segue 傳遞數據
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+         if segue.identifier == PropertyKeys.categoryToDrinksSegue,
+            let destinationVC = segue.destination as? DrinksCategoryCollectionViewController,
+            let indexPath = MenuCollectionView.indexPathsForSelectedItems?.first {
+             let selectedCategory = categories[indexPath.row]
+             destinationVC.categoryId = selectedCategory.id
+             destinationVC.categoryTitle = selectedCategory.title
+         }
+     }
+     
+ }
+*/
+
+
+// MARK: - 程式碼處理部分(修改用)
+
 
 import UIKit
 import FirebaseFirestore
@@ -61,11 +168,11 @@ class MenuCollectionViewController: UICollectionViewController {
 
      /// 從 Firestore 加載類別數據。
      func loadCategories() {
-         ActivityIndicatorManager.shared.startLoading(on: view, backgroundColor: UIColor.black.withAlphaComponent(0.5))  // 顯示活動指示器
+         HUDManager.shared.showLoading(in: view, text: "Loading...")
          // 加載類別數據
          MenuController.shared.loadCategories { [weak self] result in
              DispatchQueue.main.async {
-                 ActivityIndicatorManager.shared.stopLoading()
+                 HUDManager.shared.dismiss()
                  switch result {
                  case .success(let categories):
                      self?.categories = categories
@@ -123,3 +230,4 @@ extension MenuCollectionViewController {
     }
     
 }
+

@@ -96,80 +96,27 @@
  
  ---------------------------------------- ---------------------------------------- ----------------------------------------
  
+ D. 關於顯示 HUD 的時機：
+    
+    - 原先在使用 Google 、 Apple 登入時，在「Google 或 Apple 提供的登錄介面」的時候就會出現 HUD，為了避免讓使用者困惑，因此進行修正。
  
+    * 在 GoogleSignInController.shared.signInWithGoogle 和 AppleSignInController.shared.signInWithApple 的場景中。
+        - 通常情況下，使用者會先看到 Google 或 Apple 提供的登錄介面（例如 Google 的選擇帳號頁面或 Apple 的輸入密碼頁面）。這些介面本身是系統級別的彈出視窗，它們會遮蓋 App 畫面。
+ 
+    * HUD 的顯示邏輯
+        - 不要在調用 Google 或 Apple 登錄時立即顯示 HUD：因為這樣會讓用戶誤以為系統正在進行某種操作，而實際上他們需要進行選擇帳號或輸入憑證的操作。
+        - 改在獲得 Google 或 Apple 憑證後顯示 HUD：這樣當 HUD 出現時，確保用戶已經完成了帳號選擇或密碼輸入的過程，然後可以顯示“登入中...”來指示正在處理憑證並與 Firebase 進行認證。
+ 
+    * 結論
+        - 避免在用戶需要交互時顯示 HUD，比如選擇 Google 帳號或輸入 Apple 密碼。
+        - 在完成用戶交互並開始後台處理時顯示 HUD，這樣可以更好地指示正在進行的操作，並避免用戶誤解。
  */
-
-// MARK: - 原版storyboard
-/*
-import UIKit
-
-/// 登入介面
-class LoginViewController: UIViewController {
-
-    @IBOutlet weak var emailTextField: UITextField!
-    @IBOutlet weak var passwordTextField: UITextField!
-    @IBOutlet weak var loginButton: UIButton!
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        setUpElements()
-        setUpHideKeyboardOntap()
-        
-        ActivityIndicatorManager.shared.activityIndicator(on: view, backgroundColor: UIColor.black.withAlphaComponent(0.5))
-    }
-    
-    
-    /// 設置 UI 樣式
-    func setUpElements() {
-        emailTextField.styleTextField()
-        passwordTextField.styleTextField()
-        loginButton.styleFilledButton()
-    }
-    
-    
-    /// 處理登入按鈕點擊事件
-    @IBAction func loginButtonTapped(_ sender: UIButton) {
-        // 確保電子郵件和密碼輸入不為空
-        guard let email = emailTextField.text, !email.isEmpty,
-              let password = passwordTextField.text, !password.isEmpty else {
-            AlertService.showAlert(withTitle: "錯誤", message: "請輸入電子郵件和密碼", inViewController: self)
-            return
-        }
-        
-        ActivityIndicatorManager.shared.startLoading()  // 啟動活動指示器
-        FirebaseController.shared.loginUser(withEmail: email, password: password) { [weak self] result in
-            DispatchQueue.main.async {
-                ActivityIndicatorManager.shared.stopLoading()               // 停止活動指示器
-
-                switch result {
-                case .success(_):
-                    FirebaseController.shared.getCurrentUserDetails { userDetailsResult in
-                        switch userDetailsResult {
-                        case .success(let userDetails):
-                            NavigationHelper.navigateToMainTabBar(from: self!, with: userDetails)   // 使用 NavigationHelper 登入成功後進入到 mainTabBarController
-                        case .failure(let error):
-                            AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self!)
-                        }
-                    }
-                case .failure(let error):
-                    AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self!)
-                }
-            }
-        }
-    
-    }
-    
-}
-*/
-
 
 
 // MARK: - 視圖佈局分離版本
 import UIKit
 import FirebaseAuth
-
+import JGProgressHUD
 
 /// 登入介面
 class LoginViewController: UIViewController {
@@ -177,7 +124,7 @@ class LoginViewController: UIViewController {
     // MARK: - Properties
     private let loginView = LoginView()
     
-    
+
     // MARK: - Lifecycle Methods
     override func loadView() {
         view = loginView
@@ -190,7 +137,7 @@ class LoginViewController: UIViewController {
         setupActions()
         loadRememberedUser()
     }
-    
+
     /// 設置 Action
     private func setupActions() {
         loginView.loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
@@ -205,17 +152,17 @@ class LoginViewController: UIViewController {
     // MARK: - 處理一般登入
     /// 處理登入按鈕點擊事件
     @objc private func loginButtonTapped() {
-        // 確保電子郵件和密碼輸入不為空
+        /// 確保電子郵件和密碼輸入不為空
         guard let email = loginView.emailTextField.text, !email.isEmpty,
               let password = loginView.passwordTextField.text, !password.isEmpty else {
             AlertService.showAlert(withTitle: "錯誤", message: "請輸入電子郵件和密碼", inViewController: self)
             return
         }
         
-        ActivityIndicatorManager.shared.startLoading(on: view, backgroundColor: UIColor.black.withAlphaComponent(0.5)) // 啟動活動指示器
+        HUDManager.shared.showLoading(in: self.view, text: "Logging in...")
         EmailSignInController.shared.loginUser(withEmail: email, password: password) { [weak self] result in
             DispatchQueue.main.async {
-                ActivityIndicatorManager.shared.stopLoading()               // 停止活動指示器
+                HUDManager.shared.dismiss()
                 switch result {
                 case .success(_):
                     FirebaseController.shared.getCurrentUserDetails { userDetailsResult in
@@ -232,21 +179,21 @@ class LoginViewController: UIViewController {
                 }
             }
         }
-        
     }
  
     
     // MARK: - 處理Google登入
     @objc private func googleLoginButtonTapped() {
-        
-        ActivityIndicatorManager.shared.startLoading(on: view, backgroundColor: UIColor.black.withAlphaComponent(0.5))
-
+        view.isUserInteractionEnabled = false
         GoogleSignInController.shared.signInWithGoogle(presentingViewController: self) { [weak self] result in
             DispatchQueue.main.async {
-                ActivityIndicatorManager.shared.stopLoading()
+                
+                self?.view.isUserInteractionEnabled = true
+                HUDManager.shared.showLoading(in: self!.view, text: "Logging in...")
                 switch result {
                 case .success(let authResult):
                     FirebaseController.shared.getCurrentUserDetails { userDetailsResult in
+                        HUDManager.shared.dismiss()
                         switch userDetailsResult {
                         case .success(let userDetails):                         // 登入成功，導航到主要頁面。
                             NavigationHelper.navigateToMainTabBar(from: self!, with: userDetails)
@@ -256,24 +203,25 @@ class LoginViewController: UIViewController {
                         }
                     }
                     
-                case .failure(let error):                                       // Google登入失敗
+                case .failure(let error):
+                    HUDManager.shared.dismiss()
                     AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self!)
                 }
             }
         }
     }
- 
     
     // MARK: - 處理Apple登入
     @objc private func appleLoginButtonTapped() {
-        ActivityIndicatorManager.shared.startLoading(on: view, backgroundColor: UIColor.black.withAlphaComponent(0.5))
-        
+        view.isUserInteractionEnabled = false
         AppleSignInController.shared.signInWithApple(presentingViewController: self) { [weak self] result in
             DispatchQueue.main.async {
-                ActivityIndicatorManager.shared.stopLoading()
+                self?.view.isUserInteractionEnabled = true
+                HUDManager.shared.showLoading(in: self!.view, text: "Logging in...")
                 switch result {
                 case .success(let authResult):
                     FirebaseController.shared.getCurrentUserDetails { userDetailsResult in
+                        HUDManager.shared.dismiss()
                         switch userDetailsResult {
                         case .success(let userDetails):
                             NavigationHelper.navigateToMainTabBar(from: self!, with: userDetails)
@@ -283,6 +231,7 @@ class LoginViewController: UIViewController {
                         }
                     }
                 case .failure(let error):
+                    HUDManager.shared.dismiss()
                     AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self!)
                 }
             }

@@ -5,7 +5,7 @@
 //  Created by 曹家瑋 on 2023/12/15.
 //
 
-// MARK: - 修正版
+// MARK: - 筆記
 
 /*
  1. 初始化的時機：
@@ -26,6 +26,9 @@
     * 修正版：
         - 值機在需要顯示指示器時調用 startLoading(on:backgroundColor:)，並在請求完成後調用 stopLoading。
  */
+
+
+// MARK: - 修正版
 
 import UIKit
 

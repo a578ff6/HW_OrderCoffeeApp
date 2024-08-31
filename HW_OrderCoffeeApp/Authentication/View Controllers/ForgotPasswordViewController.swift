@@ -129,11 +129,11 @@ class ForgotPasswordViewController: UIViewController {
             return
         }
         
-        ActivityIndicatorManager.shared.startLoading(on: view, backgroundColor: UIColor.black.withAlphaComponent(0.5)) // 啟動活動指示器
+        HUDManager.shared.showLoading(in: view, text: "Sending...")
         // 使用 EmailSignInController 發送密碼重置郵件
         EmailSignInController.shared.resetPassword(forEmail: email) { [weak self] result in
             DispatchQueue.main.async {
-                ActivityIndicatorManager.shared.stopLoading()            // 停止活動指示器
+                HUDManager.shared.dismiss()
                 switch result {
                 case .success():
                     // 發送成功，顯示成功訊息

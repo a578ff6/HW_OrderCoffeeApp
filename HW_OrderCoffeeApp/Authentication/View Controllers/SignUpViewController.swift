@@ -79,7 +79,6 @@ class SignUpViewController: UIViewController {
         signUpView.termsCheckBox.isSelected.toggle()    // 切換選中狀態
     }
 
-    
     /// 處理註冊按鈕點擊事件
     @objc private func signUpButtonTapped() {
         
@@ -117,13 +116,11 @@ class SignUpViewController: UIViewController {
             return
         }
    
-        ActivityIndicatorManager.shared.startLoading(on: view, backgroundColor: UIColor.black.withAlphaComponent(0.5)) // 啟動活動指示器
-
+        HUDManager.shared.showLoading(in: view, text: "Signing up...")
         // 調用 EmailSignInController 進行用戶註冊
         EmailSignInController.shared.registerUser(withEmail: email, password: password, fullName: fullName) { [weak self] result in
             DispatchQueue.main.async {
-                ActivityIndicatorManager.shared.stopLoading()            // 停止活動指示器
-
+                HUDManager.shared.dismiss()
                 switch result {
                 case .success(_):
                     FirebaseController.shared.getCurrentUserDetails { userDetailsResult in
