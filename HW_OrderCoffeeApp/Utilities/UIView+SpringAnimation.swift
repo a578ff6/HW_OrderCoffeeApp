@@ -31,8 +31,6 @@ extension UIView {
                 self.transform = CGAffineTransform.identity
             }, completion: completion)
         })
-        
     }
-    
     
 }

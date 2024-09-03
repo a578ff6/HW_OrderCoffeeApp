@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */; };
+		9352912E2C873E9A0018B060 /* MenuSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */; };
+		935291302C875DA30018B060 /* UIView+ScaleAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */; };
 		936CFFBD2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */; };
 		936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */; };
 		936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */; };
@@ -28,6 +30,12 @@
 		93755C1F2C80971F002570A5 /* ProfileOptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1E2C80971F002570A5 /* ProfileOptionCell.swift */; };
 		93755C2F2C821F0F002570A5 /* JGProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 93755C2E2C821F0F002570A5 /* JGProgressHUD */; };
 		93755C312C82F6CF002570A5 /* HUDManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C302C82F6CF002570A5 /* HUDManager.swift */; };
+		93755C332C8351AA002570A5 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C322C8351AA002570A5 /* MenuViewController.swift */; };
+		93755C352C83520A002570A5 /* MenuCollectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C342C83520A002570A5 /* MenuCollectionHandler.swift */; };
+		93755C372C835C8E002570A5 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C362C835C8E002570A5 /* MenuView.swift */; };
+		93755C3C2C838299002570A5 /* Website.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C3B2C838299002570A5 /* Website.swift */; };
+		93755C3E2C838516002570A5 /* WebsiteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C3D2C838516002570A5 /* WebsiteManager.swift */; };
+		93755C442C8466A4002570A5 /* WebsiteImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C432C8466A4002570A5 /* WebsiteImageCell.swift */; };
 		937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937605982C4A6B0300B1316C /* BottomLineTextField.swift */; };
 		9376059B2C4AAA9C00B1316C /* UIColor+CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */; };
 		937605A02C4BB6BD00B1316C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9376059F2C4BB6BD00B1316C /* GoogleSignIn */; };
@@ -137,6 +145,8 @@
 
 /* Begin PBXFileReference section */
 		934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailViewController.swift; sourceTree = "<group>"; };
+		9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuSectionHeaderView.swift; sourceTree = "<group>"; };
+		9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ScaleAnimation.swift"; sourceTree = "<group>"; };
 		936CFFBA2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HW_OrderCoffeeAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITests.swift; sourceTree = "<group>"; };
 		936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -157,6 +167,12 @@
 		93755C1C2C8094D0002570A5 /* ProfileHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderCell.swift; sourceTree = "<group>"; };
 		93755C1E2C80971F002570A5 /* ProfileOptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileOptionCell.swift; sourceTree = "<group>"; };
 		93755C302C82F6CF002570A5 /* HUDManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDManager.swift; sourceTree = "<group>"; };
+		93755C322C8351AA002570A5 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
+		93755C342C83520A002570A5 /* MenuCollectionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuCollectionHandler.swift; sourceTree = "<group>"; };
+		93755C362C835C8E002570A5 /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
+		93755C3B2C838299002570A5 /* Website.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Website.swift; sourceTree = "<group>"; };
+		93755C3D2C838516002570A5 /* WebsiteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsiteManager.swift; sourceTree = "<group>"; };
+		93755C432C8466A4002570A5 /* WebsiteImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsiteImageCell.swift; sourceTree = "<group>"; };
 		937605982C4A6B0300B1316C /* BottomLineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
 		9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+CustomColors.swift"; sourceTree = "<group>"; };
 		937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInController.swift; sourceTree = "<group>"; };
@@ -277,6 +293,57 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		935291322C8779B70018B060 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				93755C322C8351AA002570A5 /* MenuViewController.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		935291332C8779D30018B060 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				93755C362C835C8E002570A5 /* MenuView.swift */,
+				93755C432C8466A4002570A5 /* WebsiteImageCell.swift */,
+				939BDA752B2FC08300616D1C /* CategoryCollectionViewCell.swift */,
+				9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		935291342C8779F50018B060 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				93755C3B2C838299002570A5 /* Website.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		935291352C877A0C0018B060 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				93755C3D2C838516002570A5 /* WebsiteManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		935291362C877A2B0018B060 /* Layouts */ = {
+			isa = PBXGroup;
+			children = (
+				93B9DC752C3042710050BC3F /* MenuLayoutProvider.swift */,
+			);
+			path = Layouts;
+			sourceTree = "<group>";
+		};
+		935291372C877A3E0018B060 /* Handler */ = {
+			isa = PBXGroup;
+			children = (
+				93755C342C83520A002570A5 /* MenuCollectionHandler.swift */,
+			);
+			path = Handler;
+			sourceTree = "<group>";
+		};
 		936CFFB32C6BA81F004B8724 /* FirebaseTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -399,6 +466,20 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		93755C382C83719A002570A5 /* Menu */ = {
+			isa = PBXGroup;
+			children = (
+				935291372C877A3E0018B060 /* Handler */,
+				935291362C877A2B0018B060 /* Layouts */,
+				935291352C877A0C0018B060 /* Services */,
+				935291342C8779F50018B060 /* Models */,
+				935291332C8779D30018B060 /* Views */,
+				935291322C8779B70018B060 /* View Controllers */,
+				93F9BB532C291E5400355A87 /* MenuCategoryCells */,
+			);
+			path = Menu;
+			sourceTree = "<group>";
+		};
 		939BD9C32B2A1B1700616D1C = {
 			isa = PBXGroup;
 			children = (
@@ -427,13 +508,14 @@
 				939BDA6C2B2C200F00616D1C /* Authentication */,
 				93F9BB502C291CC400355A87 /* Drinks */,
 				93BD48B32C58DA0900144E7F /* Orders */,
-				939BD9CF2B2A1B1700616D1C /* AppDelegate.swift */,
-				939BD9D12B2A1B1700616D1C /* SceneDelegate.swift */,
+				93755C382C83719A002570A5 /* Menu */,
 				939BD9D82B2A1B1900616D1C /* Assets.xcassets */,
 				939BD9DA2B2A1B1900616D1C /* LaunchScreen.storyboard */,
 				93BD48AF2C57CABF00144E7F /* GoogleService-Info.plist */,
 				939BD9DD2B2A1B1900616D1C /* Info.plist */,
 				939BD9D52B2A1B1700616D1C /* Main.storyboard */,
+				939BD9D12B2A1B1700616D1C /* SceneDelegate.swift */,
+				939BD9CF2B2A1B1700616D1C /* AppDelegate.swift */,
 				93BD48AE2C57CA3100144E7F /* HW_OrderCoffeeApp.entitlements */,
 				936CFFC72C6C73F2004B8724 /* User Profile */,
 				93755C192C80658B002570A5 /* EditProfile */,
@@ -481,7 +563,6 @@
 		93B9DC7B2C318E480050BC3F /* Layout Providers  */ = {
 			isa = PBXGroup;
 			children = (
-				93B9DC752C3042710050BC3F /* MenuLayoutProvider.swift */,
 				93B9DC732C3017FB0050BC3F /* DrinksCategoryLayoutProvider.swift */,
 				93B9DC772C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift */,
 			);
@@ -568,7 +649,6 @@
 		93BD48BC2C58E05000144E7F /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				939BDA732B2FB3E400616D1C /* MenuModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -611,6 +691,7 @@
 			isa = PBXGroup;
 			children = (
 				93B9DC842C3546150050BC3F /* UserDetails.swift */,
+				939BDA732B2FB3E400616D1C /* MenuModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -641,7 +722,6 @@
 			isa = PBXGroup;
 			children = (
 				93F9BB562C291F7600355A87 /* SupplementaryViews */,
-				93F9BB532C291E5400355A87 /* MenuCategoryCells */,
 				93F9BB542C291EB400355A87 /* DrinksCategoryCells */,
 				93F9BB552C291F0B00355A87 /* DrinkDetailCells */,
 			);
@@ -651,7 +731,6 @@
 		93F9BB532C291E5400355A87 /* MenuCategoryCells */ = {
 			isa = PBXGroup;
 			children = (
-				939BDA752B2FC08300616D1C /* CategoryCollectionViewCell.swift */,
 			);
 			path = MenuCategoryCells;
 			sourceTree = "<group>";
@@ -698,6 +777,7 @@
 				9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */,
 				939BDA842B32AD5200616D1C /* UIImageView+Styles.swift */,
 				93B9DC792C3181910050BC3F /* UIView+SpringAnimation.swift */,
+				9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -912,11 +992,13 @@
 				93755BFC2C79D20C002570A5 /* EditProfileViewController.swift in Sources */,
 				939BDA762B2FC08300616D1C /* CategoryCollectionViewCell.swift in Sources */,
 				939BDA7D2B30EB6400616D1C /* DrinksCategoryCollectionViewController.swift in Sources */,
+				93755C442C8466A4002570A5 /* WebsiteImageCell.swift in Sources */,
 				939BDA692B2B82BC00616D1C /* AlertService.swift in Sources */,
 				939BDA652B2ACBA200616D1C /* FirebaseController.swift in Sources */,
 				93B9DC832C33B9A00050BC3F /* OrderModels.swift in Sources */,
 				93F9BB5C2C2E4E6200355A87 /* ColumnItemCell.swift in Sources */,
 				93DB1D2D2C43D82200BA2CC1 /* OrderSectionHeaderView.swift in Sources */,
+				935291302C875DA30018B060 /* UIView+ScaleAnimation.swift in Sources */,
 				939BDA2C2B2AC53700616D1C /* UIViewController+HideKeyboard.swift in Sources */,
 				93F9BB5E2C2E4EEA00355A87 /* GridItemCell.swift in Sources */,
 				93B492912C3E684700E7B947 /* OrderModificationDelegate.swift in Sources */,
@@ -940,11 +1022,15 @@
 				939BDA6F2B2C211200616D1C /* Constants.swift in Sources */,
 				939BD9D02B2A1B1700616D1C /* AppDelegate.swift in Sources */,
 				93B9DC872C3661DF0050BC3F /* MainTabBarController.swift in Sources */,
+				93755C332C8351AA002570A5 /* MenuViewController.swift in Sources */,
 				93B9DC762C3042710050BC3F /* MenuLayoutProvider.swift in Sources */,
+				93755C352C83520A002570A5 /* MenuCollectionHandler.swift in Sources */,
+				93755C3C2C838299002570A5 /* Website.swift in Sources */,
 				93755C162C7F2F49002570A5 /* DatePickerHandler.swift in Sources */,
 				939BD9EB2B2A7FB200616D1C /* UIButton+Styles.swift in Sources */,
 				93755C122C7E5542002570A5 /* UIViewController+KeyboardHandling.swift in Sources */,
 				93F9BB422C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift in Sources */,
+				9352912E2C873E9A0018B060 /* MenuSectionHeaderView.swift in Sources */,
 				93755C312C82F6CF002570A5 /* HUDManager.swift in Sources */,
 				93F9BB602C2FEF1500355A87 /* ThickSeparatorView.swift in Sources */,
 				93755C1B2C808202002570A5 /* UserProfileTableHandler.swift in Sources */,
@@ -956,6 +1042,7 @@
 				93F9BB5A2C2A566D00355A87 /* DrinkOrderOptionsCollectionViewCell.swift in Sources */,
 				93F9BB4A2C269AC600355A87 /* DrinkDetailSeparatorView.swift in Sources */,
 				93DB1D352C47EE1900BA2CC1 /* ForgotPasswordView.swift in Sources */,
+				93755C372C835C8E002570A5 /* MenuView.swift in Sources */,
 				93B9DC7D2C32B0BB0050BC3F /* OrderViewController.swift in Sources */,
 				936CFFC92C6C74DE004B8724 /* UserProfileView.swift in Sources */,
 				93DB1D332C47696000BA2CC1 /* LoginView.swift in Sources */,
@@ -968,6 +1055,7 @@
 				93B9DC7A2C3181910050BC3F /* UIView+SpringAnimation.swift in Sources */,
 				936CFFCB2C6E24AD004B8724 /* UserDetailsReceiver.swift in Sources */,
 				934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */,
+				93755C3E2C838516002570A5 /* WebsiteManager.swift in Sources */,
 				93755BFA2C7700FD002570A5 /* PhotoPickerManager.swift in Sources */,
 				93BD48C32C5CE5B500144E7F /* EmailSignInController.swift in Sources */,
 				93B9DC892C368DA80050BC3F /* OrderItemCollectionViewCell.swift in Sources */,

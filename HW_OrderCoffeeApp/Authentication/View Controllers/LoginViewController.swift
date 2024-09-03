@@ -181,19 +181,15 @@ class LoginViewController: UIViewController {
         }
     }
  
-    
     // MARK: - 處理Google登入
     @objc private func googleLoginButtonTapped() {
-        view.isUserInteractionEnabled = false
+        HUDManager.shared.showLoading(in: self.view, text: "Logging in...")
         GoogleSignInController.shared.signInWithGoogle(presentingViewController: self) { [weak self] result in
             DispatchQueue.main.async {
-                
-                self?.view.isUserInteractionEnabled = true
-                HUDManager.shared.showLoading(in: self!.view, text: "Logging in...")
+                HUDManager.shared.dismiss()
                 switch result {
                 case .success(let authResult):
                     FirebaseController.shared.getCurrentUserDetails { userDetailsResult in
-                        HUDManager.shared.dismiss()
                         switch userDetailsResult {
                         case .success(let userDetails):                         // 登入成功，導航到主要頁面。
                             NavigationHelper.navigateToMainTabBar(from: self!, with: userDetails)
@@ -204,7 +200,6 @@ class LoginViewController: UIViewController {
                     }
                     
                 case .failure(let error):
-                    HUDManager.shared.dismiss()
                     AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self!)
                 }
             }
@@ -213,15 +208,13 @@ class LoginViewController: UIViewController {
     
     // MARK: - 處理Apple登入
     @objc private func appleLoginButtonTapped() {
-        view.isUserInteractionEnabled = false
+        HUDManager.shared.showLoading(in: self.view, text: "Logging in...")
         AppleSignInController.shared.signInWithApple(presentingViewController: self) { [weak self] result in
             DispatchQueue.main.async {
-                self?.view.isUserInteractionEnabled = true
-                HUDManager.shared.showLoading(in: self!.view, text: "Logging in...")
+                HUDManager.shared.dismiss()
                 switch result {
                 case .success(let authResult):
                     FirebaseController.shared.getCurrentUserDetails { userDetailsResult in
-                        HUDManager.shared.dismiss()
                         switch userDetailsResult {
                         case .success(let userDetails):
                             NavigationHelper.navigateToMainTabBar(from: self!, with: userDetails)
@@ -231,13 +224,12 @@ class LoginViewController: UIViewController {
                         }
                     }
                 case .failure(let error):
-                    HUDManager.shared.dismiss()
                     AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self!)
                 }
             }
         }
     }
-    
+
     
     // MARK: - Private Methods
 
@@ -278,7 +270,6 @@ class LoginViewController: UIViewController {
     @objc private func forgotPasswordButtonTapped() {
         NavigationHelper.navigateToForgotPassword(from: self)
     }
-    
     
     /// 跳轉到 SignUpViewController
     @objc private func signUpButtonTapped() {
