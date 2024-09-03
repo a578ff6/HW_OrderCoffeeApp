@@ -15,10 +15,17 @@
 import UIKit
 
 /// 處理與 Storyboard 相關的常數。
+///
+/// `Constants` 結構用來統一管理 App 中與 Storyboard 有關的所有「識別符號」，
+/// 包括視圖控制器的識別符號、Segue 的識別符號，以及表格或集合視圖中的 Cell 識別符號。
 struct Constants {
     
-    /// 定義結構 Storyboard，用於存放與 Storyboard 相關的常數
+    /// 定義結構 `Storyboard`，用於存放與 Storyboard 相關的常數
+    ///
+    /// 表示在 Storyboard 中設定的視圖控制器的 Identifier，方便引用。
     struct Storyboard {
+        
+        static let menuViewController = "MenuViewController"
         
         static let homePageViewController = "HomePageViewController"
         static let loginViewController = "LoginViewController"
@@ -26,9 +33,18 @@ struct Constants {
         static let forgotPasswordViewController = "ForgotPasswordViewController"
     
         static let mainTabBarController = "MainTabBarController"
-        static let menuCollectionViewController = "MenuCollectionViewController"
+        //static let menuCollectionViewController = "MenuCollectionViewController"
         static let drinkDetailViewController = "DrinkDetailViewController"
         
         static let editProfileViewController = "EditProfileViewController"
     }
+    
+    /// 定義結構 `Segue`，用於存放與 Segue 相關的常數
+    ///
+    /// 表示在 Storyboard 中設定的 Segue 的 Identifier，用來進行導航操作。
+    struct Segue {
+        static let categoryToDrinksSegue = "CategoryToDrinksSegue"
+    }
+    
+
 }
