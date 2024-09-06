@@ -135,7 +135,8 @@ class MenuViewController: UIViewController {
     /// 當用戶點擊某個分類時，將選中的分類資料傳遞給 DrinksCategoryCollectionViewController。
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == Constants.Segue.categoryToDrinksSegue,
-           let destinationVC = segue.destination as? DrinksCategoryCollectionViewController,
+           let destinationVC = segue.destination as? DrinksCategoryViewController,
+
            let selectedCategory = sender as? Category {
             destinationVC.categoryId = selectedCategory.id
             destinationVC.categoryTitle = selectedCategory.title

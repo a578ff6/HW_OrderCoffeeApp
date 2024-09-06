@@ -58,8 +58,6 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     private func setupCellAppearance() {
         self.layer.cornerRadius = 30
         self.layer.masksToBounds = true
-//        self.layer.borderWidth = 2
-//        self.layer.borderColor = UIColor(red: 39/255, green: 37/255, blue: 31/255, alpha: 1).cgColor
         
         // 設置 contentView 背景顏色
         self.contentView.backgroundColor = .lightWhiteGray
@@ -94,23 +92,20 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
-//        imageView.layer.borderWidth = 2
-//        imageView.layer.masksToBounds = true
-//        imageView.layer.borderColor = UIColor(red: 39/255, green: 37/255, blue: 31/255, alpha: 1).cgColor
         imageView.layer.cornerRadius = 30
         imageView.clipsToBounds = true
         return imageView
     }
  
     private static func createLabel(fontSize: CGFloat, textColor: UIColor, isBold: Bool) -> UILabel {
-         let label = UILabel()
-         label.translatesAutoresizingMaskIntoConstraints = false
-         label.font = isBold ? UIFont.boldSystemFont(ofSize: fontSize) : UIFont.systemFont(ofSize: fontSize)
-         label.textColor = textColor
-         label.textAlignment = .center
-         label.numberOfLines = 0
-         return label
-     }
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = isBold ? UIFont.boldSystemFont(ofSize: fontSize) : UIFont.systemFont(ofSize: fontSize)
+        label.textColor = textColor
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        return label
+    }
     
     private static func createStackView() -> UIStackView {
          let stackView = UIStackView()

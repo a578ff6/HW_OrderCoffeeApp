@@ -5,7 +5,6 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
-        <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -92,6 +91,25 @@
             </objects>
             <point key="canvasLocation" x="-451.14503816793894" y="13.380281690140846"/>
         </scene>
+        <!--Drinks Category View Controller-->
+        <scene sceneID="rGH-mh-UDd">
+            <objects>
+                <viewController id="S3X-vS-p3e" customClass="DrinksCategoryViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Az1-Xs-SSu">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="t8P-rm-ZYk"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="5Yo-KZ-o6j"/>
+                    <connections>
+                        <segue destination="WAN-d2-zFh" kind="show" identifier="DrinksToDetailSegue" id="MaP-2D-Gno"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7P1-Bx-tYg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7682" y="306"/>
+        </scene>
         <!--Starbucks-->
         <scene sceneID="DGh-Rz-dQZ">
             <objects>
@@ -104,59 +122,12 @@
                     </view>
                     <navigationItem key="navigationItem" title="Starbucks" largeTitleDisplayMode="always" id="OiZ-uR-j88"/>
                     <connections>
-                        <segue destination="SW9-Lm-ctH" kind="show" identifier="CategoryToDrinksSegue" id="mcL-Rn-xK5"/>
+                        <segue destination="S3X-vS-p3e" kind="show" identifier="CategoryToDrinksSegue" id="ndT-xj-Eei"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="S4x-Cu-5ez" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="6766" y="306"/>
-        </scene>
-        <!--Drinks Category Collection View Controller-->
-        <scene sceneID="PKS-Rs-fgX">
-            <objects>
-                <collectionViewController id="SW9-Lm-ctH" customClass="DrinksCategoryCollectionViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="brW-u1-LQz">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="13z-YQ-d2u">
-                            <size key="itemSize" width="128" height="128"/>
-                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                        </collectionViewFlowLayout>
-                        <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ColumnItemCell" id="RGG-Vu-XJ5">
-                                <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="vng-bH-7Wr">
-                                    <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </collectionViewCellContentView>
-                            </collectionViewCell>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="GridItemCell" id="SYa-WI-hEn">
-                                <rect key="frame" x="265" y="0.0" width="128" height="128"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="cT6-oo-dQ3">
-                                    <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </collectionViewCellContentView>
-                            </collectionViewCell>
-                        </cells>
-                        <connections>
-                            <outlet property="dataSource" destination="SW9-Lm-ctH" id="Sz9-cm-YhZ"/>
-                            <outlet property="delegate" destination="SW9-Lm-ctH" id="Rkw-nd-cmC"/>
-                        </connections>
-                    </collectionView>
-                    <navigationItem key="navigationItem" id="jD7-12-ePw"/>
-                    <connections>
-                        <segue destination="WAN-d2-zFh" kind="show" identifier="ShowDrinkDetail" id="peC-FS-PiQ"/>
-                    </connections>
-                </collectionViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="NLN-Na-1Bg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-                <barButtonItem image="square.grid.2x2" catalog="system" id="RMC-P9-PRs"/>
-            </objects>
-            <point key="canvasLocation" x="7683" y="306"/>
         </scene>
         <!--Drink Detail View Controller-->
         <scene sceneID="dIz-sx-3Ft">
@@ -408,7 +379,6 @@
         <image name="list.dash" catalog="system" width="128" height="85"/>
         <image name="person.crop.circle" catalog="system" width="128" height="123"/>
         <image name="square.and.arrow.up" catalog="system" width="108" height="128"/>
-        <image name="square.grid.2x2" catalog="system" width="128" height="114"/>
         <image name="starbucksLogo" width="1024" height="1024"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
