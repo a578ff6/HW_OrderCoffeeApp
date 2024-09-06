@@ -126,6 +126,7 @@ extension MenuCollectionHandler: UICollectionViewDelegate {
             if let cell = collectionView.cellForItem(at: indexPath) as? WebsiteImageCell {
                 cell.addScaleAnimation() // 添加縮放動畫
             }
+            // 立即執行 segue
             let selectedWebsite = websites[indexPath.item]
             if let url = URL(string: selectedWebsite.url) {
                 delegate?.openWebsite(url: url) // 通知 MenuViewController 打開對應的網站連結
@@ -133,10 +134,12 @@ extension MenuCollectionHandler: UICollectionViewDelegate {
             
         case .drinkCategories:
             if let cell = collectionView.cellForItem(at: indexPath) as? CategoryCollectionViewCell {
-                cell.addScaleAnimation() // 添加縮放動畫
+                cell.addScaleAnimation(duration: 0.15, scale: 0.85) {
+                    // 動畫完成後執行 segue
+                    let selectedCategory = self.categories[indexPath.item]
+                    self.delegate?.performSegue(withIdentifier: Constants.Segue.categoryToDrinksSegue, sender: selectedCategory)
+                }
             }
-            let selectedCategory = categories[indexPath.item]
-            delegate?.performSegue(withIdentifier: Constants.Segue.categoryToDrinksSegue, sender: selectedCategory)
         }
     }
 

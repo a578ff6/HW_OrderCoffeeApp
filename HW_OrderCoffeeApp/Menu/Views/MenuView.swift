@@ -57,6 +57,8 @@ class MenuView: UIView {
         ])
     }
     
+    // MARK: - Factory Method
+
     /// 建立並配置 UICollectionView，使用不同的佈局來顯示不同的 section。
     /// - Returns: 已配置好的 UICollectionView。
     private static func createCollectionView() -> UICollectionView {

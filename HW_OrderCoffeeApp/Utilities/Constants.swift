@@ -44,6 +44,7 @@ struct Constants {
     /// 表示在 Storyboard 中設定的 Segue 的 Identifier，用來進行導航操作。
     struct Segue {
         static let categoryToDrinksSegue = "CategoryToDrinksSegue"
+        static let drinksToDetailSegue = "DrinksToDetailSegue"
     }
     
 
