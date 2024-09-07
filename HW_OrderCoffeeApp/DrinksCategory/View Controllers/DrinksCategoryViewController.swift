@@ -124,8 +124,166 @@
         - 這個方法內建動畫效果，在切換佈局時使用它來確保過渡效果的平順。
  */
 
-// MARK: - 已完善
 
+
+// MARK: - async/await 版本
+
+import UIKit
+
+/// 顯示特定類別下的飲品，並允許用戶在網格和列視圖之間切換。
+class DrinksCategoryViewController: UIViewController {
+
+    // MARK: - Properties
+
+    private let drinksCategoryView = DrinksCategoryView()
+    private let collectionHandler = DrinksCategoryHandler()
+    private let layoutProvider = DrinksCategoryLayoutProvider()
+
+    // 從上一個視圖控制器傳遞的類別ID、類別標題。
+    var categoryId: String?
+    var categoryTitle: String?
+    
+    /// 切換佈局的 Enum
+    enum Layout {
+        case grid, column
+    }
+    
+    /// 儲存網格和列表的佈局設定
+    private var layouts: [Layout: UICollectionViewLayout] = [:]
+    
+    /// 用來儲存目前的布局類型。預設為 .column。
+    var activeLayout: Layout = .column {
+        didSet {
+            applyNewLayout()
+        }
+    }
+
+    // MARK: - Lifecycle Methods
+    override func loadView() {
+        view = drinksCategoryView
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupNavigationTitle()
+        setupSwitchLayoutsButton()
+        configureCollectionView()
+        Task {
+            await loadDrinkForCategory()
+        }
+    }
+
+    // MARK: - Setup Methods
+
+    /// 設置 NavigationTitle
+    private func setupNavigationTitle() {
+        guard let title = categoryTitle else { return }
+        self.navigationItem.title = title
+    }
+    
+    /// 設置切換布局按鈕
+    private func setupSwitchLayoutsButton() {
+        let switchLayoutsButton = UIBarButtonItem(image: UIImage(systemName: "square.grid.2x2"), style: .plain, target: self, action: #selector(switchLayoutsButtonTapped))
+        self.navigationItem.rightBarButtonItem = switchLayoutsButton
+    }
+
+    /// 設置 UICollectionView
+    private func configureCollectionView() {
+        drinksCategoryView.collectionView.dataSource = collectionHandler
+        drinksCategoryView.collectionView.delegate = collectionHandler
+        drinksCategoryView.collectionView.register(ColumnItemCell.self, forCellWithReuseIdentifier: ColumnItemCell.reuseIdentifier)
+        drinksCategoryView.collectionView.register(GridItemCell.self, forCellWithReuseIdentifier: GridItemCell.reuseIdentifier)
+        
+        //  註冊 section header、footer
+        drinksCategoryView.collectionView.register(DrinksCategorySectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: DrinksCategorySectionHeaderView.headerIdentifier)
+        drinksCategoryView.collectionView.register(DrinksCategorySectionFooterView.self.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: DrinksCategorySectionFooterView.footerIdentifier)
+
+        collectionHandler.delegate = self
+    }
+    
+    /// 準備兩種佈局：網格視圖與列表視圖，並根據section數量來動態生成佈局
+    private func prepareLayouts() {
+        let totalSections = collectionHandler.drinks.count
+//        print("Total sections: \(totalSections)") // 觀察 section 數量
+
+        // 為每個 section 動態配置佈局
+        layouts[.grid] = UICollectionViewCompositionalLayout { sectionIndex, _ in
+            self.layoutProvider.getLayout(for: .grid, totalSections: totalSections, sectionIndex: sectionIndex)
+        }
+        
+        layouts[.column] = UICollectionViewCompositionalLayout { sectionIndex, _ in
+            self.layoutProvider.getLayout(for: .column, totalSections: totalSections, sectionIndex: sectionIndex)
+        }
+
+        // 預設使用 column 佈局
+        if let initialLayout = layouts[.column] {
+            drinksCategoryView.collectionView.collectionViewLayout = initialLayout
+        }
+    }
+
+
+    // MARK: - Data Loading (using async/await)
+    
+    /// 從 Firestore 加載特定類別下的飲品數據。
+    private func loadDrinkForCategory() async {
+        guard let categoryId = categoryId else { return }
+        
+        HUDManager.shared.showLoading(in: view, text: "Loading Drinks...")
+        
+        do {
+            let SubcategoryDrinks = try await MenuController.shared.loadDrinksForCategory(categoryId: categoryId)
+            collectionHandler.updateData(drinks: SubcategoryDrinks)
+            drinksCategoryView.collectionView.reloadData()
+            prepareLayouts()                                                 // 在數據加載後調用 prepareLayouts，才能獲取正確的 section 數量並生成佈局。
+        } catch {
+            print("Error loading drinks: \(error)")
+            AlertService.showAlert(withTitle: "Error", message: error.localizedDescription, inViewController: self)
+        }
+        
+        HUDManager.shared.dismiss()
+    }
+    
+    // MARK: - Layout Switching
+    
+    /// 切換佈局按鈕的點擊事件處理
+    @objc private func switchLayoutsButtonTapped() {
+        activeLayout = (activeLayout == .grid) ? .column : .grid
+    }
+    
+    /// 應用新的佈局，並在動畫完成後更新按鈕圖示
+    private func applyNewLayout() {
+        if let newLayout = layouts[activeLayout] {
+            self.drinksCategoryView.collectionView.reloadItems(at: self.drinksCategoryView.collectionView.indexPathsForVisibleItems)
+            
+            drinksCategoryView.collectionView.setCollectionViewLayout(newLayout, animated: true) { (_) in
+                switch self.activeLayout {
+                case .grid:
+                    self.navigationItem.rightBarButtonItem?.image = UIImage(systemName: "rectangle.grid.1x2")
+                case .column:
+                    self.navigationItem.rightBarButtonItem?.image = UIImage(systemName: "square.grid.2x2")
+                }
+            }
+        }
+    }
+  
+    // MARK: - Navigation
+
+    // 當執行 segue 時，準備傳遞資料到下一個視圖控制器
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == Constants.Segue.drinksToDetailSegue,
+           let detailVC = segue.destination as? DrinkDetailViewController,
+           let selectedDrink = sender as? Drink {
+            detailVC.drink = selectedDrink                              // 將選中的飲品傳遞給 DrinkDetailViewController
+        }
+    }
+ 
+}
+
+
+
+
+// MARK: - 已完善（reloadItems版本，並使用DispatchQueue）
+/*
 import UIKit
 
 /// 顯示特定類別下的飲品，並允許用戶在網格和列視圖之間切換。
@@ -276,7 +434,7 @@ class DrinksCategoryViewController: UIViewController {
     }
  
 }
-
+*/
 
 
 

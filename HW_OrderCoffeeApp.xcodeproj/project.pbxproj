@@ -603,8 +603,8 @@
 				939BDA642B2ACBA200616D1C /* FirebaseController.swift */,
 				939BDA682B2B82BC00616D1C /* AlertService.swift */,
 				93755C302C82F6CF002570A5 /* HUDManager.swift */,
-				939BDA6A2B2B97ED00616D1C /* ActivityIndicatorManager.swift */,
 				93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */,
+				939BDA6A2B2B97ED00616D1C /* ActivityIndicatorManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
