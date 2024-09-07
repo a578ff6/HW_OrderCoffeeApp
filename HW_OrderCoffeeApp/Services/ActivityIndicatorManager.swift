@@ -5,7 +5,7 @@
 //  Created by 曹家瑋 on 2023/12/15.
 //
 
-// MARK: - 筆記
+// MARK: - 筆記（改使用 HUDManager ）
 
 /*
  1. 初始化的時機：
@@ -30,6 +30,7 @@
 
 // MARK: - 修正版
 
+/*
 import UIKit
 
 /// 活動指示器管理
@@ -79,7 +80,7 @@ class ActivityIndicatorManager {
     }
     
 }
-
+*/
 
 // MARK: - 原版
 /*

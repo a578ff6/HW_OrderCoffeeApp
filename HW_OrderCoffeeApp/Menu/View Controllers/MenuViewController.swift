@@ -5,6 +5,7 @@
 //  Created by 曹家瑋 on 2024/8/31.
 //
 
+
 /*
  ## MenuViewController：
  
@@ -33,9 +34,124 @@
 
  */
 
+// MARK: - async/await 版本
+import UIKit
 
-// MARK: - 已完善
+/// 負責顯示飲品分類頁面、網站橫幅的視圖控制器。
+class MenuViewController: UIViewController {
 
+    // MARK: - Properties
+    
+    private let menuView = MenuView()
+    private let collectionHandler = MenuCollectionHandler()
+    
+    /// 定義 Menu 頁面的不同 section
+    enum MenuSection: Int, CaseIterable {
+        case websiteBanner // 顯示網站橫幅
+        case drinkCategories // 顯示飲品分類
+    }
+    
+    // 用來追踪網站和分類資料是否加載完成。
+    private var isWebsiteLoaded = false
+    private var isCategoriesLoaded = false
+
+    // MARK: - Lifecycle Methods
+
+    override func loadView() {
+        view = menuView
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupCollectionView()
+        HUDManager.shared.showLoading(in: self.view, text: "Loading...")
+        Task {
+            await loadCategories()
+            await loadWebsites()
+        }
+    }
+
+    
+    // MARK: - Setup Methods
+    
+    /// 配置 UICollectionView 的 dataSource、delegate，並註冊自定義的單元格類別。
+    private func setupCollectionView() {
+        menuView.collectionView.dataSource = collectionHandler
+        menuView.collectionView.delegate = collectionHandler
+        menuView.collectionView.register(WebsiteImageCell.self, forCellWithReuseIdentifier: WebsiteImageCell.reuseIdentifier)
+        menuView.collectionView.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: CategoryCollectionViewCell.reuseIdentifier)
+        menuView.collectionView.register(MenuSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: MenuSectionHeaderView.headerIdentifier)
+        collectionHandler.delegate = self        // 將 MenuViewController 設置為 delegate，以便處理導航
+    }
+
+    
+    // MARK: - Data Loading (using async/await)
+
+    /// 加載網站橫幅資料，並將資料傳遞給 collectionHandler 來顯示於 UICollectionView 中。
+    private func loadWebsites() async {
+        do {
+            let websites = try await WebsiteManager.shared.loadWebsites()
+            self.collectionHandler.websites = websites
+            self.isWebsiteLoaded = true
+            self.menuView.collectionView.reloadData()
+            self.checkIfAllDataLoaded()
+        } catch {
+            print("Error loading websites: \(error)")
+            AlertService.showAlert(withTitle: "Error", message: error.localizedDescription, inViewController: self)
+            self.isWebsiteLoaded = true
+            self.checkIfAllDataLoaded()
+        }
+    }
+    
+    /// 加載飲品分類資料，並將資料傳遞給 collectionHandler 來顯示於 UICollectionView 中。
+    private func loadCategories() async {
+        do {
+            let categories = try await MenuController.shared.loadCategories()
+            self.collectionHandler.categories = categories
+            self.isCategoriesLoaded = true
+            self.menuView.collectionView.reloadData()
+            self.checkIfAllDataLoaded()
+        } catch {
+            print("Error loading categories: \(error)")
+            AlertService.showAlert(withTitle: "Error", message: error.localizedDescription, inViewController: self)
+            self.isCategoriesLoaded = true
+            self.checkIfAllDataLoaded()
+        }
+    }
+    
+    /// 每次加載任務完成後都會來檢查所有數據是否都已加載，並在所有數據加載完成後隱藏 HUD。
+    private func checkIfAllDataLoaded() {
+        if isWebsiteLoaded && isCategoriesLoaded {
+            HUDManager.shared.dismiss()
+        }
+    }
+    
+    // MARK: - Navigation
+    
+    /// 當用戶點擊某個分類時，將選中的分類資料傳遞給 DrinksCategoryCollectionViewController。
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == Constants.Segue.categoryToDrinksSegue,
+           let destinationVC = segue.destination as? DrinksCategoryViewController,
+
+           let selectedCategory = sender as? Category {
+            destinationVC.categoryId = selectedCategory.id
+            destinationVC.categoryTitle = selectedCategory.title
+        }
+    }
+    
+    /// 打開指定的網站 URL。
+    func openWebsite(url: URL) {
+        AlertService.showAlert(withTitle: "打開連結", message: "確定要打開這個連結嗎？", inViewController: self, showCancelButton: true) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
+    }
+
+}
+
+
+
+// MARK: - 已完善（DispatchQune版本）
+/*
 import UIKit
 
 /// 負責顯示飲品分類頁面、網站橫幅的視圖控制器。
@@ -151,3 +267,4 @@ class MenuViewController: UIViewController {
     }
 
 }
+*/

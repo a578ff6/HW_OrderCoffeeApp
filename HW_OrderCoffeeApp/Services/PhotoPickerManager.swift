@@ -17,14 +17,17 @@
         - 如果設備不支持相機或用戶未授權訪問相機，顯示適當的警告信息。
         - 在照片選擇或拍攝過程中顯示活動指示器，提升用戶體驗。
     
-    3. 活動指示器的使用：
-        - 在開始異步操作時啟動活動指示器，結束時停止活動指示器，確保用戶知道操作正在進行。
+    3.  照片上傳等網路操作：
+        * 當進行照片上傳或資料保存等涉及網路的異步操作時，應在 EditProfileViewController 等處啟動活動指示器（如 HUDManager ），以便用戶知道操作正在進行。
+            - 當用戶在 EditProfileViewController 中選擇完照片並開始上傳時，顯示活動指示器。
+            - 在上傳完成或失敗後，停止活動指示器，並根據結果顯示相應的訊息。
+ 
+        *  與照片選擇無關：
+            - 照片選擇本身不需要任何活動指示器，因為它只涉及本地的相簿或相機操作，且是即時的，不涉及耗時的網路處理。
  */
 
 import UIKit
 import PhotosUI
-import Firebase
-
 
 /// `PhotoPickerManager` 用於處理照片的選擇和上傳管理。
 /// 它支持從「相簿選擇圖片」以及「使用相機拍攝照片」。
@@ -101,10 +104,8 @@ extension PhotoPickerManager: PHPickerViewControllerDelegate {
             return
         }
         
-        ActivityIndicatorManager.shared.startLoading(on: viewController!.view)
         provider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
             DispatchQueue.main.async {
-                ActivityIndicatorManager.shared.stopLoading()
                 if let selectedImage = image as? UIImage {
                     self?.completion?(selectedImage)
                 } else {
@@ -115,7 +116,6 @@ extension PhotoPickerManager: PHPickerViewControllerDelegate {
     }
     
 }
-
 
 // MARK: - UIImagePickerControllerDelegate
 extension PhotoPickerManager: UIImagePickerControllerDelegate {

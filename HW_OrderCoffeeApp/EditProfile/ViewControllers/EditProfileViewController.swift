@@ -272,7 +272,7 @@ class EditProfileViewController: UIViewController {
     
     /// 處理大頭照上傳錯誤
     private func handleImageUploadError(_ error: Error) {
-        ActivityIndicatorManager.shared.stopLoading()
+        HUDManager.shared.dismiss()
         print("Failed to upload image: \(error)")
     }
     
@@ -301,7 +301,7 @@ class EditProfileViewController: UIViewController {
     /// 顯示預設的大頭照
     private func displayDefaultUserProfileImage() {
         editProfileView.profileImageView.image = UIImage(named: "UserSymbol")
-        ActivityIndicatorManager.shared.stopLoading()
+        HUDManager.shared.dismiss()
     }
     
     /// 加載使用者大頭照
