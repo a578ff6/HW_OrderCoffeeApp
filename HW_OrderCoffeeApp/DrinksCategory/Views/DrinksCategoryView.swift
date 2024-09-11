@@ -20,6 +20,7 @@ class DrinksCategoryView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        registerCells()
     }
     
     required init?(coder: NSCoder) {
@@ -38,6 +39,16 @@ class DrinksCategoryView: UIView {
             collectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+    }
+    
+    /// 註冊所有`自訂義的 cell` 與 `supplementary views`，確保 `UICollectionView` 具備顯示這些元素的能力
+    private func registerCells() {
+        collectionView.register(ColumnItemCell.self, forCellWithReuseIdentifier: ColumnItemCell.reuseIdentifier)
+        collectionView.register(GridItemCell.self, forCellWithReuseIdentifier: GridItemCell.reuseIdentifier)
+        
+        //  註冊 section header、footer
+        collectionView.register(DrinksCategorySectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: DrinksCategorySectionHeaderView.headerIdentifier)
+        collectionView.register(DrinksCategorySectionFooterView.self.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: DrinksCategorySectionFooterView.footerIdentifier)
     }
     
     // MARK: - Factory Method

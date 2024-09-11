@@ -452,15 +452,11 @@ class UserProfileViewController: UIViewController {
     
     // MARK: - Setup Methods
 
-    /// 設置表格視圖，包括註冊自定義的 UITableViewCell
+    /// 設置表格視圖
     private func setupTableView() {
         tableView = userProfileView.tableView
         tableView.delegate = tableHandler
         tableView.dataSource = tableHandler
-        
-        // 註冊自定義的 cell
-        tableView.register(ProfileOptionCell.self, forCellReuseIdentifier: ProfileOptionCell.reuseIdentifier)
-        tableView.register(ProfileHeaderCell.self, forCellReuseIdentifier: ProfileHeaderCell.reuseIdentifier)
     }
     
     // MARK: - Navigation

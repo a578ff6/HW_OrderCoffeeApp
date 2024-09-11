@@ -82,4 +82,14 @@ class ProfileOptionCell: UITableViewCell {
         subtitleLabel.text = subtitle
     }
     
+    // MARK: - Lifecycle Methods
+
+    // 清空圖標與標籤文字
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        iconImageView.image = nil
+        titleLabel.text = nil
+        subtitleLabel.text = nil
+    }
+
 }

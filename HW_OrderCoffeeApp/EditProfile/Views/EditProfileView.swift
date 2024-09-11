@@ -44,6 +44,7 @@ class EditProfileView: UIView {
         super.init(frame: frame)
         setupLayout()
         setupTableHeaderView()
+        registerCells()        
     }
     
     required init?(coder: NSCoder) {
@@ -89,6 +90,12 @@ class EditProfileView: UIView {
         tableView.tableHeaderView = headerView
     }
     
+    /// 註冊 UITableView 的自定義 cell
+     private func registerCells() {
+         tableView.register(ProfileTextFieldCell.self, forCellReuseIdentifier: ProfileTextFieldCell.reuseIdentifier)
+         tableView.register(GenderSelectionCell.self, forCellReuseIdentifier: GenderSelectionCell.reuseIdentifier)
+         tableView.register(BirthdaySelectionCell.self, forCellReuseIdentifier: BirthdaySelectionCell.reuseIdentifier)
+     }
     
     // MARK: - UI Element Creation
     

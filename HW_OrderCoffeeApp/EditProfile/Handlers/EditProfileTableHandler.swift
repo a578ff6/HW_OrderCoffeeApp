@@ -114,30 +114,6 @@ class EditProfileTableHandler: NSObject {
     
 }
 
-// MARK: - UITableViewDelegate
-extension EditProfileTableHandler: UITableViewDelegate {
-    /// 處理 Cell 的選取事件，控制 DatePicker 的顯示與隱藏
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 3 && indexPath.row == 0 {
-            isDatePickerVisible.toggle()
-            datePickerHandler.selectedDate = isDatePickerVisible ? userDetails?.birthday : nil
-            tableView.beginUpdates()
-            tableView.reloadSections(IndexSet(integer: 3), with: .automatic)
-            tableView.endUpdates()
-        }
-    }
-    
-    /// 決定是否允許選取指定的 Cell
-    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        return indexPath.section == 3 && indexPath.row == 0 ? indexPath : nil
-    }
-
-    /// 設定每個 section 標題的高度
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 30
-    }
-}
-
 // MARK: - UITableViewDataSource
 extension EditProfileTableHandler: UITableViewDataSource {
     // 設定表格的 section 數量
@@ -175,4 +151,34 @@ extension EditProfileTableHandler: UITableViewDataSource {
         return configureCell(for: indexPath)
     }
     
+}
+
+// MARK: - UITableViewDelegate
+extension EditProfileTableHandler: UITableViewDelegate {
+    
+    /// 處理 Cell 的選取事件，控制 DatePicker 的顯示與隱藏
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 3 && indexPath.row == 0 {
+            isDatePickerVisible.toggle()
+            datePickerHandler.selectedDate = isDatePickerVisible ? userDetails?.birthday : nil
+            tableView.beginUpdates()
+            tableView.reloadSections(IndexSet(integer: 3), with: .automatic)
+            tableView.endUpdates()
+        }
+    }
+    
+    /// 決定是否允許選取指定的 Cell
+    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        return indexPath.section == 3 && indexPath.row == 0 ? indexPath : nil
+    }
+    
+    /// 控制 Cell 是否應該在點擊時高亮顯示
+    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section == 3 && indexPath.row == 0
+    }
+
+    /// 設定每個 section 標題的高度
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 30
+    }
 }

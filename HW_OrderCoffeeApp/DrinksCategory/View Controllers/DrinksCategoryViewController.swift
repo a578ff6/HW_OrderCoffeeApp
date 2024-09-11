@@ -187,17 +187,10 @@ class DrinksCategoryViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = switchLayoutsButton
     }
 
-    /// 設置 UICollectionView
+    /// 設置 UICollectionView 的 dataSource 和 delegate
     private func configureCollectionView() {
         drinksCategoryView.collectionView.dataSource = collectionHandler
         drinksCategoryView.collectionView.delegate = collectionHandler
-        drinksCategoryView.collectionView.register(ColumnItemCell.self, forCellWithReuseIdentifier: ColumnItemCell.reuseIdentifier)
-        drinksCategoryView.collectionView.register(GridItemCell.self, forCellWithReuseIdentifier: GridItemCell.reuseIdentifier)
-        
-        //  註冊 section header、footer
-        drinksCategoryView.collectionView.register(DrinksCategorySectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: DrinksCategorySectionHeaderView.headerIdentifier)
-        drinksCategoryView.collectionView.register(DrinksCategorySectionFooterView.self.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: DrinksCategorySectionFooterView.footerIdentifier)
-
         collectionHandler.delegate = self
     }
     

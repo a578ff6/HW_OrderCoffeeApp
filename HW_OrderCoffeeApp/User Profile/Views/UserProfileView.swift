@@ -251,6 +251,7 @@ class UserProfileView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayout()
+        registerCells()
     }
     
     required init?(coder: NSCoder) {
@@ -272,6 +273,14 @@ class UserProfileView: UIView {
         ])
     }
     
+    /// 註冊所有`自訂義的 cell`
+    private func registerCells() {
+        tableView.register(ProfileOptionCell.self, forCellReuseIdentifier: ProfileOptionCell.reuseIdentifier)
+        tableView.register(ProfileHeaderCell.self, forCellReuseIdentifier: ProfileHeaderCell.reuseIdentifier)
+    }
+
+    // MARK: - Factory Methods
+
     /// 建立 UITableView
     private static func createTableView() -> UITableView {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
