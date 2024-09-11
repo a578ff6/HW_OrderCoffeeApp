@@ -107,4 +107,14 @@ class GridItemCell: UICollectionViewCell {
         subNameLabel.text = drink.subName
     }
     
+    // MARK: - Lifecycle Methods
+
+    /// 重置圖片和文字
+    override func prepareForReuse() {
+        super.prepareForReuse()        
+        imageView.image = nil
+        titleLabel.text = nil
+        subNameLabel.text = nil
+    }
+
 }
