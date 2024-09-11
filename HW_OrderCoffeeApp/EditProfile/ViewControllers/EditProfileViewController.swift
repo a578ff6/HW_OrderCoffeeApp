@@ -143,6 +143,7 @@ class EditProfileViewController: UIViewController {
         configureUserData()
         setupNavigationBar()
         setupKeyboardHandling()
+        setupChangePhotoAction()
     }
     
     // MARK: - Setup Methods
@@ -179,10 +180,6 @@ class EditProfileViewController: UIViewController {
         editProfileView.tableView.dataSource = tableHandler
         editProfileView.tableView.separatorStyle = .none
         editProfileView.tableView.backgroundColor = .lightWhiteGray
-        editProfileView.tableView.register(ProfileTextFieldCell.self, forCellReuseIdentifier: ProfileTextFieldCell.reuseIdentifier)
-        editProfileView.tableView.register(GenderSelectionCell.self, forCellReuseIdentifier: GenderSelectionCell.reuseIdentifier)
-        editProfileView.tableView.register(BirthdaySelectionCell.self, forCellReuseIdentifier: BirthdaySelectionCell.reuseIdentifier)
-        setupChangePhotoAction()
     }
 
     /// 設置更改照片按鈕的行為
@@ -196,8 +193,8 @@ class EditProfileViewController: UIViewController {
         setupKeyboardObservers(for: editProfileView.tableView)
     }
     
-    // MARK: - Actions
-    
+    // MARK: - Actions (Button Handlers)
+
     /// 保存按鈕的行為
     @objc private func saveButtonTapped() {
         guard var userDetails = userDetails else { return }
@@ -225,9 +222,8 @@ class EditProfileViewController: UIViewController {
         dismiss(animated: true, completion: nil)
     }
 
+    // MARK: - User Data Methods
 
-    // MARK: - Helper Methods
-    
     /// 驗證使用者詳細資料
     private func validateUserDetails() -> Bool {
         guard let fullName = tableHandler.userDetails?.fullName, !fullName.isEmpty else {
@@ -254,6 +250,8 @@ class EditProfileViewController: UIViewController {
          }
      }
      
+    // MARK: - Image Handling Methods
+
     /// 更新使用者的大頭照
     private func updateProfileImage(_ image: UIImage, for uid: String) {
         editProfileView.profileImageView.image = image
@@ -276,6 +274,8 @@ class EditProfileViewController: UIViewController {
         print("Failed to upload image: \(error)")
     }
     
+    // MARK: - Date Handling Methods
+
     /// 處理日期選擇變更
     private func handleDateChanged(_ date: Date) {
         userDetails?.birthday = date
@@ -287,6 +287,8 @@ class EditProfileViewController: UIViewController {
             cell.configure(with: date)
         }
     }
+
+    // MARK: - Helper Methods
 
     /// 配置使用者資料
     private func configureUserData() {
@@ -313,7 +315,6 @@ class EditProfileViewController: UIViewController {
         }
     }
 
-    
     // MARK: - User Details Setup
 
     /// 接收使用者詳細資料
@@ -323,4 +324,3 @@ class EditProfileViewController: UIViewController {
     }
     
 }
-
