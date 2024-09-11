@@ -86,4 +86,14 @@ class ProfileHeaderCell: UITableViewCell {
         emailLabel.text = email
     }
     
+    // MARK: - Lifecycle Methods
+
+    // 清空頭像與標籤文字
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        profileImageView.image = nil
+        nameLabel.text = nil
+        emailLabel.text = nil
+    }
+    
 }
