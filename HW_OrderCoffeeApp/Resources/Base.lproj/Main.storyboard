@@ -103,7 +103,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="5Yo-KZ-o6j"/>
                     <connections>
-                        <segue destination="WAN-d2-zFh" kind="show" identifier="DrinksToDetailSegue" id="MaP-2D-Gno"/>
+                        <segue destination="WAN-d2-zFh" kind="show" identifier="DrinksToDetailSegue" id="8jq-fX-ise"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7P1-Bx-tYg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -136,37 +136,10 @@
                     <view key="view" contentMode="scaleToFill" id="gHB-3w-9MX">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="V4Q-OC-5pm">
-                                <rect key="frame" x="0.0" y="103" width="393" height="666"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="ZdK-8x-uhq">
-                                    <size key="itemSize" width="128" height="128"/>
-                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                </collectionViewFlowLayout>
-                                <cells/>
-                            </collectionView>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="uiN-dI-sEq"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="uiN-dI-sEq" firstAttribute="trailing" secondItem="V4Q-OC-5pm" secondAttribute="trailing" id="9u1-CW-pkE"/>
-                            <constraint firstItem="uiN-dI-sEq" firstAttribute="bottom" secondItem="V4Q-OC-5pm" secondAttribute="bottom" id="RVk-Fn-80g"/>
-                            <constraint firstItem="V4Q-OC-5pm" firstAttribute="top" secondItem="uiN-dI-sEq" secondAttribute="top" id="Vxr-Fl-dOp"/>
-                            <constraint firstItem="V4Q-OC-5pm" firstAttribute="leading" secondItem="uiN-dI-sEq" secondAttribute="leading" id="u9Q-7n-Gso"/>
-                        </constraints>
                     </view>
-                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="SjR-rQ-PEb">
-                        <rightBarButtonItems>
-                            <barButtonItem image="square.and.arrow.up" catalog="system" id="3nf-Pq-Qbx"/>
-                            <barButtonItem image="heart" catalog="system" id="wYM-AV-Ghu"/>
-                        </rightBarButtonItems>
-                    </navigationItem>
-                    <connections>
-                        <outlet property="drinkDetailCollectionView" destination="V4Q-OC-5pm" id="T8d-tf-5Xt"/>
-                    </connections>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="SjR-rQ-PEb"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JKh-GK-Iqw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -375,10 +348,8 @@
     </scenes>
     <resources>
         <image name="basket" catalog="system" width="128" height="108"/>
-        <image name="heart" catalog="system" width="128" height="107"/>
         <image name="list.dash" catalog="system" width="128" height="85"/>
         <image name="person.crop.circle" catalog="system" width="128" height="123"/>
-        <image name="square.and.arrow.up" catalog="system" width="108" height="128"/>
         <image name="starbucksLogo" width="1024" height="1024"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

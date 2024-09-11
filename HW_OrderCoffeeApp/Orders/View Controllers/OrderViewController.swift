@@ -440,9 +440,13 @@ class OrderViewController: UIViewController {
              detailVC.editingOrderID = orderItem.id
              detailVC.editingOrderQuantity = orderItem.quantity
              
+             // Print for observation
+             print("傳遞給 DrinkDetailViewController 的資訊：size: \(orderItem.size), quantity: \(orderItem.quantity)")
+             
              detailVC.modalPresentationStyle = .pageSheet
              if let sheet = detailVC.sheetPresentationController {
                  sheet.detents = [.large()]
+                 sheet.prefersGrabberVisible = true
              }
              present(detailVC, animated: true, completion: nil)
          }
