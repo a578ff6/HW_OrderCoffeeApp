@@ -96,7 +96,7 @@ class ColumnItemCell: UICollectionViewCell {
         return stackView
     }
     
-    // MARK: - Helper Methods
+    // MARK: - Configure Method
 
     /// 設置 飲品圖片、名稱、副名稱
     func configure(with drink: Drink) {

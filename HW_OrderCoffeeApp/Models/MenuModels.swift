@@ -35,7 +35,7 @@ struct SubcategoryDrinks {
 
 
 /// Drink  具體的飲品（如「CaffèAmericano」）。
-/// 用於在 DrinksCategoryCollectionViewController、DrinksDetailTableViewController 中運用
+/// 用於在 DrinksCategoryViewController、DrinkDetailViewController 中運用
 struct Drink: Codable, Identifiable, Hashable {
     @DocumentID var id: String?
     var name: String

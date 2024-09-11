@@ -14,6 +14,8 @@
 		9352913C2C8837040018B060 /* DrinksCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352913B2C8837040018B060 /* DrinksCategoryViewController.swift */; };
 		9352913F2C8843E40018B060 /* DrinksCategoryHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352913E2C8843E40018B060 /* DrinksCategoryHandler.swift */; };
 		935291412C89C1480018B060 /* DrinksCategorySectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935291402C89C1480018B060 /* DrinksCategorySectionFooterView.swift */; };
+		9352914A2C8D85790018B060 /* DrinkDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935291492C8D85790018B060 /* DrinkDetailView.swift */; };
+		9352914C2C8D91480018B060 /* DrinkDetailHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352914B2C8D91480018B060 /* DrinkDetailHandler.swift */; };
 		936CFFBD2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */; };
 		936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */; };
 		936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */; };
@@ -152,6 +154,8 @@
 		9352913B2C8837040018B060 /* DrinksCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinksCategoryViewController.swift; sourceTree = "<group>"; };
 		9352913E2C8843E40018B060 /* DrinksCategoryHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinksCategoryHandler.swift; sourceTree = "<group>"; };
 		935291402C89C1480018B060 /* DrinksCategorySectionFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinksCategorySectionFooterView.swift; sourceTree = "<group>"; };
+		935291492C8D85790018B060 /* DrinkDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailView.swift; sourceTree = "<group>"; };
+		9352914B2C8D91480018B060 /* DrinkDetailHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailHandler.swift; sourceTree = "<group>"; };
 		936CFFBA2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HW_OrderCoffeeAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITests.swift; sourceTree = "<group>"; };
 		936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -393,6 +397,81 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		935291482C8CA9E70018B060 /* DrinkDetail */ = {
+			isa = PBXGroup;
+			children = (
+				935291552C91AAE70018B060 /* Handler */,
+				935291572C91AB0A0018B060 /* Layouts */,
+				935291562C91AAF70018B060 /* Views */,
+				935291542C91AAD70018B060 /* View Controllers */,
+			);
+			path = DrinkDetail;
+			sourceTree = "<group>";
+		};
+		935291542C91AAD70018B060 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		935291552C91AAE70018B060 /* Handler */ = {
+			isa = PBXGroup;
+			children = (
+				9352914B2C8D91480018B060 /* DrinkDetailHandler.swift */,
+			);
+			path = Handler;
+			sourceTree = "<group>";
+		};
+		935291562C91AAF70018B060 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				93F9BB392C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift */,
+				93F9BB3F2C1C0DEA00355A87 /* DrinkSizeSelectionCollectionViewCell.swift */,
+				93F9BB412C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift */,
+				93F9BB592C2A566D00355A87 /* DrinkOrderOptionsCollectionViewCell.swift */,
+				93F9BB492C269AC600355A87 /* DrinkDetailSeparatorView.swift */,
+				935291492C8D85790018B060 /* DrinkDetailView.swift */,
+				93F9BB4D2C27F91400355A87 /* DottedLineView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		935291572C91AB0A0018B060 /* Layouts */ = {
+			isa = PBXGroup;
+			children = (
+				93B9DC772C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift */,
+			);
+			path = Layouts;
+			sourceTree = "<group>";
+		};
+		935291582C91B38A0018B060 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		935291592C91B3AD0018B060 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				939BD9D82B2A1B1900616D1C /* Assets.xcassets */,
+				939BD9DA2B2A1B1900616D1C /* LaunchScreen.storyboard */,
+				939BD9D52B2A1B1700616D1C /* Main.storyboard */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		9352915A2C91B3C40018B060 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				939BD9D12B2A1B1700616D1C /* SceneDelegate.swift */,
+				939BD9CF2B2A1B1700616D1C /* AppDelegate.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
 		936CFFB32C6BA81F004B8724 /* FirebaseTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -552,20 +631,18 @@
 		939BD9CE2B2A1B1700616D1C /* HW_OrderCoffeeApp */ = {
 			isa = PBXGroup;
 			children = (
+				93BD48AE2C57CA3100144E7F /* HW_OrderCoffeeApp.entitlements */,
+				939BD9DD2B2A1B1900616D1C /* Info.plist */,
+				93BD48AF2C57CABF00144E7F /* GoogleService-Info.plist */,
+				9352915A2C91B3C40018B060 /* App */,
+				935291592C91B3AD0018B060 /* Resources */,
+				935291582C91B38A0018B060 /* Configurations */,
 				93F9BB582C293E3E00355A87 /* Utilities */,
 				939BDA6C2B2C200F00616D1C /* Authentication */,
-				93F9BB502C291CC400355A87 /* Drinks */,
 				93BD48B32C58DA0900144E7F /* Orders */,
 				93755C382C83719A002570A5 /* Menu */,
 				9352913D2C88382D0018B060 /* DrinksCategory */,
-				939BD9D82B2A1B1900616D1C /* Assets.xcassets */,
-				939BD9DA2B2A1B1900616D1C /* LaunchScreen.storyboard */,
-				93BD48AF2C57CABF00144E7F /* GoogleService-Info.plist */,
-				939BD9DD2B2A1B1900616D1C /* Info.plist */,
-				939BD9D52B2A1B1700616D1C /* Main.storyboard */,
-				939BD9D12B2A1B1700616D1C /* SceneDelegate.swift */,
-				939BD9CF2B2A1B1700616D1C /* AppDelegate.swift */,
-				93BD48AE2C57CA3100144E7F /* HW_OrderCoffeeApp.entitlements */,
+				935291482C8CA9E70018B060 /* DrinkDetail */,
 				936CFFC72C6C73F2004B8724 /* User Profile */,
 				93755C192C80658B002570A5 /* EditProfile */,
 				93BD48B92C58DE3A00144E7F /* Main */,
@@ -600,6 +677,7 @@
 		939BDA702B2C25E400616D1C /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				93B9DC7E2C32C5BC0050BC3F /* MenuController.swift */,
 				939BDA642B2ACBA200616D1C /* FirebaseController.swift */,
 				939BDA682B2B82BC00616D1C /* AlertService.swift */,
 				93755C302C82F6CF002570A5 /* HUDManager.swift */,
@@ -607,14 +685,6 @@
 				939BDA6A2B2B97ED00616D1C /* ActivityIndicatorManager.swift */,
 			);
 			path = Services;
-			sourceTree = "<group>";
-		};
-		93B9DC7B2C318E480050BC3F /* Layout Providers  */ = {
-			isa = PBXGroup;
-			children = (
-				93B9DC772C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift */,
-			);
-			path = "Layout Providers ";
 			sourceTree = "<group>";
 		};
 		93BD48B32C58DA0900144E7F /* Orders */ = {
@@ -710,14 +780,6 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		93BD48BF2C58E17C00144E7F /* Services */ = {
-			isa = PBXGroup;
-			children = (
-				93B9DC7E2C32C5BC0050BC3F /* MenuController.swift */,
-			);
-			path = Services;
-			sourceTree = "<group>";
-		};
 		93BD48CB2C662A9700144E7F /* HW_OrderCoffeeAppTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -735,54 +797,6 @@
 				939BDA732B2FB3E400616D1C /* MenuModels.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		93F9BB502C291CC400355A87 /* Drinks */ = {
-			isa = PBXGroup;
-			children = (
-				93F9BB512C291DF500355A87 /* View Controllers */,
-				93F9BB522C291E3900355A87 /* Views */,
-				93B9DC7B2C318E480050BC3F /* Layout Providers  */,
-				93BD48BF2C58E17C00144E7F /* Services */,
-			);
-			path = Drinks;
-			sourceTree = "<group>";
-		};
-		93F9BB512C291DF500355A87 /* View Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */,
-			);
-			path = "View Controllers";
-			sourceTree = "<group>";
-		};
-		93F9BB522C291E3900355A87 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				93F9BB562C291F7600355A87 /* SupplementaryViews */,
-				93F9BB552C291F0B00355A87 /* DrinkDetailCells */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		93F9BB552C291F0B00355A87 /* DrinkDetailCells */ = {
-			isa = PBXGroup;
-			children = (
-				93F9BB392C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift */,
-				93F9BB3F2C1C0DEA00355A87 /* DrinkSizeSelectionCollectionViewCell.swift */,
-				93F9BB412C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift */,
-				93F9BB592C2A566D00355A87 /* DrinkOrderOptionsCollectionViewCell.swift */,
-			);
-			path = DrinkDetailCells;
-			sourceTree = "<group>";
-		};
-		93F9BB562C291F7600355A87 /* SupplementaryViews */ = {
-			isa = PBXGroup;
-			children = (
-				93F9BB492C269AC600355A87 /* DrinkDetailSeparatorView.swift */,
-				93F9BB4D2C27F91400355A87 /* DottedLineView.swift */,
-			);
-			path = SupplementaryViews;
 			sourceTree = "<group>";
 		};
 		93F9BB582C293E3E00355A87 /* Utilities */ = {
@@ -1014,6 +1028,7 @@
 				939BDA692B2B82BC00616D1C /* AlertService.swift in Sources */,
 				939BDA652B2ACBA200616D1C /* FirebaseController.swift in Sources */,
 				93B9DC832C33B9A00050BC3F /* OrderModels.swift in Sources */,
+				9352914A2C8D85790018B060 /* DrinkDetailView.swift in Sources */,
 				93F9BB5C2C2E4E6200355A87 /* ColumnItemCell.swift in Sources */,
 				93DB1D2D2C43D82200BA2CC1 /* OrderSectionHeaderView.swift in Sources */,
 				935291302C875DA30018B060 /* UIView+ScaleAnimation.swift in Sources */,
@@ -1067,6 +1082,7 @@
 				93DB1D332C47696000BA2CC1 /* LoginView.swift in Sources */,
 				9352913C2C8837040018B060 /* DrinksCategoryViewController.swift in Sources */,
 				93755C002C79E454002570A5 /* ProfileTextFieldCell.swift in Sources */,
+				9352914C2C8D91480018B060 /* DrinkDetailHandler.swift in Sources */,
 				93755BFE2C79DEAA002570A5 /* EditProfileView.swift in Sources */,
 				939BD9D22B2A1B1700616D1C /* SceneDelegate.swift in Sources */,
 				93755C022C7B179C002570A5 /* GenderSelectionCell.swift in Sources */,
