@@ -427,12 +427,12 @@
 		935291562C91AAF70018B060 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				935291492C8D85790018B060 /* DrinkDetailView.swift */,
 				93F9BB392C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift */,
 				93F9BB3F2C1C0DEA00355A87 /* DrinkSizeSelectionCollectionViewCell.swift */,
 				93F9BB412C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift */,
 				93F9BB592C2A566D00355A87 /* DrinkOrderOptionsCollectionViewCell.swift */,
 				93F9BB492C269AC600355A87 /* DrinkDetailSeparatorView.swift */,
-				935291492C8D85790018B060 /* DrinkDetailView.swift */,
 				93F9BB4D2C27F91400355A87 /* DottedLineView.swift */,
 			);
 			path = Views;

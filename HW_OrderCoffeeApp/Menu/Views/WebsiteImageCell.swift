@@ -71,5 +71,12 @@ class WebsiteImageCell: UICollectionViewCell {
         imageView.kf.setImage(with: imageURL)
     }
     
+    // MARK: - Lifecycle Methods
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = nil // 重置圖片
+    }
+
 }
 

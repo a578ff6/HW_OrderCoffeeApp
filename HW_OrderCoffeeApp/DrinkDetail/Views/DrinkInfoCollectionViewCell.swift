@@ -134,7 +134,7 @@ class DrinkInfoCollectionViewCell: UICollectionViewCell {
         descriptionLabel.text = drink.description
     }
     
-    // MARK: - Cell Reuse
+    // MARK: - Lifecycle Methods
 
     /// 當 cell 被重用時，重置內容
     override func prepareForReuse() {

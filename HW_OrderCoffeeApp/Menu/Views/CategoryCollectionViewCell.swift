@@ -124,4 +124,14 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         subtitleLabel.text = category.subtitle
     }
     
+    // MARK: - Lifecycle Methods
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        // 重置圖片和文字
+        categoryImageView.image = nil
+        titleLabel.text = nil
+        subtitleLabel.text = nil
+    }
+
 }

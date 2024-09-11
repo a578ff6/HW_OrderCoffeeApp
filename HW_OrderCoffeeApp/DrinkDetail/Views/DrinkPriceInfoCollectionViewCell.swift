@@ -135,7 +135,8 @@ class DrinkPriceInfoCollectionViewCell: UICollectionViewCell {
         sugarValueLabel.text = "\(sizeInfo.sugar) (g)"
     }
     
-    // MARK: - Prepare for Reuse
+    // MARK: - Lifecycle Methods
+
     override func prepareForReuse() {
         super.prepareForReuse()
         // 重置所有顯示的文本，防止數據混亂

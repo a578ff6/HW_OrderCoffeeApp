@@ -37,6 +37,7 @@ class MenuView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        registerCells()
     }
     
     required init?(coder: NSCoder) {
@@ -57,6 +58,13 @@ class MenuView: UIView {
         ])
     }
     
+    /// 註冊所有`自訂義的 cell` 與 `supplementary views`，確保 `UICollectionView` 具備顯示這些元素的能力
+    private func registerCells() {
+        collectionView.register(WebsiteImageCell.self, forCellWithReuseIdentifier: WebsiteImageCell.reuseIdentifier)
+        collectionView.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: CategoryCollectionViewCell.reuseIdentifier)
+        collectionView.register(MenuSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: MenuSectionHeaderView.headerIdentifier)
+    }
+    
     // MARK: - Factory Method
 
     /// 建立並配置 UICollectionView，使用不同的佈局來顯示不同的 section。
@@ -72,8 +80,5 @@ class MenuView: UIView {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }
-    
+
 }
-
-
-
