@@ -33,9 +33,11 @@
  
  ## DrinkDetailViewController：
 
-    - 功能： 顯示特定飲品的詳細資訊，允許使用者選取尺寸並加入購物車。
+    - 功能： 顯示特定飲品的詳細資訊，允許使用者選取尺寸並加入購物車，並能夠分享飲品資訊。
     - 視圖設置： 透過 DrinkDetailView 設置視圖，並使用 DrinkDetailHandler 管理 UICollectionView 的資料顯示及用戶互動。
     - 尺寸選擇： 初始化時會自動選擇預設尺寸，使用者也可以手動選擇其他尺寸，並即時更新價格及 UI 狀態。
+    - 分享功能： 允許使用者透過 ShareManager 分享飲品資訊。
+
  
     * 使用的自定義視圖：
         - DrinkDetailView： 包含一個 UICollectionView 用於顯示飲品的相關資訊與選項（如尺寸、價格、加入購物車按鈕等）。
@@ -53,6 +55,10 @@
     * 主要功能概述：
         - 「初始化尺寸選擇邏輯」與「按鈕狀態刷新」都集中在 selectSize 和 updateSizeSelectionAndPrice 方法內，達到共用邏輯的目的。
         - DrinkDetailHandler 用於解耦控制器與視圖，清楚劃分了業務邏輯與顯示邏輯。
+    
+    * 分享功能：
+        - setupShareButton： 設置分享按鈕，並將其放置於導航列的右上角。
+        - shareDrinkInfo： 使用 ShareManager 分享當前的飲品資訊，包括名稱、描述以及使用者選取的尺寸與相關尺寸資訊。
  */
 
 
@@ -85,6 +91,11 @@ class DrinkDetailViewController: UIViewController {
     // 預先排序的尺寸，方便顯示
     var sortedSizes: [String] = []
     
+    /// 根據 selectedSize 來獲取相應的尺寸資訊
+    var sizeInfo: SizeInfo? {
+        guard let selectedSize = selectedSize else { return nil }
+        return drink?.sizes[selectedSize]
+    }
     
     // MARK: - Lifecycle Methods
     
@@ -99,7 +110,8 @@ class DrinkDetailViewController: UIViewController {
         prepareSizes()
         configureCollectionView()
         setupHandler()
-        selectSize()  // 初始化預設尺寸
+        selectSize()                        // 初始化預設尺寸
+        setupShareButton()
     }
     
     // MARK: - Section Enum
@@ -139,7 +151,7 @@ class DrinkDetailViewController: UIViewController {
     
     // MARK: - Add to Cart Handler、Size Selection Handler
     
-    /// 根據目前的選中尺寸與數量，將飲品加入購物車
+    /// 根據目前的選中尺寸與數量，將飲品加入購物車或是更新購物車中的飲品資訊
     private func addToCart(quantity: Int) {
         guard let drink = drink, let size = selectedSize else { 
             print("無法添加到購物車，未選擇飲品或尺寸")
@@ -200,10 +212,62 @@ class DrinkDetailViewController: UIViewController {
         }, completion: nil)
     }
     
+    // MARK: - Share Action
+    
+    /// 設置`分享按鈕`，並將其放置於導覽列的右上角
+    private func setupShareButton() {
+        let shareButton = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .plain, target: self, action: #selector(shareDrinkInfo))
+        navigationItem.rightBarButtonItem = shareButton
+    }
+    
+    /// 使用 ShareManager 來分享當前的飲品資訊，包含名稱、描述以及使用者選取的尺寸與相關尺寸資訊。
+    @objc private func shareDrinkInfo() {
+        guard let drink = drink else { return }
+        ShareManager.shared.share(drink: drink, selectedSize: selectedSize, sizeInfo: sizeInfo, from: self)
+    }
+
 }
 
 
+// MARK: - 使用 addSymbolEffect 設置的動畫效果（已完成）
+/*
+ ## SF Symbol 動畫效果重點筆記（ https://reurl.cc/GpnyZZ ）
+ 
+    * 動畫應用限制：
+        - SF Symbol 的動畫效果（如 .bounce.down.byLayer）只能應用在 UIImageView 上，無法直接應用在 UIImage 上。
+        - 因此，若要在 UIBarButtonItem 中使用 SF Symbol 並加上動畫效果，需要將 UIImage 包裝在 UIImageView 中，再將 UIImageView 設置為 UIBarButtonItem 的自訂視圖。
 
+    * 總結：
+        - 若要為 UIBarButtonItem 添加 SF Symbol 的動畫效果，必須將 UIImage 包裝在 UIImageView 中，再通過 customView 設置為 UIBarButtonItem。
+        - 點擊按鈕時可z手動觸發動畫效果，讓動畫在按鈕點擊後執行。
+ */
+
+/*
+ private func setupShareButton() {
+     // 創建一個帶有 SF Symbol 的 UIImageView
+     let shareButtonImageView = UIImageView(image: UIImage(systemName: "square.and.arrow.up"))
+     shareButtonImageView.tintColor = .deepGreen
+
+     // 創建 UIBarButtonItem，並將 UIImageView 設置為自訂視圖
+     let shareButton = UIBarButtonItem(customView: shareButtonImageView)
+     navigationItem.rightBarButtonItem = shareButton
+
+     // 將觸發行為關聯到分享操作
+     let tapGesture = UITapGestureRecognizer(target: self, action: #selector(shareDrinkInfo))
+     shareButtonImageView.isUserInteractionEnabled = true
+     shareButtonImageView.addGestureRecognizer(tapGesture)
+ }
+
+ @objc private func shareDrinkInfo() {
+     // 在觸發分享前，播放動畫效果
+     if let shareButtonImageView = navigationItem.rightBarButtonItem?.customView as? UIImageView {
+         shareButtonImageView.addSymbolEffect(.bounce.down.byLayer)
+     }
+     
+     guard let drink = drink else { return }
+     ShareManager.shared.share(drink: drink, selectedSize: selectedSize, sizeInfo: sizeInfo, from: self)
+ }
+ */
 
 
 // MARK: - 尺寸完成，數量完成（成功）UUID、UICollectionViewDiffableDataSource（重構前）
