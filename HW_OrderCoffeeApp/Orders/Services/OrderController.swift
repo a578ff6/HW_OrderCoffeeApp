@@ -238,7 +238,8 @@ class OrderController {
     /// 存取當前訂單項目的 Array
     var orderItems: [OrderItem] = [] {
         didSet {
-            NotificationCenter.default.post(name: .orderUpdated, object: nil)    // 每當訂單項目變化時發送通知
+            print("訂單項目更新，當前訂單數量: \(orderItems.count)")
+            NotificationCenter.default.post(name: .orderUpdatedNotification, object: nil)    // 每當訂單項目變化時發送通知
         }
     }
     
@@ -257,7 +258,7 @@ class OrderController {
         let totalAmount = price * quantity
         let orderItem = OrderItem(drink: drink, size: size, quantity: quantity, prepTime: prepTime, timestamp: timestamp, totalAmount: totalAmount, price: price)
         orderItems.append(orderItem)
-        print("添加\(orderItem.id)")
+        print("添加訂單項目 ID: \(orderItem.id)")
     }
     
     /// 更新訂單中的訂單項目的尺寸和數量
@@ -361,7 +362,7 @@ class OrderController {
 
 // MARK: - NotificationName
 extension Notification.Name {
-    static let orderUpdated = Notification.Name("OrderController.orderUpdated")
+    static let orderUpdatedNotification = Notification.Name("OrderController.orderUpdated")
 }
 
 

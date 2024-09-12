@@ -24,7 +24,7 @@
  ====== 解决方案====
  
  1. 使用委託模式來處理 OrderViewController 與 DrinkDetailViewController的交互：
-    - 建立一個 delegate，以便 rderViewController 可以通知 DrinkDetailViewController 用戶希望修改訂單飲品項。
+    - 建立一個 delegate，以便 OrderViewController 可以通知 DrinkDetailViewController 用戶希望修改訂單飲品項。
     - 在 OrderViewController 中實現該協議，並在用戶點擊訂單飲品項目時調用相關的委託方法。
  
  2. 區分添加新飲品和修改訂單飲品項目的邏輯：

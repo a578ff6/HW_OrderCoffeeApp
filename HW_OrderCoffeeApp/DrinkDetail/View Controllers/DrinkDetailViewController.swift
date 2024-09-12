@@ -141,12 +141,16 @@ class DrinkDetailViewController: UIViewController {
     
     /// 根據目前的選中尺寸與數量，將飲品加入購物車
     private func addToCart(quantity: Int) {
-        guard let drink = drink, let size = selectedSize else { return }
+        guard let drink = drink, let size = selectedSize else { 
+            print("無法添加到購物車，未選擇飲品或尺寸")
+            return
+        }
         
         if isEditingOrderItem, let id = editingOrderID {
             OrderController.shared.updateOrderItem(withID: id, with: size, and: quantity)
             dismiss(animated: true, completion: nil)                        // 只在編輯模式時關閉
         } else {
+            print("正在添加到購物車: 飲品 - \(drink.name), 尺寸 - \(size), 數量 - \(quantity)")
             OrderController.shared.addOrderItem(drink: drink, size: size, quantity: quantity)
         }
     }

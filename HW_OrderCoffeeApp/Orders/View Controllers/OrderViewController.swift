@@ -277,12 +277,12 @@ class OrderViewController: UIViewController {
      override func viewDidLoad() {
          super.viewDidLoad()
          setupCollectionView()
-         NotificationCenter.default.addObserver(self, selector: #selector(updateOrders), name: .orderUpdated, object: nil)
+         NotificationCenter.default.addObserver(self, selector: #selector(updateOrders), name: .orderUpdatedNotification, object: nil)
          updateOrders()  // 初始化時也加載當前訂單
      }
 
      deinit {
-         NotificationCenter.default.removeObserver(self, name: .orderUpdated, object: nil)
+         NotificationCenter.default.removeObserver(self, name: .orderUpdatedNotification, object: nil)
      }
 
      /// 設置 CollectionView 的 delegate 和 dataSource，並註冊自定義單元格
