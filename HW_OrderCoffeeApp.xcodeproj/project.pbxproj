@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		932258D12C92F1E1004EA2D9 /* ShareManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 932258D02C92F1E1004EA2D9 /* ShareManager.swift */; };
 		934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */; };
 		9352912E2C873E9A0018B060 /* MenuSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */; };
 		935291302C875DA30018B060 /* UIView+ScaleAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */; };
@@ -147,6 +148,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		932258D02C92F1E1004EA2D9 /* ShareManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareManager.swift; sourceTree = "<group>"; };
 		934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailViewController.swift; sourceTree = "<group>"; };
 		9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuSectionHeaderView.swift; sourceTree = "<group>"; };
 		9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ScaleAnimation.swift"; sourceTree = "<group>"; };
@@ -682,6 +684,7 @@
 				939BDA682B2B82BC00616D1C /* AlertService.swift */,
 				93755C302C82F6CF002570A5 /* HUDManager.swift */,
 				93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */,
+				932258D02C92F1E1004EA2D9 /* ShareManager.swift */,
 				939BDA6A2B2B97ED00616D1C /* ActivityIndicatorManager.swift */,
 			);
 			path = Services;
@@ -1079,6 +1082,7 @@
 				93755C372C835C8E002570A5 /* MenuView.swift in Sources */,
 				93B9DC7D2C32B0BB0050BC3F /* OrderViewController.swift in Sources */,
 				936CFFC92C6C74DE004B8724 /* UserProfileView.swift in Sources */,
+				932258D12C92F1E1004EA2D9 /* ShareManager.swift in Sources */,
 				93DB1D332C47696000BA2CC1 /* LoginView.swift in Sources */,
 				9352913C2C8837040018B060 /* DrinksCategoryViewController.swift in Sources */,
 				93755C002C79E454002570A5 /* ProfileTextFieldCell.swift in Sources */,
