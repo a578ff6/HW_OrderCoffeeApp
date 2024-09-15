@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		932258D12C92F1E1004EA2D9 /* ShareManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 932258D02C92F1E1004EA2D9 /* ShareManager.swift */; };
+		932258D32C9410F4004EA2D9 /* FavoriteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 932258D22C9410F4004EA2D9 /* FavoriteManager.swift */; };
 		934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */; };
 		9352912E2C873E9A0018B060 /* MenuSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */; };
 		935291302C875DA30018B060 /* UIView+ScaleAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */; };
@@ -149,6 +150,7 @@
 
 /* Begin PBXFileReference section */
 		932258D02C92F1E1004EA2D9 /* ShareManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareManager.swift; sourceTree = "<group>"; };
+		932258D22C9410F4004EA2D9 /* FavoriteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteManager.swift; sourceTree = "<group>"; };
 		934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailViewController.swift; sourceTree = "<group>"; };
 		9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuSectionHeaderView.swift; sourceTree = "<group>"; };
 		9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ScaleAnimation.swift"; sourceTree = "<group>"; };
@@ -683,8 +685,9 @@
 				939BDA642B2ACBA200616D1C /* FirebaseController.swift */,
 				939BDA682B2B82BC00616D1C /* AlertService.swift */,
 				93755C302C82F6CF002570A5 /* HUDManager.swift */,
-				93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */,
 				932258D02C92F1E1004EA2D9 /* ShareManager.swift */,
+				932258D22C9410F4004EA2D9 /* FavoriteManager.swift */,
+				93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */,
 				939BDA6A2B2B97ED00616D1C /* ActivityIndicatorManager.swift */,
 			);
 			path = Services;
@@ -1038,6 +1041,7 @@
 				939BDA2C2B2AC53700616D1C /* UIViewController+HideKeyboard.swift in Sources */,
 				93F9BB5E2C2E4EEA00355A87 /* GridItemCell.swift in Sources */,
 				93B492912C3E684700E7B947 /* OrderModificationDelegate.swift in Sources */,
+				932258D32C9410F4004EA2D9 /* FavoriteManager.swift in Sources */,
 				93DB1D3A2C49618C00BA2CC1 /* SignUpView.swift in Sources */,
 				93755C1F2C80971F002570A5 /* ProfileOptionCell.swift in Sources */,
 				93B9DC782C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift in Sources */,

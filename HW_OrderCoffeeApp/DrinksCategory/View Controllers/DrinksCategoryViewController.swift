@@ -38,13 +38,20 @@
             根據當前選擇的佈局 (activeLayout)，套用新的佈局，並更新右上角按鈕的圖示（網格或列表）。
             使用 reloadItems(at:) 來刷新當前可見的項目。
         - prepare(for segue:)：
-            當點擊某個飲品項目，並進入詳細頁面時，透過 prepare(for segue:) 將選中的飲品資料傳遞給 DrinkDetailViewController。
+            當點擊某個飲品項目並進入詳細頁面時，透過 prepare(for segue:) 傳遞選中的 drinkId、categoryId 及 subcategoryId 給 DrinkDetailViewController。
+            這樣可以確保 DrinkDetailViewController 能正確根據這些資訊來定位並加載相應的飲品資料。
  
     * 調整後的佈局切換：
         - 使用動態生成的佈局：
             相較於舊方式每次都重新生成佈局，現在是在數據加載成功後動態生成「網格」和「列」兩種佈局，並根據用戶選擇直接應用佈局，這樣可以確保佈局基於最新數據生成，並提高性能。
         - 局部刷新：
             使用 reloadItems(at:) 來僅刷新可見的項目，這樣的方式能保持動畫過渡效果，並且避免整體重繪，性能更佳，過渡更平滑。
+ 
+    * 調整後的資料處理：
+        - 新增 subcategoryId 的處理：
+            1. subcategoryId 用來標示當前所選子類別的 ID，當進入詳細頁面時，除了傳遞 drinkId 和 categoryId 外，還需要傳遞 subcategoryId，以便能夠正確地在 Firestore 結構中定位飲品。
+            2. 點擊飲品項目後，會將 drinkId、categoryId 和 subcategoryId 一併傳遞給 DrinkDetailViewController，確保飲品詳細資訊能正確加載。
+
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -139,7 +146,8 @@ class DrinksCategoryViewController: UIViewController {
     private let collectionHandler = DrinksCategoryHandler()
     private let layoutProvider = DrinksCategoryLayoutProvider()
 
-    // 從上一個視圖控制器傳遞的類別ID、類別標題。
+    // 保存當前選中的子類別ID，將在點擊飲品時傳遞給下一個頁面
+    var subcategoryId: String?
     var categoryId: String?
     var categoryTitle: String?
     
@@ -214,7 +222,6 @@ class DrinksCategoryViewController: UIViewController {
         }
     }
 
-
     // MARK: - Data Loading (using async/await)
     
     /// 從 Firestore 加載特定類別下的飲品數據。
@@ -258,19 +265,28 @@ class DrinksCategoryViewController: UIViewController {
             }
         }
     }
-  
+    
     // MARK: - Navigation
 
     // 當執行 segue 時，準備傳遞資料到下一個視圖控制器
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == Constants.Segue.drinksToDetailSegue,
-           let detailVC = segue.destination as? DrinkDetailViewController,
-           let selectedDrink = sender as? Drink {
-            detailVC.drink = selectedDrink                              // 將選中的飲品傳遞給 DrinkDetailViewController
-        }
-    }
- 
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+         if segue.identifier == Constants.Segue.drinksToDetailSegue,
+            let detailVC = segue.destination as? DrinkDetailViewController,
+            let selectedDrinkId = sender as? String {
+             detailVC.drinkId = selectedDrinkId  // 傳遞 drinkId
+             detailVC.categoryId = categoryId  // 傳遞 categoryId
+             detailVC.subcategoryId = self.subcategoryId // 傳遞 subcategoryId
+             print("Passing to DrinkDetailViewController: drinkId = \(selectedDrinkId), categoryId = \(String(describing: categoryId)), subcategoryId = \(String(describing: subcategoryId))")
+         }
+     }
+
 }
+
+
+
+
+
+
 
 
 

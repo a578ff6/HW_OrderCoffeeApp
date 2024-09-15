@@ -14,7 +14,7 @@ class DrinkDetailSeparatorView: UICollectionReusableView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .lightGray
+        setupFooterView()
     }
     
     required init?(coder: NSCoder) {
@@ -22,11 +22,19 @@ class DrinkDetailSeparatorView: UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        self.frame.size.width = self.superview!.frame.size.width * 0.93
-        self.center.x = self.superview!.center.x
+    /// 設置底部線條的外觀
+    private func setupFooterView() {
+        let lineView = UIView()
+        lineView.translatesAutoresizingMaskIntoConstraints = false
+        lineView.backgroundColor = .lightGray
+        addSubview(lineView)
+        
+        NSLayoutConstraint.activate([
+            lineView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.93),
+            lineView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            lineView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            lineView.heightAnchor.constraint(equalToConstant: 1)
+        ])        
     }
     
 }
-

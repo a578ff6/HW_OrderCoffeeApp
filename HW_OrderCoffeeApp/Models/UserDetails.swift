@@ -40,4 +40,7 @@ struct UserDetails: Codable {
     var address: String?             // 地址
     var gender: String?              // 性別
     var orders: [OrderItem]?
+    var favorites: [String] = []
 }
+
+

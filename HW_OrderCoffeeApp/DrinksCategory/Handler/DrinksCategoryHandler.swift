@@ -8,9 +8,9 @@
 /*
  ## DrinksCategoryHandler：
 
-    - 負責管理 DrinksCategoryViewController 中的 UICollectionView 的 dataSource 和 delegate。
-    - 根據當前的佈局選擇不同的 UICollectionViewCell 顯示方式（如網格或列佈局），並處理 section header 和 section footer 的顯示。
-    - 用戶點擊飲品項目時，會觸發 segue 進入詳細頁面。
+    - 功能：負責管理 DrinksCategoryViewController 中的 UICollectionView 的 dataSource 和 delegate，同時處理飲品的點擊事件。
+    - 佈局：根據當前的佈局選擇不同的 UICollectionViewCell 顯示方式（如網格或列佈局），並處理 section header 和 footer 的顯示。
+    - 資料傳遞：當用戶點擊飲品項目時，觸發 segue 並傳遞選中的 drinkId、subcategoryId 到詳細頁面。
 
     * 數據處理：
         - drinks 是存儲飲品子類別與對應的飲品數據的陣列。
@@ -20,14 +20,23 @@
         - updateData(drinks:)：
             用來更新飲品子類別及對應的飲品數據。
         - UICollectionViewDataSource:
-            numberOfSections(in:)：設定子類別的數量（section 的數量）。
-            collectionView(_:numberOfItemsInSection:)：設定每個子類別下的飲品數量（每個 section 的 item 數量）。
-            collectionView(_:cellForItemAt:)：根據當前的佈局樣式，為每個 item 配置並返回對應的 cell。
-            viewForSupplementaryElementOfKind(_:at:)：為每個 section 配置並返回 header 和 footer。
+            numberOfSections(in:)： 設定子類別的數量（section 的數量）。
+            collectionView(_:numberOfItemsInSection:)： 設定每個子類別下的飲品數量（每個 section 的 item 數量）。
+            collectionView(_:cellForItemAt:)： 根據當前的佈局樣式，為每個 item 配置並返回對應的 cell。
+            viewForSupplementaryElementOfKind(_:at:)： 為每個 section 配置並返回 header 和 footer。
         - UICollectionViewDelegate：
-            collectionView(_:didSelectItemAt:)：當使用者點擊某個 item 時，觸發 segue，將選中的飲品資料傳遞給下一個頁面。
+            collectionView(_:didSelectItemAt:)： 當使用者點擊某個 item 時，取得選中的 drinkId 和對應的 subcategoryId，並觸發 segue 將這些資料傳遞給下一個頁面。
  
+ ## 調整後的重點：
+ 
+    *  新增的資料傳遞 drinkId 和 subcategoryId：
+        - 點擊飲品時，不僅會取得 drinkId，還會取得對應的 subcategoryId，並將這些資訊傳遞給 DrinksCategoryViewController。
+        - 確保在詳細頁面中正確加載 Drink，因為 Drink 是嵌套在 Categories > Subcategories > Drinks 結構中的，需要透過 categoryId 和 subcategoryId 來定位具體的資料。
+ 
+    * 觸發 segue 並傳遞資料：
+        - didSelectItemAt 當用戶選擇某個飲品後，會執行縮放動畫，然後透過 segue 傳遞選中的 drinkId 和對應的 subcategoryId，確保詳細頁面能正確顯示該飲品的資料。
  */
+
 
 // MARK: - 已完善
 
@@ -59,7 +68,6 @@ extension DrinksCategoryHandler: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return drinks.count
     }
-    
     
     /// 設定每個 section 中的 item 數量，對應每個子類別下的飲品數量
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -109,16 +117,21 @@ extension DrinksCategoryHandler: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegate
 extension DrinksCategoryHandler: UICollectionViewDelegate {
-
+    
     /// 當使用者點擊某個 item 時，觸發 segue
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 //        print("Selected item in section \(indexPath.section) at item \(indexPath.item)")    // 測試用
+        
         // 取得選中的 cell
         if let cell = collectionView.cellForItem(at: indexPath) {
             // 添加縮放動畫，並在動畫完成後觸發 segue
             cell.addScaleAnimation(duration: 0.15, scale: 0.85) {
-                let selectedDrink = self.drinks[indexPath.section].drinks[indexPath.item]
-                self.delegate?.performSegue(withIdentifier: Constants.Segue.drinksToDetailSegue, sender: selectedDrink)
+                let selectedDrinkId = self.drinks[indexPath.section].drinks[indexPath.item].id  // 取得選中的 drinkId
+                let subcategoryId = self.drinks[indexPath.section].subcategory.id  // 取得對應的子類別 ID
+                self.delegate?.subcategoryId = subcategoryId                                // 設置 DrinksCategoryViewController 的 subcategoryId
+                
+                print("Selected drinkId: \(String(describing: selectedDrinkId)), Subcategory ID: \(String(describing: subcategoryId))")      // 選中的 drinkId 和 subcategoryId
+                self.delegate?.performSegue(withIdentifier: Constants.Segue.drinksToDetailSegue, sender: selectedDrinkId)
             }
         }
     }

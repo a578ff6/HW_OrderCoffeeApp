@@ -244,7 +244,7 @@ class OrderController {
     }
     
     /// 添加訂單項目
-    func addOrderItem(drink: Drink, size: String, quantity: Int) {
+    func addOrderItem(drink: Drink, size: String, quantity: Int, categoryId: String?, subcategoryId: String?) {
         
         guard let user = Auth.auth().currentUser else {
             print("User not logged in")
@@ -256,7 +256,7 @@ class OrderController {
         let timestamp = Date()      // 當前時間
         let price = drink.sizes[size]?.price ?? 0
         let totalAmount = price * quantity
-        let orderItem = OrderItem(drink: drink, size: size, quantity: quantity, prepTime: prepTime, timestamp: timestamp, totalAmount: totalAmount, price: price)
+        let orderItem = OrderItem(drink: drink, size: size, quantity: quantity, prepTime: prepTime, timestamp: timestamp, totalAmount: totalAmount, price: price, categoryId: categoryId, subcategoryId: subcategoryId)
         orderItems.append(orderItem)
         print("添加訂單項目 ID: \(orderItem.id)")
     }
