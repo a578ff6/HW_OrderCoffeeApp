@@ -9,61 +9,116 @@
 /*
  ## MenuController（重構筆記）
  
-    1. loadCategories
-        - 主要功能：從 Firebase Firestore 中的 "Categories" 集合中異步加載所有類別資料。
-        - 使用 async/await：使用 async/await 簡化了異步處理，使程式碼更具可讀性並避免傳統的 callback 地獄。
-        - 錯誤處理：當未找到資料時，會拋出 categoriesNotFound 錯誤，讓上層控制器能更容易處理異常情況。
+    * 功能：
+        - 管理從 Firebase Firestore 中加載類別、子類別以及飲品資料的邏輯，並支援異步處理。
+ 
+    * 主要調整點：
+        - 使用 async/await 替代傳統的 callback 處理方式。
+        - 引入 loadDrinkById 方法，讓使用者可以根據 categoryId、subcategoryId 和 drinkId 精確加載單一飲品的詳細資料。（ 不再依賴於使用 DrinksCategoryViewController 的 loadDrinksForCategory ）
+ 
+ &. 主要方法：
 
-    1. loadDrinksForCategory
-        - 主要功能： 從 Firebase Firestore 中根據指定的 categoryId 加載子類別及其對應的飲品資料。
-        - 使用 async/await： 使用 async/await 處理異步資料加載，這讓程式碼更具可讀性並減少 callback 層次。
-        - 返回值： 返回一個包含多個子類別及其飲品資料的 SubcategoryDrinks 陣列。
+    1. loadCategories
+        * 功能：
+            - 從 Firestore 中的 Categories 集合異步加載所有類別資料。
+        * 特點：
+            - 使用 async/await 來簡化異步操作，避免了 callback 的層層嵌套。
+            - 若無法加載到任何類別資料，則會拋出 categoriesNotFound 錯誤。
+
+    2. loadDrinksForCategory：
+        * 功能：
+            - 根據傳入的 categoryId，從 Firestore 中加載該類別下所有子類別及其對應的飲品資料。
+        * 特點：
+            - 使用 async/await 來分別異步加載子類別及其飲品資料，並將結果組合返回。
+            - 若找不到對應資料，則會拋出 menuItemsNotFound 錯誤。
  
-    2. loadSubcategories
-        - 主要功能： 從指定的 categoryId 中讀取 Firestore 中的子類別資料。
-        - Firestore 查詢： 使用 Firestore 的 getDocuments() 查詢方法來獲取 Subcategories 集合。
-        - 處理結果： 使用 compactMap 將每個子類別文件轉換為 Subcategory 結構，如果沒有資料會拋出 menuItemsNotFound 錯誤。
+    3. loadSubcategories：
+        * 功能：
+            - 根據 categoryId 從 Firestore 加載對應的子類別資料。
+        * 特點：
+            - 使用 Firestore 的 getDocuments() 方法來讀取 Subcategories 集合，並將結果轉換為 Subcategory 物件。
+            - 若資料為空，則拋出 menuItemsNotFound 錯誤。
+
+    4. loadDrinks：
+        * 功能：
+            - 根據每個子類別的 ID，從 Firestore 中加載對應的飲品資料。
+        * 特點：
+            - 使用 for 迴圈遍歷每個子類別，並查詢其 Drinks 子集合中的資料。
+            - 將每個子類別與對應的飲品組合為 SubcategoryDrinks，並返回結果。
  
-    3. loadDrinks
-        - 主要功能：根據每個子類別從 Firestore 加載對應的飲品資料。
-        - 迭代子類別：方法會遍歷每個子類別，對應查詢其 Drinks 子集合中的資料。
-        - 處理結果：每個子類別會配對對應的飲品，並組合為 SubcategoryDrinks 結構返回。如果沒有找到任何飲品資料，則會拋出 menuItemsNotFound 錯誤。
+    5. loadDrinkById：
+        * 功能：
+            - 根據傳入的 categoryId、subcategoryId 和 drinkId，從 Firestore 中精確加載單一飲品的詳細資料。
+        * 特點：
+            - 透過傳入的 ID 精準查詢，並將結果轉換為 Drink 物件。
+            - 若查詢失敗或資料不存在，則拋出 menuItemsNotFound 錯誤。
  
-    4. 優勢
-        - 簡化了異步操作： 跟原先使用 DispatchGroup 或 completion handlers，async/await 大幅簡化了異步操作的程式碼結構，使邏輯更為清晰。
-        - 錯誤處理更明確：透過 throws 關鍵字，錯誤傳遞變得簡單且明確，允許上層控制器更輕鬆地處理異常情況。
-        - 可讀性提升：使用 async/await 後，程式碼邏輯更具同步感，易於理解。
+ &. 優勢：
+ 
+    * 簡化異步操作：
+        - 使用 async/await 徹底簡化了異步操作，取代了傳統的 completion handler 或 DispatchGroup 處理方式，讓程式碼邏輯更為清晰。
+ 
+    * 錯誤處理更具一致性：
+        - 使用 throws 和 MenuControllerError 來統一處理錯誤，讓錯誤的傳遞與處理更加清晰、直觀。
+
+    * 提升程式碼可讀性：
+        - async/await 使得程式碼邏輯更加接近同步處理，易於理解和維護。
+ 
+ &. 主要流程：
+ 
+    1. loadCategories： 從 Firestore 加載所有類別資料，並在資料加載失敗時拋出錯誤。
+    2. loadDrinksForCategory： 根據指定的 categoryId 加載該類別下的所有子類別及飲品，並將結果組合為 SubcategoryDrinks 陣列。
+    3. loadDrinkById： 根據傳入的 categoryId、subcategoryId 和 drinkId 精準加載單一飲品的詳細資料，用於詳細頁面。
 
  -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
  ## 數據流的流程：
  
     1. MenuViewController：
-        - 這個控制器是最頂層，用來顯示飲品的主要類別，如「CoffeeBeverages」、「Teavana」等。
-        - 使用 loadCategories 方法從 Firestore 的 Categories 集合中獲取類別資料，當加載完成後會顯示於 UICollectionView 中。
-        - 當使用者選擇一個類別時，將會觸發 segue 導向 DrinksCategoryViewController，同時將該類別的 categoryId 和 categoryTitle 傳遞到下一個視圖控制器。
+        * 功能：
+            - 最頂層的控制器，用來顯示飲品的主要類別（如「CoffeeBeverages」、「Teavana」等）。
+        * 操作：
+            - 使用 MenuController 的 loadCategories 方法從 Firestore 的 Categories 集合中獲取所有類別資料。
+            - 當資料加載完成後，類別資料會顯示在 UICollectionView 中。
+            - 當使用者選擇某個類別時，觸發 segue，並將該類別的 categoryId 和 categoryTitle 傳遞給 DrinksCategoryViewController 進行後續處理。
  
     2. DrinksCategoryViewController：
-        - 此控制器用於顯示「特定類別」下的飲品子類別（如「DailySpecialsCoffeeSeries」、「HotEspresso」、「IcedEspresso」等）。
-        - 使用 loadDrinksForCategory 從指定類別的子集合 Subcategories 中讀取所有子類別的資料，並對每個子類別進一步讀取該子類別的 Drinks 子集合中的飲品資料。（會這樣做是因為我要在佈局上使用Drinks中飲品資料的圖片名稱等）
-        - 資料加載過程中會依次讀取子類別及其對應的飲品，並在控制台印出加載進度。
-        - 加載完成後，將這些資料顯示在 UICollectionView 中，並根據不同佈局（網格或列表）來展示。
-        - 當使用者點選某個飲品時，將資料傳遞到 DrinkDetailViewController。
+        * 功能：
+            - 用來顯示特定類別下的飲品子類別（如「DailySpecialsCoffeeSeries」、「HotEspresso」、「IcedEspresso」等）。
+        * 操作：
+            - 使用 MenuController 的 loadDrinksForCategory 方法，根據選擇的 categoryId，從 Firestore 的 Subcategories 子集合中讀取所有子類別及其對應的飲品資料。
+            - 加載過程中，先加載子類別，並對每個子類別進一步讀取該子類別的 Drinks 子集合中的飲品資料。（這樣做是為了能顯示 Drinks 中每個飲品的圖片、名稱等資訊）。
+            - 當所有資料加載完成後，將資料顯示在 UICollectionView 中，並根據不同的佈局（網格或列表）來呈現飲品資訊。
+            - 使用者選擇某個飲品時，會將對應的 drinkId、categoryId、subcategoryId 傳遞給 DrinkDetailViewController，讓使用者查看飲品的詳細資料。
+ 
  
     3. DrinkDetailViewController：
-        - 此控制器用於顯示單個飲品的詳細資料，例如飲品名稱、描述、不同尺寸的價錢、咖啡因含量、卡路里等。
-        - 資料來自於 DrinksCategoryViewController 傳遞的 Drink 結構，透過 UICollectionView 顯示飲品的詳細資訊，並允許使用者選擇不同的尺寸，最終可以將飲品加入購物車。
- 
- ## 數據處理總結：
+        * 功能：
+            - 用來顯示單一飲品的詳細資料，包括飲品名稱、描述、不同尺寸的價格、咖啡因含量、卡路里等資訊。
+        * 操作：
+            - 根據 DrinksCategoryViewController 傳遞的 drinkId、categoryId 和 subcategoryId，使用 MenuController 的 loadDrinkById 方法，從 Firestore 中精確加載該飲品的詳細資料。
+            - 飲品資料加載完成後，透過 UICollectionView 顯示飲品的詳細資訊，並允許使用者選擇不同的尺寸。
+            - 使用者可以將選擇的飲品加入購物車，並根據需求進行編輯或新增操作。
+        * 補充：
+            - 原先資料來自於 DrinksCategoryViewController 傳遞的 Drink 結構，透過 UICollectionView 顯示飲品的詳細資訊，並允許使用者選擇不同的尺寸，最終可以將飲品加入購物車。（導致我在設計「添加我的最愛」時，設計不太良好）
+
+ &.數據處理總結：
     
     1. Firebase 結構：
         - Categories 是頂層集合，代表飲品的主要分類（如「CoffeeBeverages」）。
         - 每個 Category 文檔包含 Subcategories 子集合，存放該類別下的飲品子類別（如「DailySpecialsCoffeeSeries」、「HotEspresso」）。
-        - 每個子類別下有 Drinks 子集合，存放具體的飲品資料。
+        - 每個子類別下有 Drinks 子集合，存放具體的飲品資料（如飲品名稱、描述、價格等）。
 
     2. MenuController 的資料加載：
-        - loadCategories 方法從 Categories 集合中讀取所有類別，並在主畫面 MenuViewController 中展示。
-        - loadDrinksForCategory 方法從指定類別的 Subcategories 子集合中讀取子類別，再從每個子類別的 Drinks 子集合中讀取飲品資料，並在 DrinksCategoryViewController 中展示。
+ 
+        * loadCategories 方法：
+            - 從 Categories 集合中讀取所有類別資料，並在主畫面 MenuViewController 中展示。
+ 
+        * loadDrinksForCategory 方法：
+            - 根據指定的 categoryId，先讀取該類別的 Subcategories，再讀取每個子類別對應的 Drinks 資料，並在 DrinksCategoryViewController 中展示。
+ 
+        * loadDrinkById 方法：
+            - 根據傳入的 categoryId、subcategoryId 和 drinkId，從 Firestore 中精確加載單一飲品的詳細資料，並在 DrinkDetailViewController 中顯示。
 
  -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -168,6 +223,25 @@ class MenuController {
     func loadDrinksForCategory(categoryId: String) async throws -> [SubcategoryDrinks] {
         let subcategories = try await loadSubcategories(for: categoryId)                                // 先異步加載所有子類別
         return try await loadDrinks(for: subcategories, categoryId: categoryId)                         // 再根據子類別加載對應的飲品資料
+    }
+    
+    /// 從 Firestore 加載特定的飲品資料
+    /// - Parameters:
+    ///   - categoryId: 類別的 ID
+    ///   - subcategoryId: 子類別的 ID
+    ///   - drinkId: 飲品的 ID
+    /// - Returns: 加載的 Drink 資料
+    /// - Throws: 如果資料加載失敗，拋出錯誤
+    func loadDrinkById(categoryId: String, subcategoryId: String, drinkId: String) async throws -> Drink {
+        let db = Firestore.firestore()
+        let document = try await db.collection("Categories").document(categoryId)
+            .collection("Subcategories").document(subcategoryId)
+            .collection("Drinks").document(drinkId).getDocument()
+        
+        guard let drink = try? document.data(as: Drink.self) else {
+            throw MenuControllerError.menuItemsNotFound
+        }
+        return drink
     }
 
     

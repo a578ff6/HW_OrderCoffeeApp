@@ -10,28 +10,28 @@
 
  ## ShareManager：
 
-    - 功能：負責管理飲品資訊的分享功能，包括飲品名稱、描述及使用者選取的尺寸資訊，並支援分享圖片。
+    * 功能：
+        - 管理飲品的分享功能，允許使用者將飲品的名稱、描述及選取的尺寸資訊分享給其他人。並支援分享圖片。
  
-    * 邏輯流程：
-        1. 生成分享內容文字，包含飲品名稱、描述及尺寸資訊。
-        2. 使用 Kingfisher 非同步加載飲品圖片，並將其添加到分享項目。
-        3. 初始化 UIActivityViewController，顯示分享選項。
- 
-    * 方法概述：
-        - share(drink:selectedSize:sizeInfo:from:)： 主方法，整合文字與圖片後觸發分享操作。從指定的視圖控制器中呈現分享頁面。
-        - generateShareText(drink:selectedSize:sizeInfo:)： 生成分享文字內容，根據飲品資訊與選取的尺寸資訊動態組合。
-        - downloadImageAndShare(drink:itemsToShare:from:)： 下載飲品圖片，並在成功後將圖片添加到分享項目。如果圖片下載失敗，則提示用戶圖片無法下載，但仍可分享文字內容。
-        - presentShareController(itemsToShare:in:)： 初始化 UIActivityViewController，並顯示分享頁面。
- 
-    * 資料處理：
-        - 文字處理： 在 generateShareText 方法中，根據飲品的基本資訊（名稱、描述）及選取的尺寸資訊生成完整的分享文字。這些資訊包含了使用者選取的尺寸、價格、卡路里、咖啡因等詳細資料。
-        - 圖片處理： 使用 Kingfisher 來下載飲品圖片。在 downloadImageAndShare 方法中，將圖片與文字一同整合進分享內容。如果圖片下載失敗，則顯示錯誤訊息，並僅分享文字內容。
-
     * 主要流程：
-        - share()： 整合分享文字與圖片並觸發分享功能。
-        - downloadImageAndShare()： 非同步加載圖片，將其加入分享項目，並根據結果展示分享控制器。
-        - generateShareText()： 生成分享文字，處理基本資訊和尺寸資訊的組合。
-        - presentShareController()： 顯示分享頁面，允許使用者分享內容。
+        - share(drink:selectedSize:sizeInfo:from:)：
+            1. 負責分享飲品的主要邏輯，包括生成要分享的文字內容，以及下載圖片後與文字一起分享。
+            2. 使用者可以選擇要分享的飲品尺寸及相關資訊，並透過指定的視圖控制器觸發分享頁面。
+            3. 先生成分享文字，再下載圖片並將其與文字一起分享。
+
+        - generateShareText(drink:selectedSize:sizeInfo:)：
+            1. 根據飲品名稱、描述和使用者選擇的尺寸來生成分享的文字內容。
+            2. 若提供了選取的尺寸及相關資訊（如價格、卡路里等），會將這些資訊一併加入分享內容中。
+
+ &. 資料處理與分享：
+    
+    * 圖片下載與分享：
+        - downloadImageAndShare：使用 Kingfisher 來從網路下載飲品的圖片，並將圖片與文字一起分享。
+        - 若圖片下載失敗，則仍然可以分享純文字內容，並使用 AlertService 提示使用者圖片下載失敗的狀況。
+
+    * 分享控制器的呈現：
+        - presentShareController：負責初始化並呈現分享控制器，展示各種分享選項，供使用者選擇分享途徑（如訊息、郵件、社群媒體等）。
+        - 確保分享頁面以 UIActivityViewController 的形式在指定的視圖控制器中彈出。
  
  --------------------------------------------------------------------------------------------------------------------------------
  

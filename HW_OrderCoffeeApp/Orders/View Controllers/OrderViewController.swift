@@ -260,69 +260,69 @@ import FirebaseAuth
 
  /// 用於展示和管理當前訂單
 class OrderViewController: UIViewController {
-
-     @IBOutlet weak var orderCollectionView: UICollectionView!
-     
-     weak var delegate: OrderModificationDelegate?
-     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
-
-     enum Section: Int, CaseIterable {
-         case orderItems, summary
-     }
-     
-     enum Item: Hashable {
-         case orderItem(OrderItem), summary(totalAmount: Int, totalPrepTime: Int), noOrders
-     }
-
-     override func viewDidLoad() {
-         super.viewDidLoad()
-         setupCollectionView()
-         NotificationCenter.default.addObserver(self, selector: #selector(updateOrders), name: .orderUpdatedNotification, object: nil)
-         updateOrders()  // 初始化時也加載當前訂單
-     }
-
-     deinit {
-         NotificationCenter.default.removeObserver(self, name: .orderUpdatedNotification, object: nil)
-     }
-
-     /// 設置 CollectionView 的 delegate 和 dataSource，並註冊自定義單元格
-     private func setupCollectionView() {
-         orderCollectionView.delegate = self
-         orderCollectionView.register(OrderItemCollectionViewCell.self, forCellWithReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier)
-         orderCollectionView.register(OrderSummaryCollectionViewCell.self, forCellWithReuseIdentifier: OrderSummaryCollectionViewCell.reuseIdentifier)   // summary cell
-         orderCollectionView.register(NoOrdersViewCell.self, forCellWithReuseIdentifier: NoOrdersViewCell.reuseIdentifier)        // no orders cell
-         orderCollectionView.register(OrderSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: OrderSectionHeaderView.headerIdentifier)
-         orderCollectionView.collectionViewLayout = createLayout()
-         configureDataSource()
-     }
-     
-     /// 創建 CollectionView 佈局
-     private func createLayout() -> UICollectionViewLayout {
-         let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
-             guard let sectionType = Section(rawValue: sectionIndex) else { return nil }
-             var sectionLayout: NSCollectionLayoutSection
-             
-             switch sectionType {
-             case .orderItems:
-                 let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(100)))
-                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(100)), subitems: [item])
-                 sectionLayout = NSCollectionLayoutSection(group: group)
-                 sectionLayout.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0)
-                 sectionLayout.boundarySupplementaryItems = [self.createSectionHeader()]
-
-             case .summary:
-                 let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(100)))
-                 let group = NSCollectionLayoutGroup.vertical(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(100)), subitems: [item])
-                 sectionLayout = NSCollectionLayoutSection(group: group)
-                 sectionLayout.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0)
-                 sectionLayout.boundarySupplementaryItems = [self.createSectionHeader()]
-             }
-             
-             return sectionLayout
-         }
-         
-         return layout
-     }
+    
+    @IBOutlet weak var orderCollectionView: UICollectionView!
+    
+    weak var delegate: OrderModificationDelegate?
+    private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
+    
+    enum Section: Int, CaseIterable {
+        case orderItems, summary
+    }
+    
+    enum Item: Hashable {
+        case orderItem(OrderItem), summary(totalAmount: Int, totalPrepTime: Int), noOrders
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupCollectionView()
+        NotificationCenter.default.addObserver(self, selector: #selector(updateOrders), name: .orderUpdatedNotification, object: nil)
+        updateOrders()  // 初始化時也加載當前訂單
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .orderUpdatedNotification, object: nil)
+    }
+    
+    /// 設置 CollectionView 的 delegate 和 dataSource，並註冊自定義單元格
+    private func setupCollectionView() {
+        orderCollectionView.delegate = self
+        orderCollectionView.register(OrderItemCollectionViewCell.self, forCellWithReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier)
+        orderCollectionView.register(OrderSummaryCollectionViewCell.self, forCellWithReuseIdentifier: OrderSummaryCollectionViewCell.reuseIdentifier)   // summary cell
+        orderCollectionView.register(NoOrdersViewCell.self, forCellWithReuseIdentifier: NoOrdersViewCell.reuseIdentifier)        // no orders cell
+        orderCollectionView.register(OrderSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: OrderSectionHeaderView.headerIdentifier)
+        orderCollectionView.collectionViewLayout = createLayout()
+        configureDataSource()
+    }
+    
+    /// 創建 CollectionView 佈局
+    private func createLayout() -> UICollectionViewLayout {
+        let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
+            guard let sectionType = Section(rawValue: sectionIndex) else { return nil }
+            var sectionLayout: NSCollectionLayoutSection
+            
+            switch sectionType {
+            case .orderItems:
+                let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(100)))
+                let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(100)), subitems: [item])
+                sectionLayout = NSCollectionLayoutSection(group: group)
+                sectionLayout.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0)
+                sectionLayout.boundarySupplementaryItems = [self.createSectionHeader()]
+                
+            case .summary:
+                let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(100)))
+                let group = NSCollectionLayoutGroup.vertical(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(100)), subitems: [item])
+                sectionLayout = NSCollectionLayoutSection(group: group)
+                sectionLayout.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0)
+                sectionLayout.boundarySupplementaryItems = [self.createSectionHeader()]
+            }
+            
+            return sectionLayout
+        }
+        
+        return layout
+    }
     
     
     private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
@@ -349,21 +349,21 @@ class OrderViewController: UIViewController {
                     }
                 }
                 return cell
-                 
+                
             case .summary(totalAmount: let totalAmount, totalPrepTime: let totalPrepTime):
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderSummaryCollectionViewCell.reuseIdentifier, for: indexPath) as? OrderSummaryCollectionViewCell else {
                     fatalError("Cannot create OrderSummaryCollectionViewCell")
                 }
                 cell.configure(totalAmount: totalAmount, totalPrepTime: totalPrepTime)
                 return cell
-                 
+                
             case .noOrders:
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NoOrdersViewCell.reuseIdentifier, for: indexPath) as? NoOrdersViewCell else {
                     fatalError("Cannot create NoOrdersViewCell")
                 }
                 return cell
             }
-         
+            
         }
         
         dataSource.supplementaryViewProvider = createSupplementaryViewProvider()
@@ -389,71 +389,69 @@ class OrderViewController: UIViewController {
         }
     }
     
-     /// 更新訂單列表、重新加載數據並計算總金額
-     @objc private func updateOrders() {
-         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-         snapshot.appendSections(Section.allCases)
-         
-         let orderItems = OrderController.shared.orderItems.map { Item.orderItem($0) }
-         
-         if orderItems.isEmpty {
-             snapshot.appendItems([.noOrders], toSection: .orderItems)
-         } else {
-             snapshot.appendItems(orderItems, toSection: .orderItems)
-         }
-                 
-         let totalAmount = OrderController.shared.calculateTotalAmount()
-         let totalPrepTime = OrderController.shared.calculateTotalPrepTime()
-         snapshot.appendItems([.summary(totalAmount: totalAmount, totalPrepTime: totalPrepTime)], toSection: .summary)
-         
-         dataSource.apply(snapshot, animatingDifferences: true)
-     }
-    
-     
- }
+    /// 更新訂單列表、重新加載數據並計算總金額
+    @objc private func updateOrders() {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+        snapshot.appendSections(Section.allCases)
+        
+        let orderItems = OrderController.shared.orderItems.map { Item.orderItem($0) }
+        
+        if orderItems.isEmpty {
+            snapshot.appendItems([.noOrders], toSection: .orderItems)
+        } else {
+            snapshot.appendItems(orderItems, toSection: .orderItems)
+        }
+        
+        let totalAmount = OrderController.shared.calculateTotalAmount()
+        let totalPrepTime = OrderController.shared.calculateTotalPrepTime()
+        snapshot.appendItems([.summary(totalAmount: totalAmount, totalPrepTime: totalPrepTime)], toSection: .summary)
+        
+        dataSource.apply(snapshot, animatingDifferences: true)
+    }
+}
 
 
  // MARK: - UICollectionViewDelegate
- extension OrderViewController: UICollectionViewDelegate {
-     /// 點擊訂單項目
-     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-         print("Cell at index \(indexPath.row) was selected.")   // 測試 cell 點擊
-         
-         // 檢查是否有訂單
-         guard OrderController.shared.orderItems.count > 0 else { return }
-         let orderItem = OrderController.shared.orderItems[indexPath.row]
-         
-         // 導航到 DrinkDetailViewController
-         if let delegate = delegate {
-             delegate.modifyOrderItem(orderItem, withID: orderItem.id)
-         } else {
-             presentDrinkDetailViewController(with: orderItem, at: indexPath.row)
-         }
-     }
-   
-     /// 顯示 DrinkDetailViewController
-     private func presentDrinkDetailViewController(with orderItem: OrderItem, at index: Int) {
-         if let detailVC = storyboard?.instantiateViewController(identifier: Constants.Storyboard.drinkDetailViewController) as? DrinkDetailViewController {
-             detailVC.drink = orderItem.drink
-             detailVC.selectedSize = orderItem.size
-             detailVC.isEditingOrderItem = true
-             detailVC.editingOrderID = orderItem.id
-             detailVC.editingOrderQuantity = orderItem.quantity
-             
-             // Print for observation
-             print("傳遞給 DrinkDetailViewController 的資訊：size: \(orderItem.size), quantity: \(orderItem.quantity)")
-             
-             detailVC.modalPresentationStyle = .pageSheet
-             if let sheet = detailVC.sheetPresentationController {
-                 sheet.detents = [.large()]
-                 sheet.prefersGrabberVisible = true
-             }
-             present(detailVC, animated: true, completion: nil)
-         }
-     }
-     
- }
-
+extension OrderViewController: UICollectionViewDelegate {
+    /// 點擊訂單項目
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print("Cell at index \(indexPath.row) was selected.")   // 測試 cell 點擊
+        
+        // 檢查是否有訂單
+        guard OrderController.shared.orderItems.count > 0 else { return }
+        let orderItem = OrderController.shared.orderItems[indexPath.row]
+        
+        // 導航到 DrinkDetailViewController
+        if let delegate = delegate {
+            delegate.modifyOrderItem(orderItem, withID: orderItem.id)
+        } else {
+            presentDrinkDetailViewController(with: orderItem, at: indexPath.row)
+        }
+    }
+    
+    /// 顯示 DrinkDetailViewController
+    private func presentDrinkDetailViewController(with orderItem: OrderItem, at index: Int) {
+        if let detailVC = storyboard?.instantiateViewController(identifier: Constants.Storyboard.drinkDetailViewController) as? DrinkDetailViewController {
+            detailVC.drinkId = orderItem.drink.id   // 傳遞 drinkId
+            detailVC.categoryId = orderItem.categoryId  // 傳遞 categoryId
+            detailVC.subcategoryId = orderItem.subcategoryId // 傳遞 subcategoryId
+            detailVC.selectedSize = orderItem.size  // 傳遞已選擇的尺寸
+            detailVC.isEditingOrderItem = true      // 編輯模式
+            detailVC.editingOrderID = orderItem.id  // 設置編輯的訂單ID
+            detailVC.editingOrderQuantity = orderItem.quantity  // 設置數量
+            
+            // 觀察傳遞的值
+            print("傳遞給 DrinkDetailViewController 的資訊：drinkId: \(String(describing: orderItem.drink.id)), categoryId: \(String(describing: orderItem.categoryId)), subcategoryId: \(String(describing: orderItem.subcategoryId)), size: \(orderItem.size), quantity: \(orderItem.quantity)")
+            
+            detailVC.modalPresentationStyle = .pageSheet
+            if let sheet = detailVC.sheetPresentationController {
+                sheet.detents = [.large()]
+                sheet.prefersGrabberVisible = true
+            }
+            present(detailVC, animated: true, completion: nil)
+        }
+    }
+}
 
 
 

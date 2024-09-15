@@ -105,12 +105,14 @@
  
  ## DrinkDetailHandler：
     
-    * 功能： DrinkDetailHandler 負責管理 DrinkDetailViewController 的 UICollectionView 的資料來源 (dataSource) 和使用者互動 (delegate)。
- 
+    * 功能：
+        - DrinkDetailHandler 主要負責管理 DrinkDetailViewController 中的 UICollectionView 的資料來源 (dataSource) 和使用者互動 (delegate)。
+        - 以及處理飲品詳細資料的展示和加入購物車的邏輯。
+
     * 主要職責：
         1. 將視圖控制器中的邏輯分離，處理不同區段（section）的顯示資料。
-        2. 管理使用者的尺寸選擇操作，並將結果回傳給 DrinkDetailViewController。
-        3. 處理加入購物車的邏輯，將訂單的數量傳回至控制器。
+        2. 管理使用者的尺寸選擇操作，並透過 sizeSelectionHandler 將選擇結果回傳給 DrinkDetailViewController。
+        3. 管理加入購物車的操作，透過 addToCartHandler 將飲品數量回傳給控制器進行後續處理。
     
     * 主要方法：
         - numberOfSections(in:)： 回傳 UICollectionView 中有幾個 section，根據 DrinkDetailViewController.Section 的不同類型進行動態設定。
@@ -138,7 +140,7 @@
  */
 
 
-// MARK: - 已完善
+// MARK: - 已完善（處理掉全局 drink ）
 
 import UIKit
 
@@ -148,14 +150,20 @@ class DrinkDetailHandler: NSObject {
     // MARK: - Properties
     
     private weak var viewController: DrinkDetailViewController?
+    
+    /// 存取載入的飲品詳細資料，由 handler 負責管理和顯示，避免在控制器中使用全局 drink
+    var drink: Drink?
 
-    // 使用 closures 來與 `DrinkDetailViewController` 溝通
+    // 使用 closures 與 `DrinkDetailViewController` 溝通
     var sizeSelectionHandler: ((String) -> Void)?           // 當使用者選擇尺寸時觸發
     var addToCartHandler: ((Int) -> Void)?                  // 當使用者點擊加入購物車時觸發
     
     // MARK: - Initializer
-    init(viewController: DrinkDetailViewController) {
+    
+    /// 初始化，接收 DrinkDetailViewController 和 drink 資料
+    init(viewController: DrinkDetailViewController, drink: Drink?) {
         self.viewController = viewController
+        self.drink = drink
     }
 
 }
@@ -168,12 +176,11 @@ extension DrinkDetailHandler: UICollectionViewDataSource {
         return DrinkDetailViewController.Section.allCases.count
     }
 
-    /// 根據 UICollectionView 中的不同 section 動態返回該 section 中應顯示的 item 個數。
+    /// 根據 section 動態返回應顯示的 item 數量，資料來源於內部的 `drink`
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let drink = viewController?.drink else { return 0 }
-
+        guard let drink = drink else { return 0 }
+        
         let sectionType = DrinkDetailViewController.Section.allCases[section]
-
         switch sectionType {
         case .info:
             return 1
@@ -186,9 +193,9 @@ extension DrinkDetailHandler: UICollectionViewDataSource {
         }
     }
     
-    /// 根據不同的 section 類型返回對應的 cell
+    /// 根據 section 動態返回對應的 cell，資料來自於 `drink` 和 `viewController`
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let viewController = viewController else { fatalError("No ViewController found") }
+        guard let viewController = viewController, let drink = drink else { fatalError("No ViewController or Drink found") }
         let sectionType = DrinkDetailViewController.Section.allCases[indexPath.section]
 
         switch sectionType {
@@ -196,7 +203,7 @@ extension DrinkDetailHandler: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DrinkInfoCollectionViewCell.reuseIdentifier, for: indexPath) as? DrinkInfoCollectionViewCell else {
                 fatalError("Unable to dequeue DrinkInfoCollectionViewCell or drink is nil")
             }
-            cell.configure(with: viewController.drink!)
+            cell.configure(with: drink)
             return cell
 
         case .sizeSelection:
@@ -209,12 +216,12 @@ extension DrinkDetailHandler: UICollectionViewDataSource {
                 self?.sizeSelectionHandler?(selectedSize)
             }
             return cell
-
+        
         case .priceInfo:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DrinkPriceInfoCollectionViewCell.reuseIdentifier, for: indexPath) as? DrinkPriceInfoCollectionViewCell else {
                 fatalError("Unable to dequeue DrinkPriceInfoCollectionViewCell")
             }
-            let sizeInfo = viewController.drink?.sizes[viewController.selectedSize ?? ""]
+            let sizeInfo = drink.sizes[viewController.selectedSize ?? ""]
             cell.configure(with: sizeInfo!)
             return cell
             
@@ -224,7 +231,7 @@ extension DrinkDetailHandler: UICollectionViewDataSource {
             }
             cell.updateOrderButtonTitle(isEditing: viewController.isEditingOrderItem)
             cell.configure(with: viewController.editingOrderQuantity)
-            
+
             // 當使用者點擊加入購物車時，透過 handler 傳遞數量
             cell.addToCart = { [weak self] quantity in
                 self?.addToCartHandler?(quantity)
@@ -236,6 +243,9 @@ extension DrinkDetailHandler: UICollectionViewDataSource {
     /// 處理 section 的補充視圖 (footer)
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionFooter {
+            
+            print("Creating footer for section: \(indexPath.section)")
+
             guard let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: DrinkDetailSeparatorView.reuseIdentifier, for: indexPath) as? DrinkDetailSeparatorView else {
                 fatalError("Cannot create footer view")
             }
@@ -248,6 +258,4 @@ extension DrinkDetailHandler: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegate
 extension DrinkDetailHandler: UICollectionViewDelegate {
-    
 }
-
