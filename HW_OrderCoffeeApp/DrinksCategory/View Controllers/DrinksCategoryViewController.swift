@@ -227,9 +227,7 @@ class DrinksCategoryViewController: UIViewController {
     /// 從 Firestore 加載特定類別下的飲品數據。
     private func loadDrinkForCategory() async {
         guard let categoryId = categoryId else { return }
-        
-        HUDManager.shared.showLoading(in: view, text: "Loading Drinks...")
-        
+        HUDManager.shared.showLoading(text: "Loading Drinks...")
         do {
             let SubcategoryDrinks = try await MenuController.shared.loadDrinksForCategory(categoryId: categoryId)
             collectionHandler.updateData(drinks: SubcategoryDrinks)

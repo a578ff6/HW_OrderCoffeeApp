@@ -159,7 +159,7 @@ class LoginViewController: UIViewController {
             return
         }
         
-        HUDManager.shared.showLoading(in: self.view, text: "Logging in...")
+        HUDManager.shared.showLoading(text: "Logging in...")
         EmailSignInController.shared.loginUser(withEmail: email, password: password) { [weak self] result in
             DispatchQueue.main.async {
                 HUDManager.shared.dismiss()
@@ -183,7 +183,7 @@ class LoginViewController: UIViewController {
  
     // MARK: - 處理Google登入
     @objc private func googleLoginButtonTapped() {
-        HUDManager.shared.showLoading(in: self.view, text: "Logging in...")
+        HUDManager.shared.showLoading(text: "Logging in...")
         GoogleSignInController.shared.signInWithGoogle(presentingViewController: self) { [weak self] result in
             DispatchQueue.main.async {
                 HUDManager.shared.dismiss()
@@ -208,7 +208,7 @@ class LoginViewController: UIViewController {
     
     // MARK: - 處理Apple登入
     @objc private func appleLoginButtonTapped() {
-        HUDManager.shared.showLoading(in: self.view, text: "Logging in...")
+        HUDManager.shared.showLoading(text: "Logging in...")
         AppleSignInController.shared.signInWithApple(presentingViewController: self) { [weak self] result in
             DispatchQueue.main.async {
                 HUDManager.shared.dismiss()

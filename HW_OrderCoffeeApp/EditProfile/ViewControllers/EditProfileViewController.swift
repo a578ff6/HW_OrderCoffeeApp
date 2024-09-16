@@ -235,7 +235,7 @@ class EditProfileViewController: UIViewController {
     
     /// 更新 Firebase 中的使用者資料
      private func updateUserDetailsInFirebase(_ userDetails: UserDetails) {
-         HUDManager.shared.showLoading(in: view, text: "Saving...")
+         HUDManager.shared.showLoading(text: "Saving...")
          FirebaseController.shared.updateUserDetails(userDetails) { [weak self] result in
              HUDManager.shared.dismiss()
              switch result {
@@ -255,7 +255,7 @@ class EditProfileViewController: UIViewController {
     /// 更新使用者的大頭照
     private func updateProfileImage(_ image: UIImage, for uid: String) {
         editProfileView.profileImageView.image = image
-        HUDManager.shared.showLoading(in: view, text: "Uploading image...")
+        HUDManager.shared.showLoading(text: "Uploading image...")
         FirebaseController.shared.uploadProfileImage(image, for: uid) { [weak self] result in
             HUDManager.shared.dismiss()
             switch result {

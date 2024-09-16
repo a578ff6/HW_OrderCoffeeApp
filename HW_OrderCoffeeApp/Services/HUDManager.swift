@@ -32,17 +32,34 @@ class HUDManager {
     
     private init() {
         hud.interactionType = .blockAllTouches  // 禁用所有背景元件的互動，防止在 HUD 顯示時與背景進行任何操作
+        hud.backgroundColor = UIColor(white: 0, alpha: 0.4)  // 設置半透明的背景遮罩
     }
     
-    /// 顯示加載指示器
-     /// - Parameters:
-     ///   - view: HUD 將被添加到的 UIView。
-     ///   - text: 要顯示的文字資訊。
-     /// 使用 DispatchQueue.main.async 確保顯示 HUD 的操作在main執行
-    func showLoading(in view: UIView, text: String) {
+    /// 顯示加載指示器，將 HUD 顯示在應用的最頂層（即 window 上）。
+    /// 該方法保證 HUD 始終顯示在畫面的最頂層，並覆蓋所有內容，包括 TabBar 和 NavigationBar。
+    ///
+    /// - Parameter text: 要顯示在 HUD 上的文字，例如 "Loading"。
+    func showLoading(text: String) {
+        DispatchQueue.main.async {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                self.hud.textLabel.text = text
+                self.hud.show(in: window)  // 加載到整個畫面的最頂層 UIWindow 上
+            }
+        }
+    }
+    
+    /// 顯示加載指示器，將 HUD 顯示在指定的視圖上。
+    /// 此方法適合用於將 HUD 加載到特定的視圖控制器範圍內，避免影響到其他視圖控制器。
+    /// 例如：當執行特定頁面的加載操作時，HUD 只會顯示在該頁面上，隨著視圖控制器的切換，HUD 也會隨之消失。
+    ///
+    /// - Parameters:
+    ///   - view: HUD 將被添加到的具體 UIView（通常是當前的視圖控制器的主視圖）。
+    ///   - text: 要顯示在 HUD 上的文字，例如 "Loading"。
+    func showLoadingInView(_ view: UIView, text: String) {
         DispatchQueue.main.async {
             self.hud.textLabel.text = text
-            self.hud.show(in: view)
+            self.hud.show(in: view)  // 加載到具體的視圖
         }
     }
 
@@ -53,5 +70,6 @@ class HUDManager {
             self.hud.dismiss()
         }
     }
+    
 }
 

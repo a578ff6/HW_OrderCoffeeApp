@@ -495,7 +495,7 @@ class UserProfileViewController: UIViewController {
     ///
     /// 成功登出後會導航至登入頁面，失敗則顯示錯誤訊息。
     private func executeLogout() {
-        HUDManager.shared.showLoading(in: view, text: "Logging out...")
+        HUDManager.shared.showLoadingInView(view, text: "Logging out...")
         FirebaseController.shared.signOut { [weak self] result in
             HUDManager.shared.dismiss()
             switch result {
