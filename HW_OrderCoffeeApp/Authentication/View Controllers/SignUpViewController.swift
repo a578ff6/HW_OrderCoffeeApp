@@ -116,7 +116,7 @@ class SignUpViewController: UIViewController {
             return
         }
    
-        HUDManager.shared.showLoading(in: view, text: "Signing up...")
+        HUDManager.shared.showLoading(text: "Signing up...")
         // 調用 EmailSignInController 進行用戶註冊
         EmailSignInController.shared.registerUser(withEmail: email, password: password, fullName: fullName) { [weak self] result in
             DispatchQueue.main.async {

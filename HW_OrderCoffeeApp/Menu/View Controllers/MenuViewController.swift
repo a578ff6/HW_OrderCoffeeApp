@@ -50,7 +50,7 @@
         - 在群組中添加兩個並行的非同步資料加載操作：loadCategories() 和 loadWebsites()。
         - 當所有任務完成後，進行後續處理，如隱藏載入中的提示（HUD）。
 
-    & 改善部分ㄤ
+    & 改善部分：
         - 並行加載：TaskGroup 能讓不同的資料加載操作同時進行，提升效率。
         - 資料顯示一致性：確保所有資料在同一時間加載完成，避免「突然出現」的情況。
         - 程式碼簡化：不需要「手動追蹤」每個資料是否加載完成，TaskGroup 自動處理並行執行後的邏輯。
@@ -82,8 +82,7 @@ class MenuViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureCollectionView()
-        HUDManager.shared.showLoading(in: self.view, text: "Loading...")
-        
+        HUDManager.shared.showLoading(text: "Loading...")
         Task {
             await withTaskGroup(of: Void.self) { group in
                 group.addTask { await self.loadCategories() }

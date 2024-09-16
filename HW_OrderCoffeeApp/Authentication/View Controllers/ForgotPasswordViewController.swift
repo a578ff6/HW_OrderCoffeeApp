@@ -129,7 +129,7 @@ class ForgotPasswordViewController: UIViewController {
             return
         }
         
-        HUDManager.shared.showLoading(in: view, text: "Sending...")
+        HUDManager.shared.showLoading(text: "Sending...")
         // 使用 EmailSignInController 發送密碼重置郵件
         EmailSignInController.shared.resetPassword(forEmail: email) { [weak self] result in
             DispatchQueue.main.async {
