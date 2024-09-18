@@ -18,6 +18,7 @@
 		935291412C89C1480018B060 /* DrinksCategorySectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935291402C89C1480018B060 /* DrinksCategorySectionFooterView.swift */; };
 		9352914A2C8D85790018B060 /* DrinkDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935291492C8D85790018B060 /* DrinkDetailView.swift */; };
 		9352914C2C8D91480018B060 /* DrinkDetailHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352914B2C8D91480018B060 /* DrinkDetailHandler.swift */; };
+		9353740E2C9AD6E100794A63 /* ButtonEffectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353740D2C9AD6E100794A63 /* ButtonEffectManager.swift */; };
 		936CFFBD2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */; };
 		936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */; };
 		936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */; };
@@ -160,6 +161,7 @@
 		935291402C89C1480018B060 /* DrinksCategorySectionFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinksCategorySectionFooterView.swift; sourceTree = "<group>"; };
 		935291492C8D85790018B060 /* DrinkDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailView.swift; sourceTree = "<group>"; };
 		9352914B2C8D91480018B060 /* DrinkDetailHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailHandler.swift; sourceTree = "<group>"; };
+		9353740D2C9AD6E100794A63 /* ButtonEffectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonEffectManager.swift; sourceTree = "<group>"; };
 		936CFFBA2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HW_OrderCoffeeAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITests.swift; sourceTree = "<group>"; };
 		936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -450,13 +452,6 @@
 			path = Layouts;
 			sourceTree = "<group>";
 		};
-		935291582C91B38A0018B060 /* Configurations */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Configurations;
-			sourceTree = "<group>";
-		};
 		935291592C91B3AD0018B060 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -640,7 +635,6 @@
 				93BD48AF2C57CABF00144E7F /* GoogleService-Info.plist */,
 				9352915A2C91B3C40018B060 /* App */,
 				935291592C91B3AD0018B060 /* Resources */,
-				935291582C91B38A0018B060 /* Configurations */,
 				93F9BB582C293E3E00355A87 /* Utilities */,
 				939BDA6C2B2C200F00616D1C /* Authentication */,
 				93BD48B32C58DA0900144E7F /* Orders */,
@@ -686,6 +680,7 @@
 				939BDA682B2B82BC00616D1C /* AlertService.swift */,
 				93755C302C82F6CF002570A5 /* HUDManager.swift */,
 				932258D02C92F1E1004EA2D9 /* ShareManager.swift */,
+				9353740D2C9AD6E100794A63 /* ButtonEffectManager.swift */,
 				932258D22C9410F4004EA2D9 /* FavoriteManager.swift */,
 				93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */,
 				939BDA6A2B2B97ED00616D1C /* ActivityIndicatorManager.swift */,
@@ -1060,6 +1055,7 @@
 				93B9DC7F2C32C5BC0050BC3F /* MenuController.swift in Sources */,
 				939BDA6F2B2C211200616D1C /* Constants.swift in Sources */,
 				939BD9D02B2A1B1700616D1C /* AppDelegate.swift in Sources */,
+				9353740E2C9AD6E100794A63 /* ButtonEffectManager.swift in Sources */,
 				93B9DC872C3661DF0050BC3F /* MainTabBarController.swift in Sources */,
 				9352913F2C8843E40018B060 /* DrinksCategoryHandler.swift in Sources */,
 				93755C332C8351AA002570A5 /* MenuViewController.swift in Sources */,
