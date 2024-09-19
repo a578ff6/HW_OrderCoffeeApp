@@ -19,17 +19,15 @@
     * 功能： DrinkInfoCollectionViewCell 用來顯示飲品的圖片、名稱、副標題以及簡介，透過 Kingfisher 來處理圖片載入。
  
     * UI 設計：
-        - 使用 UIImageView 來顯示飲品圖片，並設置寬高比例相等。
         - 使用 UILabel 來顯示飲品名稱、副標題和描述，且文字自動縮放和換行。
         - 使用 UIStackView 組織標籤的佈局。
  
     * 使用的自定義方法：
-        - createImageView()： 用來創建圖片顯示元件，並設定內容模式和佈局屬性。
         - createLabel()： 用來生成標籤元件，能指定字體大小、顏色、是否加粗等屬性。
         - createStackView()： 用來生成垂直排列的 StackView，方便管理多個標籤的佈局。
     
     * 配置方法：
-        - configure(with:)： 用來設置 cell 顯示的內容，包括圖片、名稱、副標題及描述。
+        - configure(with:)： 用來設置 cell 顯示的內容，包括名稱、副標題及描述。
         - prepareForReuse()： 在 cell 重用時，重置內容以避免顯示錯誤的資料。
  */
 
@@ -37,14 +35,13 @@
 import UIKit
 import Kingfisher
 
-/// 展示飲品的圖片、名稱、副標題以及描述的 CollectionView Cell
+/// 展示飲品名稱、副標題以及描述的 CollectionView Cell
 class DrinkInfoCollectionViewCell: UICollectionViewCell {
     
     static let reuseIdentifier = "DrinkInfoCollectionViewCell"
     
     // MARK: - UI Elements
-
-    let drinkImageView = createImageView(contentMode: .scaleAspectFit)
+    
     let nameLabel = createLabel(fontSize: 24, isBold: true)
     let subNameLabel = createLabel(fontSize: 18, textColor: .gray)
     let descriptionLabel = createLabel(fontSize: 16, numberOfLines: 0)
@@ -70,18 +67,13 @@ class DrinkInfoCollectionViewCell: UICollectionViewCell {
         labelStackView.addArrangedSubview(subNameLabel)
         labelStackView.addArrangedSubview(descriptionLabel)
         
-        contentView.addSubview(drinkImageView)
         contentView.addSubview(labelStackView)
     }
     
     private func setupConstraints() {
+        // 設置 StackView 的約束，讓其佔據整個 cell
         NSLayoutConstraint.activate([
-            drinkImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            drinkImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            drinkImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            drinkImageView.heightAnchor.constraint(equalTo: drinkImageView.widthAnchor),          // 保持圖片寬高比例
-            
-            labelStackView.topAnchor.constraint(equalTo: drinkImageView.bottomAnchor, constant: 8),
+            labelStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             labelStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             labelStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             labelStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
@@ -89,14 +81,6 @@ class DrinkInfoCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Factory Methods
-
-    /// 設置圖片
-    private static func createImageView(contentMode: UIView.ContentMode) -> UIImageView {
-        let imageView = UIImageView()
-        imageView.contentMode = contentMode
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }
 
     /// 設置 Label
     private static func createLabel(fontSize: CGFloat, textColor: UIColor = .black, isBold: Bool = false, numberOfLines: Int = 1) -> UILabel {
@@ -111,7 +95,7 @@ class DrinkInfoCollectionViewCell: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }
-    
+
     /// 設置 StackView
     private static func createStackView(axis: NSLayoutConstraint.Axis, spacing: CGFloat) -> UIStackView {
         let stackView = UIStackView()
@@ -128,7 +112,6 @@ class DrinkInfoCollectionViewCell: UICollectionViewCell {
     /// 配置 cell 顯示的內容
     /// - Parameter drink: 要顯示的 `Drink` 物件
     func configure(with drink: Drink) {
-        drinkImageView.kf.setImage(with: drink.imageUrl)
         nameLabel.text = drink.name
         subNameLabel.text = drink.subName
         descriptionLabel.text = drink.description
@@ -139,9 +122,9 @@ class DrinkInfoCollectionViewCell: UICollectionViewCell {
     /// 當 cell 被重用時，重置內容
     override func prepareForReuse() {
         super.prepareForReuse()
-        drinkImageView.image = nil
         nameLabel.text = nil
         subNameLabel.text = nil
         descriptionLabel.text = nil
     }
+    
 }

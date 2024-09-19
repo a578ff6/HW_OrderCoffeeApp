@@ -61,10 +61,13 @@ class DrinkDetailView: UIView {
     
     /// 註冊所有`自訂義的 cell` 與 `supplementary views`，確保 `UICollectionView` 具備顯示這些元素的能力
     private func registerCells() {
+        collectionView.register(DrinkImageCollectionViewCell.self, forCellWithReuseIdentifier: DrinkImageCollectionViewCell.reuseIdentifier)
         collectionView.register(DrinkInfoCollectionViewCell.self, forCellWithReuseIdentifier: DrinkInfoCollectionViewCell.reuseIdentifier)
         collectionView.register(DrinkSizeSelectionCollectionViewCell.self, forCellWithReuseIdentifier: DrinkSizeSelectionCollectionViewCell.reuseIdentifier)
         collectionView.register(DrinkPriceInfoCollectionViewCell.self, forCellWithReuseIdentifier: DrinkPriceInfoCollectionViewCell.reuseIdentifier)
         collectionView.register(DrinkOrderOptionsCollectionViewCell.self, forCellWithReuseIdentifier: DrinkOrderOptionsCollectionViewCell.reuseIdentifier)
+        
+        collectionView.register(DrinkDetailSeparatorView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: DrinkDetailSeparatorView.reuseIdentifier)
         collectionView.register(DrinkDetailSeparatorView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: DrinkDetailSeparatorView.reuseIdentifier)
     }
     

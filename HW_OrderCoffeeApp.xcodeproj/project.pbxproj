@@ -19,6 +19,7 @@
 		9352914A2C8D85790018B060 /* DrinkDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935291492C8D85790018B060 /* DrinkDetailView.swift */; };
 		9352914C2C8D91480018B060 /* DrinkDetailHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352914B2C8D91480018B060 /* DrinkDetailHandler.swift */; };
 		9353740E2C9AD6E100794A63 /* ButtonEffectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353740D2C9AD6E100794A63 /* ButtonEffectManager.swift */; };
+		935374102C9B218800794A63 /* DrinkImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353740F2C9B218800794A63 /* DrinkImageCollectionViewCell.swift */; };
 		936CFFBD2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */; };
 		936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */; };
 		936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */; };
@@ -162,6 +163,7 @@
 		935291492C8D85790018B060 /* DrinkDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailView.swift; sourceTree = "<group>"; };
 		9352914B2C8D91480018B060 /* DrinkDetailHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailHandler.swift; sourceTree = "<group>"; };
 		9353740D2C9AD6E100794A63 /* ButtonEffectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonEffectManager.swift; sourceTree = "<group>"; };
+		9353740F2C9B218800794A63 /* DrinkImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		936CFFBA2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HW_OrderCoffeeAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITests.swift; sourceTree = "<group>"; };
 		936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -434,6 +436,7 @@
 			isa = PBXGroup;
 			children = (
 				935291492C8D85790018B060 /* DrinkDetailView.swift */,
+				9353740F2C9B218800794A63 /* DrinkImageCollectionViewCell.swift */,
 				93F9BB392C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift */,
 				93F9BB3F2C1C0DEA00355A87 /* DrinkSizeSelectionCollectionViewCell.swift */,
 				93F9BB412C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift */,
@@ -1046,6 +1049,7 @@
 				937605A82C4BFA9F00B1316C /* GoogleSignInController.swift in Sources */,
 				9376059B2C4AAA9C00B1316C /* UIColor+CustomColors.swift in Sources */,
 				93B9DC812C32D7740050BC3F /* OrderController.swift in Sources */,
+				935374102C9B218800794A63 /* DrinkImageCollectionViewCell.swift in Sources */,
 				939BD9F12B2AB9C200616D1C /* SignUpViewController.swift in Sources */,
 				93DB1D2F2C461F9D00BA2CC1 /* KeychainManager.swift in Sources */,
 				93B492932C410A2E00E7B947 /* OrderSummaryCollectionViewCell.swift in Sources */,
