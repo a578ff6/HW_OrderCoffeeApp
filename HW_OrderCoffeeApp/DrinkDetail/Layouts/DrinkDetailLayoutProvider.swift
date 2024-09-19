@@ -36,6 +36,8 @@ class DrinkDetailLayoutProvider {
     /// - Returns: 對應的 `NSCollectionLayoutSection` 佈局
     func generateLayout(for section: DrinkDetailViewController.Section) -> NSCollectionLayoutSection {
         switch section {
+        case .image:
+            return generateImageLayout()
         case .info:
             return generateInfoLayout()
         case .sizeSelection:
@@ -47,12 +49,20 @@ class DrinkDetailLayoutProvider {
         }
     }
     
+    /// 生成飲品圖片section的佈局
+    private func generateImageLayout() -> NSCollectionLayoutSection {
+        let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalWidth(1.0)))
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalWidth(1.0)), subitems: [item])
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0)
+        return section
+    }
+    
     /// 生成飲品資訊 (info) section 的佈局
     private func generateInfoLayout() -> NSCollectionLayoutSection {
         let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(300)))
         let group = NSCollectionLayoutGroup.vertical(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(300)), subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
-        section.boundarySupplementaryItems = [createFooter(height: 1)]
         section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 15, trailing: 0)
         return section
     }
@@ -63,7 +73,7 @@ class DrinkDetailLayoutProvider {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalWidth(1.0/3)), subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .groupPagingCentered
-        section.boundarySupplementaryItems = [createFooter(height: 1)]
+        section.boundarySupplementaryItems = [createHeader(height: 1), createFooter(height: 1) ]
         section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0)
         return section
     }
@@ -92,4 +102,10 @@ class DrinkDetailLayoutProvider {
         return NSCollectionLayoutBoundarySupplementaryItem(layoutSize: footerSize, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
     }
     
+    /// 建立並配置 section 上方的分隔 header
+    private func createHeader(height: CGFloat) -> NSCollectionLayoutBoundarySupplementaryItem {
+        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(height))
+        return NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
+    }
+
 }

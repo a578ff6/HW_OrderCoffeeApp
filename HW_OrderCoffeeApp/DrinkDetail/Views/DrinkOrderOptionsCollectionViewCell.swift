@@ -34,23 +34,52 @@
     - 在 DrinkDetailViewController 中，當用戶進行修改訂單飲品項目時，改變按鈕的文字以區分「添加新飲品」和「修改訂單」。
     - 通過檢查當前是否處於編輯模式來實現。
     - 讓用戶更清楚當前操作是添加新的飲品還是修改訂單中的飲品。
+ 
+ ---------------------------------------------------------------------------------------------------------------------------------------
+
+ ## DrinkOrderOptionsCollectionViewCell 補充：
+ 
+ 1. 視圖初始化與配置的最佳實踐：
+    
+    * 將 createQuantityAndCupStackView、createQuantityContainerView 這類方法放在函數內部實例化，而非外部，這是為了讓 UI 元件的初始化與配置更具可讀性與可維護性。
+ 
+        - 延遲初始化： 某些元件只有在特定情況下才會被使用，將它們的創建邏輯放在內部方法中可以避免過早初始化，減少資源浪費。
+        - 單一責任原則： 將元件的創建與配置封裝在單一方法內，可以讓每個方法的職責更清晰，避免在一個方法中同時處理多個元件的創建，從而減少代碼的複雜度。
+        - 提升可讀性： 這樣的做法可以讓主視圖組件的初始化流程更清楚，因為具體的子元件的創建與配置都被封裝到了各自的方法中，主函數內只需簡單調用即可。
+ 
+ 2. quantityContainerView 的部分：
+
+    * quantityContainerView 是一個 UIView，本身不具備內容，但作為容器來包含其他子視圖（例如 quantityLabel 和 cupLabel）。
+        
+        - 在設定 quantityContainerView 的 Auto Layout 約束時，如果沒有明確指定其高度或寬度，會出現自動佈局錯誤。
+        - 因此，設置高度約束為 55 並將其優先級設為 .defaultHigh，可以確保在大多數情況下保持這個高度，並允許在必要時進行調整，避免衝突。
+ 
+ 3. 元件是在函數內實例化：
+
+    * 提高模組化：每個方法專注於生成特定的元件（例如 createQuantityAndCupStackView 只生成數量與單位的排列）。這樣的結構可以提高代碼的可讀性，也使得不同元件之間的邏輯更易於管理。
+    * 避免視圖初始化過早或過多的實例化：將視圖的初始化放到需要使用的地方，避免了在類的初始階段創建不必要的視圖，這在性能上更有效率。
+ 
+ 4. 一般 UI 結構設計的建議
+    - 保持分離：簡單的視圖可以在外部初始化，而複雜的組合視圖應該封裝到方法中進行初始化。
+    - 模式：按照職責劃分視圖的生成邏輯，讓每個方法只負責生成特定的視圖或視圖組合。
+    - 按需生成：盡可能只在需要時生成視圖，減少內存佔用。
+    - 延遲初始化：視圖的實例化應該盡可能晚，而不是一開始就初始化所有視圖。
 
  */
 
 
-
 // MARK: - 重構
-
 import UIKit
 
-/// 顯示訂單選項，包括杯數選擇和加入訂單按鈕
+/// 顯示訂單選項，包括杯數選擇和加入訂單按鈕的 CollectionViewCell
 class DrinkOrderOptionsCollectionViewCell: UICollectionViewCell {
     
     static let reuseIdentifier = "DrinkOrderOptionsCollectionViewCell"
     
-    private let stepper: UIStepper = createStepper()
+    private let quantityStepper = createStepper()
     private let quantityLabel = createLabel(withText: "1")
-    private let orderButton: UIButton = createOrderButton()
+    private let cupLabel = createLabel(withText: "杯")
+    private let orderButton = createOrderButton()
     
     /// 點擊 `Add to Cart` 按鈕時觸發的閉包，傳遞選擇的數量。
     var addToCart: ((Int) -> Void)?
@@ -73,27 +102,23 @@ class DrinkOrderOptionsCollectionViewCell: UICollectionViewCell {
     
     /// 設置視圖元件
     private func setupViews() {
-        let quantityStackView = createQuantityStackView()
-        let quantityContainerView = createQuantityContainerView(with: quantityStackView)
-        
-        // 將 quantityContainerView、orderButton 設置在同一個 StackView。藉此設置兩個水平且有間距的設計。
-        let mainStackView = UIStackView(arrangedSubviews: [quantityContainerView, orderButton])
-        mainStackView.axis = .horizontal
-        mainStackView.spacing = 10
-        mainStackView.alignment = .fill
-        mainStackView.distribution = .fillEqually
-        
+        let mainStackView = createMainStackView()
         contentView.addSubview(mainStackView)
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        stepper.addTarget(self, action: #selector(stepperValueChanged), for: .valueChanged)
+        /// 設置 `UIStepper` 和 `UIButton` 的 addTarget
+        quantityStepper.addTarget(self, action: #selector(stepperValueChanged), for: .valueChanged)
         orderButton.addTarget(self, action: #selector(orderButtonTapped), for: .touchUpInside)
     }
     
     /// 設置約束
     private func setupConstraints() {
         guard let mainStackView = contentView.subviews.first as? UIStackView else { return }
-        
+        setMainStackViewConstraints(mainStackView: mainStackView)
+    }
+    
+    /// 設置 `mainStackView` 的約束
+    private func setMainStackViewConstraints(mainStackView: UIStackView) {
         NSLayoutConstraint.activate([
             mainStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             mainStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
@@ -107,6 +132,70 @@ class DrinkOrderOptionsCollectionViewCell: UICollectionViewCell {
             heightConstraint.isActive = true
             orderButton.heightAnchor.constraint(equalTo: quantityContainerView.heightAnchor).isActive = true
         }
+    }
+
+    // MARK: - StackView Methods
+
+    /// 建立主堆疊視圖 `MainStackView`
+    private func createMainStackView() -> UIStackView {
+        let quantityContainerView = createQuantityContainerView()
+        let mainStackView = UIStackView(arrangedSubviews: [quantityContainerView, orderButton])
+        mainStackView.axis = .horizontal
+        mainStackView.spacing = 10
+        mainStackView.alignment = .fill
+        mainStackView.distribution = .fillEqually
+        return mainStackView
+    }
+    
+    /// 建立`數量杯數`與 `Stepper` 的堆疊視圖 `QuantityAndSteppersStackView`
+    private func createQuantityAndStepperControlStackView() -> UIStackView {
+        let quantityAndCupStackView = createQuantityAndCupStackView()
+        let quantityControlStackView = UIStackView(arrangedSubviews: [quantityAndCupStackView, quantityStepper])
+        quantityControlStackView.axis = .horizontal
+        quantityControlStackView.spacing = 10
+        quantityControlStackView.alignment = .center
+        quantityControlStackView.distribution = .fill
+        quantityControlStackView.translatesAutoresizingMaskIntoConstraints = false
+        return quantityControlStackView
+    }
+    
+    /// 建立`數量`及`杯數`的堆疊視圖 `QuantityAndCupStackView`
+    private func createQuantityAndCupStackView() -> UIStackView {
+        let quantityStackView = UIStackView(arrangedSubviews: [quantityLabel, cupLabel])
+        quantityStackView.axis = .horizontal
+        quantityStackView.spacing = 2
+        quantityStackView.alignment = .center
+        quantityStackView.distribution = .equalSpacing
+        quantityStackView.translatesAutoresizingMaskIntoConstraints = false
+        return quantityStackView
+    }
+
+    // MARK: - UIView Methods
+
+    /// 設置包含`邊框`的`數量選擇`容器 `QuantityContainerView`，藉此設計出一個`外邊框`
+    private func createQuantityContainerView() -> UIView {
+        let containerView = createContainerView()
+        let quantityControlStackView = createQuantityAndStepperControlStackView()
+        containerView.addSubview(quantityControlStackView)
+        
+        // 設置 quantityControlStackView 在 containerView 中的位置
+        NSLayoutConstraint.activate([
+            quantityControlStackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
+            quantityControlStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8),
+            quantityControlStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
+            quantityControlStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10)
+        ])
+        return containerView
+    }
+    
+    /// 建立一個帶邊框的容器視圖 `ContainerView`
+    private func createContainerView() -> UIView {
+        let containerView = UIView()
+        containerView.layer.cornerRadius = 10
+        containerView.layer.borderWidth = 2
+        containerView.layer.borderColor = UIColor.lightGray.cgColor
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        return containerView
     }
     
     // MARK: - Factory Methods
@@ -134,36 +223,10 @@ class DrinkOrderOptionsCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.text = text
         label.textAlignment = .center
+        label.adjustsFontSizeToFitWidth = true  // 自動調整字體大小
+        label.minimumScaleFactor = 0.8 // 最小縮放比例
+        label.numberOfLines = 1
         return label
-    }
-    
-    /// 創建`數量選擇的`StackView（`包含 數量Label、杯Label、stepper`）
-    private func createQuantityStackView() -> UIStackView {
-        let quantityStackView = UIStackView(arrangedSubviews: [quantityLabel, UILabel(text: "杯"), stepper])
-        quantityStackView.axis = .horizontal
-        quantityStackView.spacing = 8
-        quantityStackView.alignment = .center
-        quantityStackView.translatesAutoresizingMaskIntoConstraints = false
-        return quantityStackView
-    }
-    
-    /// 設置包含邊框的 `數量` 選擇容器： 用來當` quantityStackView` 的背景，藉此設計出一個`外邊框`
-    private func createQuantityContainerView(with stackView: UIStackView) -> UIView {
-        let quantityContainerView = UIView()
-        quantityContainerView.layer.cornerRadius = 10
-        quantityContainerView.layer.borderWidth = 2
-        quantityContainerView.layer.borderColor = UIColor.lightGray.cgColor
-        quantityContainerView.addSubview(stackView)
-        quantityContainerView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // 設置 quantityStackView 在 quantityContainerView 中的位置
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: quantityContainerView.topAnchor, constant: 8),
-            stackView.bottomAnchor.constraint(equalTo: quantityContainerView.bottomAnchor, constant: -8),
-            stackView.leadingAnchor.constraint(equalTo: quantityContainerView.leadingAnchor, constant: 8),
-            stackView.trailingAnchor.constraint(equalTo: quantityContainerView.trailingAnchor, constant: -8)
-        ])
-        return quantityContainerView
     }
     
     // MARK: - Action Methods
@@ -175,7 +238,7 @@ class DrinkOrderOptionsCollectionViewCell: UICollectionViewCell {
 
     /// 點擊訂單按鈕的處理方法
     @objc func orderButtonTapped() {
-        let quantity = Int(stepper.value)  // 確保傳遞當前的步進器數值
+        let quantity = Int(quantityStepper.value)  // 確保傳遞當前的步進器數值
         addToCart?(quantity)               // 傳遞數量到購物車
         orderButton.addSpringAnimation()
     }
@@ -199,7 +262,7 @@ class DrinkOrderOptionsCollectionViewCell: UICollectionViewCell {
     
     /// 設置初始數量
     func configure(with quantity: Int) {
-        stepper.value = Double(quantity)
+        quantityStepper.value = Double(quantity)
         quantityLabel.text = "\(quantity)"
     }
     
@@ -208,19 +271,9 @@ class DrinkOrderOptionsCollectionViewCell: UICollectionViewCell {
     /// 重置 stepper、quantityLabel、訂單按鈕的狀態
     override func prepareForReuse() {
         super.prepareForReuse()
-        stepper.value = 1
+        quantityStepper.value = 1
         quantityLabel.text = "1"
         updateOrderButtonTitle(isEditing: false)
     }
     
-}
-
-// MARK: - Extension UILabel
-
-/// 用來快速生成帶有文字的 Label
-private extension UILabel {
-    convenience init(text: String) {
-        self.init()
-        self.text = text
-    }
 }

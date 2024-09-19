@@ -118,24 +118,37 @@
         - numberOfSections(in:)： 回傳 UICollectionView 中有幾個 section，根據 DrinkDetailViewController.Section 的不同類型進行動態設定。
  
         - collectionView(_:numberOfItemsInSection:)： 根據 section 的類型動態決定每個 section 中應該顯示的 item 數量。
-                                                        
-            1. info： 顯示飲品的詳細資訊，固定為 1。
-            2. sizeSelection： 顯示可選擇的尺寸，數量根據 drink.sizes 而定。
-            3. priceInfo： 若使用者已選擇尺寸，顯示價格資訊，否則為 0。
-            4. orderOptions： 顯示訂單選項，如加入購物車按鈕，固定為 1。
+            
+            1. image: 顯示飲品的圖片。
+            2. info： 顯示飲品的詳細資訊，固定為 1。
+            3. sizeSelection： 顯示可選擇的尺寸，數量根據 drink.sizes 而定。
+            4. priceInfo： 若使用者已選擇尺寸，顯示價格資訊，否則為 0。
+            5. orderOptions： 顯示訂單選項，如加入購物車按鈕，固定為 1。
 
         - collectionView(_:cellForItemAt:)： 根據 sectionType，動態設置每個區段的 cell。
 
-            1. info： 顯示飲品的基本資訊。
-            2. sizeSelection： 顯示每個可選尺寸的按鈕，並允許使用者選擇尺寸。
-            3. priceInfo： 顯示所選尺寸的價格資訊。
-            4. orderOptions： 顯示加入購物車或更新訂單的選項。
+            1. image: 顯示飲品的圖片。
+            2. info： 顯示飲品的基本資訊。
+            3. sizeSelection： 顯示每個可選尺寸的按鈕，並允許使用者選擇尺寸。
+            4. priceInfo： 顯示所選尺寸的價格資訊。
+            5. orderOptions： 顯示加入購物車或更新訂單的選項。
     
         - viewForSupplementaryElementOfKind： 用來處理 UICollectionView 的區段補充視圖（如 footer），主要用來顯示分隔視圖。
  
     * 主要重點：
         - 使用 sizeSelectionHandler 和 addToCartHandler 來與 DrinkDetailViewController 互動，保持單一職責，清楚分離資料顯示與邏輯處理。
         - 將 UICollectionView 的 dataSource 和 delegate 邏輯完全封裝在 DrinkDetailHandler 中，讓控制器更專注於邏輯處理。
+ 
+ -------------------------------------------------------------------------------------------------------------------------------------------
+
+ ## 關於設置分隔線時遇到的問題：
+ 
+ * 問題的產生：
+    - 使用 .estimated 高度的 section (如 info section)，因為不同飲品的描述內容長度不同，會導致 footer 的位置隨著資料多寡變動，這會造成在實體裝置上滑動時出現 "移動感" 的問題。
+
+ * 如何解決：
+    - 將 footer 分隔線從 .estimated 高度的 section 中移除，並在更穩定的 section（ sizeSelection section）的 header 中設置分隔線，以避免受內容長度變化的影響。這樣可以確保分隔線的位置固定，並且不會隨資料變動造成視覺上的移動感。
+    - 另外，將圖片從 info section 拆分出來成為獨立的 section，有助於進一步穩定 UI 排列，減少視覺跳動的可能性。(主要為圖片比例問題)
 
  */
 
@@ -179,9 +192,10 @@ extension DrinkDetailHandler: UICollectionViewDataSource {
     /// 根據 section 動態返回應顯示的 item 數量，資料來源於內部的 `drink`
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let drink = drink else { return 0 }
-        
         let sectionType = DrinkDetailViewController.Section.allCases[section]
         switch sectionType {
+        case .image:
+            return 1
         case .info:
             return 1
         case .sizeSelection:
@@ -197,8 +211,15 @@ extension DrinkDetailHandler: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let viewController = viewController, let drink = drink else { fatalError("No ViewController or Drink found") }
         let sectionType = DrinkDetailViewController.Section.allCases[indexPath.section]
-
+        
         switch sectionType {
+        case .image:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DrinkImageCollectionViewCell.reuseIdentifier, for: indexPath) as? DrinkImageCollectionViewCell else {
+                fatalError("Unable to dequeue DrinkImageCollectionViewCell")
+            }
+            cell.configure(with: drink.imageUrl)
+            return cell
+            
         case .info:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DrinkInfoCollectionViewCell.reuseIdentifier, for: indexPath) as? DrinkInfoCollectionViewCell else {
                 fatalError("Unable to dequeue DrinkInfoCollectionViewCell or drink is nil")
@@ -240,16 +261,13 @@ extension DrinkDetailHandler: UICollectionViewDataSource {
         }
     }
     
-    /// 處理 section 的補充視圖 (footer)
+    /// 處理 section 的補充視圖 (`header 和 footer`)
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        if kind == UICollectionView.elementKindSectionFooter {
-            
-            print("Creating footer for section: \(indexPath.section)")
-
-            guard let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: DrinkDetailSeparatorView.reuseIdentifier, for: indexPath) as? DrinkDetailSeparatorView else {
-                fatalError("Cannot create footer view")
+        if kind == UICollectionView.elementKindSectionFooter || kind == UICollectionView.elementKindSectionHeader {            
+            guard let separatorView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: DrinkDetailSeparatorView.reuseIdentifier, for: indexPath) as? DrinkDetailSeparatorView else {
+                fatalError("Cannot create separator view")
             }
-            return footerView
+            return separatorView
         }
         return UICollectionReusableView()
     }

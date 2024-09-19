@@ -276,6 +276,7 @@ class FirebaseController {
             let birthday = (userData["birthday"] as? Timestamp)?.dateValue()
             let address = userData["address"] as? String
             let gender = userData["gender"] as? String
+            let favorites = userData["favorites"] as? [String] ?? []  // 解析 favorites 資料
 
             let userDetails = UserDetails(
                 uid: user.uid,
@@ -286,7 +287,8 @@ class FirebaseController {
                 birthday: birthday,
                 address: address,
                 gender: gender,
-                orders: nil
+                orders: nil,
+                favorites: favorites  // 將 favorites 加入 UserDetails
             )
             
             completion(.success(userDetails))
