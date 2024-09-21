@@ -41,7 +41,7 @@
  
  */
 
-// MARK: - 保留
+// MARK: - 處理我的最愛相關
 import UIKit
 
 /// 負責管理 UITableView 的 (DataSource) 和 (Delegate) 功能。
@@ -140,8 +140,8 @@ extension UserProfileTableHandler: UITableViewDelegate {
                 // 這裡可以處理點擊 "Order History" 的邏輯
                 print("Order History Tapped")
             case 3:
-                // 這裡可以處理點擊 "Favorites" 的邏輯
                 print("Favorites Tapped")
+                delegate?.navigateToFavorites()
             case 4:
                 print("Logout Tapped")
                 delegate?.confirmLogout()
@@ -153,4 +153,3 @@ extension UserProfileTableHandler: UITableViewDelegate {
     }
     
 }
-
