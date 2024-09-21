@@ -121,20 +121,21 @@
  */
 
 // MARK: - drinkID & asyc & 分享、我的最愛已經完善 & 當 HUD 顯示時，不需要手動控制按鈕的禁用與否，因為 HUD 已經會禁用所有的互動。& 震動反饋 & 另外設置Image處理Cell佈局。
+/*
 import UIKit
 
 /// 該飲品的詳細資訊頁面，選取相對應的尺寸並加入訂單。
 class DrinkDetailViewController: UIViewController {
     
     // MARK: - Properties
-
+    
     private let drinkDetailView = DrinkDetailView()
     private var collectionHandler: DrinkDetailHandler!
     
     var categoryId: String?         // 傳遞進來的 categoryId，對應飲品所屬的類別
     var subcategoryId: String?      // 傳遞進來的 subcategoryId，對應飲品所屬的子類別
     var drinkId: String?            // 傳遞進來的 drinkId，用來從 Firestore 加載飲品詳細資料
-
+    
     /// 使用者選擇的飲品尺寸
     var selectedSize: String?
     
@@ -165,8 +166,8 @@ class DrinkDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        print("接收到的 size: \(String(describing: selectedSize))") // 觀察訂單修改用
-//        print("接收到的 quantity: \(editingOrderQuantity)")         // 觀察訂單修改用
+        //        print("接收到的 size: \(String(describing: selectedSize))") // 觀察訂單修改用
+        //        print("接收到的 quantity: \(editingOrderQuantity)")         // 觀察訂單修改用
         print("Received in DrinkDetailViewController: drinkId = \(String(describing: drinkId)), categoryId = \(String(describing: categoryId)), subcategoryId = \(String(describing: subcategoryId))")
         
         Task {
@@ -331,6 +332,224 @@ class DrinkDetailViewController: UIViewController {
     }
     
 }
+*/
+
+
+// MARK: - 調整我的最愛
+
+import UIKit
+
+/// 該飲品的詳細資訊頁面，選取相對應的尺寸並加入訂單。
+class DrinkDetailViewController: UIViewController {
+    
+    // MARK: - Properties
+    
+    private let drinkDetailView = DrinkDetailView()
+    private var collectionHandler: DrinkDetailHandler!
+    
+    var categoryId: String?         // 傳遞進來的 categoryId，對應飲品所屬的類別
+    var subcategoryId: String?      // 傳遞進來的 subcategoryId，對應飲品所屬的子類別
+    var drinkId: String?            // 傳遞進來的 drinkId，用來從 Firestore 加載飲品詳細資料
+
+    /// 使用者選擇的飲品尺寸
+    var selectedSize: String?
+    
+    /// 是否在編輯現有訂單項目
+    var isEditingOrderItem = false
+    
+    /// 如果是編輯模式，儲存該訂單項目的 ID
+    var editingOrderID: UUID?
+    
+    /// 存取當前訂單飲品項目的杯數
+    var editingOrderQuantity: Int = 1
+    
+    // 預先排序的尺寸，方便顯示
+    var sortedSizes: [String] = []
+    
+    // MARK: - Section Enum
+    
+    /// 定義不同的 section，依序為：圖片、飲品資訊、尺寸選擇、價格資訊、訂單選項
+    enum Section: Int, CaseIterable {
+        case image, info, sizeSelection, priceInfo, orderOptions
+    }
+    
+    // MARK: - Lifecycle Methods
+    
+    override func loadView() {
+        self.view = drinkDetailView
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        //        print("接收到的 size: \(String(describing: selectedSize))") // 觀察訂單修改用
+        //        print("接收到的 quantity: \(editingOrderQuantity)")         // 觀察訂單修改用
+//        print("Received in DrinkDetailViewController: drinkId = \(String(describing: drinkId)), categoryId = \(String(describing: categoryId)), subcategoryId = \(String(describing: subcategoryId))")
+        Task {
+            await withTaskGroup(of: Void.self) { group in
+                group.addTask { await self.setupNavigationBarItems() }
+                group.addTask { await self.loadDrinkDetail() }
+            }
+        }
+    }
+    
+    // MARK: - Data Loading (using async/await)
+    
+    /// 從 Firestore 加載飲品資料，根據 drinkId、categoryId 和 subcategoryId 確定正確的資料來源
+    private func loadDrinkDetail() async {
+        guard let drinkId = drinkId, let categoryId = categoryId, let subcategoryId = subcategoryId else { return }
+        HUDManager.shared.showLoading(text: "Loading Detail...")
+        do {
+            let loadedDrink = try await MenuController.shared.loadDrinkById(categoryId: categoryId, subcategoryId: subcategoryId, drinkId: drinkId)
+            await handleDrinkLoaded(loadedDrink)
+        } catch {
+            AlertService.showAlert(withTitle: "Error", message: error.localizedDescription, inViewController: self)
+        }
+        HUDManager.shared.dismiss()
+    }
+    
+    // MARK: - UI Update
+    
+    /// 加載完成後的處理邏輯
+    private func handleDrinkLoaded(_ drink: Drink) async {
+        updateSortedSizes(with: drink)
+        updateUI(with: drink)
+        setupHandler(with: drink)
+        await updateFavoriteButtonState()    // 當資料載入完成後，更新按鈕的視覺狀態即可，無需再管理按鈕的互動性。
+    }
+    
+    /// 更新排序的尺寸
+    private func updateSortedSizes(with drink: Drink) {
+        sortedSizes = drink.sizes.keys.sorted()
+    }
+    
+    /// 更新 UI 元素以顯示飲品詳細資料
+    private func updateUI(with drink: Drink) {
+        drinkDetailView.collectionView.reloadData()
+        selectSize(with: drink)  // 初始化預設尺寸
+    }
+    
+    // MARK: - Setup Methods
+    
+    /// 配置尺寸選擇與加入購物車的邏輯處理
+    private func setupHandler(with drink: Drink) {
+        collectionHandler = DrinkDetailHandler(viewController: self, drink: drink)  // 在這裡初始化
+        let collectionView = drinkDetailView.collectionView
+        collectionView.dataSource = collectionHandler
+        collectionView.delegate = collectionHandler
+        
+        // 處理選取尺寸的邏輯
+        collectionHandler.sizeSelectionHandler = { [weak self] selectedSize in
+            self?.handleSizeSelection(selectedSize, with: drink)
+        }
+        
+        // 處理加入購物車的邏輯
+        collectionHandler.addToCartHandler = { [weak self] quantity in
+            self?.addToCart(quantity: quantity, with: drink)
+        }
+    }
+    
+    // MARK: - Add to Cart Handler、Size Selection Handler
+    
+    /// 根據目前的選中尺寸與數量，將飲品加入購物車或是更新購物車中的飲品資訊，並傳遞對應的 categoryId 和 subcategoryId
+    private func addToCart(quantity: Int, with drink: Drink) {
+        guard let size = selectedSize else {
+            print("無法添加到購物車，未選擇尺寸")
+            return
+        }
+        
+        if isEditingOrderItem, let id = editingOrderID {
+            OrderController.shared.updateOrderItem(withID: id, with: size, and: quantity)
+            dismiss(animated: true, completion: nil)
+        } else {
+            print("正在添加到購物車: 飲品 - \(drink.name), 尺寸 - \(size), 數量 - \(quantity)")
+            OrderController.shared.addOrderItem(drink: drink, size: size, quantity: quantity, categoryId: categoryId, subcategoryId: subcategoryId)
+        }
+    }
+    
+    /// 處理使用者選擇不同尺寸的邏輯
+    private func handleSizeSelection(_ selectedSize: String, with drink: Drink) {
+        selectSize(selectedSize, with: drink)
+    }
+    
+    /// 初始化選中的預設尺寸，或者當使用者手動選擇尺寸時，更新尺寸並刷新價格與 UI 狀態。
+    private func selectSize(_ size: String? = nil, with drink: Drink) {
+        if let size = size {
+            selectedSize = size
+        } else if selectedSize == nil {
+            selectedSize = sortedSizes.first  // 確保有預設尺寸
+        }
+        updateSizeSelectionAndPrice(with: drink)
+    }
+    
+    // MARK: - Update UI Elements
+    
+    /// 根據選中尺寸更新價格資訊並刷新 UI
+    private func updateSizeSelectionAndPrice(with drink: Drink) {
+        guard let selectedSize = selectedSize, let sizeInfo = drink.sizes[selectedSize] else { return }
+        updatePriceInfo(sizeInfo: sizeInfo)
+        refreshSelectedSizeButtons()
+    }
+    
+    /// 根據選中尺寸，更新價格資訊
+    private func updatePriceInfo(sizeInfo: SizeInfo) {
+        let priceInfoIndexPath = IndexPath(item: 0, section: DrinkDetailViewController.Section.priceInfo.rawValue)
+        drinkDetailView.collectionView.reloadItems(at: [priceInfoIndexPath])
+    }
+    
+    /// 刷新所有尺寸按鈕的狀態
+    private func refreshSelectedSizeButtons() {
+        drinkDetailView.collectionView.performBatchUpdates({
+            for (index, size) in sortedSizes.enumerated() {
+                let indexPath = IndexPath(item: index, section: Section.sizeSelection.rawValue)
+                if let cell = drinkDetailView.collectionView.cellForItem(at: indexPath) as? DrinkSizeSelectionCollectionViewCell {
+                    cell.isSelectedSize = (size == selectedSize)
+                }
+            }
+        }, completion: nil)
+    }
+    
+    // MARK: - Navigation Bar Items Setup
+    
+    /// 設置導航欄按鈕（`分享` 和 `我的最愛`）
+    private func setupNavigationBarItems() async {
+        let shareButton = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .plain, target: self, action: #selector(shareDrinkInfo))
+        let favoriteButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(toggleFavorite))
+        self.navigationItem.rightBarButtonItems = [shareButton, favoriteButton]
+        await updateFavoriteButtonState()                                   // 當資料加載完成後更新我的最愛的視覺狀態
+    }
+    
+    /// 更新 `我的最愛` 按鈕的視覺狀態
+    private func updateFavoriteButtonState() async {
+        guard let drinkId = drinkId else { return }
+        let isFavorite = await FavoriteManager.shared.isFavorite(drinkId: drinkId)
+        let favoriteButton = self.navigationItem.rightBarButtonItems?[1]
+        favoriteButton?.image = isFavorite ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
+        favoriteButton?.tintColor = isFavorite ? UIColor.deepGreen : UIColor.deepGreen
+    }
+    
+    // MARK: - Share Action & Favorite Action
+    
+    /// `分享`當前的飲品資訊，包含名稱、描述以及使用者選取的尺寸與相關尺寸資訊。
+    @objc private func shareDrinkInfo() {
+        guard let drink = collectionHandler.drink else { return }
+        guard let selectedSize = selectedSize, let sizeInfo = drink.sizes[selectedSize] else { return }
+        ShareManager.shared.share(drink: drink, selectedSize: selectedSize, sizeInfo: sizeInfo, from: self)
+    }
+    
+    /// 切換飲品的「加入最愛」狀態，並且添加震動反饋
+    @objc private func toggleFavorite() {
+        guard let categoryId = categoryId, let subcategoryId = subcategoryId, let drinkId = drinkId else { return }
+        // 創建 FavoriteDrink 結構
+        let favoriteDrink = FavoriteDrink(categoryId: categoryId, subcategoryId: subcategoryId, drinkId: drinkId)
+        Task {
+            await FavoriteManager.shared.toggleFavorite(for: favoriteDrink, in: self)
+            ButtonEffectManager.shared.applyHapticFeedback()
+        }
+    }
+
+}
+
+
 
 
 

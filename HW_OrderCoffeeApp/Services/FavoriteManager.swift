@@ -224,6 +224,8 @@ class FavoriteManager {
  
  */
 
+// MARK: - 處理 favorite的結構模式
+
 import UIKit
 import Firebase
 
@@ -239,20 +241,20 @@ class FavoriteManager {
     
     /// 切換飲品的「加入最愛」狀態
     /// - Parameters:
-    ///   - drinkId: 需要加入或移除最愛的飲品的 ID
+    ///   - favoriteDrink: 需要加入或移除最愛的 `FavoriteDrink` 結構
     ///   - viewController: 用來更新按鈕圖示的視圖控制器
-    func toggleFavorite(for drinkId: String, in viewController: UIViewController) async {
+    func toggleFavorite(for favoriteDrink: FavoriteDrink, in viewController: UIViewController) async {
         guard let user = Auth.auth().currentUser else { return }
         do {
             var favorites = try await getUserFavorites(userID: user.uid)
-            // 先立即更新 UI，提供快速的用戶反饋
-            if let index = favorites.firstIndex(of: drinkId) {
+            // 檢查是否已經在 favorites 中
+            if let index = favorites.firstIndex(where: { $0.drinkId == favoriteDrink.drinkId}) {
                 favorites.remove(at: index)  // 已在最愛中，移除
             } else {
-                favorites.append(drinkId)  // 不在最愛中，加入
+                favorites.append(favoriteDrink)  // 不在最愛中，加入
             }
             print("當前最愛清單: \(favorites)")
-            updateFavoriteButton(for: drinkId, in: viewController, favorites: favorites)
+            updateFavoriteButton(for: favoriteDrink.drinkId, in: viewController, favorites: favorites)
             try await updateUserFavorites(userID: user.uid, favorites: favorites)
         } catch {
             print("更新最愛失敗：\(error)")
@@ -266,7 +268,7 @@ class FavoriteManager {
         guard let user = Auth.auth().currentUser else { return false }
         do {
             let favorites = try await getUserFavorites(userID: user.uid)
-            return favorites.contains(drinkId)
+            return favorites.contains { $0.drinkId == drinkId }
         } catch {
             print("檢查最愛狀態失敗：\(error)")
             return false
@@ -276,26 +278,34 @@ class FavoriteManager {
     // MARK: - Private Methods
     
     /// 獲取使用者的「我的最愛」清單
-    private func getUserFavorites(userID: String) async throws -> [String] {
+    private func getUserFavorites(userID: String) async throws -> [FavoriteDrink] {
         let userRef = Firestore.firestore().collection("users").document(userID)
         let document = try await userRef.getDocument()
-        if let data = document.data(), let favorites = data["favorites"] as? [String] {
-            return favorites
+        if let data = document.data(), let favoritesData = data["favorites"] as? [[String: Any]] {
+            return favoritesData.compactMap { dict in
+                guard let categoryId = dict["categoryId"] as? String, let subcategoryId = dict["subcategoryId"] as? String, let drinkId = dict["drinkId"] as? String else { return nil }
+                return FavoriteDrink(categoryId: categoryId, subcategoryId: subcategoryId, drinkId: drinkId)
+            }
         }
         return []
     }
     
     /// 更新使用者的「我的最愛」清單到 Firebase
-    private func updateUserFavorites(userID: String, favorites: [String]) async throws {
+    private func updateUserFavorites(userID: String, favorites: [FavoriteDrink]) async throws {
         let userRef = Firestore.firestore().collection("users").document(userID)
-        try await userRef.updateData(["favorites": favorites])
+        let favoritesData = favorites.map {[
+            "categoryId": $0.categoryId,
+            "subcategoryId": $0.subcategoryId,
+            "drinkId": $0.drinkId
+        ]}
+        try await userRef.updateData(["favorites": favoritesData])
     }
-    
+
     /// 更新「加入最愛」按鈕的圖示並設定不同顏色
-    private func updateFavoriteButton(for drinkId: String, in viewController: UIViewController, favorites: [String]) {
+    private func updateFavoriteButton(for drinkId: String, in viewController: UIViewController, favorites: [FavoriteDrink]) {
         DispatchQueue.main.async {
             if let favoriteButton = viewController.navigationItem.rightBarButtonItems?[1] {
-                let isFavorite = favorites.contains(drinkId)
+                let isFavorite = favorites.contains { $0.drinkId == drinkId }
                 favoriteButton.image = isFavorite ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
                 favoriteButton.tintColor = isFavorite ? UIColor.deepGreen : UIColor.deepGreen
             }
@@ -303,4 +313,3 @@ class FavoriteManager {
     }
     
 }
-

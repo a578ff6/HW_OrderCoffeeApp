@@ -337,88 +337,7 @@ extension UserProfileViewController: UserDetailsReceiver {
  */
 
 
-// MARK: - 修改用TableVIew
-/*
- import UIKit
- import Kingfisher
- import Firebase
-
- /// 個人資訊頁面
- ///
- /// `UserProfileViewController` 顯示使用者的個人資訊，包括名字、電子郵件和頭像。會在載入時設置使用者資料，並且實現 `UserDetailsReceiver` 協議來接收來自其他視圖控制器的使用者資訊。
- class UserProfileViewController: UIViewController {
-     
-     // MARK: - Properties
-     
-     private let userProfileView = UserProfileView()
-     private let tableHandler = UserProfileTableHandler()
-     private var tableView: UITableView!
-     
-     // MARK: - Lifecycle Methods
-
-     override func loadView() {
-         view = userProfileView
-     }
-     
-     override func viewDidLoad() {
-         super.viewDidLoad()
-         setupTableView()
-         tableHandler.delegate = self
-     }
-     
-     // MARK: - Setup Methods
-
-     private func setupTableView() {
-         tableView = userProfileView.tableView
-         tableView.delegate = tableHandler
-         tableView.dataSource = tableHandler
-
-         // 註冊自定義的 cell
-         tableView.register(ProfileOptionCell.self, forCellReuseIdentifier: ProfileOptionCell.reuseIdentifier)
-         tableView.register(ProfileHeaderCell.self, forCellReuseIdentifier: ProfileHeaderCell.reuseIdentifier)
-     }
-     
-     /// 處理登出邏輯
-     ///
-     /// 在用戶確認登出後，執行登出操作並顯示活動指示器。這樣可以告知用戶正在處理登出的過程。
-     func confirmLogout() {
-         AlertService.showAlert(withTitle: "登出", message:  "您確定要登出嗎？", inViewController: self, showCancelButton: true) { [weak self] in
-             self?.executeLogout()
-         }
-     }
-     
-     private func executeLogout() {
-         ActivityIndicatorManager.shared.startLoading(on: view)
-         
-         FirebaseController.shared.signOut { [weak self] result in
-             ActivityIndicatorManager.shared.stopLoading()
-             switch result {
-             case .success:
-                 NavigationHelper.navigateToLogin(from: self!)
-             case .failure(let error):
-                 AlertService.showAlert(withTitle: "登出失敗", message: "無法登出，請稍後再試。", inViewController: self!)
-             }
-         }
-     }
-     
- }
-
- // MARK: - UserDetailsReceiver Delegate
-
- extension UserProfileViewController: UserDetailsReceiver {
-    
-    /// 實現 UserDetailsReceiver 協議來接收使用者詳細資訊並更新 UI
-    func receiveUserDetails(_ userDetails: UserDetails?) {
-        print("Received user details: \(String(describing: userDetails))")
-        tableHandler.userDetails = userDetails
-        userProfileView.tableView.reloadData()  // 確保資料刷新
-    }
-     
- }
-*/
-
-
-// MARK: - 修改用tableview
+// MARK: - 備用
 
 import UIKit
 import Kingfisher
@@ -461,13 +380,12 @@ class UserProfileViewController: UIViewController {
     
     // MARK: - Navigation
 
-    /// 導航到編輯個人資料頁面
+    /// 導航到`編輯個人資料`頁面
     ///
     /// 初始化 EditProfileViewController 並將 userDetails 傳遞給它，然後以頁面樣式顯示。
     func navigateToEditProfile() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        if let editProfileVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard
-            .editProfileViewController) as? EditProfileViewController {
+        if let editProfileVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.editProfileViewController) as? EditProfileViewController {
             editProfileVC.setupWithUserDetails(userDetails)
             editProfileVC.delegate = self
 
@@ -479,6 +397,15 @@ class UserProfileViewController: UIViewController {
             }
             
             present(navController, animated: true, completion: nil)
+        }
+    }
+    
+    /// 導航到`我的最愛清單`頁面
+    func navigateToFavorites() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let favoritesVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.favoritesViewController) as? FavoritesViewController {
+            favoritesVC.userDetails = userDetails        // 將 userDetails 傳遞給 FavoritesViewController
+            navigationController?.pushViewController(favoritesVC, animated: true)
         }
     }
     

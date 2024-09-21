@@ -287,6 +287,21 @@
             </objects>
             <point key="canvasLocation" x="7682" y="1777"/>
         </scene>
+        <!--Favorites View Controller-->
+        <scene sceneID="wW1-p7-JdT">
+            <objects>
+                <viewController storyboardIdentifier="FavoritesViewController" id="kN4-g9-AdV" customClass="FavoritesViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="g0I-WU-4wf">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="y04-VI-OZ5"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="tOI-Fa-jQZ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7684" y="2472"/>
+        </scene>
         <!--Order-->
         <scene sceneID="d9b-ck-ATS">
             <objects>

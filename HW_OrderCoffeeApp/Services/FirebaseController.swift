@@ -168,7 +168,8 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
              let birthday = (userData["birthday"] as? Timestamp)?.dateValue()
              let address = userData["address"] as? String
              let gender = userData["gender"] as? String
-
+             let favorites = userData["favorites"] as? [String] ?? []  // 解析 favorites 資料
+             
              let userDetails = UserDetails(
                  uid: user.uid,
                  email: email,
@@ -178,7 +179,8 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
                  birthday: birthday,
                  address: address,
                  gender: gender,
-                 orders: nil
+                 orders: nil,
+                 favorites: favorites  // 將 favorites 加入 UserDetails
              )
              
              completion(.success(userDetails))
@@ -224,10 +226,34 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
          }
      }
 
+     /// 更新 Firestore 中的用戶資料
+     func updateUserDetails(_ userDetails: UserDetails, completion: @escaping (Result<Void, Error>) -> Void) {
+         let db = Firestore.firestore()
+         let userRef = db.collection("users").document(userDetails.uid)
+         
+         let userData: [String: Any] = [
+             "fullName": userDetails.fullName,
+             "phoneNumber": userDetails.phoneNumber ?? "",
+             "birthday": userDetails.birthday != nil ? Timestamp(date: userDetails.birthday!) : NSNull(),
+             "address": userDetails.address ?? "",
+             "gender": userDetails.gender ?? "",
+             "profileImageURL": userDetails.profileImageURL ?? ""
+         ]
+         
+         userRef.updateData(userData) { error in
+             if let error = error {
+                 completion(.failure(error))
+             } else {
+                 completion(.success(()))
+             }
+         }
+     }
+     
      /// 執行登出操作
      func signOut(completion: @escaping (Result<Void, Error>) -> Void) {
          do {
              try Auth.auth().signOut()
+             OrderController.shared.clearOrder() // 在登出時清除內存中的 orderItems（訂單項目）
              completion(.success(()))
          } catch let signOutError as NSError {
              completion(.failure(signOutError))
@@ -276,8 +302,16 @@ class FirebaseController {
             let birthday = (userData["birthday"] as? Timestamp)?.dateValue()
             let address = userData["address"] as? String
             let gender = userData["gender"] as? String
-            let favorites = userData["favorites"] as? [String] ?? []  // 解析 favorites 資料
-
+            
+            // 解析 favorites 資料，從 Firebase 轉換成 [FavoriteDrink]
+            var favorites: [FavoriteDrink] = []
+            if let favoritesData = userData["favorites"] as? [[String: Any]] {
+                favorites = favoritesData.compactMap({ dict in
+                    guard let categoryId = dict["categoryId"] as? String, let subcategoryId = dict["subcategoryId"] as? String,  let drinkId = dict["drinkId"] as? String else { return nil}
+                    return FavoriteDrink(categoryId: categoryId, subcategoryId: subcategoryId, drinkId: drinkId)
+                })
+            }
+            
             let userDetails = UserDetails(
                 uid: user.uid,
                 email: email,
@@ -288,7 +322,7 @@ class FirebaseController {
                 address: address,
                 gender: gender,
                 orders: nil,
-                favorites: favorites  // 將 favorites 加入 UserDetails
+                favorites: favorites  // 將 favorites 轉換後的 [FavoriteDrink] 加入 UserDetails
             )
             
             completion(.success(userDetails))
