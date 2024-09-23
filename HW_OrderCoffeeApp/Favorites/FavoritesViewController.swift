@@ -41,7 +41,7 @@
  */
 
 
-// MARK: - 藉此練習 UICollectionViewDiffableDataSource（調整成三個參數、 處理User頁面傳遞的部分）
+// MARK: - 藉此練習 UICollectionViewDiffableDataSource（調整成三個參數、處理User頁面傳遞的部分、處理我的最愛視圖控制器刪除部分）
 // https://reurl.cc/6dGbxk
 
 import UIKit
@@ -65,26 +65,37 @@ class FavoritesViewController: UIViewController {
     override func loadView() {
         view = favoritesView
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         handler = FavoritesHandler(collectionView: favoritesView.collectionView)
-        // 確保有 userDetails 資料，然後加載飲品
-        if let userDetails = userDetails {
-            fetchDrinks(for: userDetails.favorites)
+        favoritesView.collectionView.delegate = handler  // 設定 delegate
+        setupCloseButton()
+        validateAndLoadUserDetails()  // 檢查userDetails並載入收藏的飲品
+    }
+    
+    // MARK: - UserDetails Validation
+    
+    /// 檢查 `userDetails` 是否存在，並根據結果進行資料加載或顯示錯誤
+    private func validateAndLoadUserDetails() {
+        guard let userDetails = userDetails else {
+            print("無法加載 favorites，userDetails 為空")
+            return
         }
+        print("接收到的userDetails: \(userDetails.favorites.map { $0.drinkId })")
+        fetchDrinks(for: userDetails.favorites)  // 加載收藏的飲品資料
     }
 
     // MARK: - Data Loading
     
-    /// 透過 `categoryId`、`subcategoryId` 和 `drinkId` 加載收藏的飲品資料
+    /// 根據使用者的收藏資料（`FavoriteDrink`）從 Firebase 加載飲品的詳細資料
     ///
-    /// 會使用 `MenuController` 來加載每個收藏飲品的詳細資訊，並更新到 UI。
+    /// 會透過 `categoryId`、`subcategoryId` 和 `drinkId` 加載每個收藏的飲品資訊，並更新到 `UICollectionView`。
     private func fetchDrinks(for favoriteDrinks: [FavoriteDrink]) {
         Task {
             var drinks: [Drink] = []
             
-            // 依照每個收藏飲品的 ID 加載飲品詳細資料（categoryId, subcategoryId 和 drinkId 加載飲品詳細資料）
+            /// 依照每個收藏飲品的 ID 加載飲品詳細資料（categoryId, subcategoryId 和 drinkId 加載飲品詳細資料）
             for favoriteDrink in favoriteDrinks {
                 print("Loading drink details for: \(favoriteDrink.drinkId)")
                 if let drink = try? await MenuController.shared.loadDrinkById(
@@ -95,10 +106,23 @@ class FavoritesViewController: UIViewController {
                     drinks.append(drink)
                 }
             }
-            print("Loaded drinks: \(drinks.map { $0.name })") // 打印加載到的飲品
+            print("Loaded drinks: \(drinks.map { $0.name })") // 觀察加載到的飲品
             // 更新 UICollectionView 的數據快照，顯示收藏的飲品清單
             handler.updateSnapshot(with: drinks)
         }
+    }
+    
+    // MARK: - Close Button Setup
+
+    /// 設置關閉按鈕
+    private func setupCloseButton() {
+        let closeButton = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeFavorites))
+        navigationItem.leftBarButtonItem = closeButton
+    }
+    
+    /// 使用 `dismiss` 關閉`Full Screen`顯示的視圖控制器
+    @objc private func closeFavorites() {
+        dismiss(animated: true, completion: nil)
     }
     
 }
