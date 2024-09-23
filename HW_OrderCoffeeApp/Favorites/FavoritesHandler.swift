@@ -5,6 +5,45 @@
 //  Created by 曹家瑋 on 2024/9/19.
 //
 
+/*
+ ## 「收藏功能」與「刪除邏輯」總結
+ 
+ 1. FavoritesViewController 與 Drink 的使用（ 對於在FavoritesViewController刪除位於清單中的最愛飲品 ）：
+ 
+    * 顯示 Cell 的方式：
+        - FavoritesViewController 中使用 Drink 來顯示每個 Cell，是因為從 FavoriteDrink 中提取的基本 ID 資訊（categoryId、subcategoryId、drinkId）僅用於查找對應的完整 Drink 資料。
+        - 使用 fetchDrinks(for:) 根據這些 ID 加載飲品資料後，UI 能夠直接顯示 Drink 的名稱、圖片和描述等資訊。
+
+    * 刪除邏輯的處理：
+        - 當用戶刪除收藏的飲品時，UI 層使用 Drink，但實際上刪除的是 Firebase 中的 FavoriteDrink。
+        - 使用 Drink.id 來查找並移除對應的 FavoriteDrink 資料，從而實現同步刪除 Firebase 和 UI 顯示的資料。
+
+ 2. 刪除功能的詳細步驟
+
+    * FavoritesHandler 中的刪除邏輯：
+        - 在 collectionView(_:contextMenuConfigurationForItemAt:point:) 中設置 context menu，當選擇「刪除」時觸發刪除邏輯。
+        - handleDelete(drink:at:) 負責將選中的 Drink 從畫面中移除，並通過 FavoriteManager.shared.removeFavorite(for:) 刪除 Firebase 中的收藏記錄。
+
+    * FavoriteManager 的移除邏輯：
+        - removeFavorite(for:) 方法負責從 Firebase 刪除指定的 Drink，並同步更新 favorites 列表和 Firebase 中的資料。
+        - refreshUserDetails() 會更新最新的使用者資料，確保資料同步到 UI，避免不一致的情況。
+
+ 3. 關鍵因素
+ 
+    * UICollectionViewDiffableDataSource：
+        - 使用 DiffableDataSource 管理資料，使得刪除操作能夠即時更新快照，並簡化資料源的處理流程。
+ 
+    * Firebase 同步與 UI 更新：
+        - FavoriteManager 的同步邏輯確保刪除操作在 Firebase 中即時反映，通過 async/await 保持資料操作流暢，並同步更新到 UI。
+
+ 4. 整體架構的因素
+    
+    *清楚分離了資料層與顯示層。FavoriteDrink 僅儲存必要的 ID 資訊，而 Drink 提供完整的顯示資料，這樣避免了冗餘的數據存儲。
+    * 使用 loadDrinkById 方法動態加載詳細的 Drink 資料，避免每次都保存完整的飲品資料，提高了效能與靈活性。
+    * 刪除邏輯設計合理，FavoritesHandler 和 FavoriteManager 的合作確保了操作的流暢性與一致性。
+ 
+ */
+
 import UIKit
 
 /// `FavoritesHandler` 負責管理 `FavoritesViewController` 中的 UICollectionView 的資料來源 (dataSource) 及使用者互動 (delegate)。
@@ -14,6 +53,8 @@ class FavoritesHandler: NSObject {
     
     var collectionView: UICollectionView
     private var dataSource: UICollectionViewDiffableDataSource<Section, Drink>!
+    
+    // MARK: - Sections
     
     /// 使用 Sections 作為 dataSource 的 section 類型
     enum Section {
@@ -27,7 +68,7 @@ class FavoritesHandler: NSObject {
         super.init()
         configureDataSource()
     }
-    
+ 
     // MARK: - DataSource 設定
 
     /// DataSource 設定
@@ -38,7 +79,6 @@ class FavoritesHandler: NSObject {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteDrinkCell.reuseIdentifier, for: indexPath) as? FavoriteDrinkCell else {
                 return UICollectionViewCell()
             }
-            // 配置 cell 的顯示
             cell.configure(with: drink)
             return cell
         }
@@ -64,6 +104,45 @@ class FavoritesHandler: NSObject {
 // MARK: - UICollectionViewDelegate
 extension FavoritesHandler: UICollectionViewDelegate {
     
+    /// 負責設置每個項目的 context menu 並提供`「刪除」`選項。
+    /// - Parameters:
+    ///   - collectionView: 當前的 UICollectionView
+    ///   - indexPath: 當前選中的項目的位置
+    ///   - point: 使用者長按的具體位置
+    /// - Returns: 回傳一個 UIContextMenuConfiguration 來配置選單，或返回 nil 表示沒有選單
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        /// 取得當前項目的飲品資料 (Drink)
+        guard let drink = dataSource.itemIdentifier(for: indexPath) else { return nil }
+        
+        // 配置 context menu 並設定「刪除」選項
+        let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ -> UIMenu? in
+            let deleteAction = UIAction(title: "刪除", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                self.handleDelete(drink: drink, at: indexPath)
+            }
+            return UIMenu(title: "", children: [deleteAction])
+        }
+        return configuration
+    }
+ 
+    /// 處理「刪除」項目的邏輯，當使用者選擇「刪除」時，會從 Firebase 和當前畫面中同步移除該飲品。
+    /// - Parameters:
+    ///   - drink: 要刪除的飲品物件
+    ///   - indexPath: 要刪除的項目的位置
+    private func handleDelete(drink: Drink, at indexPath: IndexPath) {
+        Task {
+            self.removeDrinkFromSnapshot(drink: drink)                  // 更新畫面上的收藏飲品清單
+            await FavoriteManager.shared.removeFavorite(for: drink)     // 使用 FavoriteManager 刪除 Firebase 中的收藏
+        }
+    }
+    
+    /// 從快照中移除`指定的飲品`並`更新畫面`
+    /// - Parameter drink: 要從快照中移除的飲品物件
+    private func removeDrinkFromSnapshot(drink: Drink) {
+        DispatchQueue.main.async {
+            var snapshot = self.dataSource.snapshot()
+            snapshot.deleteItems([drink])
+            self.dataSource.apply(snapshot, animatingDifferences: true)
+        }
+    }
+
 }
-
-
