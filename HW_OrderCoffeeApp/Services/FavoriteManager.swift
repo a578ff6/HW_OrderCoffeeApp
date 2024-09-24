@@ -223,6 +223,8 @@ class FavoriteManager {
     * 在 FavoriteManager 中：
         - 當使用者切換「我的最愛」狀態時，按鈕需要即時反映出這一變更。因此，updateFavoriteButton(for:in:) 負責在切換狀態後，及時更新按鈕的外觀（圖示和顏色），確保使用者在操作時能立刻看到變更效果。
  
+ -------------------------------------------------------------------------------------------------
+ 
  ## 關於 refreshUserDetails：
  
     * 當用戶進行「加入/移除最愛」後，需要即時同步最新的 UserDetails 資料到 App 中，這樣可以確保「我的最愛」在多個頁面保持一致。
@@ -249,6 +251,62 @@ class FavoriteManager {
     * 易於維護： 將 Firebase 資料讀取和 UI 更新分開模組化處理，讓程式碼易於維護和調整。
  
  （補充：或許可以在 FirebaseController 設置專門獲取 UserDetails 中的 favorites 來單獨處裡，但避免增加維護成本，跟接下來的擴展跟重構，目前先暫時不這麼做。）
+ 
+ -------------------------------------------------------------------------------------------------
+
+ ## 我的最愛 UI 同步更新與 Firebase 資料重載 vs 通知機制：
+    
+    * 涉及範圍： DrinkDetailViewController、FavoritesViewController、FavoriteManager
+ 
+    * 產生的問題：
+        - 當在不同的視圖控制器（DrinkDetailViewController 和 FavoritesViewController）中對「我的最愛」進行修改時，DrinkDetailViewController 的按鈕 UI 無法即時更新。
+        - 例如，當在 FavoritesViewController 刪除某個飲品後，回到 DrinkDetailViewController 時，按鈕 UI 還是保持為 heart.fill，無法即時反映變化。
+ 
+    * 原先的設計：
+        - 在 DrinkDetailViewController 中使用 Firebase 抓取資料，然後在 viewDidLoad() 中進行 UI 更新。
+        - 切換 Tab 或重新進入 DrinkDetailViewController 時，會重新抓取資料並更新 UI。
+        - 但當「我的最愛」在 FavoritesViewController 變更時，DrinkDetailViewController 沒有接收到變更，導致 UI 沒有同步更新。
+
+ &. 解決方式：Firebase 資料重載 & 通知機制
+ 
+    * Firebase 資料重載：
+        - 原先只有透過 Firebase 重新抓取資料並更新 UI，這可以重載視圖內容，用於保證視圖初始化或重新進入時，資料與 UI 是最新的。這是資料正確性的保證。
+        - 但是無法在視圖控制器之間即時同步資料。（必須離開當前視圖，再重新載入。）
+            - EX:
+                1.當我在 CaffèMisto 的 DrinkDetailViewController 點擊該飲品的我的最愛按鈕，並將飲品添加到我的最愛清單後。
+                2.接著前往 FavoritesViewController 時（位於 NavigationViewController (Menu部分) 的部分還是處在 CaffèMisto 的 DrinkDetailViewController）。
+                3.然後在 FavoritesViewController 中去移除掉被添加到清單中的 CaffèMisto 時，並不會反映在此時還位於 NavigationViewController (Menu部分) 的部分（因為還處在 CaffèMisto 的 DrinkDetailViewController。）
+                4.我必須要先離開CaffèMisto的DrinkDetailViewController在進入才會刷新我的最愛按鈕的UI。
+ 
+    * 通知機制（NotificationCenter）：
+        - 使用 NotificationCenter 來即時同步不同視圖控制器之間的 UI 更新。當 FavoritesViewController 修改「我的最愛」後，透過通知的方式告知 DrinkDetailViewController 更新 UI。
+ 
+ &. Firebase 資料重載 vs 通知機制的結合
+
+    * Firebase 資料重載：
+        - 適合在特定視圖控制器啟動時抓取資料並刷新 UI。
+ 
+    * 通知機制：
+        - 適合用來同步不同視圖控制器之間的 UI 變更。當「我的最愛」資料變更時，透過 NotificationCenter 發送通知，確保其他視圖控制器即時更新。
+ 
+ &. 通知機制的應用
+
+    * 在 FavoriteManager 中發送通知： 每次「我的最愛」資料更新後，在 removeFavorite 方法中發送通知。這樣可以保證所有監聽該通知的視圖控制器都能即時接收到變更。
+        - NotificationCenter.default.post(name: .favoriteStatusChanged, object: nil)
+
+    * 在 DrinkDetailViewController 監聽通知。
+        - 監聽通知並即時更新 UI。
+ 
+ &. 總結：
+ 
+    * Firebase 資料重載：
+        - 適合在進入或重新進入視圖時，保證資料的完整性和一致性。例如，當用戶重新進入 DrinkDetailViewController 或 FavoritesViewController 時，可以通過 Firebase 重載最新的「我的最愛」資料，確保顯示的是正確的內容。
+        - 資料重載也是避免資料過時或不一致的方式。
+
+    * 通知機制：
+        - 主要用來處理即時性的 UI 更新需求，當使用者在不同的視圖控制器之間切換時。
+        - 例如在 FavoritesViewController 刪除了「我的最愛」，需要即時更新 DrinkDetailViewController 的 UI。這可以讓不需要重新進入視圖時，也能即時反映變更，減少等待時間。
+
  */
 
 // MARK: - 處理 favorite的結構模式
@@ -511,6 +569,7 @@ class FavoriteManager {
             print("當前最愛清單: \(favorites)")
             try await updateUserFavorites(userID: user.uid, favorites: favorites)                   // 更新 Firebase 資料
             await refreshUserDetails()                                                              // 更新 UserDetails
+            postFavoriteStatusChangedNotification()                                                 // 發送通知，告知「我的最愛」已變更
         } catch {
             print("移除最愛失敗：\(error)")
         }
@@ -628,4 +687,14 @@ class FavoriteManager {
         }
     }
     
+}
+
+// MARK: - Notifications Handling
+
+extension FavoriteManager {
+    
+    /// 發送「我的最愛」狀態改變的通知
+    func postFavoriteStatusChangedNotification() {
+        NotificationCenter.default.post(name: .favoriteStatusChanged, object: nil)
+    }
 }

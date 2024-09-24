@@ -114,7 +114,7 @@
         - 此方法主要負責從 Firestore 中加載飲品詳細資料，並將資料顯示在 UI 中。
         - 此部分與「我的最愛」功能無直接關聯，主要是處理飲品的數據加載與 UI 更新。
 
-    * updateFavoriteButtonState：
+    * updateFavoriteButtonUIState：
         - 當飲品詳細資料加載完成後，才會檢查該飲品是否已加入「我的最愛」，並更新按鈕圖示和顏色。
         - 「我的最愛」的相關操作與資料加載是相對獨立的，保持分離是為了清晰區分資料加載與使用者互動的邏輯。
         - 當頁面載入或飲品資料加載完成時，會執行這段程式碼來顯示飲品是否已加入最愛。
@@ -384,12 +384,18 @@ class DrinkDetailViewController: UIViewController {
         //        print("接收到的 size: \(String(describing: selectedSize))") // 觀察訂單修改用
         //        print("接收到的 quantity: \(editingOrderQuantity)")         // 觀察訂單修改用
 //        print("Received in DrinkDetailViewController: drinkId = \(String(describing: drinkId)), categoryId = \(String(describing: categoryId)), subcategoryId = \(String(describing: subcategoryId))")
+        registerNotifications()
         Task {
             await withTaskGroup(of: Void.self) { group in
                 group.addTask { await self.setupNavigationBarItems() }
                 group.addTask { await self.loadDrinkDetail() }
             }
         }
+    }
+    
+    // MARK: - deinit
+    deinit {
+        removeNotifications() // 移除通知
     }
     
     // MARK: - Data Loading (using async/await)
@@ -414,7 +420,7 @@ class DrinkDetailViewController: UIViewController {
         updateSortedSizes(with: drink)
         updateUI(with: drink)
         setupHandler(with: drink)
-        await updateFavoriteButtonState()    // 當資料載入完成後，更新按鈕的視覺狀態即可，無需再管理按鈕的互動性。
+        await updateFavoriteButtonUIState()    // 當資料載入完成後，更新按鈕的視覺狀態即可，無需再管理按鈕的互動性。
     }
     
     /// 更新排序的尺寸
@@ -515,11 +521,11 @@ class DrinkDetailViewController: UIViewController {
         let shareButton = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .plain, target: self, action: #selector(shareDrinkInfo))
         let favoriteButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(toggleFavorite))
         self.navigationItem.rightBarButtonItems = [shareButton, favoriteButton]
-        await updateFavoriteButtonState()                                   // 當資料加載完成後更新我的最愛的視覺狀態
+        await updateFavoriteButtonUIState()                                   // 當資料加載完成後更新我的最愛的視覺狀態
     }
     
     /// 更新 `我的最愛` 按鈕的視覺狀態
-    private func updateFavoriteButtonState() async {
+    private func updateFavoriteButtonUIState() async {
         guard let drinkId = drinkId else { return }
         let isFavorite = await FavoriteManager.shared.isFavorite(drinkId: drinkId)
         let favoriteButton = self.navigationItem.rightBarButtonItems?[1]
@@ -549,9 +555,26 @@ class DrinkDetailViewController: UIViewController {
 
 }
 
+// MARK: - Notifications Handling
 
-
-
+extension DrinkDetailViewController {
+    /// 註冊通知觀察者
+    private func registerNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleFavoriteStatusChanged), name: .favoriteStatusChanged, object: nil)
+    }
+    
+    /// 移除通知觀察者
+    private func removeNotifications() {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    /// 當「我的最愛」狀態改變時，更新 UI，檢查最新的「我的最愛」狀態並更新按鈕
+    @objc private func handleFavoriteStatusChanged() {
+        Task {
+            await updateFavoriteButtonUIState()
+        }
+    }
+}
 
 
 
