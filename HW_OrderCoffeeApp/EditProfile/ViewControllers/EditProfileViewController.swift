@@ -141,6 +141,7 @@ class EditProfileViewController: UIViewController {
         setupManagers()
         setupTableView()
         configureUserData()
+        setupNavigationTitle()
         setupNavigationBar()
         setupKeyboardHandling()
         setupChangePhotoAction()
@@ -158,6 +159,12 @@ class EditProfileViewController: UIViewController {
     private func setupNavigationBar() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveButtonTapped))
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeButtonTapped))
+    }
+        
+    /// 設置導航欄的標題
+    private func setupNavigationTitle() {
+        title = "Edit Profile"
+        navigationController?.navigationBar.prefersLargeTitles = false
     }
     
     ///初始化照片選擇管理器

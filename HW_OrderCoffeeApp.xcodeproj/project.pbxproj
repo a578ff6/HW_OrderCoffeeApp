@@ -27,7 +27,7 @@
 		9353741B2C9D832E00794A63 /* FavoriteDrink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353741A2C9D832E00794A63 /* FavoriteDrink.swift */; };
 		9353741D2C9EB58300794A63 /* FavoritesLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353741C2C9EB58300794A63 /* FavoritesLayoutProvider.swift */; };
 		935374212CA2F02000794A63 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374202CA2F02000794A63 /* Notifications.swift */; };
-		935374232CA2F83800794A63 /* NoFavoritesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374222CA2F83800794A63 /* NoFavoritesCell.swift */; };
+		935374292CA4502B00794A63 /* NoFavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374282CA4502B00794A63 /* NoFavoritesView.swift */; };
 		936CFFBD2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */; };
 		936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */; };
 		936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */; };
@@ -179,7 +179,7 @@
 		9353741A2C9D832E00794A63 /* FavoriteDrink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteDrink.swift; sourceTree = "<group>"; };
 		9353741C2C9EB58300794A63 /* FavoritesLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesLayoutProvider.swift; sourceTree = "<group>"; };
 		935374202CA2F02000794A63 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
-		935374222CA2F83800794A63 /* NoFavoritesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFavoritesCell.swift; sourceTree = "<group>"; };
+		935374282CA4502B00794A63 /* NoFavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFavoritesView.swift; sourceTree = "<group>"; };
 		936CFFBA2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HW_OrderCoffeeAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITests.swift; sourceTree = "<group>"; };
 		936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -495,9 +495,9 @@
 			children = (
 				935374112C9C5C6900794A63 /* FavoritesViewController.swift */,
 				935374142C9C5CD000794A63 /* FavoritesHandler.swift */,
+				935374282CA4502B00794A63 /* NoFavoritesView.swift */,
 				935374162C9C5CF300794A63 /* FavoritesView.swift */,
 				935374182C9C601200794A63 /* FavoriteDrinkCell.swift */,
-				935374222CA2F83800794A63 /* NoFavoritesCell.swift */,
 				9353741C2C9EB58300794A63 /* FavoritesLayoutProvider.swift */,
 			);
 			path = Favorites;
@@ -1099,6 +1099,7 @@
 				9352913F2C8843E40018B060 /* DrinksCategoryHandler.swift in Sources */,
 				93755C332C8351AA002570A5 /* MenuViewController.swift in Sources */,
 				93B9DC762C3042710050BC3F /* MenuLayoutProvider.swift in Sources */,
+				935374292CA4502B00794A63 /* NoFavoritesView.swift in Sources */,
 				93755C352C83520A002570A5 /* MenuCollectionHandler.swift in Sources */,
 				93755C3C2C838299002570A5 /* Website.swift in Sources */,
 				93755C162C7F2F49002570A5 /* DatePickerHandler.swift in Sources */,
@@ -1126,7 +1127,6 @@
 				936CFFC92C6C74DE004B8724 /* UserProfileView.swift in Sources */,
 				932258D12C92F1E1004EA2D9 /* ShareManager.swift in Sources */,
 				93DB1D332C47696000BA2CC1 /* LoginView.swift in Sources */,
-				935374232CA2F83800794A63 /* NoFavoritesCell.swift in Sources */,
 				9352913C2C8837040018B060 /* DrinksCategoryViewController.swift in Sources */,
 				93755C002C79E454002570A5 /* ProfileTextFieldCell.swift in Sources */,
 				9352914C2C8D91480018B060 /* DrinkDetailHandler.swift in Sources */,
