@@ -16,9 +16,8 @@
 
     * 刪除邏輯的處理：
         - 當用戶刪除收藏的飲品時，UI 層使用 Drink，但實際上刪除的是 Firebase 中的 FavoriteDrink。
-        - 使用 Drink.id 來查找並移除對應的 FavoriteDrink 資料，從而實現同步刪除 Firebase 和 UI 顯示的資料。
-
- 2. 刪除功能的詳細步驟
+ 
+ 2. 刪除功能的詳細步驟：
 
     * FavoritesHandler 中的刪除邏輯：
         - 在 collectionView(_:contextMenuConfigurationForItemAt:point:) 中設置 context menu，當選擇「刪除」時觸發刪除邏輯。
@@ -27,75 +26,104 @@
     * FavoriteManager 的移除邏輯：
         - removeFavorite(for:) 方法負責從 Firebase 刪除指定的 Drink，並同步更新 favorites 列表和 Firebase 中的資料。
         - refreshUserDetails() 會更新最新的使用者資料，確保資料同步到 UI，避免不一致的情況。
+ 
+ 3. NoFavoritesView 的新增與使用：
 
- 3. 關鍵因素
+    * NoFavoritesView 的背景顯示邏輯：
+        - 當收藏飲品清單為空時，FavoritesHandler 中會將 NoFavoritesView 設為 collectionView.backgroundView，顯示「目前沒有我的最愛」的提示訊息。
+        - 當有收藏飲品時，背景視圖會被移除，直接顯示飲品的 Cell。
+
+    * NoFavoritesView 不需要註冊或重用：
+        - NoFavoritesView 是一個靜態背景視圖，並不屬於 UICollectionView 的 Cell，因此不需要註冊到 FavoritesView。
+        - 由於它不會像 UICollectionViewCell 那樣被重複使用，所以也不需要實作 prepareForReuse。
+ 
+ 4. 背景顯示邏輯的重點解釋：
+ 
+    * 將 updateBackgroundViewIfNeeded 放在 updateSnapshot
+        - 負責處理視圖的背景更新，與 snapshot 的資料更新是獨立的。
+        - 可以在快照更新前進行背景的處理，不影響後續的資料更新操作。
+        - 背景視圖的顯示或移除不會依賴 snapshot 的更新，所以即使將背景處理放在一開始，仍然可以正常運作。
+
+
+ 5. 關鍵因素
  
     * UICollectionViewDiffableDataSource：
-        - 使用 DiffableDataSource 管理資料，使得刪除操作能夠即時更新快照，並簡化資料源的處理流程。
- 
-    * Firebase 同步與 UI 更新：
-        - FavoriteManager 的同步邏輯確保刪除操作在 Firebase 中即時反映，通過 async/await 保持資料操作流暢，並同步更新到 UI。
+        - 使用 DiffableDataSource 管理資料，使得刪除操作能夠即時更新快照，並簡化資料源的處理流程。清單資料變化時會同步反映到 UI，包括顯示和隱藏 NoFavoritesView。
 
- 4. 整體架構的因素
+    * Firebase 同步與 UI 更新：
+        - FavoriteManager 的同步邏輯確保刪除操作在 Firebase 中即時反映，並通過 async/await 保持資料操作流暢，確保 UI 與後端資料一致。
+
+ 6. 整體架構的因素
     
-    *清楚分離了資料層與顯示層。FavoriteDrink 僅儲存必要的 ID 資訊，而 Drink 提供完整的顯示資料，這樣避免了冗餘的數據存儲。
+    * 清楚分離了資料層與顯示層。FavoriteDrink 僅儲存必要的 ID 資訊，而 Drink 提供完整的顯示資料，這樣避免了冗餘的數據存儲。
     * 使用 loadDrinkById 方法動態加載詳細的 Drink 資料，避免每次都保存完整的飲品資料，提高了效能與靈活性。
     * 刪除邏輯設計合理，FavoritesHandler 和 FavoriteManager 的合作確保了操作的流暢性與一致性。
  
  */
 
+// MARK: - 使用 NoFavoritesView，並且當在 FavoritesHandler 直接刪除掉最愛飲品項目之後，會立即更新顯示 NoFavoritesView
 import UIKit
 
 /// `FavoritesHandler` 負責管理 `FavoritesViewController` 中的 UICollectionView 的資料來源 (dataSource) 及使用者互動 (delegate)。
+/// 根據收藏的飲品來顯示不同的 Cell，當沒有收藏飲品時會顯示提示訊息。
 class FavoritesHandler: NSObject {
     
     // MARK: - Properties
     
     var collectionView: UICollectionView
+    
+    /// UICollectionView 的資料來源，使用 `Section` 和 `Drink` 來處理不同的資料
     private var dataSource: UICollectionViewDiffableDataSource<Section, Drink>!
     
-    // MARK: - Sections
+    // MARK: - Section
     
-    /// 使用 Sections 作為 dataSource 的 section 類型
+    /// 使用 Section 作為 dataSource 的 section 類型
     enum Section {
         case main
     }
     
     // MARK: - Initializer
-
+    
     init(collectionView: UICollectionView) {
         self.collectionView = collectionView
         super.init()
         configureDataSource()
     }
- 
-    // MARK: - DataSource 設定
+    
+    // MARK: - DataSource Setup
 
-    /// DataSource 設定
+    /// 配置 `dataSource`，根據不同的 `Drink` 顯示對應的 Cell
     private func configureDataSource() {
-        // 配置 dataSource
         dataSource = UICollectionViewDiffableDataSource<Section, Drink>(collectionView: collectionView) {
             (collectionView: UICollectionView, indexPath: IndexPath, drink: Drink) -> UICollectionViewCell? in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteDrinkCell.reuseIdentifier, for: indexPath) as? FavoriteDrinkCell else {
                 return UICollectionViewCell()
             }
-            cell.configure(with: drink)
+            cell.configure(with: drink)      // 配置飲品資料
             return cell
         }
         
-        // 設定初始快照
+        applyInitialSnapshot()
+    }
+    
+    /// 設置初始快照
+    private func applyInitialSnapshot() {
         var initialSnapshot = NSDiffableDataSourceSnapshot<Section, Drink>()
         initialSnapshot.appendSections([.main])
         dataSource.apply(initialSnapshot, animatingDifferences: false)
     }
     
-    // MARK: - 更新快照資料
+    // MARK: - Snapshot Updates
 
-    /// 更新快照資料
+    /// 根據收藏飲品清單更新資料快照，並根據清單是否為空來顯示或移除背景視圖
+    /// - Parameter drinks: 收藏的飲品清單
+    /// 如果清單為空，顯示 "目前沒有我的最愛" 的背景視圖；
+    /// 否則，移除背景視圖並顯示收藏的飲品。
     func updateSnapshot(with drinks: [Drink]) {
+        updateBackgroundViewIfNeeded(drinks.isEmpty)
         var snapshot = NSDiffableDataSourceSnapshot<Section, Drink>()
         snapshot.appendSections([.main])
-        snapshot.appendItems(drinks)
+        snapshot.appendItems(drinks, toSection: .main)
         dataSource.apply(snapshot, animatingDifferences: true)
     }
     
@@ -123,7 +151,7 @@ extension FavoritesHandler: UICollectionViewDelegate {
         }
         return configuration
     }
- 
+    
     /// 處理「刪除」項目的邏輯，當使用者選擇「刪除」時，會從 Firebase 和當前畫面中同步移除該飲品。
     /// - Parameters:
     ///   - drink: 要刪除的飲品物件
@@ -132,6 +160,7 @@ extension FavoritesHandler: UICollectionViewDelegate {
         Task {
             self.removeDrinkFromSnapshot(drink: drink)                  // 更新畫面上的收藏飲品清單
             await FavoriteManager.shared.removeFavorite(for: drink)     // 使用 FavoriteManager 刪除 Firebase 中的收藏
+            checkAndShowNoFavoritesView()                                 // 檢查是否顯示「目前沒有我的最愛」
         }
     }
     
@@ -144,5 +173,27 @@ extension FavoritesHandler: UICollectionViewDelegate {
             self.dataSource.apply(snapshot, animatingDifferences: true)
         }
     }
-
+    
+    // MARK: - No Favorites Handling
+    
+    /// 檢查並更新是否需要顯示 NoFavoritesView
+    private func checkAndShowNoFavoritesView() {
+        let snapshot = dataSource.snapshot()
+        updateBackgroundViewIfNeeded(snapshot.itemIdentifiers.isEmpty)
+    }
+    
+    /// 根據清單狀態顯示或隱藏 NoFavoritesView
+    /// - Parameter isEmpty: 飲品清單是否為空
+    private func updateBackgroundViewIfNeeded(_ isEmpty: Bool) {
+        DispatchQueue.main.async {
+            if isEmpty {
+                let noFavoritesView = NoFavoritesView()
+                noFavoritesView.frame = self.collectionView.bounds
+                self.collectionView.backgroundView = noFavoritesView
+            } else {
+                self.collectionView.backgroundView = nil        // 移除背景視圖
+            }
+        }
+    }
+    
 }

@@ -43,7 +43,6 @@ class FavoritesView: UIView {
     /// 註冊所有`自訂義的 cell`
     private func registerCells() {
         collectionView.register(FavoriteDrinkCell.self, forCellWithReuseIdentifier: FavoriteDrinkCell.reuseIdentifier)
-        collectionView.register(NoFavoritesCell.self, forCellWithReuseIdentifier: NoFavoritesCell.reuseIdentifier)
     }
     
     // MARK: - Factory Method

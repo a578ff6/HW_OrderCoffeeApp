@@ -71,6 +71,7 @@ class FavoritesViewController: UIViewController {
         handler = FavoritesHandler(collectionView: favoritesView.collectionView)
         favoritesView.collectionView.delegate = handler  // 設定 delegate
         setupCloseButton()
+        setupNavigationTitle()  // 設置導航欄標題
         validateAndLoadUserDetails()  // 檢查userDetails並載入收藏的飲品
     }
     
@@ -123,6 +124,14 @@ class FavoritesViewController: UIViewController {
     /// 使用 `dismiss` 關閉`Full Screen`顯示的視圖控制器
     @objc private func closeFavorites() {
         dismiss(animated: true, completion: nil)
+    }
+    
+    // MARK: - NavigationBar Title Setup
+    
+    /// 設置導航欄的標題
+    private func setupNavigationTitle() {
+        title = "My Favorite"
+        navigationController?.navigationBar.prefersLargeTitles = false
     }
     
 }
