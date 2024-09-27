@@ -597,6 +597,7 @@ class FavoriteManager {
             updateFavoriteButton(for: favoriteDrink.drinkId, in: viewController, favorites: favorites)                  // 更新UI的「加入最愛」按鈕
             try await updateUserFavorites(userID: user.uid, favorites: favorites)                                       // 更新Firebase的「我的最愛」清單
             await refreshUserDetails(for: viewController)                                                               // 更新UserDetails資料
+            postFavoriteStatusChangedNotification()                                                                     // 發送通知，告知「我的最愛」已變更
         } catch {
             print("更新最愛失敗：\(error)")
         }

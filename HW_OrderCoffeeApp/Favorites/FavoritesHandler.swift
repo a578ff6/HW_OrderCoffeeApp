@@ -44,7 +44,6 @@
         - 可以在快照更新前進行背景的處理，不影響後續的資料更新操作。
         - 背景視圖的顯示或移除不會依賴 snapshot 的更新，所以即使將背景處理放在一開始，仍然可以正常運作。
 
-
  5. 關鍵因素
  
     * UICollectionViewDiffableDataSource：
@@ -61,7 +60,9 @@
  
  */
 
-// MARK: - 使用 NoFavoritesView，並且當在 FavoritesHandler 直接刪除掉最愛飲品項目之後，會立即更新顯示 NoFavoritesView
+// MARK: - 使用 push 調整 validateAndLoadUserDetails & 設置 viewWillAppear & 設置通知 & 處理 DrinkDetailViwController
+// 使用 NoFavoritesView，並且當在 FavoritesHandler 直接刪除掉最愛飲品項目之後，會立即更新顯示 NoFavoritesView
+
 import UIKit
 
 /// `FavoritesHandler` 負責管理 `FavoritesViewController` 中的 UICollectionView 的資料來源 (dataSource) 及使用者互動 (delegate)。
@@ -73,7 +74,10 @@ class FavoritesHandler: NSObject {
     var collectionView: UICollectionView
     
     /// UICollectionView 的資料來源，使用 `Section` 和 `Drink` 來處理不同的資料
-    private var dataSource: UICollectionViewDiffableDataSource<Section, Drink>!
+    var dataSource: UICollectionViewDiffableDataSource<Section, Drink>!
+    
+    /// 閉包來處理飲品點擊事件
+    var didSelectDrinkHandler: ((Drink) -> Void)?
     
     // MARK: - Section
     
@@ -132,6 +136,8 @@ class FavoritesHandler: NSObject {
 // MARK: - UICollectionViewDelegate
 extension FavoritesHandler: UICollectionViewDelegate {
     
+    // MARK: - contextMenuConfigurationForItemAt
+    
     /// 負責設置每個項目的 context menu 並提供`「刪除」`選項。
     /// - Parameters:
     ///   - collectionView: 當前的 UICollectionView
@@ -158,9 +164,9 @@ extension FavoritesHandler: UICollectionViewDelegate {
     ///   - indexPath: 要刪除的項目的位置
     private func handleDelete(drink: Drink, at indexPath: IndexPath) {
         Task {
-            self.removeDrinkFromSnapshot(drink: drink)                  // 更新畫面上的收藏飲品清單
-            await FavoriteManager.shared.removeFavorite(for: drink)     // 使用 FavoriteManager 刪除 Firebase 中的收藏
-            checkAndShowNoFavoritesView()                                 // 檢查是否顯示「目前沒有我的最愛」
+            self.removeDrinkFromSnapshot(drink: drink)                       // 更新畫面上的收藏飲品清單
+            await FavoriteManager.shared.removeFavorite(for: drink)          // 使用 FavoriteManager 刪除 Firebase 中的收藏
+            checkAndShowNoFavoritesView()                                    // 檢查是否顯示「目前沒有我的最愛」
         }
     }
     
@@ -190,10 +196,26 @@ extension FavoritesHandler: UICollectionViewDelegate {
                 let noFavoritesView = NoFavoritesView()
                 noFavoritesView.frame = self.collectionView.bounds
                 self.collectionView.backgroundView = noFavoritesView
+                self.collectionView.isScrollEnabled = false
             } else {
-                self.collectionView.backgroundView = nil        // 移除背景視圖
+                self.collectionView.backgroundView = nil
+                self.collectionView.isScrollEnabled = true
             }
         }
+    }
+    
+    // MARK: - didSelectItemAt
+    
+    /// 當使用者選擇收藏清單中的某個飲品時觸發
+    ///
+    /// - Parameters:
+    ///   - collectionView: 當前的 UICollectionView
+    ///   - indexPath: 被選取項目的索引路徑
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let drink = dataSource.itemIdentifier(for: indexPath) else { return }
+        
+        // 呼叫閉包將選中的飲品傳遞給 FavoritesViewController，以進行導航
+        didSelectDrinkHandler?(drink)
     }
     
 }
