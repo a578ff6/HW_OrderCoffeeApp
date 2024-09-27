@@ -332,20 +332,19 @@ extension UserProfileViewController: UserDetailsReceiver {
   
  -----------------------------------------------------------------------------------------------------------------------------
 
- ##. navigateToFavorites 中使用 getCurrentUserDetails：
+ ##. navigateToFavorites 方法的調整：
  
-    * 功能： 在使用者點擊進入「我的最愛」清單時，透過 Firebase 獲取最新的 UserDetails，特別是最新的「我的最愛」資料，避免顯示舊資料。
-
-    * 為什麼需要 getCurrentUserDetails：
-        - 即時同步資料： 由於「我的最愛」資料會在多個地方被更新，例如在 DrinkDetailViewController 中添加或移除「我的最愛」，所以每次進入 FavoritesViewController 前，應確保最新的資料。
-        - 減少資料不一致： 避免顯示未更新的最愛清單，確保所有資料都是從 Firebase 獲取的最新狀態。
+    1. 功能變化
+        - 原先的實作： 在使用者點擊進入「我的最愛」清單時，透過 getCurrentUserDetails 從 Firebase 獲取最新的 userDetails，並將其傳遞給 FavoritesViewController。
+        - 調整後的實作： 簡化 navigateToFavorites 方法，直接實例化並 push FavoritesViewController，不再在此處獲取或傳遞 userDetails。
  
-    * 工作流程：
-        - 在 navigateToFavorites 中，透過 getCurrentUserDetails 從 Firebase 取得最新的 userDetails。
-        - 確保最新的使用者資料（包括 favorites）傳遞到 FavoritesViewController，以便展示正確的內容。
+    2. 為什麼不再需要在這裡獲取 userDetails
+        - 責任劃分明確： FavoritesViewController 已經在 viewWillAppear 中自行從 Firebase 獲取最新的 userDetails，因此不需要從外部傳遞。
+        - 避免資料不一致：讓 FavoritesViewController 自行獲取資料，確保資料的即時性和一致性。
  
-    * 補充：
-        - getCurrentUserDetails 的使用想法：由於「我的最愛」資料可能經常變動，使用 getCurrentUserDetails 保持資料即時同步是比較保險的方式，尤其是在多個頁面或操作會影響 userDetails 的情況下。
+    3. 調整後的工作流程
+        - 導航： UserProfileViewController 透過 navigateToFavorites 方法，直接 push FavoritesViewController。
+        - 資料加載： FavoritesViewController 在 viewWillAppear 中，從 Firebase 獲取最新的 userDetails，並加載收藏的飲品資料。
 
  -----------------------------------------------------------------------------------------------------------------------------
 
@@ -358,45 +357,21 @@ extension UserProfileViewController: UserDetailsReceiver {
  
  &. navigateToFavorites 的作用：
  
-    * 當用戶點擊「我的最愛」按鈕，進入 FavoritesViewController 前，navigateToFavorites 會先透過 getCurrentUserDetails 從 Firebase 獲取最新的使用者資料，確保「我的最愛」清單狀態是最新的。
+    * 導航到「我的最愛」頁面： 負責導航到 FavoritesViewController。
+    * 簡化流程： 不再在此處獲取或傳遞 userDetails，讓 FavoritesViewController 自行處理資料的獲取。
     * 這樣可以保證 FavoritesViewController 顯示的資料是正確且即時的。
     * receiveUserDetails 無法處理到這部分的資料更新，因此需要 navigateToFavorites 主動從 Firebase 獲取資料來補足。
 
  &. 具體操作流程：
- 
+  
     * UserProfileViewController 透過 receiveUserDetails 接收到新的 userDetails 資訊後，會儲存在內部變數並即時更新畫面。
-    * 當使用者點擊「我的最愛」按鈕時，navigateToFavorites 會透過 getCurrentUserDetails 再次從 Firebase 獲取最新的使用者資料，這樣可以確保進入 FavoritesViewController 時顯示的「我的最愛」清單是最新的。
-    * FavoritesViewController 加載時，會根據這些最新的 userDetails 顯示使用者收藏的飲品。
+    * 當使用者點擊「我的最愛」按鈕時，透過 navigateToFavorites 直接導航到 FavoritesViewController。
 
  &. 總結：
     
+    * 責任明確： UserProfileViewController 負責顯示使用者資訊和導航；FavoritesViewController 負責獲取並顯示收藏的飲品資料。
+    * 資料一致性： 讓 FavoritesViewController 自行從 Firebase 獲取資料，確保資料的最新和一致。
     * receiveUserDetails 是用來接收並更新當前顯示的使用者資訊，而 navigateToFavorites 則是在進入「我的最愛」頁面前，通過 Firebase 獲取最新資料以進行最終確認。兩者配合確保呈現給使用者的資料是最新的。
- 
- -----------------------------------------------------------------------------------------------------------------------------
-
- ##. 依照「導航流程」和「資料流程」，FavoritesViewController 更新「我的最愛」這部分，適合使用 getCurrentUserDetails，而不是設置委託。
-    
-    * 由於我一開始是採用設置一個處理更新我的最愛委託，來處理，結果導致無法立即更新 FavoritesViewController。
- 
- &. 資料同步性：
- 
-    * 使用 getCurrentUserDetails 可以確保每次進入 FavoritesViewController 時，從 Firebase 取得的資料是最新的。這對於多設備登入或其他情境下，資料變動頻繁的 App 來說，能有效保持資料的一致性。
-    * 如果改用委託來傳遞資料，會依賴於上次更新的資料，導致 FavoritesViewController 顯示的「我的最愛」並不是最新的，尤其是在其他地方修改了 favorites（例如其他裝置同步操作）。
-
- &. 資料流的簡化：
- 
-    * 透過 getCurrentUserDetails，你可以在任何需要的時刻，簡單地獲取完整的使用者資料，不僅限於「我的最愛」，還可以同步其他可能變動的資訊（例如使用者的姓名、頭像、訂單等）。
-    * 委託的方式則會增加資料傳遞的複雜度，並且需要確保每個修改 favorites 的操作都能正確觸發委託更新。這不如直接從 Firebase 重新獲取最新資料來得穩定和安全。
- 
- &. 操作的一致性
-    
-    * 使用 getCurrentUserDetails 能夠在導航到 FavoritesViewController 之前，統一透過 Firebase 取得最新資料，這讓資料更新的流程更加一致和可靠。
-    * 如果使用委託方式來更新「我的最愛」，會在不同控制器之間導致資料不同步的情況發生（例如從 DrinkDetailViewController 加入「我的最愛」後，沒有及時更新到 FavoritesViewController）。
- 
- &. Firebase 資料為權威資料來源：
- 
-    * 在 App 中，Firebase 是主要的資料儲存來源，這意味著每次進入 FavoritesViewController 時，從 Firebase 獲取最新資料是保持資料同步的最佳方式。
-    * 委託雖然可以即時更新，但它不能保證資料與 Firebase 的一致性，尤其在多設備或多來源變更資料的情況下。
 
  */
 
@@ -547,6 +522,7 @@ class UserProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupNavigationTitle()
         setupTableView()
         tableHandler.delegate = self
     }
@@ -558,6 +534,14 @@ class UserProfileViewController: UIViewController {
         tableView = userProfileView.tableView
         tableView.delegate = tableHandler
         tableView.dataSource = tableHandler
+        tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)            // 增加 tableView 與 large title 的距離
+    }
+    
+    /// 設置導航欄的標題
+    private func setupNavigationTitle() {
+        title = "User Profile"
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationItem.largeTitleDisplayMode = .always
     }
     
     // MARK: - Navigation
@@ -581,29 +565,14 @@ class UserProfileViewController: UIViewController {
             present(navController, animated: true, completion: nil)
         }
     }
-  
-    /// 導航到`我的最愛清單`頁面
+
+    /// 導航至「我的最愛清單」頁面
     ///
-    /// 進入 `FavoritesViewController` 前，會先從 Firebase 更新最新的使用者詳細資料，確保呈現正確的資料。
+    /// 由於 `FavoritesViewController` 會在 `viewWillAppear` 中自行加載最新的使用者資料，因此不需要在這裡傳遞 `userDetails`。
     func navigateToFavorites() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let favoritesVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.favoritesViewController) as? FavoritesViewController {
-            // 更新UserDetails，確保是最新的
-            FirebaseController.shared.getCurrentUserDetails { [weak self] result in
-                switch result {
-                case .success(let updatedUserDetails):
-                    self?.userDetails = updatedUserDetails                  // 更新當前的userDetails
-                    favoritesVC.userDetails = updatedUserDetails            // 傳遞最新的userDetails到FavoritesViewController
-                    print("最新的favorites: \(updatedUserDetails.favorites.map { $0.drinkId })")
-                    
-                    let navController = UINavigationController(rootViewController: favoritesVC)
-                    navController.modalPresentationStyle = .fullScreen
-                    self?.present(navController, animated: true, completion: nil)
-                    
-                case .failure(let error):
-                    print("無法更新 userDetails: \(error)")
-                }
-            }
+            self.navigationController?.pushViewController(favoritesVC, animated: true)
         }
     }
     

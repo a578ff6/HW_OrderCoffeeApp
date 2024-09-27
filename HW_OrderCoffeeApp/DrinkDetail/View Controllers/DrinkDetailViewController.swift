@@ -118,6 +118,53 @@
         - 當飲品詳細資料加載完成後，才會檢查該飲品是否已加入「我的最愛」，並更新按鈕圖示和顏色。
         - 「我的最愛」的相關操作與資料加載是相對獨立的，保持分離是為了清晰區分資料加載與使用者互動的邏輯。
         - 當頁面載入或飲品資料加載完成時，會執行這段程式碼來顯示飲品是否已加入最愛。
+ 
+ --------------------------------------------------------------------------------------------------------------------------------
+
+ ## 大標題屬性筆記（ https://reurl.cc/myXAeW ）
+ 
+    * 如果是從 FavoritesViewController 進入到 DrinkDetailViewController：
+ 
+        - 那麼 DrinkDetailViewController 就會呈現空白部分，原因是因為 FavoritesViewController 使用了 prefersLargeTitles，而 DrinkDetailViewController 預設繼承了這個屬性，
+          導致顯示了與 FavoritesViewController 相同的導航欄樣式（包括大標題的空間）。
+ 
+        - 當從 FavoritesViewController 導航到 DrinkDetailViewController 時，UINavigationController 會保持相同的導航欄配置，而不會自動移除或調整 prefersLargeTitles。因此，DrinkDetailViewController 會保留大標題的空白部分。
+    
+        - UINavigationController 中的 prefersLargeTitles 是屬於整個導航堆疊的屬性，因此當從一個設置了大標題的視圖控制器（ FavoritesViewController）導航到另一個視圖控制器（DrinkDetailViewController）時，除非在新視圖控制器中顯式地關閉這個屬性，否則它會繼續保留大標題的樣式。
+ 
+
+ &. prefersLargeTitles & largeTitleDisplayMode 使用差異：
+    
+    1. prefersLargeTitles
+ 
+            定義： prefersLargeTitles 是設置在 UINavigationBar 上的屬性，控制整個 UINavigationController 是否應該顯示大標題。
+ 
+            作用範圍： 影響整個 UINavigationController 的所有視圖控制器，若其他視圖控制器沒有特別指定，它們會遵循此屬性。
+    
+            用法： 通常在 UINavigationController 中全局設置，以控制大標題的顯示。
+
+    2. largeTitleDisplayMode
+
+        定義： largeTitleDisplayMode 是設置在每個 UIViewController 的 navigationItem 上的屬性，控制當前視圖控制器是否應該顯示大標題。
+
+        作用範圍： 只影響當前 UIViewController，不會影響其他視圖控制器。
+
+        用法： 用於精細控制某個視圖控制器的標題顯示模式。
+ 
+    3. 差異比較
+ 
+        * 作用範圍：
+            - prefersLargeTitles：全局設置，影響整個 UINavigationController。
+            - largeTitleDisplayMode：細粒度設置，影響單一 UIViewController。
+ 
+        * 優先順序：
+            - 當 largeTitleDisplayMode 設置為 .always 或 .never 時，會覆蓋 prefersLargeTitles 的設置。
+            - 如果設置為 .automatic，則依賴 prefersLargeTitles 決定顯示大標題與否。
+ 
+    4. 使用場景
+            - prefersLargeTitles： 當 App 中大部分視圖控制器需要統一使用大標題時，適合全局設定。
+            - largeTitleDisplayMode： 當需要單獨調整某些視圖控制器的標題顯示，或需要在大標題與小標題之間做平滑過渡時，可使用這個屬性。
+
  */
 
 // MARK: - drinkID & asyc & 分享、我的最愛已經完善 & 當 HUD 顯示時，不需要手動控制按鈕的禁用與否，因為 HUD 已經會禁用所有的互動。& 震動反饋 & 另外設置Image處理Cell佈局。
@@ -335,7 +382,7 @@ class DrinkDetailViewController: UIViewController {
 */
 
 
-// MARK: - 調整我的最愛
+// MARK: - 調整我的最愛、drinkID & asyc & 分享、我的最愛已經完善 & 當 HUD 顯示時，不需要手動控制按鈕的禁用與否，因為 HUD 已經會禁用所有的互動。& 震動反饋 & 另外設置Image處理Cell佈局。
 
 import UIKit
 
@@ -384,6 +431,8 @@ class DrinkDetailViewController: UIViewController {
         //        print("接收到的 size: \(String(describing: selectedSize))") // 觀察訂單修改用
         //        print("接收到的 quantity: \(editingOrderQuantity)")         // 觀察訂單修改用
 //        print("Received in DrinkDetailViewController: drinkId = \(String(describing: drinkId)), categoryId = \(String(describing: categoryId)), subcategoryId = \(String(describing: subcategoryId))")
+        
+        setupLargeTitleMode()
         registerNotifications()
         Task {
             await withTaskGroup(of: Void.self) { group in
@@ -551,6 +600,13 @@ class DrinkDetailViewController: UIViewController {
             await FavoriteManager.shared.toggleFavorite(for: favoriteDrink, in: self)
             ButtonEffectManager.shared.applyHapticFeedback()
         }
+    }
+    
+    // MARK: - Navigation Title
+    
+    /// 設定 navigationItem 的大標題顯示模式
+    private func setupLargeTitleMode() {
+        navigationItem.largeTitleDisplayMode = .never
     }
 
 }
