@@ -241,12 +241,31 @@
     - viewWillAppear: 確保每次視圖即將顯示時，都能從 Firebase 獲取最新的 userDetails，更新收藏清單。
     - 通知機制: 確保「我的最愛」狀態變化時，無論是否返回 FavoritesViewController，都能即時更新資料。
  
+ ----------------------------------------------------------------------------------------------------
+
+ ## 添加飲品資料到「我的最愛」時，可以根據 subcategory 來設置 section 並做區分 & 依照添加的順序展示（ feature/favorites-page-V7 ）：
+ 
+    1. 在設置完 FavoritesViewController 展示飲品後，就想說可以再加入飲品到我的最愛後，還可以顯示其 subcategory 加強分類。
+    2. 後來發現設計的過程中，我將資料是以無序的方式儲存到 Dictionary 後，它會被動排序，後來採用有序的 tuple ，確保顯示順序與使用者收藏順序一致。
+  
+    * 處理 section header 顯示子類別的名稱
+ 
+        - 在 fetchDrinks 中，為了顯示使用者收藏的飲品，使用 MenuController 的 loadSubcategoryById 來加載每個飲品所屬的子類別名稱，將其作為 section header 顯示在 UICollectionView 中。
+        - 這個讓收藏的飲品根據其所屬子類別進行分類展示，使用者可以清楚地看到每個子類別下的飲品清單。
+ 
+    * 按照收藏的順序顯示飲品
+ 
+        - FavoritesViewController 會根據使用者的「收藏順序」顯示飲品。在 fetchDrinks 中，儲存並更新「有序的子類別」及其「對應的飲品」資料，使得畫面呈現時按照收藏順序來顯示。
+        - 使用 appendDrinkToSubcategory 來檢查子類別是否已存在於資料中，若存在則將飲品添加到對應的子類別，否則新建一個新的子類別項目。
+ 
  */
 
 
 // MARK: - 使用 push 調整 validateAndLoadUserDetails & 設置 viewWillAppear & 設置通知 & 處理 DrinkDetailViwController
 // 使用 NoFavoritesView，並且當在 FavoritesHandler 直接刪除掉最愛飲品項目之後，會立即更新顯示 NoFavoritesView
 // 藉此練習 UICollectionViewDiffableDataSource（調整成三個參數、處理User頁面傳遞的部分、處理我的最愛視圖控制器刪除部分）
+// 讓每個子類別的飲品都有各自的 header 進行區分，讓使用者可以根據子類別快速找到飲品。
+// 收藏順序會被保留，且子類別與對應的飲品會按順序加入
 // https://reurl.cc/6dGbxk
 
 import UIKit
@@ -256,7 +275,7 @@ import FirebaseAuth
 ///
 /// `FavoritesViewController` 會從 Firebase 獲取最新的 `userDetails`，並透過 `MenuController` 加載對應的飲品詳細資料，顯示在收藏清單中。
 class FavoritesViewController: UIViewController {
-
+    
     // MARK: - Properties
     
     private let favoritesView = FavoritesView()
@@ -290,7 +309,7 @@ class FavoritesViewController: UIViewController {
     deinit {
         removeNotifications()
     }
-     
+
     // MARK: - Setup Methods
 
     /// 設置 CollectionView 和其相關的處理器
@@ -325,27 +344,63 @@ class FavoritesViewController: UIViewController {
 
     // MARK: - Data Loading
     
-    /// 根據使用者的收藏資料（`FavoriteDrink`）從 Firebase 加載飲品的詳細資料
+    /// 根據使用者收藏的飲品資料，從 Firestore 中加載相應的`飲品`資料，並根據`子類別`進行分類後更新畫面，
+    /// 保持與 `favoriteDrinks` 的順序一致。
     ///
-    /// 會透過 `categoryId`、`subcategoryId` 和 `drinkId` 加載每個收藏的飲品資訊，並更新到 `UICollectionView`。
+    /// - Parameter favoriteDrinks: 使用者的收藏飲品資料，包含 categoryId、subcategoryId 和 drinkId。
     private func fetchDrinks(for favoriteDrinks: [FavoriteDrink]) {
         Task {
-            var drinks: [Drink] = []
+            /// 儲存有序的資料
+            var orderedDrinksBySubcategory: [(String, [Drink])] = []
             
-            /// 依照每個收藏飲品的 ID 加載飲品詳細資料（categoryId, subcategoryId 和 drinkId 加載飲品詳細資料）
+            /// 依照收藏順序處理每個飲品
             for favoriteDrink in favoriteDrinks {
-                print("正在加載飲品詳細資料：\(favoriteDrink.drinkId)")
-                if let drink = try? await MenuController.shared.loadDrinkById(
-                    categoryId: favoriteDrink.categoryId,
-                    subcategoryId: favoriteDrink.subcategoryId,
-                    drinkId: favoriteDrink.drinkId
-                ) {
-                    drinks.append(drink)
+                if let (subcategoryTitle, drink) = try? await loadSubcategoryAndDrink(for: favoriteDrink) {
+                    appendDrinkToSubcategory(subcategoryTitle: subcategoryTitle, drink: drink, in: &orderedDrinksBySubcategory)
+                    print("子類別：\(subcategoryTitle), 飲品：\(drink.name)")
                 }
             }
-            print("已加載的飲品：\(drinks.map { $0.name })")
-            // 更新 UICollectionView 的數據快照，顯示收藏的飲品清單
-            handler.updateSnapshot(with: drinks)
+            
+            // 更新有序的飲品資料
+            handler.updateSnapshot(with: orderedDrinksBySubcategory)
+            print("已加載的飲品：\(orderedDrinksBySubcategory)")
+        }
+    }
+    
+    /// 從 Firestore 加載指定的`subcategoryTitle`與對應的`drink`資料。
+    ///
+    /// - Parameter favoriteDrink: 使用者的收藏飲品資料，包含 categoryId、subcategoryId 和 drinkId。
+    /// - Returns: 返回`subcategoryTitle`與對應的`drink`資料。
+    private func loadSubcategoryAndDrink(for favoriteDrink: FavoriteDrink) async throws -> (String, Drink)? {
+        
+        let subcategory = try? await MenuController.shared.loadSubcategoryById(
+            categoryId: favoriteDrink.categoryId,
+            subcategoryId: favoriteDrink.subcategoryId
+        )
+        
+        let drink = try? await MenuController.shared.loadDrinkById(
+            categoryId: favoriteDrink.categoryId,
+            subcategoryId: favoriteDrink.subcategoryId,
+            drinkId: favoriteDrink.drinkId
+        )
+        
+        if let subcategoryTitle = subcategory?.title, let drink = drink {
+            return (subcategoryTitle, drink)
+        }
+        return nil
+    }
+    
+    /// 將飲品加入到對應的子類別中。如果該子類別已存在，則添加到其對應的飲品列表；如果不存在，則新建子類別。
+    ///
+    /// - Parameters:
+    ///   - subcategoryTitle: 子類別的標題
+    ///   - drink: 要加入的飲品
+    ///   - orderedDrinksBySubcategory: 儲存子類別及其飲品的有序陣列
+    private func appendDrinkToSubcategory(subcategoryTitle: String, drink: Drink, in orderedDrinksBySubcategory: inout [(String, [Drink])]) {
+        if let index = orderedDrinksBySubcategory.firstIndex(where: { $0.0 == subcategoryTitle }) {
+            orderedDrinksBySubcategory[index].1.append(drink)
+        } else {
+            orderedDrinksBySubcategory.append((subcategoryTitle, [drink]))
         }
     }
     
@@ -377,7 +432,7 @@ class FavoritesViewController: UIViewController {
         
         navigationController?.pushViewController(drinkDetailVC, animated: true)
     }
-
+    
 }
 
 

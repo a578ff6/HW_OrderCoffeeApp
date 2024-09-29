@@ -28,6 +28,7 @@
 		9353741D2C9EB58300794A63 /* FavoritesLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353741C2C9EB58300794A63 /* FavoritesLayoutProvider.swift */; };
 		935374212CA2F02000794A63 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374202CA2F02000794A63 /* Notifications.swift */; };
 		935374292CA4502B00794A63 /* NoFavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374282CA4502B00794A63 /* NoFavoritesView.swift */; };
+		9353742B2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353742A2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift */; };
 		936CFFBD2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */; };
 		936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */; };
 		936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */; };
@@ -180,6 +181,7 @@
 		9353741C2C9EB58300794A63 /* FavoritesLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesLayoutProvider.swift; sourceTree = "<group>"; };
 		935374202CA2F02000794A63 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		935374282CA4502B00794A63 /* NoFavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFavoritesView.swift; sourceTree = "<group>"; };
+		9353742A2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesDrinkHeaderView.swift; sourceTree = "<group>"; };
 		936CFFBA2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HW_OrderCoffeeAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITests.swift; sourceTree = "<group>"; };
 		936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -495,12 +497,45 @@
 			children = (
 				935374112C9C5C6900794A63 /* FavoritesViewController.swift */,
 				935374142C9C5CD000794A63 /* FavoritesHandler.swift */,
-				935374282CA4502B00794A63 /* NoFavoritesView.swift */,
+				9353741C2C9EB58300794A63 /* FavoritesLayoutProvider.swift */,
+				9353742A2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift */,
 				935374162C9C5CF300794A63 /* FavoritesView.swift */,
 				935374182C9C601200794A63 /* FavoriteDrinkCell.swift */,
-				9353741C2C9EB58300794A63 /* FavoritesLayoutProvider.swift */,
+				935374282CA4502B00794A63 /* NoFavoritesView.swift */,
+				9353742D2CA92DD400794A63 /* Handler */,
+				9353742F2CA92DF700794A63 /* Layouts */,
+				9353742E2CA92DE100794A63 /* Views */,
+				9353742C2CA92DC800794A63 /* View Controllers */,
 			);
 			path = Favorites;
+			sourceTree = "<group>";
+		};
+		9353742C2CA92DC800794A63 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		9353742D2CA92DD400794A63 /* Handler */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Handler;
+			sourceTree = "<group>";
+		};
+		9353742E2CA92DE100794A63 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		9353742F2CA92DF700794A63 /* Layouts */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Layouts;
 			sourceTree = "<group>";
 		};
 		936CFFB32C6BA81F004B8724 /* FirebaseTests */ = {
@@ -1098,6 +1133,7 @@
 				93B9DC872C3661DF0050BC3F /* MainTabBarController.swift in Sources */,
 				9352913F2C8843E40018B060 /* DrinksCategoryHandler.swift in Sources */,
 				93755C332C8351AA002570A5 /* MenuViewController.swift in Sources */,
+				9353742B2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift in Sources */,
 				93B9DC762C3042710050BC3F /* MenuLayoutProvider.swift in Sources */,
 				935374292CA4502B00794A63 /* NoFavoritesView.swift in Sources */,
 				93755C352C83520A002570A5 /* MenuCollectionHandler.swift in Sources */,
