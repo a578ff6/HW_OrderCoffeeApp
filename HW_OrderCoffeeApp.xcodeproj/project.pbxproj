@@ -495,13 +495,6 @@
 		935374132C9C5C9400794A63 /* Favorites */ = {
 			isa = PBXGroup;
 			children = (
-				935374112C9C5C6900794A63 /* FavoritesViewController.swift */,
-				935374142C9C5CD000794A63 /* FavoritesHandler.swift */,
-				9353741C2C9EB58300794A63 /* FavoritesLayoutProvider.swift */,
-				9353742A2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift */,
-				935374162C9C5CF300794A63 /* FavoritesView.swift */,
-				935374182C9C601200794A63 /* FavoriteDrinkCell.swift */,
-				935374282CA4502B00794A63 /* NoFavoritesView.swift */,
 				9353742D2CA92DD400794A63 /* Handler */,
 				9353742F2CA92DF700794A63 /* Layouts */,
 				9353742E2CA92DE100794A63 /* Views */,
@@ -513,6 +506,7 @@
 		9353742C2CA92DC800794A63 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				935374112C9C5C6900794A63 /* FavoritesViewController.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -520,6 +514,7 @@
 		9353742D2CA92DD400794A63 /* Handler */ = {
 			isa = PBXGroup;
 			children = (
+				935374142C9C5CD000794A63 /* FavoritesHandler.swift */,
 			);
 			path = Handler;
 			sourceTree = "<group>";
@@ -527,6 +522,10 @@
 		9353742E2CA92DE100794A63 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				9353742A2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift */,
+				935374162C9C5CF300794A63 /* FavoritesView.swift */,
+				935374182C9C601200794A63 /* FavoriteDrinkCell.swift */,
+				935374282CA4502B00794A63 /* NoFavoritesView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -534,6 +533,7 @@
 		9353742F2CA92DF700794A63 /* Layouts */ = {
 			isa = PBXGroup;
 			children = (
+				9353741C2C9EB58300794A63 /* FavoritesLayoutProvider.swift */,
 			);
 			path = Layouts;
 			sourceTree = "<group>";
