@@ -58,10 +58,25 @@
     * 使用 loadDrinkById 方法動態加載詳細的 Drink 資料，避免每次都保存完整的飲品資料，提高了效能與靈活性。
     * 刪除邏輯設計合理，FavoritesHandler 和 FavoriteManager 的合作確保了操作的流暢性與一致性。
  
+ ------------------------------------------------------------------------------------------------
+ 
+ ## 添加飲品資料到「我的最愛」時，可以根據 subcategory 來設置 section 並做區分 & 依照添加的順序展示（ feature/favorites-page-V7 ）：
+ 
+    * 處理 section header 顯示子類別的名稱：
+        - FavoritesHandler 中的 configureSectionHeaders，透過 supplementaryViewProvider 設置 section header。
+        - 每個 section 會根據從「子類別名稱」來進行設置，並顯示於畫面的上方。
+        - 讓每個子類別的飲品都有各自的 header 進行區分，讓使用者可以根據子類別快速找到飲品。
+ 
+    * 按照收藏的順序更新 UICollectionView
+        - 在 updateSnapshot 中，會根據 FavoritesViewController 傳入的有序資料 (String, [Drink]) 來更新 UICollectionView 的顯示內容。
+        - 使用者的收藏順序會被保留，且子類別與對應的飲品會按順序加入
+ 
  */
 
 // MARK: - 使用 push 調整 validateAndLoadUserDetails & 設置 viewWillAppear & 設置通知 & 處理 DrinkDetailViwController
 // 使用 NoFavoritesView，並且當在 FavoritesHandler 直接刪除掉最愛飲品項目之後，會立即更新顯示 NoFavoritesView
+// 讓每個子類別的飲品都有各自的 header 進行區分，讓使用者可以根據子類別快速找到飲品。
+// 收藏順序會被保留，且子類別與對應的飲品會按順序加入
 
 import UIKit
 
@@ -81,9 +96,10 @@ class FavoritesHandler: NSObject {
     
     // MARK: - Section
     
-    /// 使用 Section 作為 dataSource 的 section 類型
-    enum Section {
-        case main
+    /// 使用 Section 來對應 UICollectionView 的區域 (section)。
+    enum Section: Hashable {
+        /// 使用 `subcategory` 的名稱作為 Section 的 key，便於將同一子類別的飲品顯示在同一區塊。
+        case subcategory(String)
     }
     
     // MARK: - Initializer
@@ -95,8 +111,8 @@ class FavoritesHandler: NSObject {
     }
     
     // MARK: - DataSource Setup
-
-    /// 配置 `dataSource`，根據不同的 `Drink` 顯示對應的 Cell
+    
+    /// 配置 UICollectionView 的 dataSource，根據每個 `Section` 和 `Drink` 顯示對應的 Cell。
     private func configureDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, Drink>(collectionView: collectionView) {
             (collectionView: UICollectionView, indexPath: IndexPath, drink: Drink) -> UICollectionViewCell? in
@@ -107,30 +123,58 @@ class FavoritesHandler: NSObject {
             return cell
         }
         
+        configureSectionHeaders()
         applyInitialSnapshot()
     }
     
+    /// 設置 `section header` 的 `supplementaryViewProvider`
+    private func configureSectionHeaders() {
+        dataSource.supplementaryViewProvider = { (collectionView, kind, indexPath) -> UICollectionReusableView? in
+            guard kind == UICollectionView.elementKindSectionHeader else { return nil }
+            guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FavoritesDrinkHeaderView.reuseIdentifier, for: indexPath) as? FavoritesDrinkHeaderView else {
+                return nil
+            }
+            
+            let section = self.dataSource.snapshot().sectionIdentifiers[indexPath.section]
+            if case let .subcategory(subcategoryTitle) = section {
+                headerView.configure(with: subcategoryTitle)
+            }
+            
+            return headerView
+        }
+    }
+    
     /// 設置初始快照
+    ///
+    /// 在資料未加載前，避免界面出現意外的空白或錯誤。
     private func applyInitialSnapshot() {
         var initialSnapshot = NSDiffableDataSourceSnapshot<Section, Drink>()
-        initialSnapshot.appendSections([.main])
         dataSource.apply(initialSnapshot, animatingDifferences: false)
     }
     
     // MARK: - Snapshot Updates
-
-    /// 根據收藏飲品清單更新資料快照，並根據清單是否為空來顯示或移除背景視圖
-    /// - Parameter drinks: 收藏的飲品清單
+    
+    /// 根據有序的 `飲品的子類別`進行分類並更新 UICollectionView 的資料快照。
     /// 如果清單為空，顯示 "目前沒有我的最愛" 的背景視圖；
     /// 否則，移除背景視圖並顯示收藏的飲品。
-    func updateSnapshot(with drinks: [Drink]) {
-        updateBackgroundViewIfNeeded(drinks.isEmpty)
+    ///
+    /// - Parameter orderedDrinksBySubcategory: 包含 `子類別名稱` 及其對應 `飲品陣列` 的有序資料。
+    func updateSnapshot(with orderedDrinksBySubcategory: [(String, [Drink])]) {
+
+        let isEmpty = orderedDrinksBySubcategory.allSatisfy { $0.1.isEmpty }
+        updateBackgroundViewIfNeeded(isEmpty)
+
         var snapshot = NSDiffableDataSourceSnapshot<Section, Drink>()
-        snapshot.appendSections([.main])
-        snapshot.appendItems(drinks, toSection: .main)
+
+        // 按照有序陣列順序更新 section 和 drink
+        for (subcategory, drinks) in orderedDrinksBySubcategory {
+            snapshot.appendSections([.subcategory(subcategory)])                   // 添加 section
+            snapshot.appendItems(drinks, toSection: .subcategory(subcategory))     // 為每個 section 添加飲品
+        }
+
         dataSource.apply(snapshot, animatingDifferences: true)
     }
-    
+
 }
 
 // MARK: - UICollectionViewDelegate

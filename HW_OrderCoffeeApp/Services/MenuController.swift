@@ -53,6 +53,14 @@
             - 透過傳入的 ID 精準查詢，並將結果轉換為 Drink 物件。
             - 若查詢失敗或資料不存在，則拋出 menuItemsNotFound 錯誤。
  
+    6.loadSubcategoryById：
+        * 功能：
+            - 根據傳入的 categoryId 和 subcategoryId，從 Firestore 中加載對應的子類別名稱。
+            - 特別用於顯示收藏的飲品，讓 FavoritesViewController 能將子類別名稱作為 section header。
+ 
+        * 特點：
+            - 當資料加載成功時，會返回子類別名稱，若查詢失敗或資料不存在，則拋出 menuItemsNotFound 錯誤。
+
  &. 優勢：
  
     * 簡化異步操作：
@@ -91,7 +99,6 @@
             - 當所有資料加載完成後，將資料顯示在 UICollectionView 中，並根據不同的佈局（網格或列表）來呈現飲品資訊。
             - 使用者選擇某個飲品時，會將對應的 drinkId、categoryId、subcategoryId 傳遞給 DrinkDetailViewController，讓使用者查看飲品的詳細資料。
  
- 
     3. DrinkDetailViewController：
         * 功能：
             - 用來顯示單一飲品的詳細資料，包括飲品名稱、描述、不同尺寸的價格、咖啡因含量、卡路里等資訊。
@@ -101,6 +108,15 @@
             - 使用者可以將選擇的飲品加入購物車，並根據需求進行編輯或新增操作。
         * 補充：
             - 原先資料來自於 DrinksCategoryViewController 傳遞的 Drink 結構，透過 UICollectionView 顯示飲品的詳細資訊，並允許使用者選擇不同的尺寸，最終可以將飲品加入購物車。（導致我在設計「添加我的最愛」時，設計不太良好）
+ 
+    4. FavoritesViewController：
+        * 功能：
+            - 顯示使用者收藏的飲品清單，並使用 MenuController 的 loadSubcategoryById 方法加載子類別名稱，將其作為 section header 顯示。
+            - 使用 MenuController 的 loadDrinkById 來加載具體的飲品詳細資料。
+        * 操作：
+            - 每次進入 FavoritesViewController 時，會首先檢查使用者的收藏清單，使用 userDetails 中的收藏資料，根據子類別來分類顯示飲品清單。
+            - 透過 loadSubcategoryById 加載子類別名稱作為 section header，並使用 loadDrinkById 加載對應的飲品資料。
+            - 這些資料加載後，依照收藏順序呈現在畫面上，讓使用者可以瀏覽、刪除或查看飲品詳細資訊。
 
  &.數據處理總結：
     
@@ -243,7 +259,23 @@ class MenuController {
         }
         return drink
     }
-
+    
+    /// 從 Firestore 加載飲品時，透過` subcategoryId` 將`Subcategory`名稱加載出來。藉此在 FavoritesViewController 中使用該名稱來作為 section header。
+    ///
+    /// - Parameters:
+    ///   - categoryId: 類別的 ID
+    ///   - subcategoryId: 子類別的 ID
+    /// - Returns: 加載的 Subcategory 資料
+    /// - Throws: 如果資料加載失敗，拋出錯誤
+    func loadSubcategoryById(categoryId: String, subcategoryId: String) async throws -> Subcategory {
+        let db = Firestore.firestore()
+        let document = try await db.collection("Categories").document(categoryId).collection("Subcategories").document(subcategoryId).getDocument()
+        
+        guard let subcategory = try? document.data(as: Subcategory.self) else {
+            throw MenuControllerError.menuItemsNotFound
+        }
+        return subcategory
+    }
     
     // MARK: - Private Methods
 
