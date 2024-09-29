@@ -256,10 +256,13 @@ extension FavoritesHandler: UICollectionViewDelegate {
     ///   - collectionView: 當前的 UICollectionView
     ///   - indexPath: 被選取項目的索引路徑
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let drink = dataSource.itemIdentifier(for: indexPath) else { return }
+        guard let drink = dataSource.itemIdentifier(for: indexPath),
+              let cell = collectionView.cellForItem(at: indexPath) else { return }
         
-        // 呼叫閉包將選中的飲品傳遞給 FavoritesViewController，以進行導航
-        didSelectDrinkHandler?(drink)
+        cell.addScaleAnimation(duration: 0.15, scale: 0.85) {
+            // 呼叫閉包將選中的飲品傳遞給 FavoritesViewController，以進行導航
+            self.didSelectDrinkHandler?(drink)
+        }
     }
     
 }

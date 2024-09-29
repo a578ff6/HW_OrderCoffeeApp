@@ -258,6 +258,63 @@
         - FavoritesViewController 會根據使用者的「收藏順序」顯示飲品。在 fetchDrinks 中，儲存並更新「有序的子類別」及其「對應的飲品」資料，使得畫面呈現時按照收藏順序來顯示。
         - 使用 appendDrinkToSubcategory 來檢查子類別是否已存在於資料中，若存在則將飲品添加到對應的子類別，否則新建一個新的子類別項目。
  
+ ----------------------------------------------------------------------------------------------------
+
+ ## HUD 設置筆記（ feature/favorites-page-V8 ）：
+ 
+ &. 一開始的問題：
+ 
+    * 在 FavoritesViewController 中一開始採用了全局 HUD (HUDManager.shared.showLoading) 顯示方式。
+ 
+    * 問題發生於：
+        - 當 Tab 切換到 UserProfile 的 FavoritesViewController，而同時在 Menu 的 DrinkDetailViewController 點擊我的最愛按鈕時，也會觸發 FavoritesViewController 的 HUD 顯示，這在操作反饋上很卡。
+ 
+ &. 調整方式：
+ 
+    * 後來改用局部 HUD (HUDManager.shared.showLoadingInView) 來處理，避免全局 HUD 在其他 Tab 或頁面上干擾用戶操作。
+ 
+ &. HUD 設置：
+ 
+    1.初步設置：
+        - 先將 HUDManager.shared.showLoadingInView(self.view, text: "Loading Favorites...") 放置在 fetchDrinks 方法中，並在資料加載完成後通過 HUDManager.shared.dismiss() 隱藏 HUD。
+        - dismiss() 正確隱藏了資料加載後的 HUD。
+ 
+    2. HUD 顯示設置位置：
+        - 設置於 fetchDrinks 中：由於 fetchDrinks 是資料加載的核心邏輯，因此在這裡設置 HUD 可以確保它只在加載資料時顯示，不會干擾其他操作。
+ 
+    3. HUD 放在 fetchDrinks 還是 validateAndLoadUserDetails：
+        - 將 HUD 放在 fetchDrinks 中更為合適，因為這是具體進行資料加載的地方，與 HUD 的顯示邏輯相關聯。
+        - 放在 validateAndLoadUserDetails 需要更多的 DispatchQueue.main.async 來確保操作在主線程執行，會增加不必要的複雜性。
+ 
+    4. 局部 HUD vs 全局 HUD：
+        - 使用局部 HUD 可以避免 HUD 在其他 Tab 或頁面出現，並保持頁面操作的流暢性。
+        - 測試結果顯示局部 HUD 表現良好，因為它僅在 FavoritesViewController 中顯示，不會干擾其他頁面。
+ 
+ &. HUD 的頻繁出現是否會影響用戶體驗：
+ 
+    * 實際測試下來當設置在 fetchDrinks 中會過於頻繁地去顯示到 HUD。因此我將其改到 viewWillAppear 中，並設置 全局HUD。
+ 
+    1. HUD 放在 fetchDrinks 中：
+        
+        * 優點：
+            - 每次加載資料（包括刪除或添加收藏飲品）時都會顯示 HUD，這能即時反映系統正在進行的操作，並向用戶提供反饋。
+ 
+        * 缺點：
+            - HUD 的過於頻繁出現，尤其是在快速操作（如刪除飲品）時，會顯得多餘並打斷用戶的操作流暢性。
+
+    2. HUD 放在 viewWillAppear 中：
+
+        * 優點：
+            - HUD 只在進入 FavoritesViewController 並開始初始資料加載時顯示，避免在刪除或添加收藏時反覆出現 HUD，減少用戶干擾。
+
+        * 缺點：
+            - 如果用戶希望在每次操作後立即看到反饋，這種設置可能讓用戶感覺反饋不足。(但我這邊是直接更新UI)
+
+    3. 想法：
+ 
+        * 將 HUD 放在 viewWillAppear 中：
+            - HUD 只在進入 FavoritesViewController 時顯示，表示正在加載資料，這樣可以避免刪除或添加我的最愛時頻繁出現 HUD，保持頁面操作的流暢性。
+
  */
 
 
@@ -266,6 +323,7 @@
 // 藉此練習 UICollectionViewDiffableDataSource（調整成三個參數、處理User頁面傳遞的部分、處理我的最愛視圖控制器刪除部分）
 // 讓每個子類別的飲品都有各自的 header 進行區分，讓使用者可以根據子類別快速找到飲品。
 // 收藏順序會被保留，且子類別與對應的飲品會按順序加入
+// 設置HUD
 // https://reurl.cc/6dGbxk
 
 import UIKit
@@ -300,6 +358,7 @@ class FavoritesViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        HUDManager.shared.showLoading(text: "Loading Favorites...")
         // 每次視圖即將出現時，檢查並加載最新的使用者資料
         validateAndLoadUserDetails()
     }
@@ -338,6 +397,7 @@ class FavoritesViewController: UIViewController {
                 self?.fetchDrinks(for: updatedUserDetails.favorites)                 // 加載收藏的飲品資料
             case .failure(let error):
                 print("無法更新 userDetails: \(error)")
+                HUDManager.shared.dismiss()
             }
         }
     }
@@ -364,6 +424,7 @@ class FavoritesViewController: UIViewController {
             // 更新有序的飲品資料
             handler.updateSnapshot(with: orderedDrinksBySubcategory)
             print("已加載的飲品：\(orderedDrinksBySubcategory)")
+            HUDManager.shared.dismiss() 
         }
     }
     
