@@ -55,6 +55,7 @@
  */
 
 // MARK: - 直接使用Google憑證登入
+/*
 import UIKit
 import Firebase
 import GoogleSignIn
@@ -177,13 +178,114 @@ class GoogleSignInController {
         }
     }
 }
+*/
 
 
 
 
 
+// MARK: - 直接使用Google憑證登入（async/await）
 
+import UIKit
+import Firebase
+import GoogleSignIn
 
+/// 處理 Google 相關登入和註冊邏輯的 Controller
+class GoogleSignInController {
+    
+    static let shared = GoogleSignInController()
+    
+    // MARK: - Public Methods
+    
+    /// 使用 Google 進行登入或註冊
+    /// - Parameters:
+    ///   - presentingViewController: 進行 Google 登入的視圖控制器
+    /// - Throws: 如果登入過程中發生錯誤，會拋出對應的錯誤
+    /// - Returns: 登入成功的 `AuthDataResult`，包含用戶資料
+    func signInWithGoogle(presentingViewController: UIViewController) async throws -> AuthDataResult {
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            throw NSError(domain: "GoogleSignInController", code: -1, userInfo: [NSLocalizedDescriptionKey: "Firebase client ID is missing."])
+        }
+        
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+        
+        // 使用 `withCheckedThrowingContinuation` 來將 Google Sign-In 轉換為 async/await 模式
+        let result: (GIDGoogleUser, String) = try await withCheckedThrowingContinuation { continuation in
+            GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController) { result, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else if let user = result?.user, let idToken = user.idToken?.tokenString {
+                    continuation.resume(returning: (user, idToken))
+                } else {
+                    continuation.resume(throwing: NSError(domain: "GoogleSignInError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to retrieve Google user or ID token."]))
+                }
+            }
+        }
+        
+        // 解構獲取的結果，並創建 Google 憑證
+        let (user, idToken) = result
+        
+        print("Google 登入成功，用戶：\(user.profile?.name ?? "未知"), 電子郵件：\(user.profile?.email ?? "未知")")
+        let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: user.accessToken.tokenString)
+        
+        // 使用 Google 憑證進行 Firebase 登入
+        return try await signInWithGoogleCredential(credential)
+    }
+    
+    // MARK: - Private Methods
+    
+    /// 使用 Google 憑證進行 Firebase 登入
+    /// - Parameter credential: Google 的認證憑證
+    /// - Throws: 登入過程中的任何錯誤
+    /// - Returns: 登入成功的 `AuthDataResult`
+    private func signInWithGoogleCredential(_ credential: AuthCredential) async throws -> AuthDataResult {
+        
+        let authResult = try await Auth.auth().signIn(with: credential)
+        
+        // 保存 Google 用戶數據到 Firestore
+        print("使用 Google 憑證登入成功")
+        try await storeGoogleUserData(authResult: authResult)
+        
+        return authResult
+    }
+    
+    /// 將 Google 使用者資料存儲到 Firestore
+    /// - Parameter authResult: Firebase 認證結果
+    /// - Throws: 儲存過程中的任何錯誤
+    private func storeGoogleUserData(authResult: AuthDataResult) async throws {
+        let db = Firestore.firestore()
+        let user = authResult.user
+        let userRef = db.collection("users").document(user.uid)
+        
+        let document = try await userRef.getDocument()
+        if document.exists, var userData = document.data() {
+            // 如果 document 已存在，則僅在 fullName 欄位為空時更新全名
+            if let displayName = user.displayName, userData["fullName"] as? String == "" {
+                print("更新已存在的使用者資料，Google 顯示名稱：\(displayName)")
+                userData["fullName"] = displayName
+            }
+            userData["loginProvider"] = "google"
+            try await userRef.setData(userData, merge: true)
+            
+        } else {
+            // 如果 document 不存在，則建立新的資料
+            var userData: [String: Any] = [
+                "uid": user.uid,
+                "email": user.email ?? "",
+                "loginProvider": "google"
+            ]
+            
+            if let displayName = user.displayName {
+                print("創建新使用者資料，Google 顯示名稱：\(displayName)")
+                userData["fullName"] = displayName
+            }
+            
+            try await userRef.setData(userData, merge: true)
+        }
+    }
+    
+}
 
 
 

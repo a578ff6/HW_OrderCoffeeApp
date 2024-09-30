@@ -114,6 +114,7 @@
 
 
 // MARK: - 直接使用 Apple 憑證登入
+/*
 import UIKit
 import Firebase
 import AuthenticationServices
@@ -317,6 +318,210 @@ extension AppleSignInController: ASAuthorizationControllerDelegate {
         self.signInCompletion?(.failure(error))
     }
 }
+*/
+
+
+
+// MARK: - 直接使用 Apple 憑證登入（async/await）
+import UIKit
+import Firebase
+import AuthenticationServices
+import CryptoKit
+
+/// 處理 Apple 登入相關的 Controller
+class AppleSignInController: NSObject {
+    
+    static let shared = AppleSignInController()
+    
+    // MARK: - Property
+    
+    private var currentNonce: String?
+    private var continuation: CheckedContinuation<AuthDataResult, Error>?
+
+    
+    // MARK: - Public Methods
+    
+    /// 使用 Apple 進行登入
+    /// - Parameters:
+    ///   - presentingViewController: 目前的視圖控制器，Apple 登入畫面會顯示於此視窗上
+    /// - Throws: 如果登入過程中發生錯誤，會拋出對應的錯誤
+    /// - Returns: 登入成功的 `AuthDataResult`，包含用戶資料
+    func signInWithApple(presentingViewController: UIViewController) async throws -> AuthDataResult {
+        print("開始 Apple 登入流程")
+        let request = createAppleIDRequest()
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        
+        /// 使用 `withCheckedThrowingContinuation` 將 ASAuthorizationController 登入流程轉換為 async 形式
+        return try await withCheckedThrowingContinuation { continuation in
+            self.continuation = continuation
+            authorizationController.performRequests()
+        }
+    }
+
+    // MARK: - Private Methods
+    
+    /// 建立 Apple ID 請求，生成 nonce 並加密以便後續登入驗證
+    /// - Returns: 已配置好的 Apple ID 請求
+    private func createAppleIDRequest() -> ASAuthorizationAppleIDRequest {
+        print("建立 Apple ID 請求")
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+        let nonce = randomNonceString()
+        currentNonce = nonce
+        request.nonce = sha256(nonce)
+        return request
+    }
+    
+    /// 使用 Apple 憑證進行 Firebase 登入
+    /// - Parameters:
+    ///   - credential: Apple 的認證憑證
+    ///   - fullName: 使用者的全名（可選）
+    /// - Throws: 登入過程中的任何錯誤
+    /// - Returns: 登入成功的 `AuthDataResult`
+    private func signInWithAppleCredential(_ credential: AuthCredential, fullName: PersonNameComponents?) async throws -> AuthDataResult {
+        print("使用 Apple 憑證登入。")
+        
+        let authResult = try await Auth.auth().signIn(with: credential)
+        
+        // 成功登入後，將使用者數據保存到 Firestore
+        print("Apple 登入成功，UID：\(authResult.user.uid)")
+        try await storeAppleUserData(authResult: authResult, fullName: fullName)
+        
+        return authResult
+    }
+
+    /// 將 Apple 使用者的數據儲存到 Firestore
+    /// - Parameters:
+    ///   - authResult: Firebase 認證結果
+    ///   - fullName: 使用者的全名（可選）
+    /// - Throws: 儲存過程中的任何錯誤
+    private func storeAppleUserData(authResult: AuthDataResult, fullName: PersonNameComponents?) async throws {
+        print("開始儲存用戶資料到 Firestore。")
+        let db = Firestore.firestore()
+        let user = authResult.user
+        let userRef = db.collection("users").document(user.uid)
+        
+        let document = try await userRef.getDocument()
+        if document.exists, var userData = document.data() {
+            print("用戶資料已存在，更新資料。")
+            if let fullName = fullName, let givenName = fullName.givenName, let familyName = fullName.familyName {
+                if userData["fullName"] as? String == "" {
+                    userData["fullName"] = "\(familyName) \(givenName)"
+                }
+            }
+            userData["loginProvider"] = "apple"
+            try await userRef.setData(userData, merge: true)
+            
+        } else {
+            print("用戶資料不存在，創建新資料。")
+            var userData: [String: Any] = [
+                "uid": user.uid,
+                "email": user.email ?? "",
+                "loginProvider": "apple"
+            ]
+            
+            if let fullName = fullName, let givenName = fullName.givenName, let familyName = fullName.familyName {
+                userData["fullName"] = "\(familyName) \(givenName)"
+            }
+            
+            try await userRef.setData(userData, merge: true)
+        }
+    }
+    
+}
+
+// MARK: - ASAuthorizationControllerPresentationContextProviding
+extension AppleSignInController: ASAuthorizationControllerPresentationContextProviding {
+    
+    /// 提供 Apple 登入的展示視窗
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first else {
+            return UIWindow()
+        }
+        return window
+    }
+
+    // MARK: - Private Helper Methods
+
+    /// 生成隨機的 nonce 字串
+    /// - Parameter length: nonce 字串的長度，預設為 32
+    /// - Returns: 隨機的 nonce 字串
+    private func randomNonceString(length: Int = 32) -> String {
+        precondition(length > 0)
+        var randomBytes = [UInt8](repeating: 0, count: length)
+        let errorCode = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
+        if errorCode != errSecSuccess {
+            fatalError("Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)")
+        }
+        
+        let charset: [Character] = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        let nonce = randomBytes.map { byte in
+            charset[Int(byte) % charset.count]
+        }
+        return String(nonce)
+    }
+
+    /// 對輸入字串進行 SHA256 編碼
+    /// - Parameter input: 要編碼的字串
+    /// - Returns: 編碼後的字串
+    private func sha256(_ input: String) -> String {
+        let inputData = Data(input.utf8)
+        let hashedData = SHA256.hash(data: inputData)
+        let hashString = hashedData.compactMap {
+            String(format: "%02x", $0)
+        }.joined()
+        
+        return hashString
+    }
+    
+}
+
+// MARK: - ASAuthorizationControllerDelegate
+extension AppleSignInController: ASAuthorizationControllerDelegate {
+    
+    /// Apple 登入成功時的回調
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
+            guard let nonce = currentNonce else {
+                fatalError("Invalid state: A login callback was received, but no login request was sent.")
+            }
+            guard let appleIDToken = appleIDCredential.identityToken else {
+                print("Unable to fetch identity token")
+                continuation?.resume(throwing: NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unable to fetch identity token"]))
+                return
+            }
+            guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+                print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
+                continuation?.resume(throwing: NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unable to serialize token string"]))
+                return
+            }
+            
+            let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: idTokenString, rawNonce: nonce)
+            
+            Task {
+                do {
+                    let authResult = try await self.signInWithAppleCredential(credential, fullName: appleIDCredential.fullName)
+                    continuation?.resume(returning: authResult)
+                } catch {
+                    continuation?.resume(throwing: error)
+                }
+            }
+        }
+    }
+    
+    /// Apple 登入失敗時的回調
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        print("Sign in with Apple errored: \(error)")
+        continuation?.resume(throwing: error)
+    }
+    
+}
+
+
 
 
 
