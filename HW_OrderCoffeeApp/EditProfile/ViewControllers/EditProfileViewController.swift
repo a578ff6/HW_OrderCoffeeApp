@@ -115,6 +115,7 @@
  */
 
 // MARK: - 已經完善
+/*
 import UIKit
 
 /// 負責處理個人資料編輯頁面的主視圖控制器。它管理使用者資料的顯示與更新。
@@ -273,6 +274,228 @@ class EditProfileViewController: UIViewController {
                 self?.handleImageUploadError(error)
             }
         }
+    }
+    
+    /// 處理大頭照上傳錯誤
+    private func handleImageUploadError(_ error: Error) {
+        HUDManager.shared.dismiss()
+        print("Failed to upload image: \(error)")
+    }
+    
+    // MARK: - Date Handling Methods
+
+    /// 處理日期選擇變更
+    private func handleDateChanged(_ date: Date) {
+        userDetails?.birthday = date
+        tableHandler.userDetails?.birthday = date
+
+        // 對應 BirthdaySelectionCell 並更新 dateLabel
+        let indexPath = IndexPath(row: 0, section: 3)
+        if let cell = editProfileView.tableView.cellForRow(at: indexPath) as? BirthdaySelectionCell {
+            cell.configure(with: date)
+        }
+    }
+
+    // MARK: - Helper Methods
+
+    /// 配置使用者資料
+    private func configureUserData() {
+        guard let userDetails = userDetails else {
+            displayDefaultUserProfileImage()
+            return
+        }
+        loadProfileImage(from: userDetails.profileImageURL)
+        editProfileView.tableView.reloadData()
+    }
+    
+    /// 顯示預設的大頭照
+    private func displayDefaultUserProfileImage() {
+        editProfileView.profileImageView.image = UIImage(named: "UserSymbol")
+        HUDManager.shared.dismiss()
+    }
+    
+    /// 加載使用者大頭照
+    private func loadProfileImage(from url: String?) {
+        if let profileImageURL = url {
+            editProfileView.profileImageView.kf.setImage(with: URL(string: profileImageURL), placeholder: UIImage(named: "UserSymbol"), options: nil, completionHandler: nil)
+        } else {
+            displayDefaultUserProfileImage()
+        }
+    }
+
+    // MARK: - User Details Setup
+
+    /// 接收使用者詳細資料
+    func setupWithUserDetails(_ userDetails: UserDetails?) {
+        self.userDetails = userDetails
+        configureUserData()
+    }
+    
+}
+*/
+
+
+// MARK: - async/await
+
+import UIKit
+
+/// 負責處理個人資料編輯頁面的主視圖控制器。它管理使用者資料的顯示與更新。
+class EditProfileViewController: UIViewController {
+
+    // MARK: - Properties
+
+    private let editProfileView = EditProfileView()
+    private var userDetails: UserDetails?
+    private var photoPickerManager: PhotoPickerManager!
+    private var tableHandler: EditProfileTableHandler!
+    private var datePickerHandler: DatePickerHandler!
+    
+    weak var delegate: UserDetailsReceiver? // 用來傳遞更新後資料的 delegate
+
+    // MARK: - Lifecycle Methods
+
+    override func loadView() {
+        view = editProfileView
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupManagers()
+        setupTableView()
+        configureUserData()
+        setupNavigationTitle()
+        setupNavigationBar()
+        setupKeyboardHandling()
+        setupChangePhotoAction()
+    }
+    
+    // MARK: - Setup Methods
+    
+    /// 初始化管理者
+    private func setupManagers() {
+        setupPhotoPickerManager()
+        setupDatePickerHandler()
+    }
+
+    /// 設置導航欄的保存按鈕
+    private func setupNavigationBar() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveButtonTapped))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeButtonTapped))
+    }
+        
+    /// 設置導航欄的標題
+    private func setupNavigationTitle() {
+        title = "Edit Profile"
+        navigationController?.navigationBar.prefersLargeTitles = false
+    }
+    
+    ///初始化照片選擇管理器
+    private func setupPhotoPickerManager() {
+        photoPickerManager = PhotoPickerManager(viewController: self)
+    }
+
+    /// 初始化日期選擇器管理器
+    private func setupDatePickerHandler() {
+        datePickerHandler = DatePickerHandler(datePicker: UIDatePicker())
+        datePickerHandler.onDateChanged = { [weak self] date in
+            self?.handleDateChanged(date)
+        }
+    }
+    
+    /// 設置 UITableView 和相關的行為
+    private func setupTableView() {
+        tableHandler = EditProfileTableHandler(userDetails: userDetails, datePickerHandler: datePickerHandler)
+        editProfileView.tableView.delegate = tableHandler
+        editProfileView.tableView.dataSource = tableHandler
+        editProfileView.tableView.separatorStyle = .none
+        editProfileView.tableView.backgroundColor = .lightWhiteGray
+    }
+
+    /// 設置更改照片按鈕的行為
+    private func setupChangePhotoAction() {
+        editProfileView.changePhotoButton.addTarget(self, action: #selector(changePhotoButtonTapped), for: .touchUpInside)
+    }
+    
+    /// 設置鍵盤處理
+    private func setupKeyboardHandling() {
+        setUpHideKeyboardOntap()
+        setupKeyboardObservers(for: editProfileView.tableView)
+    }
+    
+    // MARK: - Actions (Button Handlers)
+
+    /// 保存按鈕的行為
+    @objc private func saveButtonTapped() {
+        guard var userDetails = userDetails else { return }
+        guard validateUserDetails() else { return }
+
+        // 從 tableHandler 中獲取用戶修改後的資料
+        userDetails.fullName = tableHandler.userDetails?.fullName ?? ""
+        userDetails.phoneNumber = tableHandler.userDetails?.phoneNumber
+        userDetails.birthday = tableHandler.userDetails?.birthday
+        userDetails.address = tableHandler.userDetails?.address
+        userDetails.gender = tableHandler.userDetails?.gender
+        
+        Task {
+            await updateUserDetailsInFirebase(userDetails)
+        }
+    }
+
+    /// 更改照片按鈕的行為
+    @objc private func changePhotoButtonTapped() {
+        photoPickerManager.presentPhotoOptions { [weak self] selectedImage in
+            guard let image = selectedImage, let uid = self?.userDetails?.uid else { return }
+            Task {
+                await self?.updateProfileImage(image, for: uid)
+            }
+        }
+    }
+    
+    // 處理關閉按鈕的行為
+    @objc private func closeButtonTapped() {
+        dismiss(animated: true, completion: nil)
+    }
+
+    // MARK: - User Data Methods
+
+    /// 驗證使用者詳細資料
+    private func validateUserDetails() -> Bool {
+        guard let fullName = tableHandler.userDetails?.fullName, !fullName.isEmpty else {
+            AlertService.showAlert(withTitle: "錯誤", message: "姓名不能為空，請輸入姓名。", inViewController: self)
+            return false
+        }
+        return true
+    }
+    
+    /// 更新 Firebase 中的使用者資料
+    private func updateUserDetailsInFirebase(_ userDetails: UserDetails) async {
+        HUDManager.shared.showLoading(text: "Saving...")
+        do {
+            try await FirebaseController.shared.updateUserDetails(userDetails)
+            HUDManager.shared.dismiss()
+            self.userDetails = userDetails                    // 更新本地 userDetails
+            self.delegate?.receiveUserDetails(userDetails)    // 通知 UserProfileViewController 更新資料
+            dismiss(animated: true, completion: nil)
+        } catch {
+            print("Failed to update user details: \(error)")
+        }
+        HUDManager.shared.dismiss()  // 無論成功或失敗，都只執行一次 dismiss
+    }
+ 
+    // MARK: - Image Handling Methods
+    
+    /// 更新使用者的大頭照
+    private func updateProfileImage(_ image: UIImage, for uid: String) async {
+        editProfileView.profileImageView.image = image
+        HUDManager.shared.showLoading(text: "Uploading image...")
+        do {
+            let url = try await FirebaseController.shared.uploadProfileImage(image, for: uid)
+            userDetails?.profileImageURL = url                                         // 更新本地的 userDetails，但不立即保存到 Firebase
+            print("Profile image uploaded successfully")
+        } catch {
+            print("Failed to upload image: \(error)")
+        }
+        HUDManager.shared.dismiss()     // 這個dismiss還需要嗎？
     }
     
     /// 處理大頭照上傳錯誤
