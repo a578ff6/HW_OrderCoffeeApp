@@ -197,11 +197,12 @@ class GoogleSignInController {
     
     // MARK: - Public Methods
     
-    /// 使用 Google 進行登入或註冊
+    /// 使用 Google 進行登入或註冊 (此方法在主執行緒上執行)
     /// - Parameters:
     ///   - presentingViewController: 進行 Google 登入的視圖控制器
     /// - Throws: 如果登入過程中發生錯誤，會拋出對應的錯誤
     /// - Returns: 登入成功的 `AuthDataResult`，包含用戶資料
+    @MainActor
     func signInWithGoogle(presentingViewController: UIViewController) async throws -> AuthDataResult {
         guard let clientID = FirebaseApp.app()?.options.clientID else {
             throw NSError(domain: "GoogleSignInController", code: -1, userInfo: [NSLocalizedDescriptionKey: "Firebase client ID is missing."])

@@ -233,9 +233,9 @@ class SignUpViewController: UIViewController {
         }
         signUpView.termsCheckBox.isSelected.toggle()    // 切換選中狀態
     }
-
+    
     // MARK: - 處理一般 Email 註冊
-
+    
     @objc private func signUpButtonTapped() {
         Task {
             // 確認使用者有點擊「確認框」
@@ -300,14 +300,14 @@ class SignUpViewController: UIViewController {
             HUDManager.shared.dismiss()
         }
     }
-        
+    
     // MARK: - 處理Apple登入
     
     @objc private func appleLoginButtonTapped() {
         Task {
             HUDManager.shared.showLoading(text: "Logging in...")
             do {
-                let _ = try await AppleSignInController.shared.signInWithApple(presentingViewController: self)
+                let authResult = try await AppleSignInController.shared.signInWithApple(presentingViewController: self)
                 let userDetails = try await FirebaseController.shared.getCurrentUserDetails()
                 NavigationHelper.navigateToMainTabBar(from: self, with: userDetails)
             } catch {
@@ -318,23 +318,23 @@ class SignUpViewController: UIViewController {
     }
     
     // MARK: - Private Methods
-
+    
     /// 切換密碼顯示狀態
-     @objc private func togglePasswordVisibility() {
-         signUpView.passwordTextField.isSecureTextEntry.toggle()
-         let eyeImageName = signUpView.passwordTextField.isSecureTextEntry ? "eye" : "eye.slash"
-         if let eyeButton = signUpView.passwordTextField.rightView as? UIButton {
-             eyeButton.setImage(UIImage(systemName: eyeImageName), for: .normal)
-         }
-     }
-     
-     /// 切換確認密碼顯示狀態
-     @objc private func toggleConfirmPasswordVisibility() {
-         signUpView.confirmPasswordTextField.isSecureTextEntry.toggle()
-         let eyeImageName = signUpView.confirmPasswordTextField.isSecureTextEntry ? "eye" : "eye.slash"
-         if let eyeButton = signUpView.confirmPasswordTextField.rightView as? UIButton {
-             eyeButton.setImage(UIImage(systemName: eyeImageName), for: .normal)
-         }
-     }
-
+    @objc private func togglePasswordVisibility() {
+        signUpView.passwordTextField.isSecureTextEntry.toggle()
+        let eyeImageName = signUpView.passwordTextField.isSecureTextEntry ? "eye" : "eye.slash"
+        if let eyeButton = signUpView.passwordTextField.rightView as? UIButton {
+            eyeButton.setImage(UIImage(systemName: eyeImageName), for: .normal)
+        }
+    }
+    
+    /// 切換確認密碼顯示狀態
+    @objc private func toggleConfirmPasswordVisibility() {
+        signUpView.confirmPasswordTextField.isSecureTextEntry.toggle()
+        let eyeImageName = signUpView.confirmPasswordTextField.isSecureTextEntry ? "eye" : "eye.slash"
+        if let eyeButton = signUpView.confirmPasswordTextField.rightView as? UIButton {
+            eyeButton.setImage(UIImage(systemName: eyeImageName), for: .normal)
+        }
+    }
+    
 }
