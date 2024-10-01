@@ -114,6 +114,7 @@
 
 
 // MARK: - 視圖佈局分離版本
+/*
 import UIKit
 import FirebaseAuth
 import JGProgressHUD
@@ -286,7 +287,153 @@ class LoginViewController: UIViewController {
     }
     
 }
+*/
 
 
+// MARK: - 視圖佈局分離版本（async/await）
+import UIKit
+import FirebaseAuth
+import JGProgressHUD
 
-
+/// 登入介面
+class LoginViewController: UIViewController {
+    
+    // MARK: - Properties
+    private let loginView = LoginView()
+    
+    
+    // MARK: - Lifecycle Methods
+    override func loadView() {
+        view = loginView
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+        setUpHideKeyboardOntap()
+        setupActions()
+        loadRememberedUser()
+    }
+    
+    /// 設置 Action
+    private func setupActions() {
+        loginView.loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+        loginView.googleLoginButton.addTarget(self, action: #selector(googleLoginButtonTapped), for: .touchUpInside)
+        loginView.appleLoginButton.addTarget(self, action: #selector(appleLoginButtonTapped), for: .touchUpInside)
+        loginView.rememberMeButton.addTarget(self, action: #selector(rememberMeButtonTapped(_:)), for: .touchUpInside)
+        loginView.forgotPasswordButton.addTarget(self, action: #selector(forgotPasswordButtonTapped), for: .touchUpInside)
+        loginView.signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
+        loginView.setPasswordTextFieldIcon(target: self, action: #selector(togglePasswordVisibility))
+    }
+    
+    // MARK: - 處理一般登入
+    
+    @objc private func loginButtonTapped() {
+        Task {
+            /// 確保電子郵件和密碼輸入不為空
+            guard let email = loginView.emailTextField.text, !email.isEmpty,
+                  let password = loginView.passwordTextField.text, !password.isEmpty else {
+                AlertService.showAlert(withTitle: "錯誤", message: "請輸入電子郵件和密碼", inViewController: self)
+                return
+            }
+            
+            HUDManager.shared.showLoading(text: "Logging in...")
+            do {
+                let authResult = try await EmailSignInController.shared.loginUser(withEmail: email, password: password)
+                let userDetails = try await FirebaseController.shared.getCurrentUserDetails()
+                NavigationHelper.navigateToMainTabBar(from: self, with: userDetails)            // 使用 NavigationHelper 登入成功後進入到 mainTabBarController
+            } catch {
+                AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
+            }
+            HUDManager.shared.dismiss()
+        }
+    }
+    
+    // MARK: - 處理Google登入
+    
+    @objc private func googleLoginButtonTapped() {
+        Task {
+            HUDManager.shared.showLoading(text: "Logging in...")
+            do {
+                let authResult = try await GoogleSignInController.shared.signInWithGoogle(presentingViewController: self)
+                let userDetails = try await FirebaseController.shared.getCurrentUserDetails()
+                NavigationHelper.navigateToMainTabBar(from: self, with: userDetails)
+            } catch {
+                AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
+            }
+            HUDManager.shared.dismiss()
+        }
+    }
+    
+    // MARK: - 處理Apple登入
+    
+    @objc private func appleLoginButtonTapped() {
+        Task {
+            HUDManager.shared.showLoading(text: "Logging in...")
+            do {
+                let authResult = try await AppleSignInController.shared.signInWithApple(presentingViewController: self)
+                let userDetails = try await FirebaseController.shared.getCurrentUserDetails()
+                NavigationHelper.navigateToMainTabBar(from: self, with: userDetails)
+            } catch {
+                AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
+            }
+            HUDManager.shared.dismiss()
+        }
+    }
+    
+    
+    // MARK: - Private Methods
+    
+    /// 電子郵件和密碼保存到 Keychain
+    @objc private func rememberMeButtonTapped(_ sender: UIButton) {
+        guard let email = loginView.emailTextField.text, !email.isEmpty,
+              let password = loginView.passwordTextField.text, !password.isEmpty else {
+            AlertService.showAlert(withTitle: "錯誤", message: "請先輸入電子郵件和密碼", inViewController: self, completion: nil)
+            return
+        }
+        
+        sender.isSelected.toggle()
+        UserDefaults.standard.set(sender.isSelected, forKey: "RememberMe")              // Save the user's selection to UserDefaults or other storage
+        
+        if sender.isSelected {
+            if let email = loginView.emailTextField.text, let password = loginView.passwordTextField.text {
+                KeychainManager.save(key: "userEmail", data: Data(email.utf8))
+                KeychainManager.save(key: "userPassword", data: Data(password.utf8))
+            }
+        } else {
+            KeychainManager.delete(key: "userEmail")
+            KeychainManager.delete(key: "userPassword")
+        }
+    }
+    
+    /// 在 App 啟動時存取加載存取的用戶資訊
+    private func loadRememberedUser() {
+        if let remembered = UserDefaults.standard.value(forKey: "RememberMe") as? Bool, remembered {
+            loginView.rememberMeButton.isSelected = true
+            if let emailData = KeychainManager.load(key: "userEmail"), let passwordData = KeychainManager.load(key: "userPassword") {
+                loginView.emailTextField.text = String(data: emailData, encoding: .utf8)
+                loginView.passwordTextField.text = String(data: passwordData, encoding: .utf8)
+            }
+        }
+    }
+    
+    /// 跳轉到 ForgotPasswordViewController
+    @objc private func forgotPasswordButtonTapped() {
+        NavigationHelper.navigateToForgotPassword(from: self)
+    }
+    
+    /// 跳轉到 SignUpViewController
+    @objc private func signUpButtonTapped() {
+        NavigationHelper.navigateToSignUp(from: self)
+    }
+    
+    /// 切換密碼顯示狀態
+    @objc private func togglePasswordVisibility() {
+        loginView.passwordTextField.isSecureTextEntry.toggle()
+        let eyeImageName = loginView.passwordTextField.isSecureTextEntry ? "eye" : "eye.slash"
+        if let eyeButton = loginView.passwordTextField.rightView as? UIButton {
+            eyeButton.setImage(UIImage(systemName: eyeImageName), for: .normal)
+        }
+    }
+    
+}

@@ -129,7 +129,7 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
  */
 
 
-// MARK: - 備用
+// MARK: - 備用（閉包方式）
 /*
  import UIKit
  import Firebase
@@ -168,7 +168,15 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
              let birthday = (userData["birthday"] as? Timestamp)?.dateValue()
              let address = userData["address"] as? String
              let gender = userData["gender"] as? String
-             let favorites = userData["favorites"] as? [String] ?? []  // 解析 favorites 資料
+             
+             // 解析 favorites 資料，從 Firebase 轉換成 [FavoriteDrink]
+             var favorites: [FavoriteDrink] = []
+             if let favoritesData = userData["favorites"] as? [[String: Any]] {
+                 favorites = favoritesData.compactMap({ dict in
+                     guard let categoryId = dict["categoryId"] as? String, let subcategoryId = dict["subcategoryId"] as? String,  let drinkId = dict["drinkId"] as? String else { return nil}
+                     return FavoriteDrink(categoryId: categoryId, subcategoryId: subcategoryId, drinkId: drinkId)
+                 })
+             }
              
              let userDetails = UserDetails(
                  uid: user.uid,
@@ -180,7 +188,7 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
                  address: address,
                  gender: gender,
                  orders: nil,
-                 favorites: favorites  // 將 favorites 加入 UserDetails
+                 favorites: favorites  // 將 favorites 轉換後的 [FavoriteDrink] 加入 UserDetails
              )
              
              completion(.success(userDetails))
@@ -264,7 +272,7 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
 */
 
 
-// MARK: - 測試修改用
+// MARK: - 測試修改用（ async/await ）
 import UIKit
 import Firebase
 import FirebaseStorage
@@ -275,101 +283,104 @@ class FirebaseController {
     static let shared = FirebaseController()
     
     /// 獲取當前用戶的詳細資料
-    func getCurrentUserDetails(completion: @escaping (Result<UserDetails, Error>) -> Void) {
+    /// 使用 Firebase Auth 確認當前用戶是否登入，並從 Firestore 中抓取對應的使用者資料。
+    /// 如果抓取成功，會返回解析後的 UserDetails 資料結構，包含用戶的基本資訊及「我的最愛」清單。
+    /// 如果抓取過程中發生錯誤，則會拋出對應的錯誤。
+    func getCurrentUserDetails() async throws -> UserDetails {
+        
         guard let user = Auth.auth().currentUser else {
-            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User not logged in"])))
-            return
+            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User not logged in"])
         }
         
+        /// 連接至 Firestore 資料庫，取得當前用戶的 document 參考
         let db = Firestore.firestore()
         let userRef = db.collection("users").document(user.uid)
         
-        userRef.getDocument { (document, error) in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            
-            guard let document = document, document.exists, let userData = document.data() else {
-                completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User data not found"])))
-                return
-            }
-            
-            let email = userData["email"] as? String ?? ""
-            let fullName = userData["fullName"] as? String ?? ""
-            let profileImageURL = userData["profileImageURL"] as? String
-            let phoneNumber = userData["phoneNumber"] as? String
-            let birthday = (userData["birthday"] as? Timestamp)?.dateValue()
-            let address = userData["address"] as? String
-            let gender = userData["gender"] as? String
-            
-            // 解析 favorites 資料，從 Firebase 轉換成 [FavoriteDrink]
-            var favorites: [FavoriteDrink] = []
-            if let favoritesData = userData["favorites"] as? [[String: Any]] {
-                favorites = favoritesData.compactMap({ dict in
-                    guard let categoryId = dict["categoryId"] as? String, let subcategoryId = dict["subcategoryId"] as? String,  let drinkId = dict["drinkId"] as? String else { return nil}
-                    return FavoriteDrink(categoryId: categoryId, subcategoryId: subcategoryId, drinkId: drinkId)
-                })
-            }
-            
-            let userDetails = UserDetails(
-                uid: user.uid,
-                email: email,
-                fullName: fullName,
-                profileImageURL: profileImageURL,
-                phoneNumber: phoneNumber,
-                birthday: birthday,
-                address: address,
-                gender: gender,
-                orders: nil,
-                favorites: favorites  // 將 favorites 轉換後的 [FavoriteDrink] 加入 UserDetails
-            )
-            
-            completion(.success(userDetails))
+        /// 從 Firestore 獲取當前用戶的 document 資料
+        let document = try await userRef.getDocument()
+        
+        guard let userData = document.data() else {
+            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User data not found"])
+        }
+        
+        // 解析使用者的基本資訊，從 Firestore document 中取出對應欄位的資料
+        let email = userData["email"] as? String ?? ""
+        let fullName = userData["fullName"] as? String ?? ""
+        let profileImageURL = userData["profileImageURL"] as? String
+        let phoneNumber = userData["phoneNumber"] as? String
+        let birthday = (userData["birthday"] as? Timestamp)?.dateValue()
+        let address = userData["address"] as? String
+        let gender = userData["gender"] as? String
+        
+        /// 解析 favorites 資料，將 Firestore 的「我的最愛」轉換為 FavoriteDrink 的陣列
+        let favorites = parseFavorites(from: userData["favorites"] as? [[String: Any]])
+        
+        // 將所有解析後的資料封裝進 UserDetails 結構並返回
+        return UserDetails(
+            uid: user.uid,
+            email: email,
+            fullName: fullName,
+            profileImageURL: profileImageURL,
+            phoneNumber: phoneNumber,
+            birthday: birthday,
+            address: address,
+            gender: gender,
+            orders: nil,
+            favorites: favorites        // 將 favorites 轉換後的 [FavoriteDrink] 加入 UserDetails
+        )
+    }
+    
+    /// 解析 favorites 資料
+    /// 將從 Firestore 中獲取的「我的最愛」清單資料（favorites）解析為 [FavoriteDrink] 陣列。
+    /// 如果資料為空或無效，則返回一個空陣列。
+    private func parseFavorites(from data: [[String: Any]]?) -> [FavoriteDrink] {
+        
+        guard let favoritesData = data else { return [] }
+        
+        // 使用 compactMap 遍歷 favoritesData 陣列，將每一個資料字典轉換為 FavoriteDrink 結構
+        return favoritesData.compactMap { dict in
+            guard let categoryId = dict["categoryId"] as? String,
+                  let subcategoryId = dict["subcategoryId"] as? String,
+                  let drinkId = dict["drinkId"] as? String else { return nil }
+            return FavoriteDrink(categoryId: categoryId, subcategoryId: subcategoryId, drinkId: drinkId)
         }
     }
     
-    /// 上傳圖片到 Firebase Storage 並獲取下載 URL
-    func uploadProfileImage(_ image: UIImage, for uid: String, completion: @escaping (Result<String, Error>) -> Void) {
+    /// 上傳圖片到 Firebase Storage 並返回下載 URL
+    /// 將用戶上傳的圖片存至 Firebase Storage，並異步取得該圖片的下載 URL。
+    /// 若圖片上傳或 URL 獲取失敗，會拋出相應錯誤。
+    func uploadProfileImage(_ image: UIImage, for uid: String) async throws -> String {
+        
         let storageRef = Storage.storage().reference().child("profile_images/\(uid).jpg")
+        
         guard let imageData = image.jpegData(compressionQuality: 0.8) else {
-            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Image conversion failed"])))
-            return
+            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Image conversion failed"])
         }
         
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpeg"
         
-        storageRef.putData(imageData, metadata: metadata) { _, error in
-            guard error == nil else {
-                completion(.failure(error!))
-                return
-            }
-            
-            storageRef.downloadURL { url, error in
-                guard let downloadURL = url else {
-                    completion(.failure(error!))
-                    return
-                }
-                completion(.success(downloadURL.absoluteString))
-            }
-        }
+        /// 異步方式上傳圖片到 Firebase Storage
+        let uploadResult = try await storageRef.putDataAsync(imageData, metadata: metadata)
+        
+        /// 異步方式取得下載 URL
+        let downloadURL = try await storageRef.downloadURL()
+        return downloadURL.absoluteString
     }
     
     /// 更新 Firestore 中的用戶圖片 URL
-    func updateUserProfileImageURL(_ url: String, for uid: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    /// 異步方式將圖片 URL 更新至 Firestore 中對應的用戶資料。
+    /// 若更新過程中發生錯誤，會拋出相應錯誤。
+    func updateUserProfileImageURL(_ url: String, for uid: String) async throws {
         let db = Firestore.firestore()
-        db.collection("users").document(uid).updateData(["profileImageURL": url]) { error in
-            if let error = error {
-                completion(.failure(error))
-            } else {
-                completion(.success(()))
-            }
-        }
+        let userRef = db.collection("users").document(uid)
+        try await userRef.updateData(["profileImageURL": url])
     }
-
+    
     /// 更新 Firestore 中的用戶資料
-    func updateUserDetails(_ userDetails: UserDetails, completion: @escaping (Result<Void, Error>) -> Void) {
+    /// 異步方式更新 Firestore 中用戶的詳細資料，如姓名、電話號碼、生日等。
+    /// 若更新過程中發生錯誤，會拋出相應錯誤。
+    func updateUserDetails(_ userDetails: UserDetails) async throws {
         let db = Firestore.firestore()
         let userRef = db.collection("users").document(userDetails.uid)
         
@@ -382,26 +393,22 @@ class FirebaseController {
             "profileImageURL": userDetails.profileImageURL ?? ""
         ]
         
-        userRef.updateData(userData) { error in
-            if let error = error {
-                completion(.failure(error))
-            } else {
-                completion(.success(()))
-            }
-        }
+        // 異步方式更新 Firestore 中的用戶資料
+        try await userRef.updateData(userData)
     }
     
     /// 執行登出操作
-    func signOut(completion: @escaping (Result<Void, Error>) -> Void) {
+    /// 執行 Firebase Auth 的登出操作，並清除當前的訂單資料。
+    /// 若登出過程中發生錯誤，會拋出相應錯誤。
+    func signOut() throws {
         do {
             try Auth.auth().signOut()
             OrderController.shared.clearOrder() // 在登出時清除內存中的 orderItems（訂單項目）
-            completion(.success(()))
         } catch let signOutError as NSError {
-            completion(.failure(signOutError))
+            throw signOutError
         }
     }
-  
+    
 }
 
 

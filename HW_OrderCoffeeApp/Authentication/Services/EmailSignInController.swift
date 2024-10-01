@@ -107,7 +107,7 @@
 
 // 在已經先使用 Email 電子信箱註冊時，可以被相同的 Apple 、 Google 覆蓋提供者。
 // 而當先使用 Apple 、 Google 信箱註冊時，則無法使用 Email 電子信箱註冊。（這是在 Apple 未隱藏的情境）
-
+/*
 import UIKit
 import Firebase
 
@@ -335,4 +335,154 @@ class EmailSignInController {
         }
     }
  
+}
+*/
+
+// MARK: -  負責處理與 Email 登入及註冊相關的 Controller（async/await）
+
+import UIKit
+import Firebase
+
+/// 負責處理與 Email 登入及註冊相關的 Controller
+class EmailSignInController {
+    
+    static let shared = EmailSignInController()
+    
+    // MARK: - 郵件、密碼檢查
+    
+    /// 檢查電子郵件格式是否有效
+    static func isEmailvalid(_ email: String) -> Bool {
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        let emailTest = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
+        return emailTest.evaluate(with: email)
+    }
+    
+    /// 檢查密碼是否符合要求（至少8位，包含小寫字母和特殊字符）
+    static func isPasswordValid(_ password: String) -> Bool {
+        let passwordRegEx = "^(?=.*[a-z])(?=.*[$@$#!%*?&])[A-Za-z\\d$@$#!%*?&]{8,}"
+        let passwordTest = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
+        return passwordTest.evaluate(with: password)
+    }
+    
+    // MARK: - Email 登入、註冊相關
+    
+    /// 註冊新使用者
+    /// - Parameters:
+    ///   - email: 使用者的電子郵件地址
+    ///   - password: 使用者的密碼
+    ///   - fullName: 使用者的全名
+    func registerUser(withEmail email: String, password: String, fullName: String) async throws -> AuthDataResult {
+        print("開始檢查電子郵件是否存在：\(email)")
+
+        /// 檢查電子郵件是否已經存在
+        let emailExists = try await checkIfEmailExists(email)
+        if emailExists {
+            print("電子郵件地址已被另一個帳戶使用：\(email)")
+            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "電子郵件地址已被另一個帳戶使用。"])
+        }
+        
+        // 創建新用戶
+        return try await createNewUser(withEmail: email, password: password, fullName: fullName)
+    }
+    
+    /// 創建新用戶
+    /// - Parameters:
+    ///   - email: 新用戶的電子郵件地址
+    ///   - password: 新用戶的密碼
+    ///   - fullName: 新用戶的全名
+    private func createNewUser(withEmail email: String, password: String, fullName: String) async throws -> AuthDataResult {
+        print("電子郵件地址可用於註冊：\(email)")
+        
+        // 創建新用戶
+        let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
+        
+        // 保存用戶數據到 Firestore
+        print("註冊成功，保存用戶數據：\(authResult.user.uid)")
+        try await storeUserData(authResult: authResult, fullName: fullName, loginProvider: "email")
+        
+        return authResult
+    }
+    
+    /// 使用電子郵件登入
+    /// - Parameters:
+    ///   - email: 使用者的電子郵件地址
+    ///   - password: 使用者的密碼
+    func loginUser(withEmail email: String, password: String) async throws -> AuthDataResult {
+        print("嘗試使用電子郵件登入：\(email)")
+        let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+        
+        /// 使用電子郵件和密碼進行登入
+        let authResult = try await Auth.auth().signIn(with: credential)
+        
+        // 保存用戶數據
+        print("登入成功，保存用戶數據")
+        try await storeUserData(authResult: authResult, loginProvider: "email")
+        
+        return authResult
+    }
+    
+    // MARK: - 密碼重置郵件
+    
+    /// 發送密碼重置郵件
+    /// - Parameters:
+    ///   - email: 要重置密碼的電子郵件地址
+    func resetPassword(forEmail email: String) async throws {
+        print("發送密碼重置郵件到：\(email)")
+        try await Auth.auth().sendPasswordReset(withEmail: email)
+    }
+    
+    // MARK: - Firebase 數據檢查及操作
+    
+    /// 檢查電子郵件是否已經存在於 Firebase 中
+    /// - Parameters:
+    ///   - email: 要檢查的電子郵件地址
+    /// - Returns: 是否存在的結果
+    private func checkIfEmailExists(_ email: String) async throws -> Bool {
+        print("檢查電子郵件是否存在：\(email)")
+        
+        let db = Firestore.firestore()
+        let snapshot = try await db.collection("users").whereField("email", isEqualTo: email).getDocuments()
+        
+        return !snapshot.isEmpty
+    }
+    
+    /// 保存用戶數據到 Firestore
+    /// - Parameters:
+    ///   - authResult: Firebase 驗證結果
+    ///   - fullName: 使用者的全名（可選）
+    ///   - loginProvider: 登入提供者
+    private func storeUserData(authResult: AuthDataResult, fullName: String? = nil, loginProvider: String) async throws {
+        let db = Firestore.firestore()
+        let user = authResult.user
+        let userRef = db.collection("users").document(user.uid)
+        
+        // 檢查用戶數據是否存在，若存在則更新，若不存在則創建
+        let document = try await userRef.getDocument()
+        
+        if document.exists, var userData = document.data() {
+            // 更新現有資料
+            print("更新現有用戶數據：\(user.uid)")
+            userData["email"] = user.email ?? ""
+            userData["loginProvider"] = loginProvider
+            if let fullName = fullName {
+                userData["fullName"] = fullName
+            }
+            try await userRef.setData(userData, merge: true)
+        } else {
+            // 建立新的資料
+            print("建立新用戶數據：\(user.uid)")
+            var userData: [String: Any] = [
+                "uid": user.uid,
+                "email": user.email ?? "",
+                "loginProvider": loginProvider
+            ]
+            
+            if let fullName = fullName {
+                userData["fullName"] = fullName
+            }
+            
+            try await userRef.setData(userData, merge: true)
+        }
+    }
+    
 }
