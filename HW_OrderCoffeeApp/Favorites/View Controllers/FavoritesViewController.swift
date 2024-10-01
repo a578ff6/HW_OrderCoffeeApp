@@ -325,7 +325,7 @@
 // 收藏順序會被保留，且子類別與對應的飲品會按順序加入
 // 設置HUD
 // https://reurl.cc/6dGbxk
-
+/*
 import UIKit
 import FirebaseAuth
 
@@ -514,5 +514,206 @@ extension FavoritesViewController {
     /// 當「我的最愛」狀態改變時，更新 UI，檢查最新的「我的最愛」狀態並更新按鈕
     @objc private func handleFavoriteStatusChanged() {
         validateAndLoadUserDetails()
+    }
+}
+*/
+
+
+
+// MARK: - 使用 push 調整 validateAndLoadUserDetails & 設置 viewWillAppear & 設置通知 & 處理 DrinkDetailViwController（async/await）
+// 使用 NoFavoritesView，並且當在 FavoritesHandler 直接刪除掉最愛飲品項目之後，會立即更新顯示 NoFavoritesView
+// 藉此練習 UICollectionViewDiffableDataSource（調整成三個參數、處理User頁面傳遞的部分、處理我的最愛視圖控制器刪除部分）
+// 讓每個子類別的飲品都有各自的 header 進行區分，讓使用者可以根據子類別快速找到飲品。
+// 收藏順序會被保留，且子類別與對應的飲品會按順序加入
+// 設置HUD
+// https://reurl.cc/6dGbxk
+
+import UIKit
+import FirebaseAuth
+
+/// 顯示使用者收藏的飲品清單
+///
+/// `FavoritesViewController` 會從 Firebase 獲取最新的 `userDetails`，並透過 `MenuController` 加載對應的飲品詳細資料，顯示在收藏清單中。
+class FavoritesViewController: UIViewController {
+    
+    // MARK: - Properties
+    
+    private let favoritesView = FavoritesView()
+    private var handler: FavoritesHandler!
+    
+    /// 使用者詳細資訊
+    var userDetails: UserDetails?
+    
+    // MARK: - Lifecycle Methods
+    
+    override func loadView() {
+        view = favoritesView
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupNavigationTitle()
+        setupCollectionView()
+        setupHandlers()
+        registerNotifications()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        HUDManager.shared.showLoading(text: "Loading Favorites...")
+        // 每次視圖即將出現時，檢查並加載最新的使用者資料
+        Task {
+            await validateAndLoadUserDetails()
+        }
+    }
+    
+    // MARK: - deinit
+    
+    deinit {
+        removeNotifications()
+    }
+    
+    // MARK: - Setup Methods
+    
+    /// 設置 CollectionView 和其相關的處理器
+    private func setupCollectionView() {
+        handler = FavoritesHandler(collectionView: favoritesView.collectionView)
+        favoritesView.collectionView.delegate = handler              // 設定 delegate
+    }
+    
+    /// 設置處理器的事件處理
+    private func setupHandlers() {
+        // 設置閉包，當使用者點擊飲品時導航至 DrinkDetailViewController
+        handler.didSelectDrinkHandler = { [weak self] drink in
+            self?.navigateToDrinkDetail(with: drink)
+        }
+    }
+    
+    // MARK: - UserDetails Validation
+    
+    /// 檢查並從 Firebase 獲取最新的 `userDetails`，並根據結果進行資料加載或顯示錯誤
+    private func validateAndLoadUserDetails() async {
+        do {
+            let updatedUserDetails = try await FirebaseController.shared.getCurrentUserDetails()
+            self.userDetails = updatedUserDetails
+            print("接收到的 userDetails: \(updatedUserDetails.favorites.map { $0.drinkId })")
+            await fetchDrinks(for: updatedUserDetails.favorites)  // 加載收藏的飲品資料
+        } catch {
+            print("無法更新 userDetails: \(error)")
+            HUDManager.shared.dismiss()
+        }
+    }
+    
+    // MARK: - Data Loading
+    
+    /// 根據使用者收藏的飲品資料，從 Firestore 中加載相應的`飲品`資料，並根據`子類別`進行分類後更新畫面，
+    /// 保持與 `favoriteDrinks` 的順序一致。
+    ///
+    /// - Parameter favoriteDrinks: 使用者的收藏飲品資料，包含 categoryId、subcategoryId 和 drinkId。
+    private func fetchDrinks(for favoriteDrinks: [FavoriteDrink]) async {
+        /// 儲存有序的資料
+        var orderedDrinksBySubcategory: [(String, [Drink])] = []
+        
+        /// 依照收藏順序處理每個飲品
+        for favoriteDrink in favoriteDrinks {
+            if let (subcategoryTitle, drink) = try? await loadSubcategoryAndDrink(for: favoriteDrink) {
+                appendDrinkToSubcategory(subcategoryTitle: subcategoryTitle, drink: drink, in: &orderedDrinksBySubcategory)
+                print("子類別：\(subcategoryTitle), 飲品：\(drink.name)")
+            }
+        }
+        
+        // 更新有序的飲品資料
+        handler.updateSnapshot(with: orderedDrinksBySubcategory)
+        print("已加載的飲品：\(orderedDrinksBySubcategory)")
+        HUDManager.shared.dismiss()
+    }
+    
+    /// 從 Firestore 加載指定的`subcategoryTitle`與對應的`drink`資料。
+    ///
+    /// - Parameter favoriteDrink: 使用者的收藏飲品資料，包含 categoryId、subcategoryId 和 drinkId。
+    /// - Returns: 返回`subcategoryTitle`與對應的`drink`資料。
+    private func loadSubcategoryAndDrink(for favoriteDrink: FavoriteDrink) async throws -> (String, Drink)? {
+        
+        let subcategory = try? await MenuController.shared.loadSubcategoryById(
+            categoryId: favoriteDrink.categoryId,
+            subcategoryId: favoriteDrink.subcategoryId
+        )
+        
+        let drink = try? await MenuController.shared.loadDrinkById(
+            categoryId: favoriteDrink.categoryId,
+            subcategoryId: favoriteDrink.subcategoryId,
+            drinkId: favoriteDrink.drinkId
+        )
+        
+        if let subcategoryTitle = subcategory?.title, let drink = drink {
+            return (subcategoryTitle, drink)
+        }
+        return nil
+    }
+    
+    /// 將飲品加入到對應的子類別中。如果該子類別已存在，則添加到其對應的飲品列表；如果不存在，則新建子類別。
+    ///
+    /// - Parameters:
+    ///   - subcategoryTitle: 子類別的標題
+    ///   - drink: 要加入的飲品
+    ///   - orderedDrinksBySubcategory: 儲存子類別及其飲品的有序陣列
+    private func appendDrinkToSubcategory(subcategoryTitle: String, drink: Drink, in orderedDrinksBySubcategory: inout [(String, [Drink])]) {
+        if let index = orderedDrinksBySubcategory.firstIndex(where: { $0.0 == subcategoryTitle }) {
+            orderedDrinksBySubcategory[index].1.append(drink)
+        } else {
+            orderedDrinksBySubcategory.append((subcategoryTitle, [drink]))
+        }
+    }
+    
+    // MARK: - NavigationBar Title Setup
+    
+    /// 設置導航欄的標題
+    private func setupNavigationTitle() {
+        title = "My Favorite"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+    }
+    
+    // MARK: - Navigation
+    
+    /// 導航至 `DrinkDetailViewController`，顯示選中飲品的詳細資訊
+    ///
+    /// - Parameter drink: 使用者選中的飲品物件 `Drink`
+    private func navigateToDrinkDetail(with drink: Drink) {
+        /// 從 `userDetails.favorites` 中找到與選中飲品匹配的 `FavoriteDrink`，以取得完整的識別資訊
+        guard let favoriteDrink = userDetails?.favorites.first(where: { $0.drinkId == drink.id }) else {
+            print("Error: 無法找到對應的 FavoriteDrink")
+            return
+        }
+        
+        let drinkDetailVC = DrinkDetailViewController()
+        drinkDetailVC.categoryId = favoriteDrink.categoryId
+        drinkDetailVC.subcategoryId = favoriteDrink.subcategoryId
+        drinkDetailVC.drinkId = favoriteDrink.drinkId
+        
+        navigationController?.pushViewController(drinkDetailVC, animated: true)
+    }
+    
+}
+
+// MARK: - Notifications Handling
+
+extension FavoritesViewController {
+    
+    /// 註冊通知觀察者
+    private func registerNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleFavoriteStatusChanged), name: .favoriteStatusChanged, object: nil)
+    }
+    
+    /// 移除通知觀察者
+    private func removeNotifications() {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    /// 當「我的最愛」狀態改變時，更新 UI，檢查最新的「我的最愛」狀態並更新按鈕
+    @objc private func handleFavoriteStatusChanged() {
+        Task {
+            await validateAndLoadUserDetails()
+        }
     }
 }
