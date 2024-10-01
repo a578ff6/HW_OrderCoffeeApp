@@ -479,7 +479,7 @@ class EditProfileViewController: UIViewController {
         } catch {
             print("Failed to update user details: \(error)")
         }
-        HUDManager.shared.dismiss()  // 無論成功或失敗，都只執行一次 dismiss
+        HUDManager.shared.dismiss()
     }
  
     // MARK: - Image Handling Methods
@@ -495,13 +495,7 @@ class EditProfileViewController: UIViewController {
         } catch {
             print("Failed to upload image: \(error)")
         }
-        HUDManager.shared.dismiss()     // 這個dismiss還需要嗎？
-    }
-    
-    /// 處理大頭照上傳錯誤
-    private func handleImageUploadError(_ error: Error) {
         HUDManager.shared.dismiss()
-        print("Failed to upload image: \(error)")
     }
     
     // MARK: - Date Handling Methods
