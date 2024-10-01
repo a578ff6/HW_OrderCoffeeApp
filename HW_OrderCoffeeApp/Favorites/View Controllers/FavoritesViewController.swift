@@ -315,6 +315,9 @@
         * 將 HUD 放在 viewWillAppear 中：
             - HUD 只在進入 FavoritesViewController 時顯示，表示正在加載資料，這樣可以避免刪除或添加我的最愛時頻繁出現 HUD，保持頁面操作的流暢性。
 
+        * 後來測試幾次後又將 HUD 改到 viewDidLoad 中：
+            - 因為在滑動 FavoritesViewController 回到 UserProfileViewController 時，因為 viewWillAppear 特性也都會出現 HUD。
+            - 因此就改到 viewDidLoad，初次進入 FavoritesViewController 時顯示 HUD。
  */
 
 
@@ -556,11 +559,12 @@ class FavoritesViewController: UIViewController {
         setupCollectionView()
         setupHandlers()
         registerNotifications()
+        HUDManager.shared.showLoading(text: "Loading Favorites...")     // 初次進入 FavoritesViewController 時顯示 HUD
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        HUDManager.shared.showLoading(text: "Loading Favorites...")
+//        HUDManager.shared.showLoading(text: "Loading Favorites...")   // 調整到 viewDidLoad
         // 每次視圖即將出現時，檢查並加載最新的使用者資料
         Task {
             await validateAndLoadUserDetails()
