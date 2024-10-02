@@ -223,7 +223,7 @@
 
 
 // MARK: - 測試用
-
+/*
 import Foundation
 import FirebaseFirestore
 import FirebaseAuth
@@ -368,6 +368,206 @@ extension Notification.Name {
 
 
 // MARK: - Error
+/// 處理Order訂單錯誤相關訊息
+enum OrderControllerError: Error, LocalizedError {
+    case orderRequestFailed
+    case unknownError
+    case firebaseError(Error)
+    
+    static func form(_ error: Error) -> OrderControllerError {
+        return .firebaseError(error)
+    }
+    
+    var errorDescription: String? {
+        switch self {
+        case .orderRequestFailed:
+            return NSLocalizedString("Order request failed.", comment: "Order request failed.")
+        case .unknownError:
+            return NSLocalizedString("An unknown error occurred.", comment: "An unknown error occurred.")
+        case .firebaseError(let error):
+            return error.localizedDescription
+        }
+    }
+}
+*/
+
+
+// MARK: - 新版（將所有訂單操作（添加、更新、移除等）集中在 OrderController 中管理）UUID & async/await
+
+import Foundation
+import FirebaseFirestore
+import FirebaseAuth
+import UserNotifications
+
+/// OrderController 負責處理訂單相關邏輯
+class OrderController {
+    
+    static let shared = OrderController()
+    
+    // MARK: - Properties
+
+    /// 當前訂單項目列表
+    var orderItems: [OrderItem] = [] {
+        didSet {
+            print("訂單項目更新，當前訂單數量: \(orderItems.count)")
+            NotificationCenter.default.post(name: .orderUpdatedNotification, object: nil)   // 當訂單變更時發送通知
+        }
+    }
+    
+    // MARK: - Order Management Methods
+    
+    /// 新增訂單項目
+    /// - Parameters:
+    ///   - drink: 選擇的飲品
+    ///   - size: 飲品的尺寸
+    ///   - quantity: 數量
+    ///   - categoryId: 飲品所屬的類別 ID
+    ///   - subcategoryId: 飲品所屬的子類別 ID
+    func addOrderItem(drink: Drink, size: String, quantity: Int, categoryId: String?, subcategoryId: String?) {
+        
+        guard let user = Auth.auth().currentUser else {
+            print("User not logged in")
+            return
+        }
+        
+        print("為使用者 \(user.uid) 添加訂單項目")
+
+        let prepTime = drink.prepTime   // 使用飲品的準備時間（分鐘）
+        let timestamp = Date()      // 當前時間
+        let price = drink.sizes[size]?.price ?? 0
+        let totalAmount = price * quantity
+        
+        let orderItem = OrderItem(drink: drink, size: size, quantity: quantity, prepTime: prepTime, timestamp: timestamp, totalAmount: totalAmount, price: price, categoryId: categoryId, subcategoryId: subcategoryId)
+     
+        orderItems.append(orderItem)
+        print("添加訂單項目 ID: \(orderItem.id)")
+    }
+    
+    /// 更新訂單中的訂單項目的尺寸&數量
+    /// - Parameters:
+    ///   - id: 訂單項目 ID
+    ///   - size: 新的尺寸
+    ///   - quantity: 新的數量
+    func updateOrderItem(withID id: UUID, with size: String, and quantity: Int) {
+        guard let index = orderItems.firstIndex(where: { $0.id == id }) else { return }
+        let drink = orderItems[index].drink
+        let price = drink.sizes[size]?.price ?? 0
+        let totalAmount = price * quantity
+        
+        orderItems[index].size = size
+        orderItems[index].quantity = quantity
+        orderItems[index].price = price
+        orderItems[index].totalAmount = totalAmount
+    }
+    
+    /// 清空訂單
+    func clearOrder() {
+        orderItems.removeAll()
+    }
+    
+    /// 刪除特定訂單項目
+    /// - Parameter id: 訂單項目 ID
+    func removeOrderItem(withID id: UUID) {
+        orderItems.removeAll { $0.id == id }
+    }
+    
+    // MARK: - Submit Order
+
+    /// 提交訂單
+    /// - Parameter menuIDs: 訂單中飲品的菜單 ID 清單
+    /// - Throws: 若提交失敗，則拋出錯誤
+    func submitOrder(forMenuIDs menuIDs: [Int]) async throws {
+        guard let user = Auth.auth().currentUser else {
+            throw OrderControllerError.orderRequestFailed
+        }
+        
+        let orderData = buildOrderData(for: user)
+        
+        do {
+            try await saveOrderData(orderData: orderData, for: user)
+            // 安排通知
+            scheduleNotification(prepTime: calculateTotalPrepTime() * 60) // 轉換為秒
+        } catch {
+            throw OrderControllerError.form(error)
+        }
+    }
+    
+    // MARK: - Private Helper Methods
+    
+    /// 構建訂單資料
+    /// - Parameter user: 當前的使用者
+    /// - Returns: 包含訂單資訊的字典
+    private func buildOrderData(for user: User) -> [String: Any] {
+        return [
+            "uid": user.uid,
+            "orderItems": orderItems.map { item in
+                return [
+                    "drink": [
+                        "name": item.drink.name,
+                        "subName": item.drink.subName,
+                        "description": item.drink.description,
+                        "imageUrl": item.drink.imageUrl.absoluteString,
+                        "prepTime": item.drink.prepTime
+                    ],
+                    "size": item.size,
+                    "quantity": item.quantity,
+                    "prepTime": item.prepTime,
+                    "timestamp": item.timestamp,
+                    "totalAmount": item.totalAmount
+                ]
+            },
+            "timestamp": Timestamp(date: Date())
+        ]
+    }
+    
+    /// 儲存訂單資料至 Firestore
+    /// - Parameters:
+    ///   - orderData: 訂單資料
+    ///   - user: 當前使用者
+    private func saveOrderData(orderData: [String: Any], for user: User) async throws {
+        let db = Firestore.firestore()
+
+        /// 在`用戶子集合`中添加訂單
+        try await db.collection("users").document(user.uid).collection("orders").addDocument(data: orderData)
+
+        /// 在`全局 orders 集合`中添加訂單
+        try await db.collection("orders").addDocument(data: orderData)
+    }
+    
+    // MARK: - Public Helper Methods
+
+    /// 計算所有飲品的準備時間
+    /// - Returns: 總準備時間（分鐘）
+    func calculateTotalPrepTime() -> Int {
+        return orderItems.reduce(0) { $0 + ($1.prepTime * $1.quantity) }
+    }
+    
+    /// 計算訂單的總金額
+    /// - Returns: 總金額
+    func calculateTotalAmount() -> Int {
+        return orderItems.reduce(0) { $0 + $1.totalAmount }
+    }
+    
+    // MARK: - Local Notification
+
+    /// 安排本地通知提醒用户訂單已經準備好
+    /// - Parameter prepTime: 訂單準備時間（秒）
+    private func scheduleNotification(prepTime: Int) {
+        let content = UNMutableNotificationContent()
+        content.title = "Order Ready"
+        content.body = "Your order is ready for pickup!"
+        content.sound = UNNotificationSound.default
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(prepTime), repeats: false)
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+    }
+    
+}
+
+// MARK: - Error
+
 /// 處理Order訂單錯誤相關訊息
 enum OrderControllerError: Error, LocalizedError {
     case orderRequestFailed
