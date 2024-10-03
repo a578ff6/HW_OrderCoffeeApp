@@ -29,6 +29,7 @@
 		935374212CA2F02000794A63 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374202CA2F02000794A63 /* Notifications.swift */; };
 		935374292CA4502B00794A63 /* NoFavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374282CA4502B00794A63 /* NoFavoritesView.swift */; };
 		9353742B2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353742A2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift */; };
+		935374312CAD6F1500794A63 /* OrderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374302CAD6F1500794A63 /* OrderView.swift */; };
 		936CFFBD2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */; };
 		936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */; };
 		936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */; };
@@ -182,6 +183,7 @@
 		935374202CA2F02000794A63 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		935374282CA4502B00794A63 /* NoFavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFavoritesView.swift; sourceTree = "<group>"; };
 		9353742A2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesDrinkHeaderView.swift; sourceTree = "<group>"; };
+		935374302CAD6F1500794A63 /* OrderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderView.swift; sourceTree = "<group>"; };
 		936CFFBA2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HW_OrderCoffeeAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITests.swift; sourceTree = "<group>"; };
 		936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -779,6 +781,7 @@
 		93BD48B52C58DA3100144E7F /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				935374302CAD6F1500794A63 /* OrderView.swift */,
 				93B492922C410A2E00E7B947 /* OrderSummaryCollectionViewCell.swift */,
 				93B9DC882C368DA80050BC3F /* OrderItemCollectionViewCell.swift */,
 				93B492962C416C0100E7B947 /* NoOrdersViewCell.swift */,
@@ -1110,6 +1113,7 @@
 				932258D32C9410F4004EA2D9 /* FavoriteManager.swift in Sources */,
 				93DB1D3A2C49618C00BA2CC1 /* SignUpView.swift in Sources */,
 				93755C1F2C80971F002570A5 /* ProfileOptionCell.swift in Sources */,
+				935374312CAD6F1500794A63 /* OrderView.swift in Sources */,
 				93B9DC782C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift in Sources */,
 				9353741D2C9EB58300794A63 /* FavoritesLayoutProvider.swift in Sources */,
 				939BD9F32B2AC27700616D1C /* ForgotPasswordViewController.swift in Sources */,
