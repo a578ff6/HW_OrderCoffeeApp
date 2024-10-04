@@ -9,14 +9,14 @@ import UIKit
 
 /// `OrderView` 負責展示訂單的視圖，包含一個 `UICollectionView` 來展示訂單項目
 class OrderView: UIView {
-
+    
     // MARK: - UI Elements
     
     /// 用於展示訂單項目的 CollectionView
     let collectionView = OrderView.createCollectionView()
     
     // MARK: - Initializers
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         registerCells()
@@ -29,7 +29,7 @@ class OrderView: UIView {
     }
     
     // MARK: - Setup Methods
-
+    
     /// 註冊  Cells
     private func registerCells() {
         collectionView.register(OrderItemCollectionViewCell.self, forCellWithReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier)
@@ -52,15 +52,14 @@ class OrderView: UIView {
     
     // MARK: - Factory Method
     
-    /// 創建並配置 CollectionView（UICollectionViewFlowLayout
+    /// 創建並配置 CollectionView
     private static func createCollectionView() -> UICollectionView {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
+        let layout = OrderLayoutProvider.createLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-//        collectionView.alwaysBounceVertical = true
-//        collectionView.showsVerticalScrollIndicator = false
+        collectionView.alwaysBounceVertical = true
+        collectionView.showsVerticalScrollIndicator = false
         return collectionView
     }
-
+    
 }

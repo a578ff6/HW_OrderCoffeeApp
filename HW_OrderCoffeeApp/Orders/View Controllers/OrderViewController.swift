@@ -248,10 +248,15 @@ import FirebaseAuth
  /// 用於展示和管理當前訂單
 class OrderViewController: UIViewController {
     
-//    @IBOutlet weak var orderCollectionView: UICollectionView!
+    // MARK: - Properties
+
+    /// 自訂的 OrderView
+    private let orderView = OrderView()
     
     weak var delegate: OrderModificationDelegate?
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
+    
+    // MARK: - Section & Item
     
     enum Section: Int, CaseIterable {
         case orderItems, summary
@@ -261,6 +266,13 @@ class OrderViewController: UIViewController {
         case orderItem(OrderItem), summary(totalAmount: Int, totalPrepTime: Int), noOrders
     }
     
+    // MARK: - Lifecycle Methods
+    
+    /// 設置 OrderView 作為主視圖
+    override func loadView() {
+        view = orderView
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCollectionView()
@@ -268,60 +280,24 @@ class OrderViewController: UIViewController {
         updateOrders()  // 初始化時也加載當前訂單
     }
     
+    // MARK: - deinit
+
     deinit {
         NotificationCenter.default.removeObserver(self, name: .orderUpdatedNotification, object: nil)
     }
     
-    
-    /// 設置 CollectionView 的 delegate 和 dataSource，並註冊自定義單元格
+    // MARK: - CollectionView Setup
+
+    /// 設置 CollectionView 的 delegate 和 dataSource
     private func setupCollectionView() {
-        orderCollectionView.delegate = self
-        orderCollectionView.register(OrderItemCollectionViewCell.self, forCellWithReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier)
-        orderCollectionView.register(OrderSummaryCollectionViewCell.self, forCellWithReuseIdentifier: OrderSummaryCollectionViewCell.reuseIdentifier)   // summary cell
-        orderCollectionView.register(NoOrdersViewCell.self, forCellWithReuseIdentifier: NoOrdersViewCell.reuseIdentifier)        // no orders cell
-        orderCollectionView.register(OrderSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: OrderSectionHeaderView.headerIdentifier)
-        orderCollectionView.collectionViewLayout = createLayout()
-        configureDataSource()
-    }
-    
-    /// 創建 CollectionView 佈局
-    private func createLayout() -> UICollectionViewLayout {
-        let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
-            guard let sectionType = Section(rawValue: sectionIndex) else { return nil }
-            var sectionLayout: NSCollectionLayoutSection
-            
-            switch sectionType {
-            case .orderItems:
-                let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(100)))
-                let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(100)), subitems: [item])
-                sectionLayout = NSCollectionLayoutSection(group: group)
-                sectionLayout.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0)
-                sectionLayout.boundarySupplementaryItems = [self.createSectionHeader()]
-                
-            case .summary:
-                let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(100)))
-                let group = NSCollectionLayoutGroup.vertical(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(100)), subitems: [item])
-                sectionLayout = NSCollectionLayoutSection(group: group)
-                sectionLayout.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0)
-                sectionLayout.boundarySupplementaryItems = [self.createSectionHeader()]
-            }
-            
-            return sectionLayout
-        }
-        
-        return layout
-    }
-    
-    
-    private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
-        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(50))
-        let header = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
-        return header
+        orderView.collectionView.delegate = self                // 設置 delegate
+        configureDataSource()                                   // 配置 dataSource
     }
 
+    // MARK: - Data Source Configuration
     
     private func configureDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: orderCollectionView) { (collectionView, indexPath, item) in
+        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: orderView.collectionView) { (collectionView, indexPath, item) in
             switch item {
             case .orderItem(let orderItem):
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier, for: indexPath) as? OrderItemCollectionViewCell else {
@@ -333,7 +309,7 @@ class OrderViewController: UIViewController {
                     AlertService.showAlert(withTitle: "確認刪除", message: "你確定要從訂單中刪除該品項嗎？", inViewController: self, showCancelButton: true) {
                         let orderItemID = orderItem.id
                         OrderController.shared.removeOrderItem(withID: orderItemID)
-                        self.updateOrders()       // 刪除後更新訂單列表和總金額
+                        self.updateOrders()      // 刪除後更新訂單列表和總金額
                     }
                 }
                 return cell
@@ -351,12 +327,11 @@ class OrderViewController: UIViewController {
                 }
                 return cell
             }
-            
         }
         
         dataSource.supplementaryViewProvider = createSupplementaryViewProvider()
     }
-    
+
     private func createSupplementaryViewProvider() -> UICollectionViewDiffableDataSource<Section, Item>.SupplementaryViewProvider {
         return { (collectionView, kind, indexPath) -> UICollectionReusableView? in
             if kind == UICollectionView.elementKindSectionHeader {
