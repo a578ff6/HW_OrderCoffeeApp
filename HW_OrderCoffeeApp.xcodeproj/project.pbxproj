@@ -557,6 +557,7 @@
 		935374392CB06E2400794A63 /* Handler */ = {
 			isa = PBXGroup;
 			children = (
+				935374352CB00E2E00794A63 /* OrderHandler.swift */,
 			);
 			path = Handler;
 			sourceTree = "<group>";
@@ -797,7 +798,6 @@
 			isa = PBXGroup;
 			children = (
 				93B9DC7C2C32B0BB0050BC3F /* OrderViewController.swift */,
-				935374352CB00E2E00794A63 /* OrderHandler.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -806,8 +806,8 @@
 			isa = PBXGroup;
 			children = (
 				935374302CAD6F1500794A63 /* OrderView.swift */,
-				93B492922C410A2E00E7B947 /* OrderSummaryCollectionViewCell.swift */,
 				93B9DC882C368DA80050BC3F /* OrderItemCollectionViewCell.swift */,
+				93B492922C410A2E00E7B947 /* OrderSummaryCollectionViewCell.swift */,
 				93B492962C416C0100E7B947 /* NoOrdersViewCell.swift */,
 				93DB1D2C2C43D82200BA2CC1 /* OrderSectionHeaderView.swift */,
 			);

@@ -217,7 +217,7 @@
             </objects>
             <point key="canvasLocation" x="4913.740458015267" y="306.33802816901408"/>
         </scene>
-        <!--訂單-->
+        <!--Order-->
         <scene sceneID="di8-Bv-nzg">
             <objects>
                 <viewController id="9YN-bm-qYx" customClass="OrderViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -227,21 +227,9 @@
                         <viewLayoutGuide key="safeArea" id="CP2-12-wxj"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" title="訂單" largeTitleDisplayMode="always" id="nwb-dJ-dH7"/>
+                    <navigationItem key="navigationItem" title="Order" largeTitleDisplayMode="always" id="nwb-dJ-dH7"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cPs-L7-0eE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="OdJ-SN-CXH">
-                    <rect key="frame" x="0.0" y="0.0" width="393" height="614"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Qkf-1f-T3m">
-                        <size key="itemSize" width="128" height="128"/>
-                        <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                        <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                        <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                    </collectionViewFlowLayout>
-                    <cells/>
-                </collectionView>
             </objects>
             <point key="canvasLocation" x="6767" y="1039"/>
         </scene>
