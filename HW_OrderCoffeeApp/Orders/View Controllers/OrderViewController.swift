@@ -19,7 +19,7 @@
  */
 
 
-// MARK: - 第一版本成功（刪除功能備份版本）尺寸完成，數量完成（訂單飲品項目回到DetailViewController處理修改訂單。）、Label完成
+// MARK: - 重構視圖與資料分離 & 第一版本成功（刪除功能備份版本）尺寸完成，數量完成（訂單飲品項目回到DetailViewController處理修改訂單。）、Label完成
 
 /*
  執行在 OrderViewController 中點擊某個訂單飲品項目後，跳轉到 DrinkDetailViewController 讓使用者修改該訂單飲品項目的尺寸、數量：
@@ -35,6 +35,44 @@
  
  4. 關於沒有訂單時，如點擊訂單section時會出錯：
         - 檢查是否有訂單飲品項目，在點擊事件中先檢查 OrderController.shared.orderItems 是否為nil，如果是nil則不執行後續操作。
+ 
+-------------------------------------------------------------------------------------------------------------------------
+ 
+ ## OrderViewController：
+ 
+    & 功能：
+        - 展示當前訂單的視圖控制器，負責顯示訂單項目，並提供訂單項目修改、刪除的功能。
+ 
+    & 視圖設置：
+        - 透過 OrderView 設置主要視圖，並使用 OrderHandler 處理 UICollectionView 的資料顯示和用戶交互。
+ 
+    & 資料加載與更新流程：
+
+        1. 在 viewDidLoad 初始化：
+            - 註冊通知來監聽訂單資料更新。
+            - 使用 setupCollectionView 方法初始化 UICollectionView 和其相關的委託。
+            - 呼叫 refreshOrderView 方法以加載當前訂單。
+
+        2. 使用委託模式處理訂單項目的操作：
+            - 使用 OrderModificationDelegate 來通知修改訂單項目，並在需要時顯示 DrinkDetailViewController。
+            - 使用 OrderActionDelegate 來通知刪除訂單項目，並顯示確認刪除的警告視窗。
+ 
+        3. 通知處理：
+            - registerNotifications 註冊通知以監聽訂單的更新，使用 NotificationCenter.default。
+            - removeNotifications 在控制器釋放時移除註冊的通知。
+ 
+    & 資料處理：
+        - OrderHandler： 負責 UICollectionView 的 dataSource 和 delegate 方法，包括顯示訂單項目、訂單摘要和無訂單的情況，並處理修改與刪除操作。
+
+    & 主要流程：
+        - 資料接收與顯示： 從 OrderController 獲取訂單資料，並在初始化時更新視圖。
+        - 修改訂單： 當使用者選擇訂單項目時，透過委託方式呈現飲品詳細資料頁面。
+        - 刪除訂單： 點擊刪除按鈕時，透過委託方式顯示警告視窗確認，並進行訂單刪除後的更新操作。
+
+    & 主要功能概述：
+        - 資料更新： 在資料發生變動時透過 Notification 觸發更新，保持顯示內容與訂單資料同步。
+        - 視圖與資料分離： OrderView 負責視覺顯示，OrderHandler 負責資料處理，清楚劃分 UI 與業務邏輯。
+ 
  */
 
 
@@ -245,26 +283,16 @@ extension OrderViewController: UICollectionViewDelegate {
 import UIKit
 import FirebaseAuth
 
- /// 用於展示和管理當前訂單
+/// 用於展示和管理當前訂單的視圖控制器
 class OrderViewController: UIViewController {
     
     // MARK: - Properties
-
-    /// 自訂的 OrderView
+    
+    /// 自訂的 OrderView，用於`展示訂單項目`
     private let orderView = OrderView()
     
-    weak var delegate: OrderModificationDelegate?
-    private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
-    
-    // MARK: - Section & Item
-    
-    enum Section: Int, CaseIterable {
-        case orderItems, summary
-    }
-    
-    enum Item: Hashable {
-        case orderItem(OrderItem), summary(totalAmount: Int, totalPrepTime: Int), noOrders
-    }
+    /// 處理`訂單邏輯`的 OrderHandler
+    private var orderHandler: OrderHandler!
     
     // MARK: - Lifecycle Methods
     
@@ -276,124 +304,40 @@ class OrderViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCollectionView()
-        NotificationCenter.default.addObserver(self, selector: #selector(updateOrders), name: .orderUpdatedNotification, object: nil)
-        updateOrders()  // 初始化時也加載當前訂單
+        registerNotifications()
+        refreshOrderView()           // 初始化時也加載當前訂單
     }
     
     // MARK: - deinit
 
     deinit {
-        NotificationCenter.default.removeObserver(self, name: .orderUpdatedNotification, object: nil)
+        removeNotifications()
     }
     
-    // MARK: - CollectionView Setup
-
-    /// 設置 CollectionView 的 delegate 和 dataSource
+    // MARK: - Setup Methods
+    
+    /// 設置 CollectionView 的 delegate 並初始化 OrderHandler
     private func setupCollectionView() {
-        orderView.collectionView.delegate = self                // 設置 delegate
-        configureDataSource()                                   // 配置 dataSource
-    }
-
-    // MARK: - Data Source Configuration
-    
-    private func configureDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: orderView.collectionView) { (collectionView, indexPath, item) in
-            switch item {
-            case .orderItem(let orderItem):
-                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier, for: indexPath) as? OrderItemCollectionViewCell else {
-                    fatalError("Cannot create OrderItemCollectionViewCell")
-                }
-                cell.configure(with: orderItem)
-                cell.deleteAction = { [weak self] in
-                    guard let self = self else { return }
-                    AlertService.showAlert(withTitle: "確認刪除", message: "你確定要從訂單中刪除該品項嗎？", inViewController: self, showCancelButton: true) {
-                        let orderItemID = orderItem.id
-                        OrderController.shared.removeOrderItem(withID: orderItemID)
-                        self.updateOrders()      // 刪除後更新訂單列表和總金額
-                    }
-                }
-                return cell
-                
-            case .summary(totalAmount: let totalAmount, totalPrepTime: let totalPrepTime):
-                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderSummaryCollectionViewCell.reuseIdentifier, for: indexPath) as? OrderSummaryCollectionViewCell else {
-                    fatalError("Cannot create OrderSummaryCollectionViewCell")
-                }
-                cell.configure(totalAmount: totalAmount, totalPrepTime: totalPrepTime)
-                return cell
-                
-            case .noOrders:
-                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NoOrdersViewCell.reuseIdentifier, for: indexPath) as? NoOrdersViewCell else {
-                    fatalError("Cannot create NoOrdersViewCell")
-                }
-                return cell
-            }
-        }
+        orderHandler = OrderHandler(collectionView: orderView.collectionView)
+        orderView.collectionView.delegate = orderHandler
         
-        dataSource.supplementaryViewProvider = createSupplementaryViewProvider()
-    }
-
-    private func createSupplementaryViewProvider() -> UICollectionViewDiffableDataSource<Section, Item>.SupplementaryViewProvider {
-        return { (collectionView, kind, indexPath) -> UICollectionReusableView? in
-            if kind == UICollectionView.elementKindSectionHeader {
-                guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: OrderSectionHeaderView.headerIdentifier, for: indexPath) as? OrderSectionHeaderView else {
-                    fatalError("Cannot create OrderSectionHeaderView")
-                }
-                let section = Section(rawValue: indexPath.section)!
-                switch section {
-                case .orderItems:
-                    headerView.configure(with: "訂單飲品項目")
-                case .summary:
-                    headerView.configure(with: "訂單詳情")
-                }
-                return headerView
-            }
-            
-            return nil
-        }
+        /// 設置委託 (用於`修改訂單`與`刪除訂單`的交互)
+        orderHandler.orderModificationDelegate = self
+        orderHandler.orderActionDelegate = self
     }
     
-    /// 更新訂單列表、重新加載數據並計算總金額
-    @objc private func updateOrders() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendSections(Section.allCases)
-        
-        let orderItems = OrderController.shared.orderItems.map { Item.orderItem($0) }
-        
-        if orderItems.isEmpty {
-            snapshot.appendItems([.noOrders], toSection: .orderItems)
-        } else {
-            snapshot.appendItems(orderItems, toSection: .orderItems)
-        }
-        
-        let totalAmount = OrderController.shared.calculateTotalAmount()
-        let totalPrepTime = OrderController.shared.calculateTotalPrepTime()
-        snapshot.appendItems([.summary(totalAmount: totalAmount, totalPrepTime: totalPrepTime)], toSection: .summary)
-        
-        dataSource.apply(snapshot, animatingDifferences: true)
-    }
 }
 
-
- // MARK: - UICollectionViewDelegate
-extension OrderViewController: UICollectionViewDelegate {
-    /// 點擊訂單項目
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Cell at index \(indexPath.row) was selected.")   // 測試 cell 點擊
-        
-        // 檢查是否有訂單
-        guard OrderController.shared.orderItems.count > 0 else { return }
-        let orderItem = OrderController.shared.orderItems[indexPath.row]
-        
-        // 導航到 DrinkDetailViewController
-        if let delegate = delegate {
-            delegate.modifyOrderItem(orderItem, withID: orderItem.id)
-        } else {
-            presentDrinkDetailViewController(with: orderItem, at: indexPath.row)
-        }
-    }
+// MARK: - OrderModificationDelegate
+extension OrderViewController: OrderModificationDelegate {
     
-    /// 顯示 DrinkDetailViewController
-    private func presentDrinkDetailViewController(with orderItem: OrderItem, at index: Int) {
+    /// 修改訂單項目
+    func modifyOrderItem(_ orderItem: OrderItem, withID id: UUID) {
+        presentDrinkDetailViewController(with: orderItem, at: id)
+    }
+
+    /// 顯示 DrinkDetailViewController 並傳遞相關數據
+    private func presentDrinkDetailViewController(with orderItem: OrderItem, at id: UUID) {
         if let detailVC = storyboard?.instantiateViewController(identifier: Constants.Storyboard.drinkDetailViewController) as? DrinkDetailViewController {
             detailVC.drinkId = orderItem.drink.id   // 傳遞 drinkId
             detailVC.categoryId = orderItem.categoryId  // 傳遞 categoryId
@@ -406,25 +350,62 @@ extension OrderViewController: UICollectionViewDelegate {
             // 觀察傳遞的值
             print("傳遞給 DrinkDetailViewController 的資訊：drinkId: \(String(describing: orderItem.drink.id)), categoryId: \(String(describing: orderItem.categoryId)), subcategoryId: \(String(describing: orderItem.subcategoryId)), size: \(orderItem.size), quantity: \(orderItem.quantity)")
             
-            detailVC.modalPresentationStyle = .pageSheet
-            if let sheet = detailVC.sheetPresentationController {
-                sheet.detents = [.large()]
-                sheet.prefersGrabberVisible = true
-            }
-            present(detailVC, animated: true, completion: nil)
+            /// 呈現`詳細頁面`
+            configureAndPresent(detailVC)
         }
     }
+    
+    /// 配置並顯示`頁面樣式`並呈現`詳細頁面`
+    private func configureAndPresent(_ viewController: UIViewController) {
+        viewController.modalPresentationStyle = .pageSheet
+        if let sheet = viewController.sheetPresentationController {
+            sheet.detents = [.large()]
+            sheet.prefersGrabberVisible = true
+        }
+        present(viewController, animated: true, completion: nil)
+    }
+    
 }
 
+// MARK: - OrderActionDelegate
+extension OrderViewController: OrderActionDelegate {
+    
+    /// 刪除訂單項目
+    func deleteOrderItem(_ orderItem: OrderItem) {
+        AlertService.showAlert(withTitle: "確認刪除", message: "你確定要從訂單中刪除該品項嗎？", inViewController: self, showCancelButton: true) {
+            print("Deleting order item with ID: \(orderItem.id)")           // Debug
+            OrderController.shared.removeOrderItem(withID: orderItem.id)
+            self.orderHandler.updateOrders()                    // 刪除後更新訂單列表和總金額
+        }
+    }
+    
+}
 
+// MARK: - Notifications Handling
+extension OrderViewController {
+    
+    /// 註冊通知觀察者以監聽訂單資料變更
+    ///
+    /// 保持顯示內容與訂單資料同步更新。
+    private func registerNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshOrderView), name: .orderUpdatedNotification, object: nil)
+    }
+    
+    /// 移除通知觀察者
+    private func removeNotifications() {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    // MARK: - Update Orders
 
-
-
-
-
-
-
-
+    /// 更新訂單資料以同步顯示內容
+    ///
+    /// 當接收到通知或在初始化時調用，確保視圖與當前訂單資料同步顯示。
+    @objc private func refreshOrderView() {
+        orderHandler.updateOrders()
+    }
+    
+}
 
 
 

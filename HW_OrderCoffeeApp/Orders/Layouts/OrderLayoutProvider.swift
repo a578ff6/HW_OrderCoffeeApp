@@ -32,7 +32,7 @@
 
 import UIKit
 
-/// `OrderLayoutProvider` 負責為 `OrderViewController` 提供 `UICollectionViewCompositionalLayout` 佈局
+/// `OrderLayoutProvider` 負責為 `OrderHandler` 提供 `UICollectionViewCompositionalLayout` 佈局
 class OrderLayoutProvider {
 
     // MARK: - Layout Creation
@@ -40,7 +40,7 @@ class OrderLayoutProvider {
     /// 提供 `UICollectionViewCompositionalLayout` 的佈局方法
     static func createLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
-            guard let sectionType = OrderViewController.Section(rawValue: sectionIndex) else { return nil }
+            guard let sectionType = OrderHandler.Section(rawValue: sectionIndex) else { return nil }
             switch sectionType {
             case .orderItems:
                 return createOrderItemsSection()
