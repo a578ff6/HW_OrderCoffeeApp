@@ -481,10 +481,10 @@ class OrderController {
             throw OrderControllerError.orderRequestFailed
         }
         
-        let orderData = buildOrderData(for: user)
+        let orderData = buildOrderData(for: user.uid)
         
         do {
-            try await saveOrderData(orderData: orderData, for: user)
+            try await saveOrderData(orderData: orderData, for: user.uid)
             // 安排通知
             scheduleNotification(prepTime: calculateTotalPrepTime() * 60) // 轉換為秒
         } catch {
@@ -495,11 +495,11 @@ class OrderController {
     // MARK: - Private Helper Methods
     
     /// 構建訂單資料
-    /// - Parameter user: 當前的使用者
+    /// - Parameter userId: 當前的使用者
     /// - Returns: 包含訂單資訊的字典
-    private func buildOrderData(for user: User) -> [String: Any] {
+    private func buildOrderData(for userId: String) -> [String: Any] {
         return [
-            "uid": user.uid,
+            "uid": userId,
             "orderItems": orderItems.map { item in
                 return [
                     "drink": [
@@ -523,12 +523,12 @@ class OrderController {
     /// 儲存訂單資料至 Firestore
     /// - Parameters:
     ///   - orderData: 訂單資料
-    ///   - user: 當前使用者
-    private func saveOrderData(orderData: [String: Any], for user: User) async throws {
+    ///   - userID: 當前使用者
+    private func saveOrderData(orderData: [String: Any], for userID: String) async throws {
         let db = Firestore.firestore()
 
         /// 在`用戶子集合`中添加訂單
-        try await db.collection("users").document(user.uid).collection("orders").addDocument(data: orderData)
+        try await db.collection("users").document(userID).collection("orders").addDocument(data: orderData)
 
         /// 在`全局 orders 集合`中添加訂單
         try await db.collection("orders").addDocument(data: orderData)

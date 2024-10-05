@@ -6,13 +6,29 @@
 //
 
 /*
- 1. 固定 sizeLabel 寬度：
+ ## 固定 sizeLabel 寬度：
         - 固定 sizeLabel 寬度，確保無論內容多長，quantityLabel 都能保持固定位置。
         - 設置 sizeLabel 的 numberOfLines ，並設置 adjustsFontSizeToFitWidth 和 minimumScaleFactor，以確保文字能縮小以適應固定寬度。
         - 確保 sizeLabel 和 quantityLabel 之間的間距固定，並且 quantityLabel 的位置不會受到 sizeLabel 內容長度的影響。
+ 
+ -----------------------------------------------------------------------------------------------
+ 
+ ## OrderItemCollectionViewCell 筆記：
+ 
+    * 功能：
+        - 顯示訂單中的飲品項目，包含名稱、子名稱、尺寸、數量和價格等資訊。
+        - 提供刪除訂單項目的按鈕。
+
+    * 視圖設置：
+        - 透過 UIImageView 和 UILabel 顯示飲品相關的圖片和文字。
+        - 使用多個 UIStackView 組織各個 UI 元素，。
+ 
+    * 元件重設：
+        - 在 prepareForReuse 方法中，重設圖片和文字內容，以確保在 Cell 重複使用時不會顯示舊的資料。
+ 
+    * 刪除功能：
+        - 使用刪除按鈕並設置 deleteAction 閉包，在按下按鈕時執行對應的刪除行為。
  */
-
-
 
 // MARK: - 整理版本
 /*
@@ -208,6 +224,8 @@ class OrderItemCollectionViewCell: UICollectionViewCell {
     
     static let reuseIdentifier = "OrderItemCollectionViewCell"
     
+    // MARK: - UI Elements
+
     let drinkImageView = OrderItemCollectionViewCell.createDrinkImageView()
     let titleLabel = OrderItemCollectionViewCell.createLabel(fontSize: 17, numberOfLines: 1, scaleFactor: 0.7)
     let subtitleNameLabel = OrderItemCollectionViewCell.createLabel(fontSize: 13, numberOfLines: 2, textColor: .gray, scaleFactor: 0.5)
@@ -225,6 +243,8 @@ class OrderItemCollectionViewCell: UICollectionViewCell {
     
     var deleteAction: (() -> Void)?
     
+    // MARK: - Initializer
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -235,6 +255,9 @@ class OrderItemCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Factory Methods
+
+    /// 建立飲品圖片視圖
     private static func createDrinkImageView() -> UIImageView {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -247,6 +270,7 @@ class OrderItemCollectionViewCell: UICollectionViewCell {
         return imageView
     }
     
+    /// 建立標籤視圖
     private static func createLabel(fontSize: CGFloat, numberOfLines: Int = 1, textColor: UIColor = .black, scaleFactor: CGFloat = 1.0, textAlignment: NSTextAlignment = .left) -> UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -259,6 +283,7 @@ class OrderItemCollectionViewCell: UICollectionViewCell {
         return label
     }
     
+    /// 建立分隔符號標籤
     private static func createSeparatorLabel() -> UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -268,6 +293,7 @@ class OrderItemCollectionViewCell: UICollectionViewCell {
         return label
     }
     
+    /// 建立數量圖片視圖
     private static func createQuantityImageView() -> UIImageView {
         let imageView = UIImageView(image: UIImage(systemName: "mug.fill"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -275,14 +301,15 @@ class OrderItemCollectionViewCell: UICollectionViewCell {
         return imageView
     }
     
-    /// 底線
+    /// 建立底部分隔線視圖
     private static func createBottomLineView() -> UIView {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .lightGray
+        view.backgroundColor = .lightWhiteGray
         return view
     }
     
+    /// 建立刪除按鈕
     private static func createDeleteButton(target: Any?, action: Selector) -> UIButton {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -295,6 +322,7 @@ class OrderItemCollectionViewCell: UICollectionViewCell {
         return button
     }
     
+    /// 建立垂直堆疊視圖
     private static func createVerticalStackView(spacing: CGFloat, alignment: UIStackView.Alignment = .leading, distribution: UIStackView.Distribution = .fillProportionally) -> UIStackView {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -305,6 +333,7 @@ class OrderItemCollectionViewCell: UICollectionViewCell {
         return stackView
     }
     
+    /// 建立水平堆疊視圖
     private static func createHorizontalStackView(spacing: CGFloat, alignment: UIStackView.Alignment = .leading, distribution: UIStackView.Distribution = .fill) -> UIStackView {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -315,6 +344,9 @@ class OrderItemCollectionViewCell: UICollectionViewCell {
         return stackView
     }
     
+    // MARK: - Setup Methods
+
+    /// 設置各視圖元件並配置約束
     private func setupViews() {
         contentView.addSubview(drinkImageView)
         contentView.addSubview(titleAndSubtitleStackView)
@@ -371,6 +403,10 @@ class OrderItemCollectionViewCell: UICollectionViewCell {
         priceLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
     
+    // MARK: - Configure Method
+
+    /// 設置 Cell 的內容
+    /// - Parameter orderItem: 包含訂單飲品的詳細資訊
     func configure(with orderItem: OrderItem) {
         drinkImageView.kf.setImage(with: orderItem.drink.imageUrl)
         titleLabel.text = orderItem.drink.name
@@ -380,6 +416,21 @@ class OrderItemCollectionViewCell: UICollectionViewCell {
         priceLabel.text = "\(orderItem.price) 元/杯"
     }
     
+    // MARK: - Lifecycle Methods
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        drinkImageView.image = nil
+        titleLabel.text = nil
+        subtitleNameLabel.text = nil
+        sizeLabel.text = nil
+        quantityLabel.text = nil
+        priceLabel.text = nil
+    }
+    
+    // MARK: - Button Action
+    
+    /// 刪除按鈕觸發事件
     @objc private func deleteButtonTapped() {
         deleteAction?()
     }

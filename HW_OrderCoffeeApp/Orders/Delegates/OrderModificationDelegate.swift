@@ -30,11 +30,34 @@
  2. 區分添加新飲品和修改訂單飲品項目的邏輯：
     - 在 DrinkDetailViewController 中，添加一個標誌來確定訂單前是否在編輯模式。
     - 如果是編輯模式，那麼修改現有的訂單飲品項目，如果不是，則添加新飲品到訂單。
+ 
+ ------------------------------------------------------------------------------
+ 
+ 
+ ## 重點筆記 - OrderModificationDelegate
+
+    * 用途：
+        - OrderModificationDelegate 是用於處理訂單修改的委託模式，讓其他對象可以在用戶需要修改訂單時被通知。
+ 
+    * 說明：
+        - orderItem：需要被修改的訂單項目，包含飲品、數量、尺寸等相關資訊。
+        - id：每個訂單項目的唯一識別碼，用於精準識別需要修改的項目。
+ 
+    * 適用場景：
+        - 當用戶從訂單頁面選擇某個飲品進行修改時，透過此委託協議通知相關的 ViewController 執行相應的邏輯，例如顯示修改訂單頁面。
  */
 
 
 import Foundation
 
+/// 用於處`理訂單修改`操作的協議
+///
+/// 當用戶選取某個訂單項目進行修改時，會透過此協議來通知負責的對象。
 protocol OrderModificationDelegate: AnyObject {
+    
+    /// 修改訂單項目
+    /// - Parameters:
+    ///   - orderItem: 需要修改的訂單項目
+    ///   - id: 訂單項目的唯一識別碼
     func modifyOrderItem(_ orderItem: OrderItem, withID id: UUID)
 }
