@@ -399,7 +399,7 @@ import FirebaseFirestore
 import FirebaseAuth
 import UserNotifications
 
-/// OrderController 負責處理訂單相關邏輯
+/// OrderController 負責管理當前的訂單列表（如增加、更新、刪除），管理當前的狀態。
 class OrderController {
     
     static let shared = OrderController()

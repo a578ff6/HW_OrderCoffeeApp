@@ -126,6 +126,16 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
 
  ---------------------------------------- ---------------------------------------- ----------------------------------------
 
+ H. 關於 orders 屬性的設置：
+
+    * orders 只有在歷史訂單視圖中會用到，因此將 orders 的處理從 getCurrentUserDetails 中分離，並使用專門的函數來動態獲取 Firebase 中的訂單列表。
+
+    * 移除 getCurrentUserDetails 中的 orders 處理：
+        - 因為 orders 在大部分場景中並不需要，將它移除出 getCurrentUserDetails。這樣可以讓 getCurrentUserDetails 更聚焦於使用者的基本資訊，如姓名、郵件、電話等。
+ 
+    * 新增一個專門處理訂單資料的函數：
+        - 建立一個新的函數，專門從 Firebase 中抓取指定使用者的訂單資料，這樣可以在需要的時候（例如在歷史訂單視圖中）才進行訂單資料的抓取，減少不必要的資料讀取。
+ 
  */
 
 
@@ -325,9 +335,27 @@ class FirebaseController {
             birthday: birthday,
             address: address,
             gender: gender,
-            orders: nil,
+//            orders: nil,            // 因為 orders 在大部分場景中並不需要，只有在歷史訂單的頁面才會用到。
             favorites: favorites        // 將 favorites 轉換後的 [FavoriteDrink] 加入 UserDetails
         )
+    }
+    
+    /// 獲取當前用戶的歷史訂單列表（測試中）
+    func getUserOrderHistory(for uid: String) async throws -> [OrderItem] {
+        let db = Firestore.firestore()
+        let ordersRef = db.collection("users").document(uid).collection("orders")
+        
+        let snapshot = try await ordersRef.getDocuments()
+        let orderItems = snapshot.documents.compactMap { document -> OrderItem? in
+            do {
+                return try document.data(as: OrderItem.self)
+            } catch {
+                print("Error decoding order: \(error)")
+                return nil
+            }
+        }
+        
+        return orderItems
     }
     
     /// 解析 favorites 資料
