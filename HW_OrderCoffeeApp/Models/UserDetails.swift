@@ -7,22 +7,35 @@
 
 
 /*
- 添加 uid：
-    - 引用用戶資料：
-        - 如需要在多個地方引用用戶數據（EX: 訂單、訊息、評論等），那麼包含 uid 會很有幫助，因為可以標示用戶。
-    - 用戶身份驗證：
-        - 假如需要驗證用戶身份，此時 uid 作為唯一標示符號是必要的。
-    - 資料同步：
-        - 如果需要同步用戶資料或在多個設備上共享用戶數據，uid 可以幫助確保數據的唯一性。
-
- 不需要添加 uid：
-    - 單一操作：
-        - 操作僅限於當前用戶的單次操作，並且不會涉及到其他用戶的數據交互，那麼 uid 就沒那麼必要。
-    - 簡單展示：
-        - 如果只是簡單展示用戶資訊，EX: email、fullName 就足夠了。不需要 uid。
  
- 使用 Optional 處理訂單：
-    - 對於 orders 部分，因為客戶可能還沒有下訂單，所以將其設為可選型別。
+ ## UserDetails 結構設計筆記
+
+ 1. 添加 uid 的考量
+
+    * 引用用戶資料：
+        - 在多個地方引用用戶數據（如訂單、訊息、評論等）時，uid 非常重要，因為它可以唯一標示用戶，便於跨模組操作。
+ 
+    * 用戶身份驗證：
+        - 如果需要驗證用戶身份，uid 作為唯一標示符號是必要的，以確保數據的安全性和準確性。
+ 
+    * 資料同步：
+        - 若需要在多個設備之間同步用戶資料，uid 可以幫助確保每個設備上的數據是屬於相同用戶的，確保資料一致性。
+ 
+ 2. 不需要添加 uid 的情況
+ 
+    * 單一操作：
+        - 如果操作只針對當前用戶，且不涉及多用戶數據交互，這時 uid 就不是必須的。例如：本地端的一次性操作。
+
+    * 簡單展示：
+        - 若只是簡單顯示用戶資訊，如 email 或 fullName，不涉及到後續交互或數據追溯，那麼 uid 也不是必須的。
+ 
+ 3. 訂單使用非可選型別的考量
+ 
+    * 固定結構與簡化代碼邏輯：
+        - 由於 orders 屬性現在已經設定為空陣列 [OrderItem] = []，不再使用可選型別。這樣做可以簡化代碼邏輯，避免不必要的解包操作，確保即使沒有訂單，orders 也能以空陣列的形式存在。
+ 
+    * 更好地管理數據：
+        - 不使用可選型別能使訂單管理更直接，例如在加載歷史訂單時，不需要考慮 nil 的情況，從而提高代碼的穩定性和可讀性。
  */
 
 // MARK: - 還未修改註冊頁面的版本
@@ -31,14 +44,14 @@ import Foundation
 
 /// 使用者資訊
 struct UserDetails: Codable {
-    var uid: String
-    var email: String
-    var fullName: String
-    var profileImageURL: String?     // 儲存大頭照的 URL
-    var phoneNumber: String?         // 電話號碼
-    var birthday: Date?              // 生日
-    var address: String?             // 地址
-    var gender: String?              // 性別
-    var orders: [OrderItem]?
-    var favorites: [FavoriteDrink] = []
+    var uid: String                         // 使用者唯一標示符，用於身份驗證及跨模組引用
+    var email: String                       // 使用者的電子郵件
+    var fullName: String                    // 使用者的全名
+    var profileImageURL: String?            // 儲存大頭照的 URL（選填）
+    var phoneNumber: String?                // 使用者的電話號碼（選填）
+    var birthday: Date?                     // 使用者的生日（選填）
+    var address: String?                    // 使用者的地址（選填）
+    var gender: String?                     // 使用者的性別（選填）
+    var orders: [OrderItem] = []            // 訂單列表，初始化為空陣列，以避免空值的情況
+    var favorites: [FavoriteDrink] = []     // 使用者的最愛飲品列表，初始化為空陣列
 }
