@@ -54,8 +54,8 @@
             - 呼叫 refreshOrderView 方法以加載當前訂單。
 
         2. 使用委託模式處理訂單項目的操作：
-            - 使用 OrderModificationDelegate 來通知修改訂單項目，並在需要時顯示 DrinkDetailViewController。
-            - 使用 OrderActionDelegate 來通知刪除訂單項目，並顯示確認刪除的警告視窗。
+            - OrderModificationDelegate: 來通知修改訂單項目，並在需要時顯示 DrinkDetailViewController。
+            - OrderActionDelegate: 負責通知刪除訂單項目和清空所有訂單，並顯示確認的警告視窗。
  
         3. 通知處理：
             - registerNotifications 註冊通知以監聽訂單的更新，使用 NotificationCenter.default。
@@ -67,7 +67,7 @@
     & 主要流程：
         - 資料接收與顯示： 從 OrderController 獲取訂單資料，並在初始化時更新視圖。
         - 修改訂單： 當使用者選擇訂單項目時，透過委託方式呈現飲品詳細資料頁面。
-        - 刪除訂單： 點擊刪除按鈕時，透過委託方式顯示警告視窗確認，並進行訂單刪除後的更新操作。
+        - 刪除訂單： 點擊「刪除」或「清空按鈕」時，透過委託方式顯示警告視窗確認，並進行訂單刪除後的更新操作。
 
     & 主要功能概述：
         - 資料更新： 在資料發生變動時透過 Notification 觸發更新，保持顯示內容與訂單資料同步。
@@ -379,6 +379,14 @@ extension OrderViewController: OrderActionDelegate {
         }
     }
     
+    /// 清空訂單所有項目
+    func clearAllOrderItems() {
+        AlertService.showAlert(withTitle: "確認清空訂單", message: "你確定要清空所有訂單項目嗎？", inViewController: self, showCancelButton: true) {
+            OrderController.shared.clearOrder()
+            self.orderHandler.updateOrders()                 // 清空後更新訂單列表和總金額
+        }
+    }
+    
 }
 
 // MARK: - Notifications Handling
@@ -397,12 +405,12 @@ extension OrderViewController {
     }
     
     // MARK: - Update Orders
-
+    
     /// 更新訂單資料以同步顯示內容
     ///
     /// 當接收到通知或在初始化時調用，確保視圖與當前訂單資料同步顯示。
     @objc private func refreshOrderView() {
-        orderHandler.updateOrders()
+        orderHandler.updateOrders()             // 更新訂單列表，快照應用後按鈕狀態也會更新
     }
     
 }

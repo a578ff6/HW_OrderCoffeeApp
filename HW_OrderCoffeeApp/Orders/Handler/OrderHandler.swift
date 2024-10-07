@@ -23,6 +23,7 @@
  
         3.更新訂單列表：
             - 使用 updateOrders 方法更新訂單的快照，包括訂單項目與訂單總結的展示。
+            - 在更新完快照後，確保按鈕狀態會依照最新訂單狀況進行更新（例如：清空訂單按鈕的啟用狀態）。
  
     & 訂單操作處理：
  
@@ -32,7 +33,7 @@
  
     & 主要流程：
         - 資料配置： 透過 configureDataSource 配置 UICollectionView 的資料源。
-        - 更新快照： 透過 updateOrders 方法更新訂單列表。
+        - 更新快照： 透過 updateOrders 方法更新訂單列表，並在資料更新後立即調整按鈕的狀態。
         - 使用者交互： 使用委託通知 OrderViewController 處理具體的訂單修改或刪除操作。
 
  & 主要功能概述：
@@ -57,10 +58,12 @@ class OrderHandler: NSObject {
     
     // MARK: - Section & Item
     
+    /// 定義訂單視圖的 Section 類型
     enum Section: Int, CaseIterable {
         case orderItems, summary, actionButtons
     }
     
+    /// 定義訂單視圖中的 Item 類型
     enum Item: Hashable {
         case orderItem(OrderItem), summary(totalAmount: Int, totalPrepTime: Int), noOrders, actionButtons
     }
@@ -111,6 +114,13 @@ class OrderHandler: NSObject {
                     guard let self = self else { return }
                     // 這裡是按鈕點擊後的行為，進入下一個視圖控制器
                 }
+                
+                /// 清空訂單所有項目
+                cell.onClearButtonTapped = { [weak self] in
+                    guard let self = self else { return }
+                    self.orderActionDelegate?.clearAllOrderItems()  // 呼叫委託來清空所有訂單項目
+                }
+                
                 return cell
             }
         }
@@ -118,6 +128,8 @@ class OrderHandler: NSObject {
         dataSource.supplementaryViewProvider = createSupplementaryViewProvider()
     }
     
+    // MARK: - Supplementary View Setup
+
     /// 建立輔助視圖提供者，用於設定各區段的標題
     private func createSupplementaryViewProvider() -> UICollectionViewDiffableDataSource<Section, Item>.SupplementaryViewProvider {
         return { (collectionView, kind, indexPath) -> UICollectionReusableView? in
@@ -142,10 +154,13 @@ class OrderHandler: NSObject {
     
     // MARK: - Update Orders
     
-    /// 更新訂單列表，並刷新顯示資料快照
+    /// 更新訂單列表，並刷新顯示資料快照，並更新按鈕狀態。
     func updateOrders() {
-        var snapshot = createSnapshot()
-        dataSource.apply(snapshot, animatingDifferences: true)
+        var snapshot = createSnapshot()        
+        dataSource.apply(snapshot, animatingDifferences: true) {
+            /// 將`清空按鈕狀態`的更新放在快照應用之後，確保每次更新訂單視圖後根據最新資料更新按鈕狀態
+            self.refreshClearButtonState()
+        }
     }
     
     /// 建立訂單快照，用於更新資料源
@@ -181,6 +196,19 @@ class OrderHandler: NSObject {
         let totalAmount = OrderController.shared.calculateTotalAmount()
         let totalPrepTime = OrderController.shared.calculateTotalPrepTime()
         return .summary(totalAmount: totalAmount, totalPrepTime: totalPrepTime)
+    }
+    
+    // MARK: - Button State Management
+
+    /// 更新`清空按鈕`的啟用狀態
+    func refreshClearButtonState() {
+        guard let actionButtonsCell = collectionView.cellForItem(at: IndexPath(item: 0, section: Section.actionButtons.rawValue)) as? OrderActionButtonsCell else {
+            return
+        }
+        
+        let isOrderItemsEmpty = OrderController.shared.orderItems.isEmpty
+        print("更新清空按鈕狀態，當前訂單是否為空: \(isOrderItemsEmpty)")  // 觀察訂單狀態與按鈕的變化
+        actionButtonsCell.updateClearButtonState(isEnabled: !isOrderItemsEmpty)
     }
     
 }

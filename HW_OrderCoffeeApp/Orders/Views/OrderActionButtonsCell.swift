@@ -103,6 +103,9 @@
     * 堆疊視圖設置：
         - 使用 createStackView() 靜態方法創建 UIStackView，用於垂直排列兩個按鈕，並設置相應的間距、對齊方式及填充策略。
  
+    * 按鈕狀態：
+        - updateClearButtonState 更新清空按鈕的啟用狀態，並搭配改變透明度以反映按鈕的狀態。
+ 
     * 關於優化部分：
         - 使用 UIButton.Configuration 取代過時的屬性，imageEdgeInsets符合 iOS 新的 API 標準。
         - 此外，使用這個方式也能更方便地管理按鈕的各種屬性，例如圖標、標題、間距等，使您的代碼更簡潔且易於維護。
@@ -223,6 +226,16 @@ class OrderActionButtonsCell: UICollectionViewCell {
     /// 當`清空訂單`按鈕被點擊時呼叫
     @objc private func handleClearButtonTapped() {
         onClearButtonTapped?()
+    }
+    
+    // MARK: - Update Button State
+    
+    /// 更新清空按鈕的啟用狀態
+    ///
+    /// 改變透明度以反映按鈕的狀態
+    func updateClearButtonState(isEnabled: Bool) {
+        clearButton.isEnabled = isEnabled
+        clearButton.alpha = isEnabled ? 1.0 : 0.5
     }
     
 }

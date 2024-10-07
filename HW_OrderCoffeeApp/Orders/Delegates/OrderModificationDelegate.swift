@@ -50,7 +50,7 @@
 
 import Foundation
 
-/// 用於處`理訂單修改`操作的協議
+/// 用於`處理訂單修改`操作的協議
 ///
 /// 當用戶選取某個訂單項目進行修改時，會透過此協議來通知負責的對象。
 protocol OrderModificationDelegate: AnyObject {
