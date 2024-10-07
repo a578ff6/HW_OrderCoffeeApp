@@ -33,6 +33,7 @@
 		935374332CAFC29D00794A63 /* OrderLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374322CAFC29D00794A63 /* OrderLayoutProvider.swift */; };
 		935374362CB00E2E00794A63 /* OrderHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374352CB00E2E00794A63 /* OrderHandler.swift */; };
 		935374382CB06AA500794A63 /* OrderActionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374372CB06AA500794A63 /* OrderActionDelegate.swift */; };
+		9353743B2CB2BAB800794A63 /* OrderActionButtonsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353743A2CB2BAB800794A63 /* OrderActionButtonsCell.swift */; };
 		936CFFBD2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */; };
 		936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */; };
 		936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */; };
@@ -190,6 +191,7 @@
 		935374322CAFC29D00794A63 /* OrderLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderLayoutProvider.swift; sourceTree = "<group>"; };
 		935374352CB00E2E00794A63 /* OrderHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHandler.swift; sourceTree = "<group>"; };
 		935374372CB06AA500794A63 /* OrderActionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderActionDelegate.swift; sourceTree = "<group>"; };
+		9353743A2CB2BAB800794A63 /* OrderActionButtonsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderActionButtonsCell.swift; sourceTree = "<group>"; };
 		936CFFBA2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HW_OrderCoffeeAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITests.swift; sourceTree = "<group>"; };
 		936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -810,6 +812,7 @@
 				93B492922C410A2E00E7B947 /* OrderSummaryCollectionViewCell.swift */,
 				93B492962C416C0100E7B947 /* NoOrdersViewCell.swift */,
 				93DB1D2C2C43D82200BA2CC1 /* OrderSectionHeaderView.swift */,
+				9353743A2CB2BAB800794A63 /* OrderActionButtonsCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1162,6 +1165,7 @@
 				935374152C9C5CD000794A63 /* FavoritesHandler.swift in Sources */,
 				9353740E2C9AD6E100794A63 /* ButtonEffectManager.swift in Sources */,
 				93B9DC872C3661DF0050BC3F /* MainTabBarController.swift in Sources */,
+				9353743B2CB2BAB800794A63 /* OrderActionButtonsCell.swift in Sources */,
 				9352913F2C8843E40018B060 /* DrinksCategoryHandler.swift in Sources */,
 				93755C332C8351AA002570A5 /* MenuViewController.swift in Sources */,
 				9353742B2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift in Sources */,

@@ -58,11 +58,11 @@ class OrderHandler: NSObject {
     // MARK: - Section & Item
     
     enum Section: Int, CaseIterable {
-        case orderItems, summary
+        case orderItems, summary, actionButtons
     }
     
     enum Item: Hashable {
-        case orderItem(OrderItem), summary(totalAmount: Int, totalPrepTime: Int), noOrders
+        case orderItem(OrderItem), summary(totalAmount: Int, totalPrepTime: Int), noOrders, actionButtons
     }
     
     // MARK: - Initializer
@@ -102,6 +102,16 @@ class OrderHandler: NSObject {
                     fatalError("Cannot create NoOrdersViewCell")
                 }
                 return cell
+            
+            case .actionButtons:
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderActionButtonsCell.reuseIdentifier, for: indexPath) as? OrderActionButtonsCell else {
+                    fatalError("Cannot create OrderActionButtonsCell")
+                }
+                cell.onProceedButtonTapped = { [weak self] in
+                    guard let self = self else { return }
+                    // 這裡是按鈕點擊後的行為，進入下一個視圖控制器
+                }
+                return cell
             }
         }
         
@@ -121,6 +131,8 @@ class OrderHandler: NSObject {
                     headerView.configure(with: "Order Items")
                 case .summary:
                     headerView.configure(with: "Order Summary")
+                case .actionButtons:
+                    return nil                                  // actionButtons 區段不設置 header
                 }
                 return headerView
             }
@@ -142,19 +154,24 @@ class OrderHandler: NSObject {
     /// - 若訂單為空，顯示 noOrders ，否則顯示所有訂單項目。
     /// - 計算總金額和總準備時間並顯示。
     private func createSnapshot() -> NSDiffableDataSourceSnapshot<Section, Item> {
+        
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections(Section.allCases)
 
+        /// 添加訂單項目
         let orderItems = OrderController.shared.orderItems.map { Item.orderItem($0) }
-
         if orderItems.isEmpty {
             snapshot.appendItems([.noOrders], toSection: .orderItems)
         } else {
             snapshot.appendItems(orderItems, toSection: .orderItems)
         }
 
+        // 添加訂單總結
         let summaryItem = createSummaryItem()
         snapshot.appendItems([summaryItem], toSection: .summary)
+        
+        // 添加 actionButtons 按鈕到 actionButtons 區段
+        snapshot.appendItems([.actionButtons], toSection: .actionButtons)
 
         return snapshot
     }
