@@ -159,7 +159,7 @@ class OrderHandler: NSObject {
         var snapshot = createSnapshot()        
         dataSource.apply(snapshot, animatingDifferences: true) {
             /// 將`清空按鈕狀態`的更新放在快照應用之後，確保每次更新訂單視圖後根據最新資料更新按鈕狀態
-            self.refreshClearButtonState()
+            self.refreshActionButtonsState()
         }
     }
     
@@ -200,15 +200,18 @@ class OrderHandler: NSObject {
     
     // MARK: - Button State Management
 
-    /// 更新`清空按鈕`的啟用狀態
-    func refreshClearButtonState() {
+    /// 更新`清空按鈕`和`繼續按鈕`的啟用狀態
+    func refreshActionButtonsState() {
         guard let actionButtonsCell = collectionView.cellForItem(at: IndexPath(item: 0, section: Section.actionButtons.rawValue)) as? OrderActionButtonsCell else {
+            print("OrderActionButtonsCell 還沒準備好")
             return
         }
         
         let isOrderItemsEmpty = OrderController.shared.orderItems.isEmpty
         print("更新清空按鈕狀態，當前訂單是否為空: \(isOrderItemsEmpty)")  // 觀察訂單狀態與按鈕的變化
-        actionButtonsCell.updateClearButtonState(isEnabled: !isOrderItemsEmpty)
+        
+        // 更新所有按鈕的狀態
+        actionButtonsCell.updateActionButtonsState(isOrderEmpty: isOrderItemsEmpty)
     }
     
 }
