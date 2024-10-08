@@ -165,7 +165,6 @@ class OrderActionButtonsCell: UICollectionViewCell {
             buttonStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             buttonStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             buttonStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            buttonStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
         ])
         
         // 每個按鈕的高度設置為固定值，防止堆疊視圖壓縮
