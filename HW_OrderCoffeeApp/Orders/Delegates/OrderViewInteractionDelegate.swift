@@ -1,5 +1,5 @@
 //
-//  OrderModificationDelegate.swift
+//  OrderViewInteractionDelegate.swift
 //  HW_OrderCoffeeApp
 //
 //  Created by 曹家瑋 on 2024/7/10.
@@ -34,30 +34,42 @@
  ------------------------------------------------------------------------------
  
  
- ## 重點筆記 - OrderModificationDelegate
+ ## 重點筆記 - OrderViewInteractionDelegate
 
     * 用途：
-        - OrderModificationDelegate 是用於處理訂單修改的委託模式，讓其他對象可以在用戶需要修改訂單時被通知。
+        - OrderViewInteractionDelegate 是用於處理訂單修改和視圖交互的委託模式，允許其他對象在用戶需要修改訂單或進入顧客資料頁面時被通知。
  
     * 說明：
-        - orderItem：需要被修改的訂單項目，包含飲品、數量、尺寸等相關資訊。
-        - id：每個訂單項目的唯一識別碼，用於精準識別需要修改的項目。
+        
+        1. modifyOrderItemToDetailViewDetail(orderItem, id)： 處理用戶希望修改訂單項目時的邏輯，包含飲品、數量、尺寸等相關資訊。
  
+                - orderItem： 需要被修改的訂單項目，包含飲品、數量、尺寸等相關資訊。
+                - id： 每個訂單項目的唯一識別碼，用於精準識別需要修改的項目。
+    
+        2. proceedToCustomerDetails()： 處理進入顧客資料頁面的邏輯，用於填寫顧客信息。
+
     * 適用場景：
-        - 當用戶從訂單頁面選擇某個飲品進行修改時，透過此委託協議通知相關的 ViewController 執行相應的邏輯，例如顯示修改訂單頁面。
+ 
+        - 當用戶從訂單頁面選擇某個飲品進行修改時，透過此委託協議通知相關的 ViewController 執行相應的邏輯，例如顯示修改訂單的詳細頁面。
+
+        - 當用戶想要繼續到顧客資料頁面時，使用 proceedToCustomerDetails() 來進行下一步的操作。
+ 
  */
 
 
 import Foundation
 
-/// 用於`處理訂單修改`操作的協議
+/// 用於`處理訂單視圖交互`的協議
 ///
-/// 當用戶選取某個訂單項目進行修改時，會透過此協議來通知負責的對象。
-protocol OrderModificationDelegate: AnyObject {
+/// 當用戶`選取某個訂單項目進行修改`或`進入顧客資料頁面`時，會透過此協議來通知負責的對象。
+protocol OrderViewInteractionDelegate: AnyObject {
     
-    /// 修改訂單項目
+    /// 修改訂單項目並進入詳細頁面
     /// - Parameters:
     ///   - orderItem: 需要修改的訂單項目
     ///   - id: 訂單項目的唯一識別碼
-    func modifyOrderItem(_ orderItem: OrderItem, withID id: UUID)
+    func modifyOrderItemToDetailViewDetail(_ orderItem: OrderItem, withID id: UUID)
+    
+    /// 繼續到顧客資料頁面（`OrderCustomerDetailsViewController`）
+    func proceedToCustomerDetails()
 }

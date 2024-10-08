@@ -28,8 +28,8 @@
     & 訂單操作處理：
  
         *  使用委託（delegate）來處理訂單項目的修改與刪除操作。
-            - orderModificationDelegate： 負責通知視圖控制器顯示詳細飲品頁面，並進行訂單項目修改。
-            - orderActionDelegate： 負責通知視圖控制器進行訂單項目的刪除，並確保操作後能正確刷新訂單列表。
+            - orderViewInteractionDelegate： 負責通知視圖控制器進行訂單項目的修改（顯示飲品詳細頁面）或是進入到顧客資料頁面。
+            - orderActionDelegate： 負責通知視圖控制器進行訂單項目的刪除和清空操作，並確保操作後能正確刷新訂單列表。
  
     & 主要流程：
         - 資料配置： 透過 configureDataSource 配置 UICollectionView 的資料源。
@@ -38,7 +38,7 @@
 
  & 主要功能概述：
         - 視圖邏輯與資料源分離： OrderHandler 專注於訂單資料的展示和邏輯處理，與視圖控制器的職責分離。
-        - 使用委託來處理互動： 使用兩個不同的委託（orderModificationDelegate 和 orderActionDelegate）來確保訂單的修改與刪除邏輯可以由 OrderViewController 實現。
+        - 使用委託來處理互動： 使用兩個不同的委託（orderViewInteractionDelegate 和 orderActionDelegate）來確保訂單的修改與刪除邏輯可以由 OrderViewController 實現。
  */
 
 import UIKit
@@ -52,7 +52,7 @@ class OrderHandler: NSObject {
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
     
     /// 使用委託來處理`修改訂單項目`
-    weak var orderModificationDelegate: OrderModificationDelegate?
+    weak var orderViewInteractionDelegate: OrderViewInteractionDelegate?
     /// 使用委託來處理`刪除訂單項目`
     weak var orderActionDelegate: OrderActionDelegate?
     
@@ -110,15 +110,17 @@ class OrderHandler: NSObject {
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderActionButtonsCell.reuseIdentifier, for: indexPath) as? OrderActionButtonsCell else {
                     fatalError("Cannot create OrderActionButtonsCell")
                 }
+            
+                // 利用委託處理「進入顧客資料」視圖控制器
                 cell.onProceedButtonTapped = { [weak self] in
                     guard let self = self else { return }
-                    // 這裡是按鈕點擊後的行為，進入下一個視圖控制器
+                    self.orderViewInteractionDelegate?.proceedToCustomerDetails()
                 }
                 
-                /// 清空訂單所有項目
+                /// 呼叫委託來清空所有訂單項目
                 cell.onClearButtonTapped = { [weak self] in
                     guard let self = self else { return }
-                    self.orderActionDelegate?.clearAllOrderItems()  // 呼叫委託來清空所有訂單項目
+                    self.orderActionDelegate?.clearAllOrderItems()
                 }
                 
                 return cell
@@ -227,8 +229,8 @@ extension OrderHandler: UICollectionViewDelegate {
         let orderItem = OrderController.shared.orderItems[indexPath.row]
         
         /// 通知委託處理選中的訂單項目。若委託存在，則由委託實現訂單項目的導航邏輯，顯示`飲品詳細頁面`。
-        guard let delegate = orderModificationDelegate else { return }
-        delegate.modifyOrderItem(orderItem, withID: orderItem.id)
+        guard let delegate = orderViewInteractionDelegate else { return }
+        delegate.modifyOrderItemToDetailViewDetail(orderItem, withID: orderItem.id)
     }
     
 }
