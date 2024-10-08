@@ -31,7 +31,7 @@
      - addToCart 方法成功執行後，會將更新的資料提交到訂單系統，訂單中的飲品資訊（尺寸與數量）會正確更新並回傳到 OrderViewController，並即時反映在訂單列表中。
   
   * 無需額外的委託模式
-     - OrderViewController 負責設置 OrderModificationDelegate，當使用者點擊訂單中的飲品時，它將飲品的 drinkId、categoryId、subcategoryId 和編輯資料傳遞給 DrinkDetailViewController。並在必要時通過委託方法來接收飲品更新。
+     - OrderViewController 負責設置 OrderViewInteractionDelegate，當使用者點擊訂單中的飲品時，它將飲品的 drinkId、categoryId、subcategoryId 和編輯資料傳遞給 DrinkDetailViewController。並在必要時通過委託方法來接收飲品更新。
      - DrinkDetailViewController 負責加載和顯示飲品的詳細資訊，並直接透過方法更新訂單，而不需要額外設置委託來回傳資料。
   
   --------------------------------------------------------------------------------------------------------------------------------
@@ -1136,7 +1136,7 @@ class DrinkDetailViewController: UIViewController {
  }
 
 
- // MARK: - OrderModificationDelegate
+ // MARK: - OrderViewInteractionDelegate
  extension DrinkDetailViewController: OrderModificationDelegate {
      
      func modifyOrderItem(_ orderItem: OrderItem, withID id: UUID) {

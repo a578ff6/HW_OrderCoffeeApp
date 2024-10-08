@@ -38,6 +38,8 @@ struct Constants {
         
         static let editProfileViewController = "EditProfileViewController"
         static let favoritesViewController = "FavoritesViewController"
+        
+        static let orderCustomerDetailsViewController = "OrderCustomerDetailsViewController"
     }
     
     /// 定義結構 `Segue`，用於存放與 Segue 相關的常數

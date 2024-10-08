@@ -32,6 +32,7 @@ class OrderView: UIView {
     
     /// 註冊  Cells
     private func registerCells() {
+        collectionView.register(OrderActionButtonsCell.self, forCellWithReuseIdentifier: OrderActionButtonsCell.reuseIdentifier)
         collectionView.register(OrderItemCollectionViewCell.self, forCellWithReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier)
         collectionView.register(OrderSummaryCollectionViewCell.self, forCellWithReuseIdentifier: OrderSummaryCollectionViewCell.reuseIdentifier)
         collectionView.register(NoOrdersViewCell.self, forCellWithReuseIdentifier: NoOrdersViewCell.reuseIdentifier)

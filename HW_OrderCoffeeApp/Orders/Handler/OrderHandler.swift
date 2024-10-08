@@ -23,21 +23,22 @@
  
         3.更新訂單列表：
             - 使用 updateOrders 方法更新訂單的快照，包括訂單項目與訂單總結的展示。
+            - 在更新完快照後，確保按鈕狀態會依照最新訂單狀況進行更新（例如：清空訂單按鈕的啟用狀態）。
  
     & 訂單操作處理：
  
         *  使用委託（delegate）來處理訂單項目的修改與刪除操作。
-            - orderModificationDelegate： 負責通知視圖控制器顯示詳細飲品頁面，並進行訂單項目修改。
-            - orderActionDelegate： 負責通知視圖控制器進行訂單項目的刪除，並確保操作後能正確刷新訂單列表。
+            - orderViewInteractionDelegate： 負責通知視圖控制器進行訂單項目的修改（顯示飲品詳細頁面）或是進入到顧客資料頁面。
+            - orderActionDelegate： 負責通知視圖控制器進行訂單項目的刪除和清空操作，並確保操作後能正確刷新訂單列表。
  
     & 主要流程：
         - 資料配置： 透過 configureDataSource 配置 UICollectionView 的資料源。
-        - 更新快照： 透過 updateOrders 方法更新訂單列表。
+        - 更新快照： 透過 updateOrders 方法更新訂單列表，並在資料更新後立即調整按鈕的狀態。
         - 使用者交互： 使用委託通知 OrderViewController 處理具體的訂單修改或刪除操作。
 
  & 主要功能概述：
         - 視圖邏輯與資料源分離： OrderHandler 專注於訂單資料的展示和邏輯處理，與視圖控制器的職責分離。
-        - 使用委託來處理互動： 使用兩個不同的委託（orderModificationDelegate 和 orderActionDelegate）來確保訂單的修改與刪除邏輯可以由 OrderViewController 實現。
+        - 使用委託來處理互動： 使用兩個不同的委託（orderViewInteractionDelegate 和 orderActionDelegate）來確保訂單的修改與刪除邏輯可以由 OrderViewController 實現。
  */
 
 import UIKit
@@ -51,18 +52,20 @@ class OrderHandler: NSObject {
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
     
     /// 使用委託來處理`修改訂單項目`
-    weak var orderModificationDelegate: OrderModificationDelegate?
+    weak var orderViewInteractionDelegate: OrderViewInteractionDelegate?
     /// 使用委託來處理`刪除訂單項目`
     weak var orderActionDelegate: OrderActionDelegate?
     
     // MARK: - Section & Item
     
+    /// 定義訂單視圖的 Section 類型
     enum Section: Int, CaseIterable {
-        case orderItems, summary
+        case orderItems, summary, actionButtons
     }
     
+    /// 定義訂單視圖中的 Item 類型
     enum Item: Hashable {
-        case orderItem(OrderItem), summary(totalAmount: Int, totalPrepTime: Int), noOrders
+        case orderItem(OrderItem), summary(totalAmount: Int, totalPrepTime: Int), noOrders, actionButtons
     }
     
     // MARK: - Initializer
@@ -102,12 +105,33 @@ class OrderHandler: NSObject {
                     fatalError("Cannot create NoOrdersViewCell")
                 }
                 return cell
+            
+            case .actionButtons:
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderActionButtonsCell.reuseIdentifier, for: indexPath) as? OrderActionButtonsCell else {
+                    fatalError("Cannot create OrderActionButtonsCell")
+                }
+            
+                // 利用委託處理「進入顧客資料」視圖控制器
+                cell.onProceedButtonTapped = { [weak self] in
+                    guard let self = self else { return }
+                    self.orderViewInteractionDelegate?.proceedToCustomerDetails()
+                }
+                
+                /// 呼叫委託來清空所有訂單項目
+                cell.onClearButtonTapped = { [weak self] in
+                    guard let self = self else { return }
+                    self.orderActionDelegate?.clearAllOrderItems()
+                }
+                
+                return cell
             }
         }
         
         dataSource.supplementaryViewProvider = createSupplementaryViewProvider()
     }
     
+    // MARK: - Supplementary View Setup
+
     /// 建立輔助視圖提供者，用於設定各區段的標題
     private func createSupplementaryViewProvider() -> UICollectionViewDiffableDataSource<Section, Item>.SupplementaryViewProvider {
         return { (collectionView, kind, indexPath) -> UICollectionReusableView? in
@@ -121,6 +145,8 @@ class OrderHandler: NSObject {
                     headerView.configure(with: "Order Items")
                 case .summary:
                     headerView.configure(with: "Order Summary")
+                case .actionButtons:
+                    return nil                                  // actionButtons 區段不設置 header
                 }
                 return headerView
             }
@@ -130,10 +156,13 @@ class OrderHandler: NSObject {
     
     // MARK: - Update Orders
     
-    /// 更新訂單列表，並刷新顯示資料快照
+    /// 更新訂單列表，並刷新顯示資料快照，並更新按鈕狀態。
     func updateOrders() {
-        var snapshot = createSnapshot()
-        dataSource.apply(snapshot, animatingDifferences: true)
+        var snapshot = createSnapshot()        
+        dataSource.apply(snapshot, animatingDifferences: true) {
+            /// 將`清空按鈕狀態`的更新放在快照應用之後，確保每次更新訂單視圖後根據最新資料更新按鈕狀態
+            self.refreshActionButtonsState()
+        }
     }
     
     /// 建立訂單快照，用於更新資料源
@@ -142,19 +171,24 @@ class OrderHandler: NSObject {
     /// - 若訂單為空，顯示 noOrders ，否則顯示所有訂單項目。
     /// - 計算總金額和總準備時間並顯示。
     private func createSnapshot() -> NSDiffableDataSourceSnapshot<Section, Item> {
+        
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections(Section.allCases)
 
+        /// 添加訂單項目
         let orderItems = OrderController.shared.orderItems.map { Item.orderItem($0) }
-
         if orderItems.isEmpty {
             snapshot.appendItems([.noOrders], toSection: .orderItems)
         } else {
             snapshot.appendItems(orderItems, toSection: .orderItems)
         }
 
+        // 添加訂單總結
         let summaryItem = createSummaryItem()
         snapshot.appendItems([summaryItem], toSection: .summary)
+        
+        // 添加 actionButtons 按鈕到 actionButtons 區段
+        snapshot.appendItems([.actionButtons], toSection: .actionButtons)
 
         return snapshot
     }
@@ -164,6 +198,22 @@ class OrderHandler: NSObject {
         let totalAmount = OrderController.shared.calculateTotalAmount()
         let totalPrepTime = OrderController.shared.calculateTotalPrepTime()
         return .summary(totalAmount: totalAmount, totalPrepTime: totalPrepTime)
+    }
+    
+    // MARK: - Button State Management
+
+    /// 更新`清空按鈕`和`繼續按鈕`的啟用狀態
+    func refreshActionButtonsState() {
+        guard let actionButtonsCell = collectionView.cellForItem(at: IndexPath(item: 0, section: Section.actionButtons.rawValue)) as? OrderActionButtonsCell else {
+            print("OrderActionButtonsCell 還沒準備好")
+            return
+        }
+        
+        let isOrderItemsEmpty = OrderController.shared.orderItems.isEmpty
+        print("更新清空按鈕狀態，當前訂單是否為空: \(isOrderItemsEmpty)")  // 觀察訂單狀態與按鈕的變化
+        
+        // 更新所有按鈕的狀態
+        actionButtonsCell.updateActionButtonsState(isOrderEmpty: isOrderItemsEmpty)
     }
     
 }
@@ -179,8 +229,8 @@ extension OrderHandler: UICollectionViewDelegate {
         let orderItem = OrderController.shared.orderItems[indexPath.row]
         
         /// 通知委託處理選中的訂單項目。若委託存在，則由委託實現訂單項目的導航邏輯，顯示`飲品詳細頁面`。
-        guard let delegate = orderModificationDelegate else { return }
-        delegate.modifyOrderItem(orderItem, withID: orderItem.id)
+        guard let delegate = orderViewInteractionDelegate else { return }
+        delegate.modifyOrderItemToDetailViewDetail(orderItem, withID: orderItem.id)
     }
     
 }
