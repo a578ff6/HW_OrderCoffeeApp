@@ -176,7 +176,8 @@ class OrderHandler: NSObject {
         snapshot.appendSections(Section.allCases)
 
         /// 添加訂單項目
-        let orderItems = OrderController.shared.orderItems.map { Item.orderItem($0) }
+        let orderItems = OrderItemManager.shared.orderItems.map { Item.orderItem($0) }
+        
         if orderItems.isEmpty {
             snapshot.appendItems([.noOrders], toSection: .orderItems)
         } else {
@@ -195,8 +196,8 @@ class OrderHandler: NSObject {
     
     /// 建立訂單總結項目（包含`總金額`與`總準備時間`）
     private func createSummaryItem() -> Item {
-        let totalAmount = OrderController.shared.calculateTotalAmount()
-        let totalPrepTime = OrderController.shared.calculateTotalPrepTime()
+        let totalAmount = OrderItemManager.shared.calculateTotalAmount()
+        let totalPrepTime = OrderItemManager.shared.calculateTotalPrepTime()
         return .summary(totalAmount: totalAmount, totalPrepTime: totalPrepTime)
     }
     
@@ -208,8 +209,7 @@ class OrderHandler: NSObject {
             print("OrderActionButtonsCell 還沒準備好")
             return
         }
-        
-        let isOrderItemsEmpty = OrderController.shared.orderItems.isEmpty
+        let isOrderItemsEmpty = OrderItemManager.shared.orderItems.isEmpty
         print("更新清空按鈕狀態，當前訂單是否為空: \(isOrderItemsEmpty)")  // 觀察訂單狀態與按鈕的變化
         
         // 更新所有按鈕的狀態
@@ -225,8 +225,8 @@ extension OrderHandler: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("Cell at index \(indexPath.row) was selected.")   // 測試 cell 點擊
         /// 檢查是否有訂單
-        guard OrderController.shared.orderItems.count > 0 else { return }
-        let orderItem = OrderController.shared.orderItems[indexPath.row]
+        guard OrderItemManager.shared.orderItems.count > 0 else { return }
+        let orderItem = OrderItemManager.shared.orderItems[indexPath.row]
         
         /// 通知委託處理選中的訂單項目。若委託存在，則由委託實現訂單項目的導航邏輯，顯示`飲品詳細頁面`。
         guard let delegate = orderViewInteractionDelegate else { return }

@@ -21,6 +21,6 @@ extension Notification.Name {
 
     /// 當訂單項目更新時發送的通知
     ///
-    /// 每當 `OrderController` 中的訂單項目變更時，會發送此通知。訂閱該通知的觀察者（如顯示訂單的頁面）可以即時刷新顯示內容。
+    /// 每當 `OrderItemManager` 中的訂單項目（`orderItems`）變更時，會發送此通知。訂閱該通知的觀察者（如顯示訂單的頁面）可以即時刷新顯示內容。
     static let orderUpdatedNotification = Notification.Name("orderUpdated")
 }

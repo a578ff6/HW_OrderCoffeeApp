@@ -46,32 +46,38 @@
     * 方便訂單管理和資料查詢：
         - 透過保留 categoryId 和 subcategoryId，訂單管理時可以更方便地對訂單進行分類和統計，例如根據子類別進行篩選。
  
+ --------------------------------------------------------------------------------------------------------
+
+ ## 筆記：
+ 
+    - OrderItem 用於記錄單個飲品的資訊，如飲品種類、尺寸、數量、準備時間、價格等。
+    - totalAmount 是單項飲品的總價（即 price * quantity），方便在訂單中計算總額。
+    - timestamp 用於追蹤這個飲品項目加入訂單的時間，不過考慮到這個屬性可能與整體訂單時間戳記重複，目前先移除掉。
+ 
  */
 
 
 import Foundation
 
-/// 訂單部分
+/// 訂單`項目`結構，描述訂單中的單個飲品項目
 struct OrderItem: Codable, Equatable, Hashable {
-    let id: UUID        // 確保訂單飲品項目方便更新、刪除
-    var drink: Drink
-    var size: String
-    var quantity: Int
-    var prepTime: Int           // 以分鐘為單位（基於飲品去設置準備時間，而不是尺寸）
-    var timestamp: Date         // 時間戳記使用
-    var totalAmount: Int
-    var price: Int
+    let id: UUID                          // 唯一標識符，用於區分每個訂單項目（方便更新、刪除等操作）
+    var drink: Drink                      // 飲品詳細資料
+    var size: String                      // 飲品的尺寸（例如小杯、中杯、大杯）
+    var quantity: Int                     // 飲品的數量
+    var prepTime: Int                     // 以分鐘為單位（基於飲品去設置準備時間，而不是尺寸）
+    var totalAmount: Int                  // 單項飲品的總金額（單價乘以數量）                 （可能需要調整）
+    var price: Int                        // 單項飲品的價格
     var categoryId: String?
-    var subcategoryId: String? 
+    var subcategoryId: String?
 
     // 在初始化時，UUID 會自動產生。
-    init(drink: Drink, size: String, quantity: Int, prepTime: Int, timestamp: Date, totalAmount: Int, price: Int, categoryId: String?, subcategoryId: String?) {
+    init(drink: Drink, size: String, quantity: Int, prepTime: Int, totalAmount: Int, price: Int, categoryId: String?, subcategoryId: String?) {
         self.id = UUID()
         self.drink = drink
         self.size = size
         self.quantity = quantity
         self.prepTime = prepTime
-        self.timestamp = timestamp
         self.totalAmount = totalAmount
         self.price = price
         self.categoryId = categoryId   // 設置值

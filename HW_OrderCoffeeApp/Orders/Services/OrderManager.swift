@@ -393,7 +393,7 @@ enum OrderControllerError: Error, LocalizedError {
 
 
 // MARK: - 新版（將所有訂單操作（添加、更新、移除等）集中在 OrderController 中管理）UUID & async/await
-
+/*
 import Foundation
 import FirebaseFirestore
 import FirebaseAuth
@@ -437,8 +437,8 @@ class OrderController {
         let price = drink.sizes[size]?.price ?? 0
         let totalAmount = price * quantity
         
-        let orderItem = OrderItem(drink: drink, size: size, quantity: quantity, prepTime: prepTime, timestamp: timestamp, totalAmount: totalAmount, price: price, categoryId: categoryId, subcategoryId: subcategoryId)
-     
+        let orderItem = OrderItem(drink: drink, size: size, quantity: quantity, prepTime: prepTime, totalAmount: totalAmount, price: price, categoryId: categoryId, subcategoryId: subcategoryId)
+        
         orderItems.append(orderItem)
         print("添加訂單項目 ID: \(orderItem.id)")
     }
@@ -512,7 +512,6 @@ class OrderController {
                     "size": item.size,
                     "quantity": item.quantity,
                     "prepTime": item.prepTime,
-                    "timestamp": item.timestamp,
                     "totalAmount": item.totalAmount
                 ]
             },
@@ -551,6 +550,125 @@ class OrderController {
     // MARK: - Local Notification
 
     /// 安排本地通知提醒用户訂單已經準備好
+    /// - Parameter prepTime: 訂單準備時間（秒）
+    private func scheduleNotification(prepTime: Int) {
+        let content = UNMutableNotificationContent()
+        content.title = "Order Ready"
+        content.body = "Your order is ready for pickup!"
+        content.sound = UNNotificationSound.default
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(prepTime), repeats: false)
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+    }
+    
+}
+
+// MARK: - Error
+
+/// 處理Order訂單錯誤相關訊息
+enum OrderControllerError: Error, LocalizedError {
+    case orderRequestFailed
+    case unknownError
+    case firebaseError(Error)
+    
+    static func form(_ error: Error) -> OrderControllerError {
+        return .firebaseError(error)
+    }
+    
+    var errorDescription: String? {
+        switch self {
+        case .orderRequestFailed:
+            return NSLocalizedString("Order request failed.", comment: "Order request failed.")
+        case .unknownError:
+            return NSLocalizedString("An unknown error occurred.", comment: "An unknown error occurred.")
+        case .firebaseError(let error):
+            return error.localizedDescription
+        }
+    }
+}
+*/
+
+
+// MARK: - 調整OrderItemManager
+
+
+import Foundation
+import FirebaseFirestore
+import FirebaseAuth
+import UserNotifications
+
+
+class OrderController {
+    
+    static let shared = OrderController()
+    
+    // MARK: - Submit Order
+
+    /// 提交訂單（需要調整？）
+    /// - Parameter menuIDs: 訂單中飲品的菜單 ID 清單
+    /// - Throws: 若提交失敗，則拋出錯誤
+    func submitOrder(forMenuIDs menuIDs: [Int]) async throws {
+        guard let user = Auth.auth().currentUser else {
+            throw OrderControllerError.orderRequestFailed
+        }
+        
+        let orderData = buildOrderData(for: user.uid)
+        
+        do {
+            try await saveOrderData(orderData: orderData, for: user.uid)
+            // 安排通知
+            scheduleNotification(prepTime: calculateTotalPrepTime() * 60) // 轉換為秒
+        } catch {
+            throw OrderControllerError.form(error)
+        }
+    }
+    
+    // MARK: - Private Helper Methods
+    
+    /// 構建訂單資料（需要調整？）
+    /// - Parameter userId: 當前的使用者
+    /// - Returns: 包含訂單資訊的字典
+    private func buildOrderData(for userId: String) -> [String: Any] {
+        return [
+            "uid": userId,
+            "orderItems": orderItems.map { item in
+                return [
+                    "drink": [
+                        "name": item.drink.name,
+                        "subName": item.drink.subName,
+                        "description": item.drink.description,
+                        "imageUrl": item.drink.imageUrl.absoluteString,
+                        "prepTime": item.drink.prepTime
+                    ],
+                    "size": item.size,
+                    "quantity": item.quantity,
+                    "prepTime": item.prepTime,
+                    "totalAmount": item.totalAmount
+                ]
+            },
+            "timestamp": Timestamp(date: Date())
+        ]
+    }
+    
+    /// 儲存訂單資料至 Firestore（需要調整？）
+    /// - Parameters:
+    ///   - orderData: 訂單資料
+    ///   - userID: 當前使用者
+    private func saveOrderData(orderData: [String: Any], for userID: String) async throws {
+        let db = Firestore.firestore()
+
+        /// 在`用戶子集合`中添加訂單
+        try await db.collection("users").document(userID).collection("orders").addDocument(data: orderData)
+
+        /// 在`全局 orders 集合`中添加訂單
+        try await db.collection("orders").addDocument(data: orderData)
+    }
+    
+    // MARK: - Local Notification
+
+    /// 安排本地通知提醒用户訂單已經準備好（需要調整？）
     /// - Parameter prepTime: 訂單準備時間（秒）
     private func scheduleNotification(prepTime: Int) {
         let content = UNMutableNotificationContent()

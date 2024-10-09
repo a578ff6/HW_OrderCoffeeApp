@@ -135,7 +135,7 @@ class MainTabBarController: UITabBarController {
     ///
     /// 如果訂單數量為 0 則隱藏 badge，否則顯示訂單數量
     @objc private func updateOrderBadge() {
-        let itemCount = OrderController.shared.orderItems.count
+        let itemCount = OrderItemManager.shared.orderItems.count
         self.viewControllers?[1].tabBarItem.badgeValue = itemCount == 0 ? nil : "\(itemCount)"
     }
 
