@@ -1,5 +1,5 @@
 //
-//  OrderController.swift
+//  OrderManagerError.swift
 //  HW_OrderCoffeeApp
 //
 //  Created by 曹家瑋 on 2024/7/1.
@@ -43,10 +43,6 @@
  
  --------------------------------------------------------------------------
 
- 1. updateOrderItem：
-    - 更新了訂單項目的尺寸和數量，同時也更新了價格和總金額。確保在修改訂單項目的尺寸或數量時，所有相關的屬性都會被正確更新。
-    - 關於 OrderItem 結構中的 prepTime：
-        - 因為 prepTime 是基於飲品而不是尺寸，所以在更新尺寸時並不需要更改 prepTime。也就是說，無論選擇哪個尺寸，該飲品的準備時間都是一樣的。
  
  */
 
@@ -593,25 +589,25 @@ enum OrderControllerError: Error, LocalizedError {
 
 // MARK: - 調整OrderItemManager
 
-
 import Foundation
 import FirebaseFirestore
 import FirebaseAuth
 import UserNotifications
 
 
-class OrderController {
+class OrderManager {
     
-    static let shared = OrderController()
+    static let shared = OrderManager()
     
     // MARK: - Submit Order
 
+    /*
     /// 提交訂單（需要調整？）
     /// - Parameter menuIDs: 訂單中飲品的菜單 ID 清單
     /// - Throws: 若提交失敗，則拋出錯誤
     func submitOrder(forMenuIDs menuIDs: [Int]) async throws {
         guard let user = Auth.auth().currentUser else {
-            throw OrderControllerError.orderRequestFailed
+            throw OrderManagerError.orderRequestFailed
         }
         
         let orderData = buildOrderData(for: user.uid)
@@ -621,12 +617,14 @@ class OrderController {
             // 安排通知
             scheduleNotification(prepTime: calculateTotalPrepTime() * 60) // 轉換為秒
         } catch {
-            throw OrderControllerError.form(error)
+            throw OrderManagerError.form(error)
         }
     }
+     */
     
     // MARK: - Private Helper Methods
     
+    /*
     /// 構建訂單資料（需要調整？）
     /// - Parameter userId: 當前的使用者
     /// - Returns: 包含訂單資訊的字典
@@ -651,6 +649,7 @@ class OrderController {
             "timestamp": Timestamp(date: Date())
         ]
     }
+     */
     
     /// 儲存訂單資料至 Firestore（需要調整？）
     /// - Parameters:
@@ -687,12 +686,12 @@ class OrderController {
 // MARK: - Error
 
 /// 處理Order訂單錯誤相關訊息
-enum OrderControllerError: Error, LocalizedError {
+enum OrderManagerError: Error, LocalizedError {
     case orderRequestFailed
     case unknownError
     case firebaseError(Error)
     
-    static func form(_ error: Error) -> OrderControllerError {
+    static func form(_ error: Error) -> OrderManagerError {
         return .firebaseError(error)
     }
     
