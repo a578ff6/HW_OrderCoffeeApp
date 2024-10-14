@@ -75,7 +75,7 @@ class CustomerDetailsManager {
         self.customerDetails = CustomerDetails(
             fullName: userDetails.fullName,                               // 使用 UserDetails 的姓名作為預設顧客姓名
             phoneNumber: userDetails.phoneNumber ?? "",                   // 若未填寫，設置為空字符串，讓 UI 去處理提示
-            pickupMethod: .inStore,                                       // 預設取件方式為 "到店取件"，可根據需求調整
+            pickupMethod: .homeDelivery,                                  // 預設取件方式為 "外送服務"，可根據需求調整
             address: userDetails.address,                                 // 若未填寫，設置為 nil
             storeName: nil,                                               // 店家名稱會根據取件方式選擇
             notes: nil                                                    // 備註欄位為選填
