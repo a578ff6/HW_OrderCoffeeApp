@@ -38,7 +38,7 @@
             - setupActions()：為 pickupMethodSegmentedControl、selectStoreButton 和 addressTextField 添加相應的事件監聽。
 
         4. 更新 UI 方法
-            - updateUI(for:)：根據選擇的取件方式更新相關 UI，並清空不相關的輸入欄位（如切換至到店自取時清空 addressTextField）。
+            - updateUI(for:)：根據選擇的取件方式更新相關 UI，僅在對應欄位有值時清空不相關的輸入欄位。例如，切換至「到店自取」時，只有 storeTextField 有值時才會清空 addressTextField。
             - segmentedControlValueChanged()：監聽 segmented control 的變更，觸發更新 UI。
 
         5. 動態邊框設置
@@ -48,6 +48,7 @@
     * 設計考量：
 
         1. 考量到 UseerDetails 的 address 會有填寫，因此預設顯示「外送服務」，避免因為切換「取件方式」而清空 addressTextField。
+            - 避免因為切換「取件方式」而清空 addressTextField，保護使用者的輸入資料。
  
         2. 必填欄位提示
             - storeTextField 和 addressTextField 設置了紅框判斷，以即時提示使用者這些欄位為必填。
@@ -57,7 +58,7 @@
             - 因為 storeTextField 是無法直接編輯的，storeTextFieldChanged 可以省略，僅在點擊 selectStoreButton 後更新店家名稱時進行狀態更新。
 
         4. 清空不相關欄位
-            - 切換取件方式時，會清空不相關的輸入欄位（如從「外送服務」切換到「到店自取」時清空 addressTextField），確保提交訂單時不會混淆取件方式的資料。
+            - 切換取件方式時，會僅在需要時清空不相關的輸入欄位。例如：從「外送服務」切換到「到店自取」時，只有 storeTextField 有值時才會清空 addressTextField，確保不會無意中移除使用者已填寫的資料。
 
     * 未來改進空間：
 
@@ -66,6 +67,17 @@
 
         2. 資料驗證強化
             - 目前只對空值進行判斷，可以考慮增加對地址格式的驗證，以提高輸入資料的正確性。
+ 
+## 調整部分：
+ 
+    &. 原先是 updateUI 是只要切換取件方式時，將另一個取件方式的相關欄位`清空`。
+ 
+        * 為什麼要這樣做？
+            - 能夠確保用戶在切換取件方式時，不會因為不必要的操作而失去輸入的資料。
+            - 僅在相關欄位有資料時才執行清空動作，避免讓用戶感到混淆。
+ 
+        * 現在的邏輯：
+            - 只有在對應欄位有資料時才執行清空操作，避免讓用戶在無必要時失去輸入的資料，這樣可以更精確地保護使用者體驗。
  */
 
 
@@ -135,7 +147,7 @@
  */
 
 
-// MARK: - 預設顯示為「外送服務」
+// MARK: - 預設顯示為「外送服務」，並且調整了updateUI對於欄位的判斷邏輯
 
 import UIKit
 
@@ -252,26 +264,39 @@ class OrderPickupMethodCell: UICollectionViewCell {
     
     /// 更新 UI 顯示不同的取件方式相關視圖
     ///
-    /// 切換取件方式時，將另一個取件方式的相關欄位`清空`。
+    /// 根據選取的取件方式，切換顯示相關視圖，並在需要時清空另一種取件方式的欄位。只有在對應欄位有值時，才會執行清空操作，以保留用戶輸入的有效資訊。
     private func updateUI(for method: PickupMethod) {
         switch method {
         case .homeDelivery:
             inStoreStackView.isHidden = true
             homeDeliveryStackView.isHidden = false
             
-            // 在切換到 Home Delivery 時檢查地址是否為空，並設置紅框
+            // 檢查店家欄位有值才清空外送地址
+            clearTextFieldIfNeeded(addressTextField, basedOn: storeTextField)
+            
+            // 更新 addressTextField 的紅框狀態
             setTextFieldBorder(addressTextField, isEmpty: addressTextField.text?.isEmpty ?? true)
-            // 清空店家名稱欄位
-            storeTextField.text = ""
             
         case .inStore:
             inStoreStackView.isHidden = false
             homeDeliveryStackView.isHidden = true
             
-            // 在切換到 In-Store Pickup 時檢查店家是否為空，並設置紅框
+            // 檢查外送地址欄位有值才清空店家名稱
+            clearTextFieldIfNeeded(storeTextField, basedOn: addressTextField)
+
+            // 更新 storeTextField 的紅框狀態
             setTextFieldBorder(storeTextField, isEmpty: storeTextField.text?.isEmpty ?? true)
-            // 清空外送地址欄位
-            addressTextField.text = ""
+        }
+    }
+    
+    /// 根據條件清空指定的 TextField
+    ///
+    /// - Parameters:
+    ///   - textFieldToClear: 要清空的 TextField。
+    ///   - conditionTextField: 作為判斷依據的 TextField。如果這個欄位有值，則清空 `textFieldToClear`。
+    private func clearTextFieldIfNeeded(_ textFieldToClear: UITextField, basedOn conditionTextField: UITextField) {
+        if conditionTextField.text?.isEmpty == false {
+            textFieldToClear.text = ""
         }
     }
     
@@ -398,9 +423,3 @@ class OrderPickupMethodCell: UICollectionViewCell {
     }
     
 }
-
-
-
-
-
-
