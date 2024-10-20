@@ -147,6 +147,50 @@
  */
 
 
+// MARK: - 新增 updatePickupMethod(_ method: PickupMethod):
+
+/*
+ 
+ ## 關鍵方法與邏輯
+
+    * segmentedControlValueChanged():
+        - 用於處理當使用者在 Segmented Control 中切換取件方式時的動作。根據選擇更新取件方式，並呼叫 CustomerDetailsManager.shared.updatePickupMethod()，確保顧客資料同步更新。
+        - 然後呼叫 updateUI(for:) 方法更新 UI，以顯示相應取件方式的相關元素。
+
+    * updatePickupMethod(_ method: PickupMethod):
+        - CustomerDetailsManager 中的方法，用於更新顧客的取件方式，以確保顧客資料的統一管理和資料同步。這樣不論在哪裡更改取件方式，都能保持資料的一致性。
+ 
+ ## 設計考量
+
+    * 資料同步更新
+        - 在 segmentedControlValueChanged() 方法中直接使用 CustomerDetailsManager.shared.updatePickupMethod(selectedMethod) 是為了保持取件方式的資料一致性，確保顧客的所有資料都經過統一的資料管理器更新。
+
+    * 維護方便性
+        - 集中管理資料更新，方便未來如有新需求，只需要修改 CustomerDetailsManager 即可，減少重複代碼並提高可維護性。
+
+    * 未來改進方向
+        - 可以考慮在 updatePickupMethod 方法中添加其他的業務邏輯，比如當切換為「外送服務」時，更新訂單的總金額以包含額外的運費。這樣可以使邏輯更集中，並減少界面層級中的複雜性。
+ */
+
+// MARK: - 在選擇店家後 Submit 按鈕未啟用
+
+/*
+ * 未執行 onStoreChange 回調：
+ 
+    - 在選擇「到店自取」時，將設置好的「大安店」傳到 storeTextField 時，雖然 storeTextField 的內容被設置為 "大安店"。
+    - 但 onStoreChange 回調未被觸發，從而無法通知 CustomerDetailsManager 更新店家名稱，最終導致表單驗證未通過。
+ 
+ * 解決方式：
+ 
+    - 在 selectStoreButtonTapped 方法中，調用 onStoreChange 回調，告訴外部（如 ViewController）顧客的店家選擇已經更改。
+    - 這樣做可以確保 storeName 的更新會正確反映到 CustomerDetailsManager 中，並且觸發 customerDetailsDidChange() 方法來更新提交按鈕的狀態。
+ 
+ * 顧客資料未正確更新：
+ 
+    - 如果 onStoreChange 沒有被調用，則 CustomerDetailsManager 中的顧客資料不會更新，導致在驗證表單時，系統認為顧客尚未選擇店家，進而使提交按鈕保持禁用狀態。
+ */
+
+
 // MARK: - 預設顯示為「外送服務」，並且調整了updateUI對於欄位的判斷邏輯
 
 import UIKit
@@ -259,7 +303,12 @@ class OrderPickupMethodCell: UICollectionViewCell {
     /// 根據選取的取件方式更新 UI
     @objc private func segmentedControlValueChanged() {
         let selectedMethod: PickupMethod = pickupMethodSegmentedControl.selectedSegmentIndex == 0 ? .homeDelivery : .inStore
-        updateUI(for: selectedMethod)
+        CustomerDetailsManager.shared.updatePickupMethod(selectedMethod)            // 使用 CustomerDetailsManager 更新取件方式
+        
+        print("SegmentedControl 改變，新的取件方式為：\(selectedMethod.rawValue)") // 觀察取件方式
+        
+        updateUI(for: selectedMethod)   // 更新 UI
+        logPickupMethodUpdate()         // 確認 `CustomerDetailsManager` 中的取件方式是否已更新
     }
     
     /// 更新 UI 顯示不同的取件方式相關視圖
@@ -300,13 +349,26 @@ class OrderPickupMethodCell: UICollectionViewCell {
         }
     }
     
+    /// 確認 `CustomerDetailsManager` 中的取件方式是否已更新（觀察取件方式）
+    private func logPickupMethodUpdate() {
+        if let updatedCustomerDetails = CustomerDetailsManager.shared.getCustomerDetails() {
+            print("CustomerDetailsManager 中的取件方式：\(updatedCustomerDetails.pickupMethod.rawValue)")
+        } else {
+            print("CustomerDetailsManager 尚未有顧客詳細資料")
+        }
+    }
+    
     // MARK: - Action Handlers
 
     /// 點擊選擇店家按鈕的動作處理（會進入到「選取店家視圖控制器」）
     @objc private func selectStoreButtonTapped() {
         onStoreButtonTapped?()
         // 假設選擇店家後名稱被設為 "大安店"（由於還沒設置「選取店家視圖控制器」，因此先透過selectStoreButtonTapped模擬）
-        storeTextField.text = "大安店"
+        let storeName = "大安店"
+        storeTextField.text = storeName
+        
+        // 更新顧客資料
+        onStoreChange?(storeName)
         // 更新紅框狀態，因為已經選擇了店家，應移除紅框
         setTextFieldBorder(storeTextField, isEmpty: storeTextField.text?.isEmpty ?? true)
     }

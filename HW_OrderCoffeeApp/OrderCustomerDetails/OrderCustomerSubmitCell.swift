@@ -63,9 +63,9 @@ import UIKit
 class OrderCustomerSubmitCell: UICollectionViewCell {
     
     // MARK: - Properties
-
+    
     static let reuseIdentifier = "OrderCustomerSubmitCell"
-
+    
     // MARK: - UI Elements
     
     /// 提交訂單的按鈕
@@ -90,7 +90,7 @@ class OrderCustomerSubmitCell: UICollectionViewCell {
     }
     
     // MARK: - Setup Methods
-
+    
     private func setupViews() {
         contentView.addSubview(submitButton)
         
@@ -125,12 +125,12 @@ class OrderCustomerSubmitCell: UICollectionViewCell {
         var titleAttr = AttributedString(title)
         titleAttr.font = font
         configuration.attributedTitle = titleAttr
-
+        
         let button = UIButton(configuration: configuration, primaryAction: nil)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }
-
+    
     // MARK: - Action Handler
     
     @objc private func submitButtonTapped() {
@@ -138,12 +138,21 @@ class OrderCustomerSubmitCell: UICollectionViewCell {
     }
     
     // MARK: - Helper Methods
-
-    /// 配置按鈕狀態（例如在驗證資料未完成時禁用按鈕）
+    
+    /// 配置按鈕狀態（根據驗證資料未完成時禁用按鈕）
     /// - Parameter isEnabled: 按鈕是否可用
     func configureSubmitButton(isEnabled: Bool) {
+        print("配置提交按鈕: \(isEnabled ? "啟用" : "禁用")")
         submitButton.isEnabled = isEnabled
-        submitButton.configuration?.baseForegroundColor = isEnabled ? .deepGreen : .lightGray
+        
+        // 使用 AttributeContainer 來設置字體和顏色
+        var attributedTitle = AttributedString("Submit Order")
+        var container = AttributeContainer()
+        container.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        container.foregroundColor = isEnabled ? UIColor.white : UIColor.lightGray
+        attributedTitle.mergeAttributes(container)
+        
+        submitButton.configuration?.attributedTitle = attributedTitle
     }
     
 }

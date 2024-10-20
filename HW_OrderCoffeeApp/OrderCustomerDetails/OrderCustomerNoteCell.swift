@@ -44,7 +44,7 @@
  
         2. 靈活性：
             - configure(with:) 方法的設計讓 OrderCustomerNoteCell 可以在需要時配置現有的備註資料，使得該元件可重複使用於不同情境下。
-
+            - cconfigure(with:) 方法的使用，由於 UserDetails 中並沒有 notes 屬性，但 CustomerDetails 中有。因此，OrderCustomerNoteCell 的 configure 方法應從 CustomerDetails 中填充 notes，而不是從 UserDetails。
         3. 即時反饋：
             - 通過剩餘字數的顯示和字數限制的應用，確保用戶輸入的內容符合限制，並且不會因為輸入過多內容而影響使用者體驗。
 
@@ -52,6 +52,7 @@
         - 字數警告： 可以考慮在用戶即將超過字數限制時，改變 characterCountLabel 的顏色，以引起用戶的注意。
         - UI 改善：目前的邊框顏色是淺灰色，可以根據應用的主題顏色進一步調整，以提升視覺一致性。
         - 驗證格式：儘管備註沒有固定格式，但可以考慮提供一些快速填寫模板，方便用戶輸入常見的需求。
+        - 保持文字：回到上一個視圖時，可以保留填寫的文字，而非回到該頁面時，再次清空 TextView 的 note 內容。
  */
 
 
@@ -109,6 +110,19 @@
     3. 解決方式：
         - 在 updateCharacterCount() 中加入邏輯，以忽略提示文字的影響。具體來說，當提示文字顯示時，可以將剩餘字數顯示為最大值 150。
         - 這樣一來，在 noteTextView 中顯示提示文字時，characterCountLabel 會顯示為 "剩餘字數：150"，而當用戶開始輸入時，會顯示實際的剩餘字數。這樣就可以避免初始提示文字影響剩餘字數的顯示。
+ */
+
+
+// MARK: - print 觀察整理流程
+
+/*
+ 1. 當 OrderCustomerDetailsViewController 從 Firebase 獲取到 UserDetails 並通過 CustomerDetailsManager 填充顧客資料時，notes 最初是 nil。
+ 
+ 2. 當 OrderCustomerNoteCell 被顯示時，會根據 CustomerDetails 中的 notes 來配置。若是 nil，則顯示提示文字。
+ 
+ 3. 當用戶在備註欄中輸入文字時，回調 (onNoteChange) 被觸發，並通過 CustomerDetailsManager.updateCustomerDetails() 來更新顧客資料。
+ 
+ 4. 每次變更時，可以通過 print 觀察到 notes 的內容變化。
  */
 
 
@@ -173,7 +187,7 @@ class OrderCustomerNoteCell: UICollectionViewCell {
     /// 設置 UI 元件的動作
     private func setupActions() {
         noteTextView.delegate = self
-        updateCharacterCount()  // 初始化時更新剩餘字數(可能用不到，先設置)
+        updateCharacterCount()  // 初始化時更新剩餘字數
     }
     
     // MARK: - Factory Methods
@@ -229,7 +243,7 @@ class OrderCustomerNoteCell: UICollectionViewCell {
     
     // MARK: - Configure Method
     
-    /// 配置備註內容（先設置，可能用不到）
+    /// 配置備註內容
     /// - Parameter note: 備註內容
     func configure(with note: String?) {
         if let note = note, !note.isEmpty {
@@ -239,7 +253,7 @@ class OrderCustomerNoteCell: UICollectionViewCell {
             noteTextView.text = placeholderText
             noteTextView.textColor = .lightGray      // 顯示提示文字的顏色
         }
-        updateCharacterCount() // 配置時更新剩餘字數（可能用不到，先設置）
+        updateCharacterCount() // 配置時更新剩餘字數
     }
     
 }
