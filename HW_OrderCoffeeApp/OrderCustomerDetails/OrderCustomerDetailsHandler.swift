@@ -138,15 +138,15 @@ import UIKit
 ///
 /// 它負責配置顯示訂單相關資訊的各種 Cell，並處理用戶在表單填寫過程中的各種互動。
 class OrderCustomerDetailsHandler: NSObject {
-
+    
     // MARK: - Properties
-
+    
     /// CollectionView，顯示顧客詳細資料
     private var collectionView: UICollectionView
     
     /// 用於通知顧客資料變更或提交訂單的事件
     weak var delegate: OrderCustomerDetailsHandlerDelegate?
-
+    
     // MARK: - Section
     
     /// 定義表單中各個區域（訂單條款、顧客姓名和電話、取件方式、備註、提交訂單按鈕）
@@ -295,6 +295,12 @@ extension OrderCustomerDetailsHandler: UICollectionViewDataSource {
             cell.configure(with: customerDetails)
         }
         
+        /// 設置回調，當取件方式變更時通知外部
+        cell.onPickupMethodChanged = { [weak self] newMethod in
+            CustomerDetailsManager.shared.updatePickupMethod(newMethod)              // 更新取件方式
+            self?.notifyCustomerDetailsChanged()                                     // 通知變更，更新提交按鈕狀態
+        }
+
         /// 處理店家選擇按鈕點擊
         cell.onStoreButtonTapped = { [weak self] in
             // 顯示店家選擇視圖控制器的邏輯
@@ -303,11 +309,13 @@ extension OrderCustomerDetailsHandler: UICollectionViewDataSource {
         // 更新店家名稱並通知變更
         cell.onStoreChange = { [weak self] storeName in
             self?.updateCustomerDetails(storeName: storeName)
+            print("Store name updated to: \(storeName)") // 添加觀察店家名稱變更的 print
         }
         
         // 更新外送地址並通知變更
         cell.onAddressChange = { [weak self] address in
             self?.updateCustomerDetails(address: address)
+            print("Address updated to: \(address)") // 添加觀察地址變更的 print
         }
         
         return cell
@@ -352,13 +360,3 @@ extension OrderCustomerDetailsHandler: UICollectionViewDataSource {
     }
     
 }
-
-
-
-
-
-
-
-
-
-

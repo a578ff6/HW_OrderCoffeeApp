@@ -191,6 +191,222 @@
  */
 
 
+// MARK: - 如何在切換取件方式後有效管理各個欄位的狀態（發生的問題）
+
+/*
+ 1. 問題描述
+ 
+    - 當使用者選擇「Home Delivery」時填寫了addressTextField，接著切換到「In-Store Pickup」，雖然 storeTextField 沒有填寫值，但由於之前的addressTextField已經有內容，提交按鈕仍然處於啟用狀態，這就導致顧客資料（customerDetails）在提交時包含了與當前取件方式不一致的資訊。
+
+    - 這樣的行為顯示出在切換取件方式後，原有的資料沒有被適當清空，導致資料不一致。
+
+ 2. 主要問題與需求
+ 
+    - 當切換取件方式時，應該根據新的取件方式去判斷相對應欄位的填寫狀況，若新的方式下相對應欄位沒有填寫，提交按鈕應該被禁用。
+    - 需要保留原有填寫的資訊，以便當使用者切換回來時不用重新輸入。
+    - 保持資料的同步和一致性，確保 CustomerDetails 中的資料符合當前的取件方式。
+ 
+ 3. 建議的解決方案（我選擇方法1）
+ 
+    &. 方法1：切換取件方式時保留資料，但不影響驗證
+ 
+       * 在切換取件方式時，可以選擇不自動清空資料，但當提交訂單時，要根據取件方式來檢查必填欄位是否已經正確填寫。具體的處理方式如下：
+
+        - 在每次切換取件方式後，更新提交按鈕的狀態。
+        - 當切換到「In-Store Pickup」時，如果 storeTextField 沒有值，則即使 addressTextField 有值，提交按鈕應當被禁用。
+        - 保留切換取件方式之前的輸入值，但不在顯示的 UI 上展示這些資料（即使資料在 CustomerDetails 中），這樣可以確保當切回時能夠復原之前的內容。
+ 
+ 
+    &. 方法2：每次切換取件方式時自動清空相對應的資料
+ 
+        - 當切換取件方式時，自動清空不相應的資料欄位。例如，從「Home Delivery」切換到「In-Store Pickup」時，清空地址欄位 addressTextField，並相應地更新 CustomerDetails。
+        - 儲存使用者的輸入資料，以便切回取件方式時能自動恢復，但這可能會增加一些狀態管理的複雜性。
+ */
+
+// MARK: - 如何在切換取件方式後有效管理各個欄位的狀態（重點筆記：取件方式切換與資料同步更新）
+
+/*
+ 
+ ## 重點筆記：取件方式切換與資料同步更新
+
+    * 目標（在切換取件方式後）：
+
+        - 僅在欄位有填寫值時，才清空相應的欄位，避免不必要的資料丟失。
+        - 確保提交按鈕狀態即時更新，正確反映當前表單的完整性，防止不完整資料被提交。
+        - 當切換取件方式時，如果 `conditionTextField`（店家欄位或地址欄位）有值，則清空另一個取件方式相關的欄位（從「到店取件」切換回「外送服務」時，若店家欄位有值，則清空地址欄位）。同時，通知對應的變更以更新 `CustomerDetails` 和提交按鈕狀態。
+
+ &. 問題：
+ 
+    1. 資料沒有即時清空：
+ 
+        * 描述：
+            - 當使用者切換取件方式時，上一個取件方式的對應欄位（例如，地址或店家名稱）並沒有被適當清空，導致保留了與當前選擇的取件方式不相關的資料。
+
+        * 具體例子：
+            - 當取件方式從「Home Delivery」切換到「In-Store Pickup」時，addressTextField（外送地址欄位）仍保留先前輸入的地址。
+            - 當用戶在「In-Store Pickup」填寫店家名稱後，再次切回「Home Delivery」，本應被清空的地址卻未被及時清空，導致資料錯誤，且在提交訂單時可能包含不一致的資訊（如同時包含地址和店家名稱）。
+ 
+    2. 提交按鈕狀態不正確：
+ 
+        * 描述：
+            - 當使用者在表單中未正確填寫所有必填欄位時，提交按鈕仍處於啟用狀態，這樣可能導致提交不完整或錯誤的資料。
+
+        * 具體例子：
+            - 當取件方式是「Home Delivery」時，如果 addressTextField 未填寫地址，提交按鈕仍處於可點擊狀態。這可能會導致用戶在未提供必要配送資訊的情況下成功提交訂單。
+            - 當取件方式從「In-Store Pickup」切換回「Home Delivery」時，由於地址欄位沒有即時清空和更新狀態，提交按鈕沒有禁用，導致可以在沒有地址的情況下提交資料。
+
+ &. 解決方案：
+ 
+    1. 保留資料但不影響 UI 顯示
+
+        - 當切換取件方式時，保留之前填寫的資料，但 UI 僅顯示當前取件方式相關的欄位（如地址或店家名稱）。
+        - 切回之前的取件方式時，自動恢復先前輸入的資料。
+ 
+    2. 同步清空相應欄位
+ 
+        - 透過 updateUI(for:) 方法，在切換取件方式時，只在對應欄位有值時才清空不相應的欄位。
+        - 例如，從「Home Delivery」切換到「In-Store Pickup」時，若地址欄位有值則清空，同時需要確保店家欄位正確更新。
+ 
+    3. 取件方式變更後立即進行表單驗證
+ 
+        - 在取件方式變更後，立即重新驗證所有必填欄位，確保提交按鈕的狀態正確。
+        - 例如，若切換到「Home Delivery」而地址未填寫，應禁用提交按鈕。
+ 
+    4. 提交按鈕的即時狀態更新
+ 
+        - 當欄位變更時，使用回調通知外部視圖控制器，以即時更新提交按鈕的狀態。
+        - 在每次欄位變更或取件方式切換後，調用 updateSubmitButtonState() 確保按鈕狀態與資料同步。
+ 
+ &. 具體實施步驟：
+ 
+    1. OrderPickupMethodCell 的更新
+ 
+        - 在 updateUI(for:) 方法中，切換取件方式時，根據當前方式顯示或隱藏相關的 UI 元件。
+        - 若欄位有填寫值，才會清空對應的另一個欄位，確保用戶資料不丟失。清空操作使用 clearTextFieldIfNeeded 方法。
+ 
+    2. 使用回調來通知資料變更
+ 
+        - 在 OrderPickupMethodCell 中，設置 onPickupMethodChanged 回調，每次取件方式變更時，回調通知 Handler。
+        - 在 OrderPickupMethodCell 添加 onPickupMethodChanged 回調，以及在 segmentedControlValueChanged 設置此回調，每次取件方式變更時呼叫回調，回調通知 Handler 進行資料驗證和更新提交按鈕狀態。
+        - 在 OrderCustomerDetailsHandler 中使用此回調來更新 CustomerDetailsManager 並進行資料驗證。
+ 
+    3. 更新 CustomerDetailsManager 的驗證邏輯
+ 
+        - 確保根據當前取件方式正確地驗證相應的必填欄位。
+        - 如選擇「Home Delivery」，需檢查地址是否填寫；如選擇「In-Store Pickup」，則需檢查店家名稱是否填寫。
+ 
+    4. 即時更新提交按鈕的狀態
+ 
+        - 在 OrderCustomerDetailsViewController 中，通過 OrderCustomerDetailsHandler 的回調，當資料或取件方式變更時，調用 updateSubmitButtonState() 來確保提交按鈕狀態與最新資料同步。
+ 
+    5. 關鍵步驟的補充（清空欄位的變更通知與回調）
+ 
+        - 當欄位被清空時，透過回調通知 Handler，更新 CustomerDetailsManager 內的資料，並確保 UI 與提交按鈕狀態保持一致。具體在 clearTextFieldIfNeeded() 方法中，負責通知欄位被清空後的變更。
+
+ &. 最終結果
+ 
+    - 切換取件方式後，只有在欄位有填寫值的情況下才清空對應的資料。
+    - UI 上的欄位顯示僅反映當前取件方式相關的資料。
+    - 提交按鈕的狀態即時更新，確保在所有必要欄位未正確填寫時禁用按鈕，避免提交不完整的資料。
+    - 使用者輸入的資料能夠保留，提升用戶體驗。
+ */
+
+
+// MARK: - setupActions 與欄位變更處理
+
+/*
+ ## 筆記：setupActions 與欄位變更處理
+
+ 1. setupAction 中的必要設置：
+    
+    - pickupMethodSegmentedControl： 需要監聽取件方式的變更，當使用者切換取件方式時，觸發 segmentedControlValueChanged ，進行 UI 和資料同步的更新。
+    - addressTextField： 需要監聽地址輸入變更，當使用者輸入或修改地址時，觸發 addressTextFieldChanged ，進行資料更新和清空店家名稱的邏輯。
+    - selectStoreButton： 需要監聽按鈕點擊事件，當使用者選擇店家時，觸發 selectStoreButtonTapped，進行資料更新，並清空地址的邏輯。
+
+ 2. storeTextField 不需要設置在 setupActions：
+ 
+    - 由於 storeTextField 是不可編輯的，所有的變更都是透過 selectStoreButtonTapped 來處理，因此不需要在 setupActions 中對 storeTextField 設置監聽。
+    - selectStoreButtonTapped 中已經手動觸發了 onStoreChange，用來更新店家名稱並進行必要的資料處理。
+
+ 3. 核心邏輯：
+ 
+    - 每次變更欄位後，需要確保資料一致性：
+      - 當「地址欄位」被填寫時，應清空「店家欄位」。
+      - 當「店家欄位」被選擇時，應清空「地址欄位」。
+ 
+    - 使用回調來通知資料更新： 每當 addressTextFieldChanged 或 selectStoreButtonTapped 發生變更時，透過回調 (onAddressChange 和 onStoreChange) 通知更新，並確保 CustomerDetails 同步變更。
+ 
+    - 即時更新提交按鈕狀態： 每次資料變更後，立即檢查資料完整性並更新提交按鈕的啟用/禁用狀態，確保只有必填資料完整時才允許提交。
+
+ ---
+
+ ## 重要觀察點：
+    - addressTextFieldChanged 與 storeTextFieldChanged 都應在變更後及時更新相應的資料狀態，並清空與取件方式無關的欄位。
+    - 不需要監聽 `storeTextField`，因為變更都是透過 `selectStoreButton` 完成。
+ */
+
+
+// MARK: - `addressTextFieldChanged`、`storeTextFieldChanged` 和 `selectStoreButtonTapped` 調整後問題解決
+
+/*
+ ## 筆記： addressTextFieldChanged 、 storeTextFieldChanged 和 selectStoreButtonTapped 調整後問題解決
+
+ 1. addressTextFieldChanged 的調整：
+    - 當使用者在「外送地址」欄位輸入或修改地址時，透過 addressTextFieldChanged 觸發回調 (onAddressChange)，來即時更新顧客的 CustomerDetails 資料。
+    - 每次地址變更時，檢查是否有值，若有值，應清空店家名稱 (storeName)，以確保取件方式資料一致。
+
+ 2. storeTextFieldChanged 的調整：
+    - 儘管 storeTextField 是不可編輯的欄位，但當店家被選擇後，必須透過回調 (onStoreChange) 來更新資料，這裡需要手動處理。
+    - 每次店家名稱被更新後，應清空外送地址 (address)，以確保兩種取件方式不會同時存在相關資料。
+
+ 3. selectStoreButtonTapped 的調整：
+    - 點擊「選擇店家」按鈕時，會觸發 selectStoreButtonTapped ，這時候需手動賦值給 storeTextField，並透過回調更新 CustomerDetails 的店家名稱。
+    - 選擇店家後，同樣需要清空外送地址，確保當前顧客資料只反映一種取件方式。
+
+ ## 關鍵調整重點：
+    - 資料同步： 每次欄位變更後，確保相關資料欄位同步更新，並及時清空與取件方式無關的資料。
+    - 透過回調更新資料： 無論是地址或店家名稱的變更，都要透過回調通知外部邏輯，以便更新 CustomerDetails 並確保按鈕狀態同步。
+
+ 這些調整確保了在不同取件方式間的欄位切換時，資料得以正確更新並避免重複儲存多餘的資料。
+ */
+
+
+// MARK: - onfigure(with:) 和 segmentedControlValueChanged （重要）
+
+/*
+ 
+ * configure(with:) 的邏輯和 segmentedControlValueChanged 不同。
+ 
+ &. configure(with:) 方法：
+
+    * 用途：
+        - 用於初始化和重新配置 OrderPickupMethodCell 的顯示狀態，通常在首次載入畫面或重新載入資料時使用。
+ 
+    * 行為邏輯：
+        - 根據 CustomerDetails 中的數據設置取件方式及相關欄位的內容。
+        - 清空不相關的欄位： 在初始化或重新配置時，為保證 UI 和資料一致性，無條件清空不相關的欄位。例如：
+ 
+            1.若選擇「Home Delivery」，清空 storeTextField。
+            2.若選擇「In-Store Pickup」，清空 addressTextField。
+
+    * 原因：
+        - 由於這是初始化或重新配置，因此不考慮用戶已經輸入的資料，而是以 CustomerDetails 中的資料為基礎來呈現。
+
+ &. segmentedControlValueChanged 方法：
+
+    * 用途：
+        - 當使用者切換取件方式時呼叫，用於即時更新畫面。
+ 
+    * 行為邏輯：
+        - 條件性清空不相關欄位： 只有在欄位有值時才進行清空，避免過多清除，保留使用者可能有用的輸入。
+        - 以使用者互動為主： 這部分的設計是基於用戶互動行為，以減少不必要的干擾，與初始化邏輯不同，不會強制清空所有不相關欄位。
+ 
+ &. 總結：
+    - configure(with:) 是在初始化或重新配置資料時使用，無條件清空不相關欄位以保證資料和 UI 的一致性。
+    - segmentedControlValueChanged 則是針對使用者的互動，即時更新畫面，只有在需要時才清空欄位，以保留用戶的輸入。
+ */
+
+
 // MARK: - 預設顯示為「外送服務」，並且調整了updateUI對於欄位的判斷邏輯
 
 import UIKit
@@ -238,6 +454,8 @@ class OrderPickupMethodCell: UICollectionViewCell {
     var onStoreButtonTapped: (() -> Void)?      // 在點擊「選擇店家」按鈕時觸發，通知外部（如 ViewController）進行下一步的處理，比如進入「店家選擇視圖」。
     /// 店家選擇完成後更新店家名稱的回調
     var onStoreChange: ((String) -> Void)?     // 當店家選擇完成後（從店家選擇視圖返回）設置店家名稱時觸發，用於更新 storeTextField 的顯示。（先保留，後續可能移除）
+    /// 取件方式變更時的回調
+    var onPickupMethodChanged: ((PickupMethod) -> Void)?
 
     // MARK: - Initializer
     
@@ -303,12 +521,11 @@ class OrderPickupMethodCell: UICollectionViewCell {
     /// 根據選取的取件方式更新 UI
     @objc private func segmentedControlValueChanged() {
         let selectedMethod: PickupMethod = pickupMethodSegmentedControl.selectedSegmentIndex == 0 ? .homeDelivery : .inStore
-        CustomerDetailsManager.shared.updatePickupMethod(selectedMethod)            // 使用 CustomerDetailsManager 更新取件方式
-        
+        //        CustomerDetailsManager.shared.updatePickupMethod(selectedMethod)            // 使用 CustomerDetailsManager 更新取件方式
         print("SegmentedControl 改變，新的取件方式為：\(selectedMethod.rawValue)") // 觀察取件方式
-        
-        updateUI(for: selectedMethod)   // 更新 UI
-        logPickupMethodUpdate()         // 確認 `CustomerDetailsManager` 中的取件方式是否已更新
+        updateUI(for: selectedMethod)
+        onPickupMethodChanged?(selectedMethod)
+        logPickupMethodUpdate()
     }
     
     /// 更新 UI 顯示不同的取件方式相關視圖
@@ -320,32 +537,37 @@ class OrderPickupMethodCell: UICollectionViewCell {
             inStoreStackView.isHidden = true
             homeDeliveryStackView.isHidden = false
             
-            // 檢查店家欄位有值才清空外送地址
+            /// 檢查`店家欄位`有值才清空`外送地址`
             clearTextFieldIfNeeded(addressTextField, basedOn: storeTextField)
-            
-            // 更新 addressTextField 的紅框狀態
             setTextFieldBorder(addressTextField, isEmpty: addressTextField.text?.isEmpty ?? true)
             
         case .inStore:
             inStoreStackView.isHidden = false
             homeDeliveryStackView.isHidden = true
             
-            // 檢查外送地址欄位有值才清空店家名稱
+            /// 檢查`外送地址欄位`有值才清空`店家名稱`
             clearTextFieldIfNeeded(storeTextField, basedOn: addressTextField)
-
-            // 更新 storeTextField 的紅框狀態
             setTextFieldBorder(storeTextField, isEmpty: storeTextField.text?.isEmpty ?? true)
         }
     }
     
-    /// 根據條件清空指定的 TextField
+    /// 根據指定條件清空對應的 TextField 並通知變更
     ///
     /// - Parameters:
-    ///   - textFieldToClear: 要清空的 TextField。
-    ///   - conditionTextField: 作為判斷依據的 TextField。如果這個欄位有值，則清空 `textFieldToClear`。
+    ///   - textFieldToClear: 要清空的 TextField（例如地址或店家名稱）。
+    ///   - conditionTextField: 作為清空依據的 TextField。如果此欄位有值，則清空 textFieldToClear。
+    /// 當切換取件方式時，如果 `conditionTextField`（店家欄位或地址欄位）有值，則清空另一個取件方式相關的欄位。
+    /// 同時，通知對應的變更以更新 `CustomerDetails` 和提交按鈕狀態。
     private func clearTextFieldIfNeeded(_ textFieldToClear: UITextField, basedOn conditionTextField: UITextField) {
         if conditionTextField.text?.isEmpty == false {
-            textFieldToClear.text = ""
+            textFieldToClear.text = ""              // 清空指定的欄位
+            
+            // 通知欄位清空後的變更，更新 CustomerDetails 和提交按鈕狀態
+            if textFieldToClear == addressTextField {
+                onAddressChange?("")
+            } else if textFieldToClear == storeTextField {
+                onStoreChange?("")
+            }
         }
     }
     
@@ -363,29 +585,45 @@ class OrderPickupMethodCell: UICollectionViewCell {
     /// 點擊選擇店家按鈕的動作處理（會進入到「選取店家視圖控制器」）
     @objc private func selectStoreButtonTapped() {
         onStoreButtonTapped?()
-        // 假設選擇店家後名稱被設為 "大安店"（由於還沒設置「選取店家視圖控制器」，因此先透過selectStoreButtonTapped模擬）
+        // 模擬選擇店家名稱為 "大安店"（由於還沒設置「選取店家視圖控制器」，因此先透過selectStoreButtonTapped模擬）
         let storeName = "大安店"
         storeTextField.text = storeName
         
+        print("Store Button Tapped, selected store: \(storeName)")  // 增加觀察 storeTextField 被賦值
+        
         // 更新顧客資料
         onStoreChange?(storeName)
+        // 觸發 storeTextFieldChanged，確保資料同步
+        storeTextFieldChanged()
         // 更新紅框狀態，因為已經選擇了店家，應移除紅框
         setTextFieldBorder(storeTextField, isEmpty: storeTextField.text?.isEmpty ?? true)
     }
 
-    /// 店家名稱變更的處理，顯示紅框提示（先留著）
-    /// 目前的邏輯其實並不太需要，因為 storeTextField 是不可編輯的，主要的變更是來自於選擇店家按鈕的動作處理 (selectStoreButtonTapped)。
-    /// 這樣的情況下，可以完全省略 storeTextFieldChanged，並集中在選擇店家按鈕被點擊之後的處理來更新視圖狀態，這樣會讓程式碼簡潔許多，同時減少不必要的事件監聽。
+    /// 店家名稱變更的處理，主要用於確保店家名稱在填寫或選擇後，資料與顯示保持一致。
+    /// 雖然 storeTextField 是不可直接編輯的，但仍需要在 (selectStoreButtonTapped)選擇店家後透過此方法來進行同步資料的更新。
+    /// 當 storeTextField 被更新後，此方法會觸發清空不相關的欄位（例如外送地址），以保持顧客資料的一致性。
     @objc private func storeTextFieldChanged() {
         let text = storeTextField.text ?? ""
+        print("Store Text Field Changed: \(text)")  // 增加觀察 storeTextField 變更
         onStoreChange?(text)
+        
+        // 當選擇店家時，清空外送地址
+        if !text.isEmpty {
+            print("Store name is filled, clearing address text field.")  // 觀察清空外送地址
+            clearTextFieldIfNeeded(addressTextField, basedOn: storeTextField)
+        }
     }
     
-    /// 外送地址變更的處理，顯示紅框提示
+    /// 當 `addressTextField` 變更時的處理，顯示紅框提示
     @objc private func addressTextFieldChanged() {
         let text = addressTextField.text ?? ""
         onAddressChange?(text)
         setTextFieldBorder(addressTextField, isEmpty: text.isEmpty)
+        
+        // 當填寫外送地址時，清空店家名稱
+        if !text.isEmpty {
+            clearTextFieldIfNeeded(storeTextField, basedOn: addressTextField)
+        }
     }
     
     // MARK: - Helper Methods
@@ -405,7 +643,7 @@ class OrderPickupMethodCell: UICollectionViewCell {
         control.translatesAutoresizingMaskIntoConstraints = false
         return control
     }
-        
+    
     /// 建立一個帶有`圖標`和`文字`的按鈕
     private static func createButton(title: String?, font: UIFont?, backgroundColor: UIColor, titleColor: UIColor, iconName: String) -> UIButton {
         let button = UIButton(type: .system)
@@ -469,18 +707,21 @@ class OrderPickupMethodCell: UICollectionViewCell {
     
     /// 根據 CustomerDetails 設定初始畫面狀態
     /// - Parameter customerDetails: 包含顧客取件方式、店家名稱、送達地址等資訊的資料結構
-    /// 初始化顯示的視圖是「外送服務」，因此需要設置紅框檢查，而「到店自取」的部分則是交由 updateUI 去處理。
+    ///
+    /// 此方法用於在初始化或重新配置畫面狀態時執行（例如切換訂單或重新加載畫面時）。
+    /// 根據顧客的取件方式設定相關欄位，並清空不相關的欄位以保證 UI 和資料的一致性。
     func configure(with customerDetails: CustomerDetails) {
         if customerDetails.pickupMethod == .homeDelivery {
-            pickupMethodSegmentedControl.selectedSegmentIndex = 0
-            addressTextField.text = customerDetails.address
+            // 如果顧客的取件方式是 Home Delivery，清空店家名稱欄位，並設定地址
+            addressTextField.text = customerDetails.address ?? ""
+            storeTextField.text = "" // 清空店家名稱
             setTextFieldBorder(addressTextField, isEmpty: customerDetails.address?.isEmpty ?? true)
             updateUI(for: .homeDelivery)
         } else {
-            pickupMethodSegmentedControl.selectedSegmentIndex = 1
-            storeTextField.text = customerDetails.storeName
+            // 如果顧客的取件方式是 In-Store Pickup，清空外送地址欄位，並設定店家名稱
+            storeTextField.text = customerDetails.storeName ?? ""
+            addressTextField.text = "" // 清空外送地址
             updateUI(for: .inStore)
-
         }
     }
     

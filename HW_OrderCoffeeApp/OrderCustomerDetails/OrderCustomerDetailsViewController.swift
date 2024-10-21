@@ -310,7 +310,7 @@ class OrderCustomerDetailsViewController: UIViewController {
     func updateSubmitButtonState() {
         let validationResult = CustomerDetailsManager.shared.validateCustomerDetails()
         let isFormValid = (validationResult == .success)
-        print("更新提交按鈕狀態: \(isFormValid ? "啟用" : "禁用")")
+        print("更新提交按鈕狀態: \(isFormValid ? "啟用" : "禁用") - 由於：\(validationResult)")
         
         // 獲取提交按鈕所在的 indexPath，並更新按鈕狀態
         let submitIndexPath = IndexPath(item: 0, section: OrderCustomerDetailsHandler.Section.submitAction.rawValue)
@@ -373,14 +373,3 @@ extension OrderCustomerDetailsViewController: OrderCustomerDetailsHandlerDelegat
       // 在這裡實現地址驗證的邏輯
   }
  */
-
-
-
-
-
-
-
-
-
-
-

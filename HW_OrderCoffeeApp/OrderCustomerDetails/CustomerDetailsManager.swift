@@ -197,6 +197,12 @@ class CustomerDetailsManager {
             storeName: nil,                                               // 店家名稱會根據取件方式選擇
             notes: nil                                                    // 備註欄位為選填
         )
+        
+        print("Populating customer details:")  // 增加觀察 populateCustomerDetails
+        print("Full Name: \(userDetails.fullName)")
+        print("Phone Number: \(userDetails.phoneNumber ?? "")")
+        print("Address: \(userDetails.address ?? "")")
+        print("Store Name: \(self.customerDetails?.storeName ?? "No Store Name Set")")
     }
     
     /// 獲取當前的顧客詳細資料
@@ -228,6 +234,11 @@ class CustomerDetailsManager {
         // 如果選擇宅配運送，需驗證地址是否有填寫
         if details.pickupMethod == .homeDelivery && (details.address?.isEmpty ?? true) {
             return .failure(.missingAddress)
+        }
+        
+        // 如果選擇到店取件，需驗證店家名稱是否有填寫
+        if details.pickupMethod == .inStore && (details.storeName?.isEmpty ?? true) {
+            return .failure(.missingStoreName)
         }
         
         return .success
@@ -289,4 +300,5 @@ enum ValidationError: String, Error, Equatable {
     case missingFullName = "顧客姓名未填寫"
     case missingPhoneNumber = "顧客電話號碼未填寫"
     case missingAddress = "宅配運送需要填寫配送地址"
+    case missingStoreName = "到店取件需要選擇店家"
 }
