@@ -431,7 +431,7 @@ class FirebaseController {
     func signOut() throws {
         do {
             try Auth.auth().signOut()
-            OrderController.shared.clearOrder() // 在登出時清除內存中的 orderItems（訂單項目）
+            OrderItemManager.shared.clearOrder() // 在登出時清除內存中的 orderItems（訂單項目）
         } catch let signOutError as NSError {
             throw signOutError
         }

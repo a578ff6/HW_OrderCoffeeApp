@@ -8,7 +8,7 @@
 // 真
 /*
  1. 分開處理當前訂單和歷史訂單：
-        - 區分當前訂單和歷史訂單的處理方式。OrderController 處理當前的訂單，而歷史訂單通過 FirebaseController 獲取。
+        - 區分當前訂單和歷史訂單的處理方式。OrderItemManager 處理當前的訂單，而歷史訂單通過 FirebaseController 獲取。
  
  2. 即時更新訂單列表：
         - 每次添加訂單項目後，使用通知或委託機制來立即更新 OrderViewController 的訂單列表。
@@ -31,10 +31,10 @@
     - 在 DrinkDetailViewController 中，展示傳遞過來的訂單飲品項目資訊，且允許使用者憂改尺寸、數量。
 
  3. 更新訂單飲品項目：
-    - 當用戶在 DrinkDetailViewController 中點擊「更新訂單」按鈕時，將修改後的資訊凡回並更新 OrderController 中的相應訂單飲品項目。
+    - 當用戶在 DrinkDetailViewController 中點擊「更新訂單」按鈕時，將修改後的資訊凡回並更新 OrderItemManager 中的相應訂單飲品項目。
  
  4. 關於沒有訂單時，如點擊訂單section時會出錯：
-        - 檢查是否有訂單飲品項目，在點擊事件中先檢查 OrderController.shared.orderItems 是否為nil，如果是nil則不執行後續操作。
+        - 檢查是否有訂單飲品項目，在點擊事件中先檢查 OrderItemManager.shared.orderItems 是否為nil，如果是nil則不執行後續操作。
  
 -------------------------------------------------------------------------------------------------------------------------
  
@@ -66,7 +66,7 @@
         - OrderHandler： 負責 UICollectionView 的 dataSource 和 delegate 方法，包括顯示訂單項目、訂單摘要和無訂單的情況，並處理修改與刪除操作。
 
     & 主要流程：
-        - 資料接收與顯示： 從 OrderController 獲取訂單資料，並在初始化時透過 orderHandler.updateOrders() 更新視圖。
+        - 資料接收與顯示： 從 OrderItemManager 獲取訂單資料，並在初始化時透過 orderHandler.updateOrders() 更新視圖。
         - 修改訂單： 當使用者選擇訂單項目時，透過 OrderViewInteractionDelegate 委託方式顯示飲品詳細資料頁面（DrinkDetailViewController），以修改飲品資訊。
         - 刪除訂單項目： 點擊「刪除」或「清空」按鈕時，透過 OrderActionDelegate 委託方式顯示警告視窗以確認操作，並刪除相應訂單項目或清空所有項目，最後更新視圖。
         - 進入顧客資料頁面： 當使用者點擊「proceed」按鈕且訂單中有項目時，透過 OrderViewInteractionDelegate 進入 OrderCustomerDetailsViewController，讓用戶填寫顧客資料（如姓名、電話等）。
@@ -376,10 +376,11 @@ extension OrderViewController: OrderViewInteractionDelegate {
     func proceedToCustomerDetails() {
         
         // 確保訂單中有項目才能繼續
-        guard !OrderController.shared.orderItems.isEmpty else { return }
+        guard !OrderItemManager.shared.orderItems.isEmpty else { return }
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let customerDetailsVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.orderCustomerDetailsViewController) as? OrderCustomerDetailsViewController {
+            customerDetailsVC.orderItems = OrderItemManager.shared.orderItems    // 傳遞訂單資料
             navigationController?.pushViewController(customerDetailsVC, animated: true)
         }
     }
@@ -393,7 +394,7 @@ extension OrderViewController: OrderActionDelegate {
     func deleteOrderItem(_ orderItem: OrderItem) {
         AlertService.showAlert(withTitle: "確認刪除", message: "你確定要從訂單中刪除該品項嗎？", inViewController: self, showCancelButton: true) {
             print("Deleting order item with ID: \(orderItem.id)")           // Debug
-            OrderController.shared.removeOrderItem(withID: orderItem.id)
+            OrderItemManager.shared.removeOrderItem(withID: orderItem.id)
             self.orderHandler.updateOrders()                    // 刪除後更新訂單列表和總金額
         }
     }
@@ -401,7 +402,7 @@ extension OrderViewController: OrderActionDelegate {
     /// 清空訂單所有項目
     func clearAllOrderItems() {
         AlertService.showAlert(withTitle: "確認清空訂單", message: "你確定要清空所有訂單項目嗎？", inViewController: self, showCancelButton: true) {
-            OrderController.shared.clearOrder()
+            OrderItemManager.shared.clearOrder()
             self.orderHandler.updateOrders()                 // 清空後更新訂單列表和總金額
         }
     }
@@ -433,417 +434,3 @@ extension OrderViewController {
     }
     
 }
-
-
-
-// MARK: - 方法一 訂單數據量不大版本（只是用來處理當前訂單而不是歷史訂單）
-
-/*
- 1. 直接從 OrderController 獲取 orderItems。
- 2. 當訂單項目變化時，直接從 OrderController 獲取最新的訂單數據並更新 UI。
- 3. 適合訂單數據只需從單一數據源獲取的情況，並且 OrderController 的數據變化立即需要反映到 UI 上。
- */
-
-
-/*
- 
- import UIKit
-
-class OrderViewController: UIViewController {
-
-    @IBOutlet weak var orderCollectionView: UICollectionView!
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupCollectionView()
-        NotificationCenter.default.addObserver(self, selector: #selector(updateOrders), name: .orderUpdated, object: nil)
-        updateOrders()  // 初始化時也加載當前訂單
-    }
- 
- deinit {
-      NotificationCenter.default.removeObserver(self, name: .orderUpdated, object: nil)
-  }
-    
-
-    private func setupCollectionView() {
-        orderCollectionView.delegate = self
-        orderCollectionView.dataSource = self
-        orderCollectionView.register(OrderItemCollectionViewCell.self, forCellWithReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier)
-    }
-    
-    @objc private func updateOrders() {
-        orderCollectionView.reloadData()
-        updateTotalAmount()
-    }
-    
-    private func updateTotalAmount() {
-        let totalAmount = OrderController.shared.orderItems.reduce(0) { $0 + $1.totalAmount }
-        print("總金額\(totalAmount)")  // 測試用
-    }
-
- 
-}
-
-// MARK: - UICollectionViewDelegate, UICollectionViewDataSource
-extension OrderViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let orderCount = OrderController.shared.orderItems.count
-        if orderCount == 0 {
-            let noOrdersLabel = UILabel()
-            noOrdersLabel.text = "目前沒有商品在訂單中"
-            noOrdersLabel.textAlignment = .center
-            noOrdersLabel.frame = orderCollectionView.bounds
-            orderCollectionView.backgroundView = noOrdersLabel
-        } else {
-            orderCollectionView.backgroundView = nil
-        }
-        return orderCount
-    }
-    
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier, for: indexPath) as? OrderItemCollectionViewCell else {
-            fatalError("Cannot create OrderItemCollectionViewCell")
-        }
-        
-        let orderItem = OrderController.shared.orderItems[indexPath.row]
-        cell.configure(with: orderItem)
-        cell.stepperChanged = { [weak self] newQuantity in
-            OrderController.shared.updateOrderItemQuantity(at: indexPath.row, to: newQuantity)
-            self?.updateTotalAmount()
-        }
-        return cell
-    }
-    
-}
- */
-
-
- 
- // MARK: -  方法二（只是用來處理當前訂單而不是歷史訂單）適合訂單量大：訂單數據量較大
-
-/*
- 1. 在 OrderViewController 中有一個本地的 orders 變數來存放訂單數據。
- 2. 在初始化和通知更新時，都會同步 OrderController 的數據到本地 orders 變數。
- 3. 適合需要在本地對訂單數據進行一些處理或變換，並且希望減少對 OrderController 的直接依賴的情況。
- 4. initializeOrderData 是為了在初始化時從 OrderController 獲取當前的訂單數據，這樣可以保證 OrderViewController 的 orders 變數一開始就有正確的數據。
- */
-
-/*
-import UIKit
-
-/// 處理訂單
-class OrderViewController: UIViewController {
-
-    @IBOutlet weak var orderCollectionView: UICollectionView!
-    
-    var orders: [OrderItem] = []
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupCollectionView()
-        initializeOrderData()
-        NotificationCenter.default.addObserver(self, selector: #selector(updateOrders), name: .orderUpdated, object: nil)
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self, name: .orderUpdated, object: nil)
-    }
-    
-    private func setupCollectionView() {
-        orderCollectionView.delegate = self
-        orderCollectionView.dataSource = self
-        orderCollectionView.register(OrderItemCollectionViewCell.self, forCellWithReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier)
-    }
-    
-    private func initializeOrderData() {
-        orders = OrderController.shared.orderItems
-        orderCollectionView.reloadData()
-        updateTotalAmount()
-    }
-    
-    private func updateTotalAmount() {
-        let totalAmount = orders.reduce(0) { $0 + $1.totalAmount }
-        print("總金額\(totalAmount)")  // 測試用
-    }
-    
-    @objc private func updateOrders() {
-        orders = OrderController.shared.orderItems
-        orderCollectionView.reloadData()
-        updateTotalAmount()
-    }
-}
-
-// MARK: - UICollectionViewDelegate, UICollectionViewDataSource
-extension OrderViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let orderCount = orders.count
-        if orderCount == 0 {
-            let noOrdersLabel = UILabel()
-            noOrdersLabel.text = "目前沒有商品在訂單中"
-            noOrdersLabel.textAlignment = .center
-            noOrdersLabel.frame = orderCollectionView.bounds
-            orderCollectionView.backgroundView = noOrdersLabel
-        } else {
-            orderCollectionView.backgroundView = nil
-        }
-        return orderCount
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier, for: indexPath) as? OrderItemCollectionViewCell else {
-            fatalError("Cannot create OrderItemCollectionViewCell")
-        }
-        
-        let orderItem = orders[indexPath.row]
-        cell.configure(with: orderItem)
-        cell.stepperChanged = { [weak self] newQuantity in
-            self?.orders[indexPath.row].quantity = newQuantity
-            OrderController.shared.updateOrderItemQuantity(at: indexPath.row, to: newQuantity)
-            self?.updateTotalAmount()
-        }
-        
-        return cell
-    }
-}
-*/
-
-
-
-
-
-
-// MARK: - 模擬版本(早期概念版本)
-/*
- A. 在處理使用者訂單資料時，可以在使用者登入後載入其歷史訂單，這樣使用者可以查看自己的歷史訂單記錄。
-    不需要在 FirebaseController 中對現有的方法做太多調整，只需新增一個新的方法來載入使用者的訂單資料。
-
- B.處理空訂單清單的邏輯
-  - 在 updateUI 方法中，透過判斷 orderItems 是否為 nil 來控制 emptyOrdersLabel 的顯示與隱藏。
-    - 這樣，當使用者沒有訂單時，會顯示提示Label；當使用者有訂單時，顯示訂單清單。
-
- ------------------------------------------------------------------------------
-
-  1. OrderViewController 中的 Storyboard 修改
-  - 在 Storyboard 中新增 UILabel，用於提示使用者沒有訂單數據，並將其連接到 emptyOrdersLabel。
-  - 設定該Label的初始狀態為隱藏。
-
-  2. 處理空訂單清單的邏輯
-  - 在 updateUI 方法中，透過判斷 orderItems 是否為空來控制 emptyOrdersLabel 的顯示與隱藏。
-  - 這樣，當使用者沒有訂單時，會顯示提示標籤；當使用者有訂單時，顯示訂單清單。
-
-
-  3. 設計考慮
-  - 載入使用者訂單：在使用者登入成功後，可以載入使用者的訂單資料並顯示在 UI 上。
-  - 通知機制：透過 NotificationCenter 監聽訂單變化，即時更新 UI。
-  - 資料持久化：將訂單資料儲存在 Firestore 中，確保使用者每次登入都能看到自己的歷史訂單。
- 
-  - 總結：
-  - 透過在 FirebaseController 中新增 loadUserOrders 方法，可以在使用者登入後載入其歷史訂單，
-    - 並在 OrderViewController 中展示這些訂單。保證了資料的即時性，也提供了良好的使用者體驗。
- */
-
-/*
- import UIKit
-
- class OrderViewController: UIViewController {
-
-     @IBOutlet weak var orderCollectionView: UICollectionView!
-     
-     var orders: [OrderItem] = []
-     var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
-     let layoutProvider = OrderLayoutProvider() // 假設你有一個 layout provider 來設置 collection view 的 layout
-     
-     enum Section: CaseIterable {
-         case orderItems, phone, buyerName, pickupMethod
-     }
-     
-     enum Item: Hashable {
-         case orderItem(OrderItem), phone, buyerName, pickupMethod
-     }
-     
-     override func viewDidLoad() {
-         super.viewDidLoad()
-         setupCollectionView()
-         configureDataSource()
-         applyInitialSnapshot()
-         NotificationCenter.default.addObserver(self, selector: #selector(updateOrders), name: .orderUpdated, object: nil)
-     }
-     
-     deinit {
-         NotificationCenter.default.removeObserver(self, name: .orderUpdated, object: nil)
-     }
-     
-     private func setupCollectionView() {
-         orderCollectionView.delegate = self
-         orderCollectionView.collectionViewLayout = layoutProvider.createLayout()
-         
-         // 註冊 cell
-         orderCollectionView.register(OrderItemCollectionViewCell.self, forCellWithReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier)
-         orderCollectionView.register(PhoneCollectionViewCell.self, forCellWithReuseIdentifier: PhoneCollectionViewCell.reuseIdentifier)
-         orderCollectionView.register(BuyerNameCollectionViewCell.self, forCellWithReuseIdentifier: BuyerNameCollectionViewCell.reuseIdentifier)
-         orderCollectionView.register(PickupMethodCollectionViewCell.self, forCellWithReuseIdentifier: PickupMethodCollectionViewCell.reuseIdentifier)
-     }
-     
-     @objc private func updateOrders() {
-         orders = OrderController.shared.orderItems
-         applySnapshot()
-     }
-     
-     private func applySnapshot() {
-         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-         snapshot.appendSections(Section.allCases)
-         
-         snapshot.appendItems(orders.map { .orderItem($0) }, toSection: .orderItems)
-         snapshot.appendItems([.phone], toSection: .phone)
-         snapshot.appendItems([.buyerName], toSection: .buyerName)
-         snapshot.appendItems([.pickupMethod], toSection: .pickupMethod)
-         
-         dataSource.apply(snapshot, animatingDifferences: true)
-     }
-     
-     private func applyInitialSnapshot() {
-         orders = OrderController.shared.orderItems
-         applySnapshot()
-     }
-     
-     private func configureDataSource() {
-         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: orderCollectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in
-             switch item {
-             case .orderItem(let orderItem):
-                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier, for: indexPath) as? OrderItemCollectionViewCell else {
-                     fatalError("Cannot create OrderItemCollectionViewCell")
-                 }
-                 cell.configure(with: orderItem)
-                 cell.stepperChanged = { [weak self] newQuantity in
-                     self?.orders[indexPath.row].quantity = newQuantity
-                     OrderController.shared.updateOrderItemQuantity(at: indexPath.row, to: newQuantity)
-                     self?.applySnapshot()
-                 }
-                 return cell
-                 
-             case .phone:
-                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhoneCollectionViewCell.reuseIdentifier, for: indexPath) as? PhoneCollectionViewCell else {
-                     fatalError("Cannot create PhoneCollectionViewCell")
-                 }
-                 // 配置電話 cell
-                 return cell
-                 
-             case .buyerName:
-                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BuyerNameCollectionViewCell.reuseIdentifier, for: indexPath) as? BuyerNameCollectionViewCell else {
-                     fatalError("Cannot create BuyerNameCollectionViewCell")
-                 }
-                 // 配置購買人姓名 cell
-                 return cell
-                 
-             case .pickupMethod:
-                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PickupMethodCollectionViewCell.reuseIdentifier, for: indexPath) as? PickupMethodCollectionViewCell else {
-                     fatalError("Cannot create PickupMethodCollectionViewCell")
-                 }
-                 // 配置取件方式 cell
-                 return cell
-             }
-         }
-         
-         orderCollectionView.delegate = self
-     }
- }
-
- */
-
-
-
-// MARK: - 一開始將歷史訂單及當前訂單放在一起的錯誤部分
-/*
-import UIKit
-
-/// 處理訂單
-class OrderViewController: UIViewController {
-
-    var userDetails: UserDetails?
-
-    @IBOutlet weak var orderCollectionView: UICollectionView!
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupCollectionView()
-        loaduserOrders()
-        NotificationCenter.default.addObserver(self, selector: #selector(updateOrders), name: .orderUpdated, object: nil)
-    }
-    
-    
-    private func setupCollectionView() {
-        orderCollectionView.delegate = self
-        orderCollectionView.dataSource = self
-        orderCollectionView.register(OrderItemCollectionViewCell.self, forCellWithReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier)
-    }
-    
-    
-    private func loaduserOrders() {
-        FirebaseController.shared.getCurrentUserDetails { [weak self] result in
-            switch result {
-            case .success(let userDetails):
-                self?.userDetails = userDetails
-                self?.userDetails?.orders = OrderController.shared.orderItems   // 確保初始訂單從 OrderController 中獲取
-                self?.orderCollectionView.reloadData()
-                self?.updateTotalAmount()
-            case .failure(let error):
-                print("Error loading user details: \(error)")
-                AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self!)
-            }
-        }
-    }
-    
-    
-    private func updateTotalAmount() {
-        let totalAmount = userDetails?.orders?.reduce(0) { $0 + $1.totalAmount } ?? 0
-        print("總金額\(totalAmount)")  // 測試用
-    }
-    
-    @objc private func updateOrders() {
-        userDetails?.orders = OrderController.shared.orderItems
-        orderCollectionView.reloadData()
-        updateTotalAmount()
-    }
-
-}
-
-
-// MARK: - Extension UICollectionViewDelegate、UICollectionViewDataSource
-extension OrderViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let orderCount = userDetails?.orders?.count ?? 0
-        if orderCount == 0 {
-            // 顯示提示訊息
-            let noOrdersLabel = UILabel()
-            noOrdersLabel.text = "目前沒有商品在訂單中"
-            noOrdersLabel.textAlignment = .center
-            noOrdersLabel.frame = orderCollectionView.bounds
-            orderCollectionView.backgroundView = noOrdersLabel
-        } else {
-            orderCollectionView.backgroundView = nil
-        }
-        return orderCount
-    }
-    
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderItemCollectionViewCell.reuseIdentifier, for: indexPath) as? OrderItemCollectionViewCell else {
-            fatalError("Cannot create OrderItemCollectionViewCell")
-        }
-        
-        if let orderItem = userDetails?.orders?[indexPath.row] {
-            cell.configure(with: orderItem)
-            cell.stepperChanged = { [weak self] newQuanity in
-                self?.userDetails?.orders?[indexPath.row].quantity = newQuanity
-                OrderController.shared.updateOrderItemQuantity(at: indexPath.row, to: newQuanity)
-                self?.updateTotalAmount()
-            }
-        }
-        
-        return cell
-    }
-    
-}
-*/

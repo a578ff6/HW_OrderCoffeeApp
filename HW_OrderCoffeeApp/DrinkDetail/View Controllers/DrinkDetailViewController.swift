@@ -513,11 +513,11 @@ class DrinkDetailViewController: UIViewController {
         }
         
         if isEditingOrderItem, let id = editingOrderID {
-            OrderController.shared.updateOrderItem(withID: id, with: size, and: quantity)
+            OrderItemManager.shared.updateOrderItem(withID: id, with: size, and: quantity)
             dismiss(animated: true, completion: nil)
         } else {
             print("正在添加到購物車: 飲品 - \(drink.name), 尺寸 - \(size), 數量 - \(quantity)")
-            OrderController.shared.addOrderItem(drink: drink, size: size, quantity: quantity, categoryId: categoryId, subcategoryId: subcategoryId)
+            OrderItemManager.shared.addOrderItem(drink: drink, size: size, quantity: quantity, categoryId: categoryId, subcategoryId: subcategoryId)
         }
     }
     
