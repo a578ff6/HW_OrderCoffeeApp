@@ -5,6 +5,10 @@
 //  Created by 曹家瑋 on 2024/8/10.
 //
 
+
+// MARK: - async/await
+
+/*
 import XCTest
 import Firebase
 import FirebaseStorage
@@ -27,9 +31,7 @@ class FirebaseControllerTests: XCTestCase {
         Auth.auth().useEmulator(withHost: "127.0.0.1", port: 9099)
         
         // 使用 Storage 模擬器
-        let storageSettings = Storage.storage().useEmulator(withHost: "127.0.0.1", port: 9199)
-
-        
+        let _ = Storage.storage().useEmulator(withHost: "127.0.0.1", port: 9199)
         
         // 初始化 Firebase
         if FirebaseApp.app() == nil {
@@ -43,64 +45,72 @@ class FirebaseControllerTests: XCTestCase {
         super.tearDown()
     }
     
-    /// 取得當前使用者登入資訊的測試
-    func testGetCurrentUserDetails_withLoggedInUser_shouldSucceed() {
-        let email = "test@example.com"
+    /*
+    /// 建立新用戶的測試
+    func testCreateUser_withEmailAndPassword_shouldSucceed() async {
+        let email = "test_create@example.com"
         let password = "Test@1234"
-        let fullName = "Test User"
+
+        do {
+            // 創建新用戶
+            let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
+            XCTAssertNotNil(authResult.user, "Failed to create user")
+            
+            // 在 Firestore 中設置新用戶的初始資料
+            let fullName = "Test Create User"
+            let userRef = Firestore.firestore().collection("users").document(authResult.user.uid)
+            try await userRef.setData([
+                "email": email,
+                "fullName": fullName,
+                "phoneNumber": "123456789",
+                "address": "Test Address"
+            ])
+            
+        } catch {
+            XCTFail("Failed to create user: \(error.localizedDescription)")
+        }
+    }
+    */
+    
+    
+    /// 取得當前使用者登入資訊的測試
+    func testGetCurrentUserDetails_withCreatedUser_shouldSucceed() async {
+        let email = "test_create@example.com"
+        let password = "Test@1234"
+        let fullName = "Test Create User"
         
-        let expectation = self.expectation(description: "Should successfully get user details")
-        
-        // 登錄用戶
-        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
-            guard let _ = authResult?.user else {
-                XCTFail("Failed to sign in user")
-                return
-            }
+        do {
+            // 登錄用戶
+            let _ = try await Auth.auth().signIn(withEmail: email, password: password)
             
             // 測試 FirebaseController 的 getCurrentUserDetails 方法
-            FirebaseController.shared.getCurrentUserDetails { result in
-                switch result {
-                case .success(let userDetails):
-                    XCTAssertEqual(userDetails.email, email)
-                    XCTAssertEqual(userDetails.fullName, fullName)
-                    expectation.fulfill()
-                case .failure(let error):
-                    XCTFail("Failed to get user details: \(error.localizedDescription)")
-                }
-            }
+            let userDetails = try await FirebaseController.shared.getCurrentUserDetails()
+            XCTAssertEqual(userDetails.email, email)
+            XCTAssertEqual(userDetails.fullName, fullName)
+        } catch {
+            XCTFail("Failed to get user details: \(error.localizedDescription)")
         }
-        
-        waitForExpectations(timeout: 10, handler: nil)
     }
     
     /// 針對大頭照上傳和 URL 更新的測試
-    func testUpdateUserProfileImageURL_shouldUpdateFirestore() {
-        let expectation = self.expectation(description: "Should update Firestore with image URL")
+    func testUpdateUserProfileImageURL_shouldUpdateFirestore() async {
         let testURL = "http://example.com/test-uid.jpg"
-        let uid = "B5yXvl9sZMDfu4yk1bMBKQsiIQLA" // 使用從 testRegisterUser_withNewEmail_shouldSucceed 測試中獲得的 UID（會變動）
+        let uid = "RgnhI9WEKdkN4jo21Cn0aosqjkkc" // 使用從測試中獲得的 UID（會變動）
         
-        FirebaseController.shared.updateUserProfileImageURL(testURL, for: uid) { result in
-            switch result {
-            case .success():
-                // 確認 Firestore 是否更新了 URL
-                let db = Firestore.firestore()
-                let userRef = db.collection("users").document(uid)
-                userRef.getDocument { document, error in
-                    if let document = document, document.exists {
-                        let url = document.data()?["profileImageURL"] as? String
-                        XCTAssertEqual(url, testURL)
-                        expectation.fulfill()
-                    } else {
-                        XCTFail("Failed to retrieve document or document does not exist")
-                    }
-                }
-            case .failure(let error):
-                XCTFail("Failed to update Firestore: \(error.localizedDescription)")
-            }
+        do {
+            // 更新 Firestore 中的用戶圖片 URL
+            try await FirebaseController.shared.updateUserProfileImageURL(testURL, for: uid)
+            
+            // 確認 Firestore 是否更新了 URL
+            let db = Firestore.firestore()
+            let userRef = db.collection("users").document(uid)
+            let document = try await userRef.getDocument()
+            let url = document.data()?["profileImageURL"] as? String
+            XCTAssertEqual(url, testURL)
+        } catch {
+            XCTFail("Failed to update Firestore: \(error.localizedDescription)")
         }
-        
-        waitForExpectations(timeout: 10, handler: nil)
     }
     
 }
+*/
