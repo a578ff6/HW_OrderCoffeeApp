@@ -5,7 +5,7 @@
 //  Created by 曹家瑋 on 2024/10/10.
 //
 
-// MARK: - 關於 selectStoreButtonTapped 暫時不處理：
+// MARK: - 關於 selectStoreButtonTapped 暫時不處理 以及 送出訂單後清空Order(orderItems、customerDetails)：
 /*
  ## selectStoreButtonTapped 暫不處理：
  
@@ -129,8 +129,96 @@
             2.取件方式（pickupMethod）: 使用者切換取件方式（例如從「到店自取」改為「外送」）或選擇店家時，會調用相應的回調來更新資料。
             3.備註（notes）: 用戶輸入備註時，透過回調即時更新資料。
             4.提交訂單（submitAction）: 點擊提交按鈕時，透過委託呼叫 submitOrder() 方法，將訂單提交。
-
  */
+
+
+// MARK: - 關於 調整 OrderCustomerDetailsHandler 的邏輯，讓它能更好地管理和處理顧客詳細資料。 以及運用 collectAndUpdateCustomerDetails。
+
+/*
+ ## OrderCustomerDetailsHandler 調整邏輯的具體步驟
+ 
+    - 在 OrderCustomerDetailsHandler 中，需要進行一些邏輯上的調整，主要是讓它能夠正確地管理和處理 OrderPickupMethodCell 的交互，並更新 CustomerDetailsManager 中的顧客資料。
+
+ 1. 完善 configurePickupMethodCell
+
+    - 首先，在 configurePickupMethodCell 方法中，需要根據 CustomerDetails 初始化 OrderPickupMethodCell，並設置相關的回調。
+ 
+ 2. 通知顧客資料變更
+
+    - 在顧客資料發生變更時，需要通知外部的 OrderCustomerDetailsViewController 來更新提交按鈕的狀態，這樣可以確保只有當資料完整時才允許提交訂單。
+ 
+ 3. 設置顧客資料變更回調
+
+    - 對於 OrderPickupMethodCell 中的其他回調，例如地址變更和店家選擇變更，都應該調用 collectAndUpdateCustomerDetails() 來更新資料並且通知外部的變更。
+
+    - 以下是如何為 OrderPickupMethodCell 設置這些回調：
+        - 取件方式變更：當用戶切換取件方式時，更新顧客資料中的 pickupMethod 並通知 OrderCustomerDetailsViewController 更新提交按鈕狀態。
+        - 地址變更和店家選擇變更：當地址或店家名稱發生變更時，調用 collectAndUpdateCustomerDetails() 更新資料，並通知外部變更。
+ 
+ 4. 修改 OrderCustomerDetailsHandler 中的 cellForItemAt
+ 
+    - 在 collectionView(_:cellForItemAt:) 方法中，對每個 section 的 cell 進行配置，其中 pickupMethod 的部分應使用前面調整過的 configurePickupMethodCell 方法。
+ 
+ 5. 調整後的 OrderCustomerDetailsHandler
+ 
+    - 這些調整能夠幫助 OrderCustomerDetailsHandler 更加有效地管理表單內部的邏輯，確保顧客資料的變更能夠即時反映到表單的提交按鈕上。
+
+    - 調整後的回調和邏輯的好處
+        - 更清晰的責任劃分：OrderPickupMethodCell 負責 UI 和與用戶交互的回調，具體的資料更新則由 CustomerDetailsManager 處理。
+        - 易於擴展和維護：如果未來需要更改資料處理邏輯，這樣的設計便於集中在 CustomerDetailsManager 內進行修改，而不需要深入到 UI 元件內部。
+        - 確保資料一致性：所有資料變更都統一通過 CustomerDetailsManager 處理，可以減少資料不一致的問題。
+ */
+
+
+// MARK: - 筆記主題：取件方式變更導致的 UI 同步問題與解決方案（重要）
+
+/*
+ ## 筆記主題：取件方式變更導致的 UI 同步問題與解決方案
+
+ &. 問題描述
+ 
+    - 在切換取件方式（例如從 "In-Store Pickup" 切換到 "Home Delivery"）後，如果 storeName 或 address 有值則清空對方，但 UI 中的 addressTextField 或 storeTextField 並未正確同步更新，導致顯示內容與資料管理層不一致。
+    - 例如，當切換到 "Home Delivery" 後，addressTextField 仍顯示之前輸入的地址。
+    
+    1.在「Home Delivery」 的 addressTextField 輸入地址「新北市三重區」
+    2.接著切換「取件方式」到「In-Store Pickup」
+    3.點擊selectStoreButton，給storeTextField 賦值「大安店」，這時候就會清空 address 的值。
+    4.接著在切換「取件方式」到「Home Delivery」，雖然 address 被清空，但是 addressText 卻還有「新北市三重區」
+ 
+ &. 問題原因
+ 
+    - 資料更新後，UI 未同步更新，導致畫面顯示和資料不一致。
+ 
+ &. 解決方案
+ 
+    1. 在取件方式變更後重新配置 Cell：
+        - 透過呼叫 configure(with:) 方法來重新配置相關的 Cell，確保 UI 和資料保持一致。
+
+    2. 在 onPickupMethodChanged 回調中進行 UI 更新：
+        - 在更新資料後，重新呼叫 configure(with:)，以便同步更新 UI，確保畫面顯示符合最新的取件方式。
+ 
+ &. 詳細說明
+ 
+    1. 為何在 onPickupMethodChanged 呼叫 configure(with:)
+        - onPickupMethodChanged 的目的是處理使用者切換取件方式，這會影響 UI 中顯示的欄位。
+        - 例如，切換為 "Home Delivery" 應顯示地址輸入框，而隱藏選擇店家的欄位。呼叫 configure(with:) 可以確保 UI 及時根據使用者的選擇進行更新。
+    
+    2. 是否應在 onStoreChange 或 onAddressChange 中呼叫 configure(with:)
+        - 可以考慮，但不一定必要。這些變更通常不會影響 UI 中其他欄位的顯示狀況，因此只需更新相應的資料即可，無需重新配置整個 Cell。這樣可以減少不必要的重新渲染，提高性能。
+ 
+ &. 小結
+ 
+    - onPickupMethodChanged 中呼叫 configure(with:) 是因為取件方式的變更會直接影響到 UI 的顯示邏輯，需要根據選擇的取件方式來顯示或隱藏相應的欄位。
+    - onStoreChange 和 onAddressChange 不呼叫 configure(with:)，因為這些變更僅涉及資料更新，不會改變 UI 的欄位顯示狀況。
+ 
+ &. 重點筆記
+
+    1.在取件方式變更 (onPickupMethodChanged) 時，呼叫 configure(with:) 以確保 UI 的顯示符合使用者的選擇。
+    2.在店家或地址變更 (onStoreChange, onAddressChange) 時，僅更新資料層，不需重新配置 UI，從而提高性能。
+    3.保持 UI 與資料的一致性是確保良好使用者體驗的重要環節，應根據情境決定是否需要更新 UI。
+    4.這樣的設計考慮可以確保程式邏輯簡潔，提高效能，避免不必要的 UI 更新。
+ */
+
 
 import UIKit
 
@@ -174,8 +262,8 @@ class OrderCustomerDetailsHandler: NSObject {
     }
     
     /// 更新顧客資料並通知委託變更
-    private func updateCustomerDetails(fullName: String? = nil, phoneNumber: String? = nil, address: String? = nil, storeName: String? = nil, notes: String? = nil) {
-        CustomerDetailsManager.shared.updateCustomerDetails(fullName: fullName, phoneNumber: phoneNumber, address: address, storeName: storeName, notes: notes)
+    private func collectAndUpdateCustomerDetails(fullName: String? = nil, phoneNumber: String? = nil, address: String? = nil, storeName: String? = nil, notes: String? = nil) {
+        CustomerDetailsManager.shared.updateStoredCustomerDetails(fullName: fullName, phoneNumber: phoneNumber, address: address, storeName: storeName, notes: notes)
         notifyCustomerDetailsChanged()
     }
 
@@ -274,12 +362,12 @@ extension OrderCustomerDetailsHandler: UICollectionViewDataSource {
         
         // 更新姓名並通知變更
         cell.onNameChange = { [weak self] newName in
-            self?.updateCustomerDetails(fullName: newName)
+            self?.collectAndUpdateCustomerDetails(fullName: newName)
         }
     
         // 更新電話並通知變更
         cell.onPhoneChange = { [weak self] newPhoneNumber in
-            self?.updateCustomerDetails(phoneNumber: newPhoneNumber)
+            self?.collectAndUpdateCustomerDetails(phoneNumber: newPhoneNumber)
         }
         
         return cell
@@ -291,31 +379,42 @@ extension OrderCustomerDetailsHandler: UICollectionViewDataSource {
             fatalError("Cannot create OrderPickupMethodCell")
         }
         
+        // 從 CustomerDetailsManager 中獲取顧客資料
         if let customerDetails = CustomerDetailsManager.shared.getCustomerDetails() {
+            // 配置 Cell 的顯示，根據顧客的取件方式、地址和店家名稱
             cell.configure(with: customerDetails)
         }
         
-        /// 設置回調，當取件方式變更時通知外部
+        // 設置回調，當取件方式變更時通知外部處理
         cell.onPickupMethodChanged = { [weak self] newMethod in
-            CustomerDetailsManager.shared.updatePickupMethod(newMethod)              // 更新取件方式
-            self?.notifyCustomerDetailsChanged()                                     // 通知變更，更新提交按鈕狀態
+            // 更新取件方式
+            CustomerDetailsManager.shared.updatePickupMethod(newMethod)
+            // 通知外部（OrderCustomerDetailsViewController）更新提交按鈕狀態
+            self?.notifyCustomerDetailsChanged()
+            
+            // 重新配置 Cell，使得 UI 同步更新
+            if let updatedCustomerDetails = CustomerDetailsManager.shared.getCustomerDetails() {
+                cell.configure(with: updatedCustomerDetails)
+            }
         }
 
-        /// 處理店家選擇按鈕點擊
-        cell.onStoreButtonTapped = { [weak self] in
-            // 顯示店家選擇視圖控制器的邏輯
-        }
-        
         // 更新店家名稱並通知變更
         cell.onStoreChange = { [weak self] storeName in
-            self?.updateCustomerDetails(storeName: storeName)
-            print("Store name updated to: \(storeName)") // 添加觀察店家名稱變更的 print
+            self?.collectAndUpdateCustomerDetails(storeName: storeName)
+            print("Store name updated to: \(storeName)")
         }
         
         // 更新外送地址並通知變更
         cell.onAddressChange = { [weak self] address in
-            self?.updateCustomerDetails(address: address)
-            print("Address updated to: \(address)") // 添加觀察地址變更的 print
+            self?.collectAndUpdateCustomerDetails(address: address)
+            print("Address updated to: \(address)")
+        }
+        
+        // 處理店家選擇按鈕點擊
+        cell.onStoreButtonTapped = { [weak self] in
+            // 顯示店家選擇視圖控制器的邏輯
+            // 這裡可以實現一個導航到店家選擇的功能，然後返回時更新店家名稱
+            // 可用 self?.delegate?.navigateToStoreSelection() 等方法
         }
         
         return cell
@@ -334,7 +433,7 @@ extension OrderCustomerDetailsHandler: UICollectionViewDataSource {
 
         // 更新備註並通知變更
         cell.onNoteChange = { [weak self] note in
-            self?.updateCustomerDetails(notes: note)
+            self?.collectAndUpdateCustomerDetails(notes: note)
         }
 
         return cell
