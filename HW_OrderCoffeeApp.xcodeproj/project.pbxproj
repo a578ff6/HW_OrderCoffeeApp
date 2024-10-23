@@ -599,20 +599,13 @@
 		9353743C2CB5145D00794A63 /* OrderCustomerDetails */ = {
 			isa = PBXGroup;
 			children = (
-				9353745E2CC3D3F800794A63 /* OrderCustomerDetailsHandlerDelegate.swift */,
-				935374522CB80F1300794A63 /* OrderCustomerDetailsLayoutProvider.swift */,
-				9353744E2CB7F1BF00794A63 /* OrderCustomerDetailsHandler.swift */,
-				9353743D2CB5149700794A63 /* OrderCustomerDetailsViewController.swift */,
-				9353744C2CB7EF3900794A63 /* OrderCustomerDetailsView.swift */,
-				9353745C2CBF281B00794A63 /* OrderCustomerSubmitCell.swift */,
-				935374582CBB038D00794A63 /* OrderPickupMethodCell.swift */,
-				9353745A2CBD43B900794A63 /* OrderCustomerNoteCell.swift */,
-				935374502CB80D0000794A63 /* OrderCustomerInfoCell.swift */,
-				935374562CB9A6B300794A63 /* OrderTermsMessageCell.swift */,
-				935374542CB93F6D00794A63 /* OrderCustomerDetailsSectionHeaderView.swift */,
-				9353743F2CB666E800794A63 /* CustomerDetails.swift */,
-				935374432CB67DB100794A63 /* Order.swift */,
-				935374472CB6D9F600794A63 /* CustomerDetailsManager.swift */,
+				935374602CC95BA000794A63 /* Delegates */,
+				935374612CC95BAE00794A63 /* Handler */,
+				935374622CC95BBB00794A63 /* Layouts */,
+				935374632CC95BC700794A63 /* Views */,
+				935374642CC95BD900794A63 /* View Controllers */,
+				935374652CC95DAC00794A63 /* Models */,
+				935374662CC95DC000794A63 /* Services */,
 			);
 			path = OrderCustomerDetails;
 			sourceTree = "<group>";
@@ -623,6 +616,68 @@
 				935374492CB7B40A00794A63 /* CustomerDetailsManagerTests.swift */,
 			);
 			path = CustomerDetailsTest;
+			sourceTree = "<group>";
+		};
+		935374602CC95BA000794A63 /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				9353745E2CC3D3F800794A63 /* OrderCustomerDetailsHandlerDelegate.swift */,
+			);
+			path = Delegates;
+			sourceTree = "<group>";
+		};
+		935374612CC95BAE00794A63 /* Handler */ = {
+			isa = PBXGroup;
+			children = (
+				9353744E2CB7F1BF00794A63 /* OrderCustomerDetailsHandler.swift */,
+			);
+			path = Handler;
+			sourceTree = "<group>";
+		};
+		935374622CC95BBB00794A63 /* Layouts */ = {
+			isa = PBXGroup;
+			children = (
+				935374522CB80F1300794A63 /* OrderCustomerDetailsLayoutProvider.swift */,
+			);
+			path = Layouts;
+			sourceTree = "<group>";
+		};
+		935374632CC95BC700794A63 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				9353744C2CB7EF3900794A63 /* OrderCustomerDetailsView.swift */,
+				9353745C2CBF281B00794A63 /* OrderCustomerSubmitCell.swift */,
+				935374582CBB038D00794A63 /* OrderPickupMethodCell.swift */,
+				9353745A2CBD43B900794A63 /* OrderCustomerNoteCell.swift */,
+				935374502CB80D0000794A63 /* OrderCustomerInfoCell.swift */,
+				935374562CB9A6B300794A63 /* OrderTermsMessageCell.swift */,
+				935374542CB93F6D00794A63 /* OrderCustomerDetailsSectionHeaderView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		935374642CC95BD900794A63 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				9353743D2CB5149700794A63 /* OrderCustomerDetailsViewController.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		935374652CC95DAC00794A63 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				9353743F2CB666E800794A63 /* CustomerDetails.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		935374662CC95DC000794A63 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				935374472CB6D9F600794A63 /* CustomerDetailsManager.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		936CFFB32C6BA81F004B8724 /* FirebaseTests */ = {
@@ -832,6 +887,7 @@
 			isa = PBXGroup;
 			children = (
 				93B9DC7E2C32C5BC0050BC3F /* MenuController.swift */,
+				93B9DC802C32D7740050BC3F /* OrderManager.swift */,
 				939BDA642B2ACBA200616D1C /* FirebaseController.swift */,
 				939BDA682B2B82BC00616D1C /* AlertService.swift */,
 				93755C302C82F6CF002570A5 /* HUDManager.swift */,
@@ -929,7 +985,6 @@
 		93BD48BD2C58E0B100144E7F /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				93B9DC802C32D7740050BC3F /* OrderManager.swift */,
 				935374452CB6A74B00794A63 /* OrderItemManager.swift */,
 			);
 			path = Services;
@@ -958,6 +1013,7 @@
 			isa = PBXGroup;
 			children = (
 				93B9DC842C3546150050BC3F /* UserDetails.swift */,
+				935374432CB67DB100794A63 /* Order.swift */,
 				9353741A2C9D832E00794A63 /* FavoriteDrink.swift */,
 				939BDA732B2FB3E400616D1C /* MenuModels.swift */,
 			);
