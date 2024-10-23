@@ -40,6 +40,31 @@
         * 在需要計算整體訂單金額或總準備時間時，OrderItemManager 可以方便地提供這些數據。
  */
 
+// MARK: - 為何在 OrderItemManager 中增加重置 customerDetails 的邏輯
+
+/*
+ 1. 保持訂單與顧客資料的同步：
+
+    - OrderItemManager 管理所有的訂單項目，當所有訂單項目被刪除時，代表當前的訂單流程需要完全重新開始。
+    - 因此，此時顧客資料也應該被重置，保證整個流程從頭開始，不會殘留之前的資料。
+    - 將重置 customerDetails 的邏輯放在 OrderItemManager 中，可以保證當訂單項目被完全清空時，顧客資料也同步清空，避免狀態不一致的情況。
+ 
+ 2. 邏輯集中與責任劃分：
+ 
+    - OrderItemManager 的責任在於管理訂單項目。當訂單被清空時，同時清空顧客資料的邏輯屬於訂單狀態管理的一部分，因此這樣的行為應該由 OrderItemManager 來負責。
+    - 這樣可以使邏輯更加集中，避免不同管理層之間的責任不清。顧客資料重置與訂單狀態變化同步，能提升可維護性。
+
+ 3. 避免重複程式碼：
+
+    - 若不在 OrderItemManager 中加入這個邏輯，可能會導致在 OrderViewController 或其他地方多次手動調用 resetCustomerDetails()。這樣做不僅增加了代碼的重複性，也更容易出現錯誤。
+    - 在 OrderItemManager 中統一管理這部分邏輯，能避免重複代碼，保持代碼簡潔清晰。
+ 
+ 4. 補充：它涉及到訂單狀態管理的責任範圍，以及在清空訂單時自動處理顧客資料的邏輯。具體來說：
+
+    - OrderItemManager：管理訂單項目、處理與訂單相關的增刪改查邏輯，當訂單項目被清空時，對應的顧客資料也應該被重置。
+    - CustomerDetailsManager：主要負責顧客資料的管理和操作，它不應該去決定何時重置顧客資料，而應由管理訂單狀態的 OrderItemManager 來觸發這一動作。
+ */
+
 import Foundation
 import FirebaseFirestore
 import FirebaseAuth
@@ -57,6 +82,12 @@ class OrderItemManager {
         didSet {
             print("訂單項目更新，當前訂單數量: \(orderItems.count)")
             NotificationCenter.default.post(name: .orderUpdatedNotification, object: nil)   // 當訂單變更時發送通知
+            
+            // 當訂單項目為空時，重置顧客資料
+            if orderItems.isEmpty {
+                CustomerDetailsManager.shared.resetCustomerDetails()
+                print("所有訂單項目已被清空，重置顧客資料")
+            }
         }
     }
     

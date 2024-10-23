@@ -139,6 +139,30 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
  */
 
 
+// MARK: - 重點筆記：為何在 signOut() 中清除訂單和重置顧客資料
+
+/*
+ 1. 確保用戶狀態的清晰與資料一致性：
+
+    - 登出操作意味著用戶即將離開應用的當前狀態，為了保證下次登入的用戶不會看到前一個用戶的資料，需要在登出時清除內存中與訂單相關的所有資料，包括 訂單項目 (orderItems) 和 顧客詳細資料 (customerDetails)。
+    - 如果不進行這樣的清除，可能會導致資料不一致，甚至讓新登錄的用戶看到其他用戶的私人資訊，存在隱私洩露的風險。
+ 
+ 2. 清空當前用戶的所有臨時資料：
+
+    - OrderItemManager.shared.clearOrder() 會清空當前用戶正在處理的訂單項目。
+    - CustomerDetailsManager.shared.resetCustomerDetails() 重置顧客詳細資料，使得 App 重新回到最初的狀態，為下一次使用做好準備。
+ 
+ 3. 避免過期資料干擾：
+
+    - 訂單流程中涉及用戶的多個資料，例如訂單項目列表和顧客資料等。登出後，這些資料應該被重置，以避免在新用戶登入時引入舊資料帶來的干擾。
+    - 保證用戶登錄後看到的資料都是和自己的帳號相關的，不受前一用戶登錄影響，提供更好的用戶體驗。
+ 
+ 4. 集中管理登出行為的邏輯：
+
+    - 在 signOut() 方法中進行訂單和顧客資料的清除，將與登出相關的操作集中在一起，可以使得邏輯更加清晰，避免需要在其他地方手動記得清除這些資料，減少出錯的機會。
+ */
+
+
 // MARK: - 備用（閉包方式）
 /*
  import UIKit
@@ -432,6 +456,7 @@ class FirebaseController {
         do {
             try Auth.auth().signOut()
             OrderItemManager.shared.clearOrder() // 在登出時清除內存中的 orderItems（訂單項目）
+            CustomerDetailsManager.shared.resetCustomerDetails()
         } catch let signOutError as NSError {
             throw signOutError
         }
