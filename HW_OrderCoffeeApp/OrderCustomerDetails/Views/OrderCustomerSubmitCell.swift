@@ -134,7 +134,9 @@ class OrderCustomerSubmitCell: UICollectionViewCell {
     // MARK: - Action Handler
     
     @objc private func submitButtonTapped() {
-        onSubmitTapped?()
+        submitButton.addSpringAnimation(scale: 1.05) {_ in 
+            self.onSubmitTapped?()
+        }
     }
     
     // MARK: - Helper Methods
