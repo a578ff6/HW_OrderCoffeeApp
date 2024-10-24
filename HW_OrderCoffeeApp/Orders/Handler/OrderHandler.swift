@@ -41,6 +41,27 @@
         - 使用委託來處理互動： 使用兩個不同的委託（orderViewInteractionDelegate 和 orderActionDelegate）來確保訂單的修改與刪除邏輯可以由 OrderViewController 實現。
  */
 
+
+// MARK: - 問題「OrderSummaryCollectionViewCell 和 OrderActionButtonsCell 觸發點擊事件」
+
+/*
+ &. 問題
+    - 點擊 OrderSummaryCollectionViewCell 和 OrderActionButtonsCell 時，原本不應該觸發的點擊事件卻被執行，導致顯示「Cell at index 0 was selected」的訊息，甚至進入了不應該的訂單項目詳細頁面。
+    - 實際上，只有 OrderItemCollectionViewCell（訂單項目 Cell）應該能夠被點擊，並進入詳細頁面。
+ 
+ &. 問題的產生
+    - 原本在 UICollectionViewDelegate 的方法 collectionView(_:didSelectItemAt:) 中，沒有針對不同區段的 Cell 進行判斷，導致所有區段的 Cell 都觸發了點擊事件。
+    - 因此，當用戶點擊任何 UICollectionView 的 Cell（包括 OrderSummaryCollectionViewCell 和 OrderActionButtonsCell）時，都會進入同樣的點擊處理邏輯，並執行不應該有的行為。
+ 
+ &. 解決方式
+ 
+    * 增加區段判斷：
+        - 在 didSelectItemAt 方法中，使用 Section(rawValue: indexPath.section) 來判斷當前點擊的 Cell 所屬的區段。
+        - 只處理 .orderItems 區段的點擊：當點擊的 Cell 屬於 .orderItems 區段時，才執行進入訂單項目詳細頁面的操作。
+        - 忽略其他區段：如果是 .summary 或 .actionButtons 區段，直接返回，不進行任何處理。
+ */
+
+
 import UIKit
 
 /// OrderHandler 負責管理訂單視圖的邏輯與資料源
@@ -223,14 +244,24 @@ extension OrderHandler: UICollectionViewDelegate {
     
     /// 處理選擇訂單項目的操作
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Cell at index \(indexPath.row) was selected.")   // 測試 cell 點擊
-        /// 檢查是否有訂單
-        guard OrderItemManager.shared.orderItems.count > 0 else { return }
-        let orderItem = OrderItemManager.shared.orderItems[indexPath.row]
+        guard let sectionType = Section(rawValue: indexPath.section) else { return }
         
-        /// 通知委託處理選中的訂單項目。若委託存在，則由委託實現訂單項目的導航邏輯，顯示`飲品詳細頁面`。
-        guard let delegate = orderViewInteractionDelegate else { return }
-        delegate.modifyOrderItemToDetailViewDetail(orderItem, withID: orderItem.id)
+        /// 只在點擊 `orderItems` 區段的 cell 時才處理點擊
+        switch sectionType {
+        case .orderItems:
+            print("Cell at index \(indexPath.row) was selected.") // 測試 cell 點擊
+            
+            // 確保有訂單項目後才進入詳細頁面
+            guard OrderItemManager.shared.orderItems.count > 0 else { return }
+            let orderItem = OrderItemManager.shared.orderItems[indexPath.row]
+            
+            /// 通知委託處理選中的訂單項目，由委託實現訂單項目的導航邏輯，顯示`飲品詳細頁面`。
+            guard let delegate = orderViewInteractionDelegate else { return }
+            delegate.modifyOrderItemToDetailViewDetail(orderItem, withID: orderItem.id)
+            
+        case .summary, .actionButtons:
+            return
+        }
     }
     
 }
