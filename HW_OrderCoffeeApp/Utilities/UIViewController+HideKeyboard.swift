@@ -5,6 +5,8 @@
 //  Created by 曹家瑋 on 2023/12/14.
 //
 
+/// NOTE: 由於已使用 IQKeyboardManager 進行鍵盤管理，這部分功能已被取代，無需再手動設置。
+/*
 import UIKit
 
 
@@ -23,4 +25,4 @@ extension UIViewController {
         view.endEditing(true)
     }
 }
-
+*/

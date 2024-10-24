@@ -50,6 +50,7 @@
 		9353745B2CBD43B900794A63 /* OrderCustomerNoteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353745A2CBD43B900794A63 /* OrderCustomerNoteCell.swift */; };
 		9353745D2CBF281C00794A63 /* OrderCustomerSubmitCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353745C2CBF281B00794A63 /* OrderCustomerSubmitCell.swift */; };
 		9353745F2CC3D3F800794A63 /* OrderCustomerDetailsHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353745E2CC3D3F800794A63 /* OrderCustomerDetailsHandlerDelegate.swift */; };
+		935374692CCA368700794A63 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 935374682CCA368700794A63 /* IQKeyboardManagerSwift */; };
 		936CFFBD2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */; };
 		936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */; };
 		936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */; };
@@ -332,6 +333,7 @@
 				939BDA572B2ACB8300616D1C /* FirebaseMLModelDownloader in Frameworks */,
 				939BDA4B2B2ACB8300616D1C /* FirebaseFirestoreSwift in Frameworks */,
 				939BDA372B2ACB8300616D1C /* FirebaseAppCheck in Frameworks */,
+				935374692CCA368700794A63 /* IQKeyboardManagerSwift in Frameworks */,
 				937605A02C4BB6BD00B1316C /* GoogleSignIn in Frameworks */,
 				939BDA352B2ACB8300616D1C /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				939BDA3B2B2ACB8300616D1C /* FirebaseAuth in Frameworks */,
@@ -646,12 +648,12 @@
 			isa = PBXGroup;
 			children = (
 				9353744C2CB7EF3900794A63 /* OrderCustomerDetailsView.swift */,
-				9353745C2CBF281B00794A63 /* OrderCustomerSubmitCell.swift */,
+				935374542CB93F6D00794A63 /* OrderCustomerDetailsSectionHeaderView.swift */,
+				935374562CB9A6B300794A63 /* OrderTermsMessageCell.swift */,
+				935374502CB80D0000794A63 /* OrderCustomerInfoCell.swift */,
 				935374582CBB038D00794A63 /* OrderPickupMethodCell.swift */,
 				9353745A2CBD43B900794A63 /* OrderCustomerNoteCell.swift */,
-				935374502CB80D0000794A63 /* OrderCustomerInfoCell.swift */,
-				935374562CB9A6B300794A63 /* OrderTermsMessageCell.swift */,
-				935374542CB93F6D00794A63 /* OrderCustomerDetailsSectionHeaderView.swift */,
+				9353745C2CBF281B00794A63 /* OrderCustomerSubmitCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1104,6 +1106,7 @@
 				9376059F2C4BB6BD00B1316C /* GoogleSignIn */,
 				937605A12C4BB6BD00B1316C /* GoogleSignInSwift */,
 				93755C2E2C821F0F002570A5 /* JGProgressHUD */,
+				935374682CCA368700794A63 /* IQKeyboardManagerSwift */,
 			);
 			productName = HW_OrderCoffeeApp;
 			productReference = 939BD9CC2B2A1B1700616D1C /* HW_OrderCoffeeApp.app */;
@@ -1164,6 +1167,7 @@
 				939BDA772B2FC90300616D1C /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				9376059E2C4BB6BC00B1316C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				93755C2C2C821E23002570A5 /* XCRemoteSwiftPackageReference "JGProgressHUD" */,
+				935374672CCA355A00794A63 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
 			);
 			productRefGroup = 939BD9CD2B2A1B1700616D1C /* Products */;
 			projectDirPath = "";
@@ -1702,6 +1706,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		935374672CCA355A00794A63 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hackiftekhar/IQKeyboardManager.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.2.0;
+			};
+		};
 		93755C2C2C821E23002570A5 /* XCRemoteSwiftPackageReference "JGProgressHUD" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/JonasGessner/JGProgressHUD.git";
@@ -1737,6 +1749,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		935374682CCA368700794A63 /* IQKeyboardManagerSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 935374672CCA355A00794A63 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;
+			productName = IQKeyboardManagerSwift;
+		};
 		93755C2E2C821F0F002570A5 /* JGProgressHUD */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 93755C2C2C821E23002570A5 /* XCRemoteSwiftPackageReference "JGProgressHUD" */;

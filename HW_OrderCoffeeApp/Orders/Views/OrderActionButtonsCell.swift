@@ -219,12 +219,16 @@ class OrderActionButtonsCell: UICollectionViewCell {
     
     /// 當`繼續`按鈕被點擊時呼叫，進入下一個視圖
     @objc private func handleProceedButtonTapped() {
-        onProceedButtonTapped?()
+        proceedButton.addSpringAnimation(scale: 1.05) {_ in 
+            self.onProceedButtonTapped?()
+        }
     }
     
     /// 當`清空訂單`按鈕被點擊時呼叫
     @objc private func handleClearButtonTapped() {
-        onClearButtonTapped?()
+        clearButton.addSpringAnimation(scale: 1.05) {_ in 
+            self.onClearButtonTapped?()
+        }
     }
     
     // MARK: - Update Button State

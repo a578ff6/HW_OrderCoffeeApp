@@ -365,7 +365,6 @@ class EditProfileViewController: UIViewController {
         configureUserData()
         setupNavigationTitle()
         setupNavigationBar()
-        setupKeyboardHandling()
         setupChangePhotoAction()
     }
     
@@ -414,12 +413,6 @@ class EditProfileViewController: UIViewController {
     /// 設置更改照片按鈕的行為
     private func setupChangePhotoAction() {
         editProfileView.changePhotoButton.addTarget(self, action: #selector(changePhotoButtonTapped), for: .touchUpInside)
-    }
-    
-    /// 設置鍵盤處理
-    private func setupKeyboardHandling() {
-        setUpHideKeyboardOntap()
-        setupKeyboardObservers(for: editProfileView.tableView)
     }
     
     // MARK: - Actions (Button Handlers)

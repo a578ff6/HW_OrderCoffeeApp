@@ -283,14 +283,8 @@ class OrderCustomerDetailsViewController: UIViewController {
             do {
                 let userDetails = try await FirebaseController.shared.getCurrentUserDetails()
                 CustomerDetailsManager.shared.populateCustomerDetails(from: userDetails)
-                
                 // 刷新 collection view 以顯示已填寫的資料
                 orderCustomerDetailsView.collectionView.reloadData()
-                
-                // 配置提交按鈕的初始狀態
-                // 註解掉這一行是因為提交按鈕的狀態已在 cellForItemAt 方法中處理，保持代碼簡潔
-                // updateSubmitButtonState()
-                
             } catch {
                 print("獲取用戶資料時發生錯誤：\(error)")
             }
@@ -335,13 +329,19 @@ extension OrderCustomerDetailsViewController: OrderCustomerDetailsHandlerDelegat
     ///
     /// 當用戶點擊提交按鈕時調用，這裡會調用 OrderManager 來`提交訂單`並在成功或失敗後給予回應。
     func submitOrder() {
-        Task {
-            do {
-                try await OrderManager.shared.submitOrder()
-                print("訂單已成功提交")
-                // 這裡可以做其他操作，例如返回上個畫面或更新 UI
-            } catch {
-                print("訂單提交失敗：\(error.localizedDescription)")
+        AlertService.showAlert(withTitle: "確認提交訂單", message: "您確定要提交訂單嗎？", inViewController: self, showCancelButton: true) { [weak self] in
+            guard let self = self else { return }
+            
+            Task {
+                do {
+                    try await OrderManager.shared.submitOrder()
+                    print("訂單已成功提交")
+                    // 提交成功後的操作，例如返回上個畫面或更新 UI
+                } catch {
+                    print("訂單提交失敗：\(error.localizedDescription)")
+                    // 顯示錯誤提示(或者改成跳出一個失敗的畫面)
+                    AlertService.showAlert(withTitle: "提交失敗", message: "訂單提交過程中出現錯誤，請稍後再試。", inViewController: self, showCancelButton: false, completion: nil)
+                }
             }
         }
     }
