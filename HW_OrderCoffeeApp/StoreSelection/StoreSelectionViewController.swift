@@ -77,32 +77,62 @@
  
  1. 類別說明
     - StoreSelectionViewController 用來呈現地圖視圖，並顯示所有店鋪的位置，讓使用者可以選擇特定的店鋪。
-    - 這個類別包含地圖視圖、店鋪資料以及和 StoreSelectionHandler 的交互邏輯。
+    - 此類別包含地圖視圖、店鋪資料，以及與 StoreSelectionHandler 和 LocationManagerHandler 的交互邏輯。
+    - 定位功能已抽離至 LocationManagerHandler 中，以更好地管理和處理位置授權與更新。
  
  2. 使用的屬性
     - storeSelectionView：包含地圖視圖的自訂視圖。
     - stores：存放從 Firebase 取得的所有店鋪資料。
     - todayOpeningHours：儲存每個店鋪今日的營業時間。
     - storeSelectionHandler：用於處理地圖上和店鋪相關的互動操作。
+    - locationManagerHandler：用於管理位置更新的 Handler，負責獲取和監控使用者的位置變化，並更新店鋪距離。
  
  3. 主要方法
-    
+
     * setupHandler()：
         - 將地圖視圖的代理設置為 StoreSelectionHandler，並將 StoreSelectionHandler 的代理設置為 StoreSelectionViewController，以便協作處理地圖上的選擇動作及店鋪資訊的顯示。
  
+    * setupLocationManagerHandler()：
+        - 設置 LocationManagerHandler 的代理，並啟動位置更新。
+        - 透過委派模式，當位置授權和更新變化時，LocationManagerHandler 會通知 StoreSelectionViewController。
+ 
     * fetchAndDisplayStores()：
-        - 從 Firebase 獲取所有店鋪資料，並將每個店鋪以標註 (annotation) 的方式顯示在地圖上。
+        - 從 Firebase 獲取所有店鋪資料，並將每個店鋪以標註 (annotation) 的方式顯示在地圖上。 
  
     * formatPhoneNumber(_:)：
         - 格式化店鋪的電話號碼，使其符合台灣的常見格式，例如添加區域碼和適當的符號分隔。
  
  4. StoreSelectionHandlerDelegate 作用
-    - 代理模式的使用：StoreSelectionHandlerDelegate 用於讓 StoreSelectionHandler 請求資料和顯示店鋪詳細資訊，而這些邏輯由 StoreSelectionViewController 來實作。這樣分離了視圖控制器和地圖互動邏輯。
-    - 使得地圖的交互邏輯 (StoreSelectionHandler) 和資料的管理 (StoreSelectionViewController) 保持分離。
+    - 代理模式的使用：StoreSelectionHandlerDelegate 用於讓 StoreSelectionHandler 請求資料並顯示店鋪詳細資訊，而這些邏輯由 StoreSelectionViewController 實作，從而將視圖控制器和地圖交互邏輯分離。
+    - 距離計算的整合：新增了 fetchDistanceToStore(for:) 方法，使得在使用者點選店鋪標註時，可以顯示與該店鋪的距離。
+
+ 5. 定位與距離計算部分
  
+ * 位置獲取與更新：
+    - setupLocationManagerHandler()：
+        - 設置 LocationManagerHandler 並啟動位置更新。
+ 
+    - didUpdateUserLocation(location:)：
+        - 當位置更新時，由 LocationManagerHandler 通知代理 (StoreSelectionViewController) 並進一步調用 StoreManager.shared.updateUserLocationAndCalculateDistances() 更新與店鋪的距離。
+ 
+    - didReceiveLocationAuthorizationDenied：
+        - 當位置權限被拒絕時調用，顯示提示訊息，引導使用者前往設定頁面開啟位置權限。
+
+ * 距離展示：
+    - 使用 fetchDistanceToStore(for:) 方法（StoreSelectionHandlerDelegate 的實現）來查找特定店鋪與使用者之間的距離，並在店鋪詳細信息的彈窗中顯示該距離。
+    - 該方法最終調用的是 StoreManager 中的 getDistanceToStore(for:) 方法來獲取距離資料，從而增強使用者對店鋪位置的感知。 
+    - 在店鋪詳細信息的彈窗中顯示該距離，增強使用者對店鋪位置的感知。
+
  5. 想法
-    - 清晰的職責分離：StoreSelectionViewController 負責資料的獲取和顯示，StoreSelectionHandler 負責地圖交互。
-    - 提高可重用性：如果需要重新設計地圖交互，修改 StoreSelectionHandler 不會影響 StoreSelectionViewController。
+ 
+    * 清晰的職責分離：
+        - StoreSelectionViewController 負責資料的獲取和顯示。
+        - StoreSelectionHandler 負責地圖交互。
+        - LocationManagerHandler 負責位置更新和授權處理，減少了重複的邏輯並簡化了視圖控制器的負擔。
+ 
+    * 提高可重用性：
+        - 如果需要重新設計地圖交互，修改 StoreSelectionHandler 不會影響 StoreSelectionViewController。
+        - 使用 LocationManagerHandler 集中處理位置邏輯，讓其他視圖控制器可以重複使用這部分的功能。
  */
 
 
@@ -161,6 +191,88 @@
    - 例如，也因為改成純數字，因此從資料庫中取出的電話號碼。所以不用在經過 `replacingOccurrences(of:)` 進行去除所有非數字字符後再使用。
  */
 
+// MARK: -  StoreSelectionHandler vs. LocationManagerHandler 的責任劃分
+
+/*
+ ## StoreSelectionHandler vs. LocationManagerHandler 的責任劃分
+ 
+ &. StoreSelectionHandler：
+
+    * 職責：
+        - 處理「地圖視圖上的交互邏輯」。
+    
+    * 主要任務：
+        - 管理使用者與地圖之間的互動，例如選取地圖上的標註（annotation）以顯示店鋪詳細資訊。
+        - 簡單來說，`StoreSelectionHandler` 專注於地圖上的點選與標註的互動，因此它的職責應聚焦於處理使用者如何與地圖進行交互。
+ 
+    * 責任劃分：
+        - 確保與地圖標註相關的所有操作都集中在這裡，減少視圖控制器的複雜度，便於管理地圖交互的相關邏輯。
+ 
+ &. LocationManagerHandler：
+
+    * 職責：
+        - 處理「定位和位置更新」。
+
+    * 主要任務：
+        - 管理位置權限的請求，例如首次請求定位權限以及監聽權限變更。
+        - 追蹤用戶的實時位置，並在位置更新時通知代理，以便其他模組根據位置變化執行相應邏輯。
+
+    * 責任劃分：
+        - 所有與位置權限、位置更新相關的邏輯都應集中在 `LocationManagerHandler` 中，使得位置管理的邏輯與其他應用邏輯分離，保持職責單一。
+
+    * 設計優勢
+        - 透過使用代理 (`delegate`) 通知位置更新或權限變更，這樣可以讓 `LocationManagerHandler` 易於與不同的視圖控制器進行整合，提高代碼的可重用性
+ */
+
+// MARK: - 定位與店面距離處理步驟總結
+
+/*
+ ## 定位與店面距離處理步驟總結
+ 
+    - 在 App 中設置「與門市的距離」功能，能夠提升使用者體驗，幫助他們找到最適合的店鋪。
+
+ 1. 先處理定位
+    - 定位是整個流程的第一步，需要獲取使用者的當前位置才能計算與門市的距離。這部分由 LocationManagerHandler 來實現，使用 Core Location 框架來管理位置更新。
+
+    * 請求定位權限：
+        - 在 LocationManagerHandler 中使用 CLLocationManager 請求和獲取使用者的定位權限。
+        - 在初始化時（init() 方法），設定 CLLocationManager 的代理，並設置精度（desiredAccuracy）。
+        - 使用 startLocationUpdates() 方法請求權限，並根據授權狀態來決定是否啟動位置更新。
+
+    * 獲取使用者的當前位置：
+        - 當 CLLocationManager 更新到使用者的位置時，LocationManagerHandler 會通過代理（LocationManagerHandlerDelegate）通知 StoreSelectionViewController，將最新的位置信息傳遞過去。
+ 
+ 2. 計算與每個門市的距離
+    - 當定位獲取成功後，可以進行距離計算，這部分由 StoreManager 負責處理。
+
+    * 在 StoreManager 中集中處理距離計算：
+        - 使用 updateUserLocationAndCalculateDistances(userLocation: stores:) ，計算使用者當前位置到每個店鋪的距離，並將結果保存起來。
+        - 使用者的當前位置通過 LocationManagerHandler 傳遞給 StoreSelectionViewController，再傳遞給 StoreManager 進行距離計算，這樣能保持位置和店鋪數據的一致性。
+ 
+ 3. 顯示距離資訊
+    
+    * 地圖上的互動與詳細資訊顯示：
+        - 在地圖上顯示店鋪位置，並標註每個店鋪的距離。使用 StoreSelectionHandler 處理地圖視圖的互動，當使用者選取地圖上的標註時，顯示店鋪的詳細資訊，包括與使用者的距離。
+        - 使用 StoreSelectionHandlerDelegate 取得店鋪距離，並在顯示店鋪詳細訊息的彈窗中顯示，例如「距離：2.5 公里」。
+ 
+ 4. 設計思路與建議
+
+    * 定位與距離計算的順序：
+        - 先處理定位，再計算距離。定位是距離計算的基礎，只有獲取到使用者位置後，才能計算與店鋪的距離。
+ 
+    * 集中管理距離計算的邏輯：
+        - 距離計算邏輯應放置在 StoreManager 中，這樣能統一處理與店鋪數據相關的操作，保持代碼的可維護性和邏輯的一致性。
+ 
+    * 保持視圖控制器的簡潔：
+        - StoreSelectionViewController 應該專注於視圖展示和用戶互動，避免混合太多數據處理的邏輯。
+        - 因此，將距離計算集中在 StoreManager 和定位邏輯集中在 LocationManagerHandler 中，是一個較好的設計選擇。
+ 
+ 5. 總結
+    - 先處理定位：使用 LocationManagerHandler 獲取使用者的位置，並通過代理通知 StoreSelectionViewController。
+    - 再計算距離：使用 StoreManager 計算每個店鋪到使用者之間的距離，並保存結果。
+    - 最佳化使用者體驗：當定位成功後，根據計算的距離顯示最接近的店鋪，或標示距離遠近，讓使用者可以方便地選擇合適的店鋪。
+ */
+
 
 import UIKit
 import MapKit
@@ -178,6 +290,8 @@ class StoreSelectionViewController: UIViewController {
     private var todayOpeningHours: [String: String] = [:]
     /// 處理地圖上相關互動的 handler
     private let storeSelectionHandler = StoreSelectionHandler()
+    /// 處理定位距離的 handler
+    private let locationManagerHandler = LocationManagerHandler()
     
     // MARK: - Lifecycle Methods
     
@@ -189,6 +303,7 @@ class StoreSelectionViewController: UIViewController {
         super.viewDidLoad()
         setupNavigationTitle()
         setupHandler()
+        setupLocationManagerHandler()
         fetchAndDisplayStores()
     }
     
@@ -205,6 +320,12 @@ class StoreSelectionViewController: UIViewController {
     private func setupHandler() {
         storeSelectionView.mapView.delegate = storeSelectionHandler
         storeSelectionHandler.delegate = self
+    }
+    
+    /// 設置 setupLocationManagerHandler 的代理
+    private func setupLocationManagerHandler() {
+        locationManagerHandler.delegate = self
+        locationManagerHandler.startLocationUpdates()
     }
 
     // MARK: - Fetch Stores and Display
@@ -255,6 +376,23 @@ class StoreSelectionViewController: UIViewController {
     
 }
 
+// MARK: - LocationManagerHandlerDelegate
+extension StoreSelectionViewController: LocationManagerHandlerDelegate {
+    
+    /// 當位置更新時調用
+    /// - Parameter location: 使用者當前的位置 (`CLLocation`)
+    /// 調用 StoreManager 更新使用者位置並計算與所有店鋪之間的距離。
+    func didUpdateUserLocation(location: CLLocation) {
+        StoreManager.shared.updateUserLocationAndCalculateDistances(userLocation: location, stores: stores)
+    }
+    
+    /// 當位置權限被拒絕時調用
+    /// 顯示提示訊息，引導使用者前往設定頁面開啟位置權限。
+    func didReceiveLocationAuthorizationDenied() {
+        AlertService.showAlert(withTitle: "位置權限已關閉", message: "請前往設定開啟位置權限，以使用附近店鋪的相關功能。", inViewController: self, showCancelButton: true, completion: nil)
+    }
+}
+
 // MARK: - StoreSelectionHandlerDelegate
 extension StoreSelectionViewController: StoreSelectionHandlerDelegate {
     
@@ -268,13 +406,20 @@ extension StoreSelectionViewController: StoreSelectionHandlerDelegate {
         return todayOpeningHours[storeId] ?? "營業時間未提供"
     }
     
+    /// 取得特定店鋪的距離
+    func fetchDistanceToStore(for storeId: String) -> CLLocationDistance? {
+        return StoreManager.shared.getDistanceToStore(for: storeId)
+    }
+    
     /// 顯示選定店鋪的詳細訊息
     func presentStoreDetailsAlert(for store: Store, todayOpeningHours: String) {
         let formattedPhoneNumber = formatPhoneNumber(store.phoneNumber)
+        let distance = fetchDistanceToStore(for: store.id)
+        let distanceString = distance != nil ? String(format: "%.2f 公里", distance! / 1000) : "距離未提供"
         
         let alertController = UIAlertController(
             title: store.name,
-            message: "地址: \(store.address)\n電話: \(formattedPhoneNumber)\n今日營業時間: \(todayOpeningHours)",
+            message: "地址: \(store.address)\n電話: \(formattedPhoneNumber)\n今日營業時間: \(todayOpeningHours)\n距離: \(distanceString)",
             preferredStyle: .actionSheet
         )
         
@@ -293,17 +438,6 @@ extension StoreSelectionViewController: StoreSelectionHandlerDelegate {
     
 }
 
-
-// MARK: - 測試想法
-/*
- private func displayStoresOnMap(_ stores: [Store]) {
-     for store in stores {
-         let annotation = MKPointAnnotation()
-         annotation.title = store.name
-         annotation.coordinate = CLLocationCoordinate2D(latitude: store.latitude, longitude: store.longitude)
-         storeSelectionView.mapView.addAnnotation(annotation)
-     }
- */
 
 
 // MARK: - 初期測試用

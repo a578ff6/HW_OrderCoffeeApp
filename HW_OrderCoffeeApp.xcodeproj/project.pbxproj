@@ -58,6 +58,9 @@
 		935374742CCAC17B00794A63 /* StoreSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374732CCAC17B00794A63 /* StoreSelectionView.swift */; };
 		935374762CCAC1A400794A63 /* StoreSelectionLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374752CCAC1A400794A63 /* StoreSelectionLayoutProvider.swift */; };
 		935374782CCCCC7800794A63 /* StoreSelectionHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374772CCCCC7800794A63 /* StoreSelectionHandlerDelegate.swift */; };
+		9353747A2CCD6B7200794A63 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 935374792CCD6B7200794A63 /* CoreLocation.framework */; };
+		9353747C2CCD7C9A00794A63 /* LocationManagerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353747B2CCD7C9A00794A63 /* LocationManagerHandler.swift */; };
+		9353747E2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353747D2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift */; };
 		936CFFBD2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */; };
 		936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */; };
 		936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */; };
@@ -239,6 +242,9 @@
 		935374732CCAC17B00794A63 /* StoreSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSelectionView.swift; sourceTree = "<group>"; };
 		935374752CCAC1A400794A63 /* StoreSelectionLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSelectionLayoutProvider.swift; sourceTree = "<group>"; };
 		935374772CCCCC7800794A63 /* StoreSelectionHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSelectionHandlerDelegate.swift; sourceTree = "<group>"; };
+		935374792CCD6B7200794A63 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		9353747B2CCD7C9A00794A63 /* LocationManagerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerHandler.swift; sourceTree = "<group>"; };
+		9353747D2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerHandlerDelegate.swift; sourceTree = "<group>"; };
 		936CFFBA2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HW_OrderCoffeeAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITests.swift; sourceTree = "<group>"; };
 		936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -338,6 +344,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9353747A2CCD6B7200794A63 /* CoreLocation.framework in Frameworks */,
 				939BDA412B2ACB8300616D1C /* FirebaseDatabase in Frameworks */,
 				939BDA4F2B2ACB8300616D1C /* FirebaseFunctionsCombine-Community in Frameworks */,
 				939BDA472B2ACB8300616D1C /* FirebaseFirestore in Frameworks */,
@@ -704,8 +711,10 @@
 				935374732CCAC17B00794A63 /* StoreSelectionView.swift */,
 				9353746D2CCABDCA00794A63 /* StoreSelectionHandler.swift */,
 				9353746B2CCABD6900794A63 /* StoreSelectionViewController.swift */,
-				9353746F2CCABDEB00794A63 /* Store.swift */,
 				935374712CCABE0100794A63 /* StoreManager.swift */,
+				9353746F2CCABDEB00794A63 /* Store.swift */,
+				9353747B2CCD7C9A00794A63 /* LocationManagerHandler.swift */,
+				9353747D2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift */,
 			);
 			path = StoreSelection;
 			sourceTree = "<group>";
@@ -828,6 +837,7 @@
 		93755C2D2C821E73002570A5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				935374792CCD6B7200794A63 /* CoreLocation.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1309,6 +1319,7 @@
 				9376059B2C4AAA9C00B1316C /* UIColor+CustomColors.swift in Sources */,
 				935374512CB80D0000794A63 /* OrderCustomerInfoCell.swift in Sources */,
 				93B9DC812C32D7740050BC3F /* OrderManager.swift in Sources */,
+				9353747C2CCD7C9A00794A63 /* LocationManagerHandler.swift in Sources */,
 				935374102C9B218800794A63 /* DrinkImageCollectionViewCell.swift in Sources */,
 				939BD9F12B2AB9C200616D1C /* SignUpViewController.swift in Sources */,
 				93DB1D2F2C461F9D00BA2CC1 /* KeychainManager.swift in Sources */,
@@ -1334,6 +1345,7 @@
 				9353742B2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift in Sources */,
 				93B9DC762C3042710050BC3F /* MenuLayoutProvider.swift in Sources */,
 				935374292CA4502B00794A63 /* NoFavoritesView.swift in Sources */,
+				9353747E2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift in Sources */,
 				935374742CCAC17B00794A63 /* StoreSelectionView.swift in Sources */,
 				93755C352C83520A002570A5 /* MenuCollectionHandler.swift in Sources */,
 				93755C3C2C838299002570A5 /* Website.swift in Sources */,

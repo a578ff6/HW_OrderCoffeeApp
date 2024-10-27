@@ -35,6 +35,43 @@
     - 高靈活性：使用代理讓處理店鋪的展示邏輯變得靈活。如果要修改資料的取得方式或顯示方式，只需修改代理的方法實現，而不需要修改 StoreSelectionHandler 的內部邏輯。
  */
 
+// MARK: - fetchDistanceToStore 方法重點筆記
+
+
+/*
+ ## fetchDistanceToStore 方法重點筆記
+ 
+ 1. 方法功能：
+    - 該方法的作用是從 storeDistances 字典中，查找並返回特定店鋪與使用者之間的距離。
+ 
+ 2. 參數與返回值：
+
+    * 參數：
+        - storeId: String：店鋪的唯一標識符，用於查找該店鋪的距離。
+ 
+    * 返回值：
+        - 返回該店鋪與使用者之間的距離 (CLLocationDistance)。
+        - 如果該店鋪的距離尚未計算，則返回 nil。
+ 
+    * 使用方式：
+        - 該方法由 StoreSelectionHandlerDelegate 的代理協議提供，因此可以在代理中使用此方法來獲取特定店鋪的距離，例如在用戶選擇店鋪時顯示該店鋪的詳細資訊時使用。
+ 
+    * 記錄位置：
+        - 由於距離的計算依賴於使用者的當前位置，因此需要在獲取使用者位置後，更新 storeDistances 字典。
+        - 在 StoreSelectionViewController 中，透過 CLLocationManager 來獲取使用者的位置，並使用 StoreManager.shared.calculateDistances() 方法計算每個店鋪的距離，然後更新 storeDistances。
+
+ 
+ &. 使用 fetchDistanceToStore 的流程：
+ 
+ 1. 位置獲取：
+    - StoreSelectionViewController 使用 CLLocationManager 來獲取使用者的當前位置。
+    - 當位置更新後，調用 StoreManager.shared.calculateDistances() 來計算每個店鋪的距離，並將結果保存在 storeDistances 中。
+ 
+ 2. 距離展示：
+    - 當使用者選擇某個店鋪時，透過 fetchDistanceToStore(for:) 方法查找該店鋪與使用者之間的距離。
+    - 在店鋪詳細信息的彈窗中展示該距離，增強使用者對店鋪位置的感知。
+ */
+
 import Foundation
 import CoreLocation
 
@@ -56,4 +93,9 @@ protocol StoreSelectionHandlerDelegate: AnyObject {
     ///   - todayOpeningHours: 該店鋪今日的營業時間
     func presentStoreDetailsAlert(for store: Store, todayOpeningHours: String)
     
+    /// 取得特定店鋪的距離（通過 StoreManager）
+    /// - Parameter storeId: 店鋪的唯一標識符
+    /// - Returns: 與用戶位置之間的距離
+    func fetchDistanceToStore(for storeId: String) -> CLLocationDistance?
+
 }
