@@ -6,6 +6,10 @@
 	<string>我們需要訪問您的照片庫來讓您選擇大頭照。</string>
 	<key>NSCameraUsageDescription</key>
 	<string>我們需要使用您的相機來讓您拍攝照片。</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>我們需要訪問您的位置以顯示距離最近的店鋪。</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>我們需要持續使用您的位置來提供最佳的店鋪導航服務。</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
