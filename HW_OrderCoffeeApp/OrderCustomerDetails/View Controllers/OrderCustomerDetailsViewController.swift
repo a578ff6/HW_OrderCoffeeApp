@@ -214,8 +214,26 @@
 
         - cellForItemAt 負責初始化狀態，確保在 Cell 創建時狀態正確。
         - updateSubmitButtonState() 負責在資料變更時動態更新，保持按鈕狀態即時響應。
-
  */
+
+
+// MARK: -  navigateToStoreSelection 的功能和設計
+/*
+ ## navigateToStoreSelection 的功能和設計
+ 
+ * 功能目的：
+    - navigateToStoreSelection 方法主要用於導航至 StoreSelectionViewController，讓用戶可以選擇取件門市。這對於支持多門市取件選擇的應用程式非常重要。
+
+ * 設計重點：
+    - 利用 navigationController?.pushViewController 實現畫面切換，這樣可以保持導航欄的返回功能，增強用戶體驗。
+ 
+ * 錯誤處理：
+    - 若 ID 無法匹配到對應的 ViewController，則會輸出錯誤訊息以便於調試和避免崩潰。
+ 
+ * 還沒處理：
+    - 可以考慮加入一個回調或委託，以便在返回 OrderCustomerDetailsViewController 後更新選擇的門市名稱顯示。
+ */
+
 
 import UIKit
 
@@ -345,31 +363,19 @@ extension OrderCustomerDetailsViewController: OrderCustomerDetailsHandlerDelegat
             }
         }
     }
+    
+    /// 導航至 StoreSelectionViewController 來選擇取件門市
+    func navigateToStoreSelection() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let storeSelectionVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.storeSelectionViewController) as? StoreSelectionViewController {
+            let navigationController = UINavigationController(rootViewController: storeSelectionVC)
+            // 設置模態展示方式
+            navigationController.modalPresentationStyle = .fullScreen
+            present(navigationController, animated: true, completion: nil)
+        } else {
+            print("無法找到 ID 為 StoreSelectionViewControllerID 的視圖控制器")
+        }
+
+    }
+    
 }
-
-
-
-// MARK: - 初步構想 Methods（進入到）
-
-/*
- /// 打開店家選擇視圖（可能會使用到委託）
- func openStoreSelectionView() {
-     // 例如：使用導航控制器推入一個選擇店家的頁面
-     let storeSelectionViewController = StoreSelectionViewController()
-     storeSelectionViewController.onStoreSelected = { [weak self] storeName in
-         self?.updateSelectedStore(storeName)
-     }
-     navigationController?.pushViewController(storeSelectionViewController, animated: true)
- }
-
- /// 更新選擇的店家名稱
-  func updateSelectedStore(_ storeName: String) {
-      CustomerDetailsManager.shared.updateStoreName(storeName)
-      orderCustomerDetailsView.collectionView.reloadData()
-  }
-
-  /// 驗證地址
-  func validateAddress(_ address: String) {
-      // 在這裡實現地址驗證的邏輯
-  }
- */

@@ -251,17 +251,18 @@
         <!--Store Selection View Controller-->
         <scene sceneID="rzS-Lf-Z8O">
             <objects>
-                <viewController id="Yr4-Jo-x2W" customClass="StoreSelectionViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="StoreSelectionViewController" id="Yr4-Jo-x2W" customClass="StoreSelectionViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="PRP-gW-Vup">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="4qC-CM-Mtg"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
+                    <navigationItem key="navigationItem" id="fGc-rq-Uac"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pml-gz-DDr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="8621" y="1039"/>
+            <point key="canvasLocation" x="8647" y="1039"/>
         </scene>
         <!--User Profile-->
         <scene sceneID="db4-xi-11o">

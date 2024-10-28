@@ -40,6 +40,8 @@ struct Constants {
         static let favoritesViewController = "FavoritesViewController"
         
         static let orderCustomerDetailsViewController = "OrderCustomerDetailsViewController"
+        
+        static let storeSelectionViewController = "StoreSelectionViewController"
     }
     
     /// 定義結構 `Segue`，用於存放與 Segue 相關的常數

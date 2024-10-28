@@ -414,7 +414,7 @@ extension OrderCustomerDetailsHandler: UICollectionViewDataSource {
         cell.onStoreButtonTapped = { [weak self] in
             // 顯示店家選擇視圖控制器的邏輯
             // 這裡可以實現一個導航到店家選擇的功能，然後返回時更新店家名稱
-            // 可用 self?.delegate?.navigateToStoreSelection() 等方法
+            self?.delegate?.navigateToStoreSelection()
         }
         
         return cell
