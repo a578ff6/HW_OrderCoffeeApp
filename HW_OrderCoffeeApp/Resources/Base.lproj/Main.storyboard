@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Yr4-Jo-x2W">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="hQI-nO-bJh">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -248,7 +248,7 @@
             </objects>
             <point key="canvasLocation" x="7682" y="1039"/>
         </scene>
-        <!--Store Selection View Controller-->
+        <!--Item-->
         <scene sceneID="rzS-Lf-Z8O">
             <objects>
                 <viewController storyboardIdentifier="StoreSelectionViewController" id="Yr4-Jo-x2W" customClass="StoreSelectionViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -258,11 +258,12 @@
                         <viewLayoutGuide key="safeArea" id="4qC-CM-Mtg"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
+                    <tabBarItem key="tabBarItem" title="Item" id="840-hN-J1X"/>
                     <navigationItem key="navigationItem" id="fGc-rq-Uac"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pml-gz-DDr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="8647" y="1039"/>
+            <point key="canvasLocation" x="8621" y="1039"/>
         </scene>
         <!--User Profile-->
         <scene sceneID="db4-xi-11o">

@@ -6,25 +6,36 @@
 //
 
 // MARK: - StoreInfoViewController 重點筆記
-/*
+/**
  ## StoreInfoViewController 重點筆記
 
- 1. 控制器分離與視圖組合
-    - StoreInfoViewController 中使用了 StoreInfoView 作為控制器的根視圖，使視圖層邏輯更加清晰，便於重用和維護。
+ 1. `控制器分離與視圖組合`
+    - `StoreInfoViewController`中使用了`StoreInfoView` 作為控制器的根視圖，使視圖層邏輯更加清晰，便於重用和維護。
 
- 2. 根視圖使用 loadView 設置
+ 2. `根視圖使用 loadView 設置`
     - 通過 loadView() 方法來指定控制器的根視圖為 StoreInfoView，這樣視圖的佈局可以完全由 StoreInfoView 自行管理，而 StoreInfoViewController 只需專注於控制器的邏輯部分。
 
- 3. 雙視圖切換的邏輯
+ 3. `雙視圖切換的邏輯`
     - StoreInfoView 包含 DefaultInfoView 和 SelectStoreInfoView 兩個子視圖，分別用來顯示「初始提示資訊」和「選擇的門市資訊」。
     - 通過隱藏與顯示這兩個子視圖來實現界面的狀態切換，使邏輯簡單明確。
 
- 4. 視圖的設置與資料配置分離
+ 4. `視圖的設置與資料配置分離`
     - setupViews() 方法負責定義視圖的佈局，而 configure(with:) 方法負責將資料填充到 UI 元素中，確保佈局與數據配置的分離。
 
- 5. 按鈕行為建議
+ 5. `按鈕行為建議`
     - 「撥打電話」按鈕的回調行為使用 Action Sheet，提供更好的用戶體驗，讓用戶在執行撥打電話前能夠確認。
     - 「選擇門市」按鈕可根據具體邏輯，使用 Alert 或 Action Sheet 來提示用戶後續動作的確認，具體取決於交互需求。
+ 
+ 6. `使用 Delegate 與 StoreSelectionResultDelegate 的設置`
+     - `delegate` 屬性設置為 `StoreSelectionResultDelegate`，用於在用戶選擇完門市後通知主畫面更新顯示，實現了「店鋪選擇畫面」與主畫面之間的鬆耦合。
+ 
+ 7. `設計考量`
+    
+    * `資料一致性`：
+        - 使用代理模式 (`StoreSelectionResultDelegate`) 來通知主畫面選擇結果，確保`選擇的門市`能即時`同步至訂單顯示`。
+    
+    * `用戶確認`：
+        - 在選擇店鋪前加入確認提示 (`Alert`)，減少誤操作的可能性，提升用戶體驗。
  */
 
 
@@ -41,6 +52,11 @@ class StoreInfoViewController: UIViewController {
     /// StoreInfoView 是自定義的 UIView，包含「預設提示資訊視圖」與「選擇的門市資訊視圖」
     private let storeInfoView = StoreInfoView()
     
+    // MARK: - Delegate
+    
+    /// 用於通知主畫面選擇的門市結果，保持主畫面與門市選擇間的同步
+    weak var delegate: StoreSelectionResultDelegate?
+
     // MARK: - Lifecycle Methods
     
     override func loadView() {
@@ -104,8 +120,9 @@ class StoreInfoViewController: UIViewController {
     private func setupSelectStoreAction(for store: Store) {
         storeInfoView.selectStoreInfoView.onSelectStoreTapped = {
             AlertService.showAlert(withTitle: "選擇門市", message: "你確定要選擇「\(store.name)」作為取件門市嗎？", inViewController: self, showCancelButton: true) {
-                // 根據App邏輯處理選擇店鋪的動作
-                // self.setSelectedStore(store)
+                // 通知主畫面已選擇的門市名稱
+                self.delegate?.storeSelectionDidComplete(with: store.name)
+                self.dismiss(animated: true, completion: nil)
             }
         }
     }
