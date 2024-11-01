@@ -1,5 +1,5 @@
 {
-  "originHash" : "d9060bdfac6a9ab645493e9d0045de30dbd62073e931c56921ac03ccbe6366c8",
+  "originHash" : "fa9485a943e60b7f4231a30d986421ef39bebca03ebca85f62423b4016a90317",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -35,6 +35,15 @@
       "state" : {
         "revision" : "eca84fd638116dd6adb633b5a3f31cc7befcbb7d",
         "version" : "10.29.0"
+      }
+    },
+    {
+      "identity" : "floatingpanel?tab=readme-ov-file",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/scenee/FloatingPanel?tab=readme-ov-file",
+      "state" : {
+        "revision" : "b6e8928b1a3ad909e6db6a0278d286c33cfd0dc3",
+        "version" : "2.8.6"
       }
     },
     {

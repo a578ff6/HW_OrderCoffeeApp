@@ -54,6 +54,30 @@ class AlertService {
         viewController.present(alert, animated: true, completion: nil)
     }
     
+    /// 用於創建並顯示一個標準的 ActionSheet，並在點擊後執行 completion
+    static func showActionSheet(withTitle title: String, message: String, inViewController viewController: UIViewController, showCancelButton: Bool = true, completion: (() -> Void)? = nil) {
+        let actionSheet = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+        
+        let confirmAction = createAlertAction(title: "確定", style: .default, color: UIColor.deepGreen) {
+            completion?()
+        }
+        actionSheet.addAction(confirmAction)
+        
+        if showCancelButton {
+            let cancelAction = createAlertAction(title: "取消", style: .cancel, color: UIColor.deepGreen)
+            actionSheet.addAction(cancelAction)
+        }
+        
+        // 如果是在 iPad 上需要指定 popover 的 sourceView
+        if let popoverPresentationController = actionSheet.popoverPresentationController {
+            popoverPresentationController.sourceView = viewController.view
+            popoverPresentationController.sourceRect = CGRect(x: viewController.view.bounds.midX, y: viewController.view.bounds.midY, width: 0, height: 0)
+            popoverPresentationController.permittedArrowDirections = []
+        }
+        
+        viewController.present(actionSheet, animated: true, completion: nil)
+    }
+    
     /// 按鈕創建
     private static func createAlertAction(title: String, style: UIAlertAction.Style, color: UIColor, handler: (() -> Void)? = nil) -> UIAlertAction {
         let action = UIAlertAction(title: title, style: style) { _ in
