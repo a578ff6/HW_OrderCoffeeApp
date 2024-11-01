@@ -52,12 +52,11 @@
 		9353745F2CC3D3F800794A63 /* OrderCustomerDetailsHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353745E2CC3D3F800794A63 /* OrderCustomerDetailsHandlerDelegate.swift */; };
 		935374692CCA368700794A63 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 935374682CCA368700794A63 /* IQKeyboardManagerSwift */; };
 		9353746C2CCABD6900794A63 /* StoreSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353746B2CCABD6900794A63 /* StoreSelectionViewController.swift */; };
-		9353746E2CCABDCA00794A63 /* StoreSelectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353746D2CCABDCA00794A63 /* StoreSelectionHandler.swift */; };
+		9353746E2CCABDCA00794A63 /* StoreSelectionMapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353746D2CCABDCA00794A63 /* StoreSelectionMapHandler.swift */; };
 		935374702CCABDEB00794A63 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353746F2CCABDEB00794A63 /* Store.swift */; };
 		935374722CCABE0100794A63 /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374712CCABE0100794A63 /* StoreManager.swift */; };
-		935374742CCAC17B00794A63 /* StoreSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374732CCAC17B00794A63 /* StoreSelectionView.swift */; };
-		935374762CCAC1A400794A63 /* StoreSelectionLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374752CCAC1A400794A63 /* StoreSelectionLayoutProvider.swift */; };
-		935374782CCCCC7800794A63 /* StoreSelectionHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374772CCCCC7800794A63 /* StoreSelectionHandlerDelegate.swift */; };
+		935374742CCAC17B00794A63 /* StoreSelectionMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374732CCAC17B00794A63 /* StoreSelectionMapView.swift */; };
+		935374782CCCCC7800794A63 /* StoreSelectionMapHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935374772CCCCC7800794A63 /* StoreSelectionMapHandlerDelegate.swift */; };
 		9353747A2CCD6B7200794A63 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 935374792CCD6B7200794A63 /* CoreLocation.framework */; };
 		9353747C2CCD7C9A00794A63 /* LocationManagerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353747B2CCD7C9A00794A63 /* LocationManagerHandler.swift */; };
 		9353747E2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353747D2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift */; };
@@ -87,6 +86,7 @@
 		93755C3C2C838299002570A5 /* Website.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C3B2C838299002570A5 /* Website.swift */; };
 		93755C3E2C838516002570A5 /* WebsiteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C3D2C838516002570A5 /* WebsiteManager.swift */; };
 		93755C442C8466A4002570A5 /* WebsiteImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C432C8466A4002570A5 /* WebsiteImageCell.swift */; };
+		9375E2E32CD136D8002E3668 /* StoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9375E2E22CD136D8002E3668 /* StoreInfoViewController.swift */; };
 		937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937605982C4A6B0300B1316C /* BottomLineTextField.swift */; };
 		9376059B2C4AAA9C00B1316C /* UIColor+CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */; };
 		937605A02C4BB6BD00B1316C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9376059F2C4BB6BD00B1316C /* GoogleSignIn */; };
@@ -142,6 +142,13 @@
 		93B492912C3E684700E7B947 /* OrderViewInteractionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B492902C3E684700E7B947 /* OrderViewInteractionDelegate.swift */; };
 		93B492932C410A2E00E7B947 /* OrderSummaryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B492922C410A2E00E7B947 /* OrderSummaryCollectionViewCell.swift */; };
 		93B492972C416C0100E7B947 /* NoOrdersViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B492962C416C0100E7B947 /* NoOrdersViewCell.swift */; };
+		93B7B52F2CD1523C00E0205A /* FloatingPanel in Frameworks */ = {isa = PBXBuildFile; productRef = 93B7B52E2CD1523C00E0205A /* FloatingPanel */; };
+		93B7B5372CD15F0F00E0205A /* StoreInfoPanelLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5362CD15F0F00E0205A /* StoreInfoPanelLayout.swift */; };
+		93B7B5392CD1D31D00E0205A /* DefaultInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5382CD1D31D00E0205A /* DefaultInfoView.swift */; };
+		93B7B53B2CD1D53E00E0205A /* SelectStoreInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B53A2CD1D53E00E0205A /* SelectStoreInfoView.swift */; };
+		93B7B53D2CD1D76900E0205A /* StoreInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B53C2CD1D76900E0205A /* StoreInfoView.swift */; };
+		93B7B53F2CD1E4A300E0205A /* FloatingPanelHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B53E2CD1E4A300E0205A /* FloatingPanelHelper.swift */; };
+		93B7B5422CD3126E00E0205A /* StoreSelectionResultDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5412CD3126E00E0205A /* StoreSelectionResultDelegate.swift */; };
 		93B9DC742C3017FB0050BC3F /* DrinksCategoryLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9DC732C3017FB0050BC3F /* DrinksCategoryLayoutProvider.swift */; };
 		93B9DC762C3042710050BC3F /* MenuLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9DC752C3042710050BC3F /* MenuLayoutProvider.swift */; };
 		93B9DC782C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9DC772C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift */; };
@@ -236,12 +243,11 @@
 		9353745C2CBF281B00794A63 /* OrderCustomerSubmitCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCustomerSubmitCell.swift; sourceTree = "<group>"; };
 		9353745E2CC3D3F800794A63 /* OrderCustomerDetailsHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCustomerDetailsHandlerDelegate.swift; sourceTree = "<group>"; };
 		9353746B2CCABD6900794A63 /* StoreSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSelectionViewController.swift; sourceTree = "<group>"; };
-		9353746D2CCABDCA00794A63 /* StoreSelectionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSelectionHandler.swift; sourceTree = "<group>"; };
+		9353746D2CCABDCA00794A63 /* StoreSelectionMapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSelectionMapHandler.swift; sourceTree = "<group>"; };
 		9353746F2CCABDEB00794A63 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		935374712CCABE0100794A63 /* StoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreManager.swift; sourceTree = "<group>"; };
-		935374732CCAC17B00794A63 /* StoreSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSelectionView.swift; sourceTree = "<group>"; };
-		935374752CCAC1A400794A63 /* StoreSelectionLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSelectionLayoutProvider.swift; sourceTree = "<group>"; };
-		935374772CCCCC7800794A63 /* StoreSelectionHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSelectionHandlerDelegate.swift; sourceTree = "<group>"; };
+		935374732CCAC17B00794A63 /* StoreSelectionMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSelectionMapView.swift; sourceTree = "<group>"; };
+		935374772CCCCC7800794A63 /* StoreSelectionMapHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSelectionMapHandlerDelegate.swift; sourceTree = "<group>"; };
 		935374792CCD6B7200794A63 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		9353747B2CCD7C9A00794A63 /* LocationManagerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerHandler.swift; sourceTree = "<group>"; };
 		9353747D2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerHandlerDelegate.swift; sourceTree = "<group>"; };
@@ -271,6 +277,7 @@
 		93755C3B2C838299002570A5 /* Website.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Website.swift; sourceTree = "<group>"; };
 		93755C3D2C838516002570A5 /* WebsiteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsiteManager.swift; sourceTree = "<group>"; };
 		93755C432C8466A4002570A5 /* WebsiteImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsiteImageCell.swift; sourceTree = "<group>"; };
+		9375E2E22CD136D8002E3668 /* StoreInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreInfoViewController.swift; sourceTree = "<group>"; };
 		937605982C4A6B0300B1316C /* BottomLineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
 		9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+CustomColors.swift"; sourceTree = "<group>"; };
 		937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInController.swift; sourceTree = "<group>"; };
@@ -298,6 +305,12 @@
 		93B492902C3E684700E7B947 /* OrderViewInteractionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderViewInteractionDelegate.swift; sourceTree = "<group>"; };
 		93B492922C410A2E00E7B947 /* OrderSummaryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderSummaryCollectionViewCell.swift; sourceTree = "<group>"; };
 		93B492962C416C0100E7B947 /* NoOrdersViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoOrdersViewCell.swift; sourceTree = "<group>"; };
+		93B7B5362CD15F0F00E0205A /* StoreInfoPanelLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreInfoPanelLayout.swift; sourceTree = "<group>"; };
+		93B7B5382CD1D31D00E0205A /* DefaultInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultInfoView.swift; sourceTree = "<group>"; };
+		93B7B53A2CD1D53E00E0205A /* SelectStoreInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectStoreInfoView.swift; sourceTree = "<group>"; };
+		93B7B53C2CD1D76900E0205A /* StoreInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreInfoView.swift; sourceTree = "<group>"; };
+		93B7B53E2CD1E4A300E0205A /* FloatingPanelHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanelHelper.swift; sourceTree = "<group>"; };
+		93B7B5412CD3126E00E0205A /* StoreSelectionResultDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSelectionResultDelegate.swift; sourceTree = "<group>"; };
 		93B9DC732C3017FB0050BC3F /* DrinksCategoryLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinksCategoryLayoutProvider.swift; sourceTree = "<group>"; };
 		93B9DC752C3042710050BC3F /* MenuLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuLayoutProvider.swift; sourceTree = "<group>"; };
 		93B9DC772C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailLayoutProvider.swift; sourceTree = "<group>"; };
@@ -375,6 +388,7 @@
 				939BDA452B2ACB8300616D1C /* FirebaseDynamicLinks in Frameworks */,
 				939BDA492B2ACB8300616D1C /* FirebaseFirestoreCombine-Community in Frameworks */,
 				939BDA592B2ACB8300616D1C /* FirebaseMessaging in Frameworks */,
+				93B7B52F2CD1523C00E0205A /* FloatingPanel in Frameworks */,
 				93755C2F2C821F0F002570A5 /* JGProgressHUD in Frameworks */,
 				939BDA552B2ACB8300616D1C /* FirebaseInstallations in Frameworks */,
 			);
@@ -706,15 +720,13 @@
 		9353746A2CCABD2300794A63 /* StoreSelection */ = {
 			isa = PBXGroup;
 			children = (
-				935374772CCCCC7800794A63 /* StoreSelectionHandlerDelegate.swift */,
-				935374752CCAC1A400794A63 /* StoreSelectionLayoutProvider.swift */,
-				935374732CCAC17B00794A63 /* StoreSelectionView.swift */,
-				9353746D2CCABDCA00794A63 /* StoreSelectionHandler.swift */,
-				9353746B2CCABD6900794A63 /* StoreSelectionViewController.swift */,
-				935374712CCABE0100794A63 /* StoreManager.swift */,
-				9353746F2CCABDEB00794A63 /* Store.swift */,
-				9353747B2CCD7C9A00794A63 /* LocationManagerHandler.swift */,
-				9353747D2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift */,
+				93B7B5442CD4CA9200E0205A /* Delegates */,
+				93B7B5432CD4CA7800E0205A /* Handler */,
+				93B7B5472CD4CAFF00E0205A /* Views */,
+				93B7B5482CD4CB1300E0205A /* View Controllers */,
+				93B7B5452CD4CABE00E0205A /* Models */,
+				93B7B5462CD4CAD500E0205A /* Services */,
+				93B7B5492CD4D68B00E0205A /* Helpers */,
 			);
 			path = StoreSelection;
 			sourceTree = "<group>";
@@ -855,6 +867,16 @@
 			path = Menu;
 			sourceTree = "<group>";
 		};
+		9375E2E42CD136DE002E3668 /* StoreInfo */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B54C2CD4D6FF00E0205A /* Layouts */,
+				93B7B54B2CD4D6EB00E0205A /* Views */,
+				93B7B54A2CD4D6E000E0205A /* View Controllers */,
+			);
+			path = StoreInfo;
+			sourceTree = "<group>";
+		};
 		939BD9C32B2A1B1700616D1C = {
 			isa = PBXGroup;
 			children = (
@@ -886,6 +908,7 @@
 				935291592C91B3AD0018B060 /* Resources */,
 				93F9BB582C293E3E00355A87 /* Utilities */,
 				939BDA6C2B2C200F00616D1C /* Authentication */,
+				9375E2E42CD136DE002E3668 /* StoreInfo */,
 				9353746A2CCABD2300794A63 /* StoreSelection */,
 				9353743C2CB5145D00794A63 /* OrderCustomerDetails */,
 				93BD48B32C58DA0900144E7F /* Orders */,
@@ -939,6 +962,91 @@
 				939BDA6A2B2B97ED00616D1C /* ActivityIndicatorManager.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		93B7B5432CD4CA7800E0205A /* Handler */ = {
+			isa = PBXGroup;
+			children = (
+				9353746D2CCABDCA00794A63 /* StoreSelectionMapHandler.swift */,
+				9353747B2CCD7C9A00794A63 /* LocationManagerHandler.swift */,
+			);
+			path = Handler;
+			sourceTree = "<group>";
+		};
+		93B7B5442CD4CA9200E0205A /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B5412CD3126E00E0205A /* StoreSelectionResultDelegate.swift */,
+				935374772CCCCC7800794A63 /* StoreSelectionMapHandlerDelegate.swift */,
+				9353747D2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift */,
+			);
+			path = Delegates;
+			sourceTree = "<group>";
+		};
+		93B7B5452CD4CABE00E0205A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				9353746F2CCABDEB00794A63 /* Store.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		93B7B5462CD4CAD500E0205A /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				935374712CCABE0100794A63 /* StoreManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		93B7B5472CD4CAFF00E0205A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				935374732CCAC17B00794A63 /* StoreSelectionMapView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		93B7B5482CD4CB1300E0205A /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				9353746B2CCABD6900794A63 /* StoreSelectionViewController.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		93B7B5492CD4D68B00E0205A /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B53E2CD1E4A300E0205A /* FloatingPanelHelper.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		93B7B54A2CD4D6E000E0205A /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				9375E2E22CD136D8002E3668 /* StoreInfoViewController.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		93B7B54B2CD4D6EB00E0205A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B53C2CD1D76900E0205A /* StoreInfoView.swift */,
+				93B7B53A2CD1D53E00E0205A /* SelectStoreInfoView.swift */,
+				93B7B5382CD1D31D00E0205A /* DefaultInfoView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		93B7B54C2CD4D6FF00E0205A /* Layouts */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B5362CD15F0F00E0205A /* StoreInfoPanelLayout.swift */,
+			);
+			path = Layouts;
 			sourceTree = "<group>";
 		};
 		93BD48B32C58DA0900144E7F /* Orders */ = {
@@ -1146,6 +1254,7 @@
 				937605A12C4BB6BD00B1316C /* GoogleSignInSwift */,
 				93755C2E2C821F0F002570A5 /* JGProgressHUD */,
 				935374682CCA368700794A63 /* IQKeyboardManagerSwift */,
+				93B7B52E2CD1523C00E0205A /* FloatingPanel */,
 			);
 			productName = HW_OrderCoffeeApp;
 			productReference = 939BD9CC2B2A1B1700616D1C /* HW_OrderCoffeeApp.app */;
@@ -1207,6 +1316,7 @@
 				9376059E2C4BB6BC00B1316C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				93755C2C2C821E23002570A5 /* XCRemoteSwiftPackageReference "JGProgressHUD" */,
 				935374672CCA355A00794A63 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
+				93B7B52D2CD1522900E0205A /* XCRemoteSwiftPackageReference "FloatingPanel" */,
 			);
 			productRefGroup = 939BD9CD2B2A1B1700616D1C /* Products */;
 			projectDirPath = "";
@@ -1295,7 +1405,7 @@
 				93B9DC832C33B9A00050BC3F /* OrderItem.swift in Sources */,
 				9352914A2C8D85790018B060 /* DrinkDetailView.swift in Sources */,
 				935374362CB00E2E00794A63 /* OrderHandler.swift in Sources */,
-				9353746E2CCABDCA00794A63 /* StoreSelectionHandler.swift in Sources */,
+				9353746E2CCABDCA00794A63 /* StoreSelectionMapHandler.swift in Sources */,
 				93F9BB5C2C2E4E6200355A87 /* ColumnItemCell.swift in Sources */,
 				935374122C9C5C6900794A63 /* FavoritesViewController.swift in Sources */,
 				93DB1D2D2C43D82200BA2CC1 /* OrderSectionHeaderView.swift in Sources */,
@@ -1305,13 +1415,15 @@
 				93F9BB5E2C2E4EEA00355A87 /* GridItemCell.swift in Sources */,
 				93B492912C3E684700E7B947 /* OrderViewInteractionDelegate.swift in Sources */,
 				932258D32C9410F4004EA2D9 /* FavoriteManager.swift in Sources */,
-				935374782CCCCC7800794A63 /* StoreSelectionHandlerDelegate.swift in Sources */,
+				935374782CCCCC7800794A63 /* StoreSelectionMapHandlerDelegate.swift in Sources */,
 				93DB1D3A2C49618C00BA2CC1 /* SignUpView.swift in Sources */,
 				93755C1F2C80971F002570A5 /* ProfileOptionCell.swift in Sources */,
 				935374312CAD6F1500794A63 /* OrderView.swift in Sources */,
 				93B9DC782C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift in Sources */,
+				9375E2E32CD136D8002E3668 /* StoreInfoViewController.swift in Sources */,
 				9353741D2C9EB58300794A63 /* FavoritesLayoutProvider.swift in Sources */,
 				939BD9F32B2AC27700616D1C /* ForgotPasswordViewController.swift in Sources */,
+				93B7B53B2CD1D53E00E0205A /* SelectStoreInfoView.swift in Sources */,
 				93B9DC742C3017FB0050BC3F /* DrinksCategoryLayoutProvider.swift in Sources */,
 				939BD9EF2B2AA48B00616D1C /* LoginViewController.swift in Sources */,
 				937605A82C4BFA9F00B1316C /* GoogleSignInController.swift in Sources */,
@@ -1329,10 +1441,10 @@
 				935374332CAFC29D00794A63 /* OrderLayoutProvider.swift in Sources */,
 				939BDA812B32959700616D1C /* DrinksCategorySectionHeaderView.swift in Sources */,
 				939BDA6B2B2B97ED00616D1C /* ActivityIndicatorManager.swift in Sources */,
-				935374762CCAC1A400794A63 /* StoreSelectionLayoutProvider.swift in Sources */,
 				93B9DC7F2C32C5BC0050BC3F /* MenuController.swift in Sources */,
 				9353743E2CB5149700794A63 /* OrderCustomerDetailsViewController.swift in Sources */,
 				939BDA6F2B2C211200616D1C /* Constants.swift in Sources */,
+				93B7B5372CD15F0F00E0205A /* StoreInfoPanelLayout.swift in Sources */,
 				9353745F2CC3D3F800794A63 /* OrderCustomerDetailsHandlerDelegate.swift in Sources */,
 				939BD9D02B2A1B1700616D1C /* AppDelegate.swift in Sources */,
 				9353745D2CBF281C00794A63 /* OrderCustomerSubmitCell.swift in Sources */,
@@ -1346,11 +1458,12 @@
 				93B9DC762C3042710050BC3F /* MenuLayoutProvider.swift in Sources */,
 				935374292CA4502B00794A63 /* NoFavoritesView.swift in Sources */,
 				9353747E2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift in Sources */,
-				935374742CCAC17B00794A63 /* StoreSelectionView.swift in Sources */,
+				935374742CCAC17B00794A63 /* StoreSelectionMapView.swift in Sources */,
 				93755C352C83520A002570A5 /* MenuCollectionHandler.swift in Sources */,
 				93755C3C2C838299002570A5 /* Website.swift in Sources */,
 				93755C162C7F2F49002570A5 /* DatePickerHandler.swift in Sources */,
 				939BD9EB2B2A7FB200616D1C /* UIButton+Styles.swift in Sources */,
+				93B7B53D2CD1D76900E0205A /* StoreInfoView.swift in Sources */,
 				935374402CB666E800794A63 /* CustomerDetails.swift in Sources */,
 				935374722CCABE0100794A63 /* StoreManager.swift in Sources */,
 				935374172C9C5CF300794A63 /* FavoritesView.swift in Sources */,
@@ -1374,6 +1487,7 @@
 				935374192C9C601200794A63 /* FavoriteDrinkCell.swift in Sources */,
 				93F9BB4A2C269AC600355A87 /* DrinkDetailSeparatorView.swift in Sources */,
 				93DB1D352C47EE1900BA2CC1 /* ForgotPasswordView.swift in Sources */,
+				93B7B5392CD1D31D00E0205A /* DefaultInfoView.swift in Sources */,
 				935374382CB06AA500794A63 /* OrderActionDelegate.swift in Sources */,
 				93755C372C835C8E002570A5 /* MenuView.swift in Sources */,
 				93B9DC7D2C32B0BB0050BC3F /* OrderViewController.swift in Sources */,
@@ -1397,6 +1511,7 @@
 				93755BFA2C7700FD002570A5 /* PhotoPickerManager.swift in Sources */,
 				93BD48C32C5CE5B500144E7F /* EmailSignInController.swift in Sources */,
 				93B9DC892C368DA80050BC3F /* OrderItemCollectionViewCell.swift in Sources */,
+				93B7B5422CD3126E00E0205A /* StoreSelectionResultDelegate.swift in Sources */,
 				939BDA852B32AD5200616D1C /* UIImageView+Styles.swift in Sources */,
 				939BD9E42B2A1B4E00616D1C /* HomePageViewController.swift in Sources */,
 				9353744D2CB7EF3900794A63 /* OrderCustomerDetailsView.swift in Sources */,
@@ -1404,6 +1519,7 @@
 				93755C042C7B28AE002570A5 /* BirthdaySelectionCell.swift in Sources */,
 				935374462CB6A74B00794A63 /* OrderItemManager.swift in Sources */,
 				93BD48B22C57CB9000144E7F /* AppleSignInController.swift in Sources */,
+				93B7B53F2CD1E4A300E0205A /* FloatingPanelHelper.swift in Sources */,
 				93B492972C416C0100E7B947 /* NoOrdersViewCell.swift in Sources */,
 				9353744F2CB7F1BF00794A63 /* OrderCustomerDetailsHandler.swift in Sources */,
 				9353746C2CCABD6900794A63 /* StoreSelectionViewController.swift in Sources */,
@@ -1794,6 +1910,14 @@
 				minimumVersion = 7.10.1;
 			};
 		};
+		93B7B52D2CD1522900E0205A /* XCRemoteSwiftPackageReference "FloatingPanel" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scenee/FloatingPanel?tab=readme-ov-file";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.6;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1956,6 +2080,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 939BDA772B2FC90300616D1C /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		93B7B52E2CD1523C00E0205A /* FloatingPanel */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 93B7B52D2CD1522900E0205A /* XCRemoteSwiftPackageReference "FloatingPanel" */;
+			productName = FloatingPanel;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -1,15 +1,15 @@
 //
-//  StoreSelectionHandler.swift
+//  StoreSelectionMapHandler.swift
 //  HW_OrderCoffeeApp
 //
 //  Created by 曹家瑋 on 2024/10/25.
 //
 
 /*
- ## StoreSelectionHandler 重點筆記
+ ## StoreSelectionMapHandler.swift 重點筆記
 
  1. 類別說明
-    - StoreSelectionHandler 是用於處理地圖視圖 (MKMapView) 上店鋪選擇互動的物件。
+    - StoreSelectionMapHandler 是用於處理地圖視圖 (MKMapView) 上店鋪選擇互動的物件。
     - 負責處理與地圖相關的事件，例如使用者點選地圖上的標註（店鋪）時的處理邏輯。
  
  2. 使用的屬性
@@ -28,15 +28,15 @@
  4. Delegate 使用好處
     
     * 職責分離：
-        - StoreSelectionHandler 只負責地圖互動的處理，而不需要知道店鋪的資料是從哪裡來的，這些邏輯由代理 (StoreSelectionViewController) 處理。
+        - StoreSelectionMapHandler 只負責地圖互動的處理，而不需要知道店鋪的資料是從哪裡來的，這些邏輯由代理 (StoreSelectionViewController) 處理。
         - 地圖交互和店鋪詳細資料顯示的邏輯相互分離，保持了程式碼的模組化和高可維護性。
  
     * 降低耦合度：
-        - 使用代理讓 StoreSelectionHandler 和 StoreSelectionViewController 分離，保持了代碼的模組化與清晰度。使得地圖交互的修改不會影響到店鋪資料的管理和顯示。
+        - 使用代理讓 StoreSelectionMapHandler 和 StoreSelectionViewController 分離，保持了代碼的模組化與清晰度。使得地圖交互的修改不會影響到店鋪資料的管理和顯示。
  
  5. 代理模式的運作
     - StoreSelectionMapHandlerDelegate 用於定義代理需要實作的方法，包括取得店鋪資料、取得營業時間以及顯示店鋪資訊。
-    - StoreSelectionHandler 在需要店鋪資料或顯示信息時，會呼叫這些代理方法，由 StoreSelectionViewController 負責具體的實作和邏輯處理。
+    - StoreSelectionMapHandler 在需要店鋪資料或顯示信息時，會呼叫這些代理方法，由 StoreSelectionViewController 負責具體的實作和邏輯處理。
     - - 當店鋪被選取時，控制器會使用 FloatingPanel 來顯示詳細資訊，避免了使用臨時彈窗的方式，提供更好的用戶體驗。
  
  6. 為什麼這麼設計
