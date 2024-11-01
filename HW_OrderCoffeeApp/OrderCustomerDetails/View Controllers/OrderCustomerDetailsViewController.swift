@@ -139,7 +139,7 @@
  
     * `主要的設置方法`：
         - `setupViewController()`：初始化視圖控制器，包括導航欄標題設置和資料處理器初始化。
-        - `fetchAndPopulateUserDetails()`：從 Firebase 獲取用戶的詳細資料，並填充到顧客資料中，最後刷新表單來顯示這些資料。
+        - `fetchAndPopulateUserDetails()`：從 Firebase 獲取用戶的詳細資料，並填充到顧客資料中，最後刷新表單來顯示這些資料。資料填充完成後再初始化 `OrderCustomerDetailsHandler`，確保 Cell 初次配置時就有正確的資料。
  
     * `表單驗證與按鈕狀態`：
         - `updateSubmitButtonState()`：每當顧客資料變更時，檢查資料是否完整並根據結果啟用或禁用提交按鈕，避免不完整的訂單提交。
@@ -298,6 +298,51 @@
         - 在 `CustomerDetailsManager` 中更新資料後，務必確保對應的 UI 也能及時更新，例如透過回調或重新載入 collection view 的特定區域。
  */
 
+// MARK: - 資料驅動的 UI 配置重點筆記（重要）
+/**
+ ## 資料驅動的 UI 配置重點筆記
+
+ `1. 問題描述：`
+    - 在初次進入 "`OrderCustomerDetailsViewController`" 時，顯示的 UI 欄位（例如姓名、電話、取件方式）先呈現空值或必填紅框，再過一瞬間資料才被填入。
+    - 再次進入時，UI 顯示是正確的，沒有顯示空值或閃爍的情況。
+
+ `2. 解決方法：`
+    - 延遲初始化 `OrderCustomerDetailsHandler`：
+      - 將 `OrderCustomerDetailsHandler` 的初始化移至資料加載完成之後進行，而不是在 `viewDidLoad()` 中。
+      - 在 `fetchAndPopulateUserDetails()` 方法的 `do` 區塊中，待資料加載成功後再初始化 `OrderCustomerDetailsHandler` 並設置 `CollectionView`。
+
+` 3. 優點：`
+    - `確保資料完整性`：確保 `CollectionView` 初始化時有完整且正確的顧客資料，避免顯示不完整或閃爍的情況。
+    - `提高用戶體驗`：減少頁面初次載入時顯示的異常狀況，例如紅框提示或空白欄位，使得 UI 在用戶看到時已經是最終狀態。
+
+ 4. `實作步驟`：
+    - 先在 `fetchAndPopulateUserDetails()` 中獲取資料。
+    - 當資料獲取成功後，再初始化 `OrderCustomerDetailsHandler` 並設置 `CollectionView` 的數據源和代理。
+
+ `5. 應用場景：
+    - `遠端資料加載`：特別適合需要從遠端獲取資料並進行顯示的場景，能有效避免 UI 與資料不同步的問題。
+    - `減少 UI 異常顯示`：用於希望避免 UI 因為資料尚未加載完成而顯示異常的情況，例如空白或錯誤提示。
+
+ `6. 結論：`
+    - 這種方式屬於 "`資料驅動的 UI 配置`"，即 UI 的配置依賴於資料的準備狀態。這可以提高頁面載入的穩定性，讓用戶在初次看到界面時就能獲得良好的體驗。
+ */
+
+// MARK: - 資料驅動的 UI 配置（重要）
+
+/**
+ ## 資料驅動的 UI 配置
+    
+ * 意思是 UI 的初始化和配置是由資料是否準備好來決定的。這種做法特別適合以下情況：
+
+1. 需要從`遠端`獲取資料，且資料獲取有一定的`延遲`。
+2. 顯示的內容高度依賴於資料的完整性。
+3. 希望避免用戶在資料還未加載完成之前看到不完整或錯誤的 UI。
+4. 雖然這會導致頁面初次載入時稍有延遲，但大部分用戶更能接受的是一個稍微晚一點但已經準備好的界面，而不是一個閃爍或者顯示錯誤提示的界面。
+
+- 這種做法也不是必須的，取決於具體的需求和應用場景。
+ - 在 App 中，如果 UI 需要即時顯示而且對資料的即時性要求不高，開發者可能會先顯示一個佔位符界面或是加載動畫，再逐步填充資料。
+ */
+
 
 import UIKit
 
@@ -326,19 +371,12 @@ class OrderCustomerDetailsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupViewController()
+        setupNavigationTitle()
         fetchAndPopulateUserDetails()
         logOrderItemsCount()
     }
     
     // MARK: - Setup Methods
-    
-    /// 配置 ViewController 相關設定
-    private func setupViewController() {
-        setupNavigationTitle()
-        setupOrderDetailsHandler()
-        setupDelegate()
-    }
     
     /// 設置導航欄的標題
     private func setupNavigationTitle() {
@@ -347,29 +385,38 @@ class OrderCustomerDetailsViewController: UIViewController {
         navigationItem.largeTitleDisplayMode = .always
     }
     
-    /// 設置 OrderCustomerDetailsHandler
+    /// 初始化 OrderCustomerDetailsHandler 並設置委託
+    ///
+    /// 創建 `OrderCustomerDetailsHandler` 來處理顧客詳細資料的相關交互，並將當前的視圖控制器設置為其委託，以便響應顧客資料的變更。
     private func setupOrderDetailsHandler() {
         ordercustomerDetailsHandler = OrderCustomerDetailsHandler(collectionView: orderCustomerDetailsView.collectionView)
-    }
-    
-    /// 設置委託
-    private func setupDelegate() {
         ordercustomerDetailsHandler.delegate = self
     }
     
     // MARK: - Data Handling
     
-    /// 從 Firebase 獲取`當前用戶資料`並填充 CustomerDetails
+    /// 從 Firebase 獲取當前用戶的詳細資料並填充 CustomerDetails
+    ///
+    /// 該方法異步從 Firebase 中獲取用戶詳細資料，並將其填充到 `CustomerDetailsManager` 中。
+    /// 當資料填充完成後，初始化 `OrderCustomerDetailsHandler`，以確保表單配置正確顯示資料，最後刷新 collection view 來顯示填入的顧客資訊。
     private func fetchAndPopulateUserDetails() {
+        HUDManager.shared.showLoading(text: "Loading Details...")
         Task {
             do {
                 let userDetails = try await FirebaseController.shared.getCurrentUserDetails()
+                print("Fetched user details: \(userDetails)")
                 CustomerDetailsManager.shared.populateCustomerDetails(from: userDetails)
+                
+                // 在資料填充完成後初始化 OrderCustomerDetailsHandler
+                setupOrderDetailsHandler()
+                
                 // 刷新 collection view 以顯示已填寫的資料
                 orderCustomerDetailsView.collectionView.reloadData()
+                print("Collection view reloaded after populating user details")
             } catch {
                 print("獲取用戶資料時發生錯誤：\(error)")
             }
+            HUDManager.shared.dismiss()
         }
     }
     
@@ -404,6 +451,7 @@ extension OrderCustomerDetailsViewController: OrderCustomerDetailsHandlerDelegat
     ///
     /// 通過更新提交按鈕狀態來即時反映顧客資料的變更，以確保表單驗證邏輯始終準確。
     func customerDetailsDidChange() {
+        print("Customer details did change, updating submit button state.")
         updateSubmitButtonState()
     }
     
@@ -458,11 +506,11 @@ extension OrderCustomerDetailsViewController: StoreSelectionResultDelegate {
     func storeSelectionDidComplete(with storeName: String) {
         // 更新 CustomerDetailsManager 中的 storeName
         CustomerDetailsManager.shared.updateStoredCustomerDetails(storeName: storeName)
-        
+        print("Store selected: \(storeName)")
         // 刷新取件方式區域的 Cell
         let pickupSectionIndex = OrderCustomerDetailsHandler.Section.pickupMethod.rawValue
         orderCustomerDetailsView.collectionView.reloadSections(IndexSet(integer: pickupSectionIndex))
-        
+        print("Pickup method section reloaded after store selection")
         // 更新提交按鈕狀態
         updateSubmitButtonState()
     }

@@ -351,6 +351,7 @@ extension OrderCustomerDetailsHandler: UICollectionViewDataSource {
         
         /// 從 CustomerDetailsManager 獲取顧客資料，然後配置 cell，設置初始值
         if let customerDetails = CustomerDetailsManager.shared.getCustomerDetails() {
+            print("[OrderCustomerDetailsHandler] Configuring CustomerInfoCell with FullName: \(customerDetails.fullName), PhoneNumber: \(customerDetails.phoneNumber)")
             cell.configure(with: customerDetails)
         }
         
@@ -375,6 +376,7 @@ extension OrderCustomerDetailsHandler: UICollectionViewDataSource {
         
         // 從 CustomerDetailsManager 中獲取顧客資料
         if let customerDetails = CustomerDetailsManager.shared.getCustomerDetails() {
+            print("[OrderCustomerDetailsHandler] Configuring PickupMethodCell with Pickup Method: \(customerDetails.pickupMethod.rawValue)")
             // 配置 Cell 的顯示，根據顧客的取件方式、地址和店家名稱
             cell.configure(with: customerDetails)
         }
@@ -388,6 +390,7 @@ extension OrderCustomerDetailsHandler: UICollectionViewDataSource {
             
             // 重新配置 Cell，使得 UI 同步更新
             if let updatedCustomerDetails = CustomerDetailsManager.shared.getCustomerDetails() {
+                print("[OrderCustomerDetailsHandler] PickupMethod changed to: \(updatedCustomerDetails.pickupMethod.rawValue), re-configuring PickupMethodCell")
                 cell.configure(with: updatedCustomerDetails)
             }
         }
@@ -395,13 +398,13 @@ extension OrderCustomerDetailsHandler: UICollectionViewDataSource {
         // 更新店家名稱並通知變更
         cell.onStoreChange = { [weak self] storeName in
             self?.collectAndUpdateCustomerDetails(storeName: storeName)
-            print("Store name updated to: \(storeName)")
+            print("[OrderCustomerDetailsHandler] Store name updated to: \(storeName)")
         }
         
         // 更新外送地址並通知變更
         cell.onAddressChange = { [weak self] address in
             self?.collectAndUpdateCustomerDetails(address: address)
-            print("Address updated to: \(address)")
+            print("[OrderCustomerDetailsHandler] Address updated to: \(address)")
         }
         
         // 處理店家選擇按鈕點擊
@@ -421,12 +424,14 @@ extension OrderCustomerDetailsHandler: UICollectionViewDataSource {
 
         /// 配置 notes 欄位
         if let customerDetails = CustomerDetailsManager.shared.getCustomerDetails() {
+            print("[OrderCustomerDetailsHandler] Configuring NoteCell with Notes: \(customerDetails.notes ?? "No Notes")")
             cell.configure(with: customerDetails.notes)
         }
 
         // 更新備註並通知變更
         cell.onNoteChange = { [weak self] note in
             self?.collectAndUpdateCustomerDetails(notes: note)
+            print("[OrderCustomerDetailsHandler] Notes updated to: \(note)")
         }
 
         return cell
@@ -441,10 +446,14 @@ extension OrderCustomerDetailsHandler: UICollectionViewDataSource {
         // 配置提交按鈕的初始狀態
         let validationResult = CustomerDetailsManager.shared.validateCustomerDetails()
         let isFormValid = (validationResult == .success)
+        
+        // 觀察驗證結果及是否啟用提交按鈕
+        print("[OrderCustomerDetailsHandler] Configuring SubmitButton: isFormValid = \(isFormValid), ValidationResult = \(validationResult)")
         cell.configureSubmitButton(isEnabled: isFormValid)
 
         // 提交按鈕被點擊的處理
         cell.onSubmitTapped = { [weak self] in
+            print("[OrderCustomerDetailsHandler] Submit button tapped.")
             self?.delegate?.submitOrder()
         }
 

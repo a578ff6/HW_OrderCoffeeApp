@@ -452,12 +452,12 @@ class OrderPickupMethodCell: UICollectionViewCell {
         case .homeDelivery:
             inStoreStackView.isHidden = true
             homeDeliveryStackView.isHidden = false
-            setTextFieldBorder(addressTextField)
+//            setTextFieldBorder(addressTextField)
             
         case .inStore:
             inStoreStackView.isHidden = false
             homeDeliveryStackView.isHidden = true
-            setTextFieldBorder(storeTextField)
+//            setTextFieldBorder(storeTextField)
         }
     }
     
@@ -470,7 +470,9 @@ class OrderPickupMethodCell: UICollectionViewCell {
         onStoreButtonTapped?()
     }
     
-    /// 當地址變更時的處理
+    /// 當用戶修改地址輸入框的內容時的處理
+    ///
+    /// 會在用戶更改地址輸入框的值時被調用。它將新值傳遞給 `onAddressChange` 回調，並根據輸入框是否為空來更新其邊框顏色，以提醒使用者該欄位是否需要填寫。
     @objc private func addressTextFieldChanged() {
         let text = addressTextField.text ?? ""
         print("Address text changed to: \(text)")
@@ -552,6 +554,8 @@ class OrderPickupMethodCell: UICollectionViewCell {
     /// 設定初始的取件方式
     /// - Parameter pickupMethod: 取件方式（外送或到店取件）
     func configure(with customerDetails: CustomerDetails) {
+        print("[OrderPickupMethodCell] Configuring with Pickup Method: \(customerDetails.pickupMethod.rawValue)")
+
         pickupMethodSegmentedControl.selectedSegmentIndex = (customerDetails.pickupMethod == .homeDelivery) ? 0 : 1
         updateUI(for: customerDetails.pickupMethod)
         
