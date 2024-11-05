@@ -149,6 +149,20 @@
 		93B7B53D2CD1D76900E0205A /* StoreInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B53C2CD1D76900E0205A /* StoreInfoView.swift */; };
 		93B7B53F2CD1E4A300E0205A /* FloatingPanelHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B53E2CD1E4A300E0205A /* FloatingPanelHelper.swift */; };
 		93B7B5422CD3126E00E0205A /* StoreSelectionResultDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5412CD3126E00E0205A /* StoreSelectionResultDelegate.swift */; };
+		93B7B54F2CD50CE900E0205A /* OrderConfirmationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B54E2CD50CE900E0205A /* OrderConfirmationViewController.swift */; };
+		93B7B5512CD5E20500E0205A /* OrderConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5502CD5E20500E0205A /* OrderConfirmationView.swift */; };
+		93B7B5532CD5E23B00E0205A /* OrderConfirmationLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5522CD5E23B00E0205A /* OrderConfirmationLayoutProvider.swift */; };
+		93B7B5552CD5E28500E0205A /* OrderConfirmationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5542CD5E28500E0205A /* OrderConfirmationHandler.swift */; };
+		93B7B5572CD66D6100E0205A /* OrderConfirmationCheckmarkCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5562CD66D6100E0205A /* OrderConfirmationCheckmarkCell.swift */; };
+		93B7B5592CD6751C00E0205A /* OrderConfirmationMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5582CD6751C00E0205A /* OrderConfirmationMessageCell.swift */; };
+		93B7B55B2CD6812800E0205A /* OrderConfirmationCustomerInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B55A2CD6812800E0205A /* OrderConfirmationCustomerInfoCell.swift */; };
+		93B7B55D2CD70FA900E0205A /* OrderrConfirmationItemDetailsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B55C2CD70FA900E0205A /* OrderrConfirmationItemDetailsCell.swift */; };
+		93B7B55F2CD74A9700E0205A /* OrderrConfirmationDetailsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B55E2CD74A9700E0205A /* OrderrConfirmationDetailsCell.swift */; };
+		93B7B5612CD7912400E0205A /* OrderrConfirmationCloseButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5602CD7912400E0205A /* OrderrConfirmationCloseButtonCell.swift */; };
+		93B7B5632CD80CF800E0205A /* OrderConfirmationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5622CD80CF800E0205A /* OrderConfirmationManager.swift */; };
+		93B7B5652CD8DC9B00E0205A /* OrderConfirmation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5642CD8DC9B00E0205A /* OrderConfirmation.swift */; };
+		93B7B5672CD9066D00E0205A /* OrderConfirmationHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5662CD9066D00E0205A /* OrderConfirmationHandlerDelegate.swift */; };
+		93B7B5692CD9E22800E0205A /* OrderConfirmationSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5682CD9E22800E0205A /* OrderConfirmationSectionHeaderView.swift */; };
 		93B9DC742C3017FB0050BC3F /* DrinksCategoryLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9DC732C3017FB0050BC3F /* DrinksCategoryLayoutProvider.swift */; };
 		93B9DC762C3042710050BC3F /* MenuLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9DC752C3042710050BC3F /* MenuLayoutProvider.swift */; };
 		93B9DC782C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9DC772C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift */; };
@@ -311,6 +325,20 @@
 		93B7B53C2CD1D76900E0205A /* StoreInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreInfoView.swift; sourceTree = "<group>"; };
 		93B7B53E2CD1E4A300E0205A /* FloatingPanelHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanelHelper.swift; sourceTree = "<group>"; };
 		93B7B5412CD3126E00E0205A /* StoreSelectionResultDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSelectionResultDelegate.swift; sourceTree = "<group>"; };
+		93B7B54E2CD50CE900E0205A /* OrderConfirmationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderConfirmationViewController.swift; sourceTree = "<group>"; };
+		93B7B5502CD5E20500E0205A /* OrderConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderConfirmationView.swift; sourceTree = "<group>"; };
+		93B7B5522CD5E23B00E0205A /* OrderConfirmationLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderConfirmationLayoutProvider.swift; sourceTree = "<group>"; };
+		93B7B5542CD5E28500E0205A /* OrderConfirmationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderConfirmationHandler.swift; sourceTree = "<group>"; };
+		93B7B5562CD66D6100E0205A /* OrderConfirmationCheckmarkCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderConfirmationCheckmarkCell.swift; sourceTree = "<group>"; };
+		93B7B5582CD6751C00E0205A /* OrderConfirmationMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderConfirmationMessageCell.swift; sourceTree = "<group>"; };
+		93B7B55A2CD6812800E0205A /* OrderConfirmationCustomerInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderConfirmationCustomerInfoCell.swift; sourceTree = "<group>"; };
+		93B7B55C2CD70FA900E0205A /* OrderrConfirmationItemDetailsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderrConfirmationItemDetailsCell.swift; sourceTree = "<group>"; };
+		93B7B55E2CD74A9700E0205A /* OrderrConfirmationDetailsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderrConfirmationDetailsCell.swift; sourceTree = "<group>"; };
+		93B7B5602CD7912400E0205A /* OrderrConfirmationCloseButtonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderrConfirmationCloseButtonCell.swift; sourceTree = "<group>"; };
+		93B7B5622CD80CF800E0205A /* OrderConfirmationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderConfirmationManager.swift; sourceTree = "<group>"; };
+		93B7B5642CD8DC9B00E0205A /* OrderConfirmation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderConfirmation.swift; sourceTree = "<group>"; };
+		93B7B5662CD9066D00E0205A /* OrderConfirmationHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderConfirmationHandlerDelegate.swift; sourceTree = "<group>"; };
+		93B7B5682CD9E22800E0205A /* OrderConfirmationSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderConfirmationSectionHeaderView.swift; sourceTree = "<group>"; };
 		93B9DC732C3017FB0050BC3F /* DrinksCategoryLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinksCategoryLayoutProvider.swift; sourceTree = "<group>"; };
 		93B9DC752C3042710050BC3F /* MenuLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuLayoutProvider.swift; sourceTree = "<group>"; };
 		93B9DC772C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailLayoutProvider.swift; sourceTree = "<group>"; };
@@ -908,6 +936,7 @@
 				935291592C91B3AD0018B060 /* Resources */,
 				93F9BB582C293E3E00355A87 /* Utilities */,
 				939BDA6C2B2C200F00616D1C /* Authentication */,
+				93B7B54D2CD4DB2100E0205A /* OrderConfirmation */,
 				9375E2E42CD136DE002E3668 /* StoreInfo */,
 				9353746A2CCABD2300794A63 /* StoreSelection */,
 				9353743C2CB5145D00794A63 /* OrderCustomerDetails */,
@@ -1047,6 +1076,27 @@
 				93B7B5362CD15F0F00E0205A /* StoreInfoPanelLayout.swift */,
 			);
 			path = Layouts;
+			sourceTree = "<group>";
+		};
+		93B7B54D2CD4DB2100E0205A /* OrderConfirmation */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B5662CD9066D00E0205A /* OrderConfirmationHandlerDelegate.swift */,
+				93B7B5622CD80CF800E0205A /* OrderConfirmationManager.swift */,
+				93B7B5642CD8DC9B00E0205A /* OrderConfirmation.swift */,
+				93B7B5542CD5E28500E0205A /* OrderConfirmationHandler.swift */,
+				93B7B54E2CD50CE900E0205A /* OrderConfirmationViewController.swift */,
+				93B7B5502CD5E20500E0205A /* OrderConfirmationView.swift */,
+				93B7B5522CD5E23B00E0205A /* OrderConfirmationLayoutProvider.swift */,
+				93B7B5682CD9E22800E0205A /* OrderConfirmationSectionHeaderView.swift */,
+				93B7B5562CD66D6100E0205A /* OrderConfirmationCheckmarkCell.swift */,
+				93B7B5582CD6751C00E0205A /* OrderConfirmationMessageCell.swift */,
+				93B7B55C2CD70FA900E0205A /* OrderrConfirmationItemDetailsCell.swift */,
+				93B7B55A2CD6812800E0205A /* OrderConfirmationCustomerInfoCell.swift */,
+				93B7B55E2CD74A9700E0205A /* OrderrConfirmationDetailsCell.swift */,
+				93B7B5602CD7912400E0205A /* OrderrConfirmationCloseButtonCell.swift */,
+			);
+			path = OrderConfirmation;
 			sourceTree = "<group>";
 		};
 		93BD48B32C58DA0900144E7F /* Orders */ = {
@@ -1406,13 +1456,16 @@
 				9352914A2C8D85790018B060 /* DrinkDetailView.swift in Sources */,
 				935374362CB00E2E00794A63 /* OrderHandler.swift in Sources */,
 				9353746E2CCABDCA00794A63 /* StoreSelectionMapHandler.swift in Sources */,
+				93B7B5632CD80CF800E0205A /* OrderConfirmationManager.swift in Sources */,
 				93F9BB5C2C2E4E6200355A87 /* ColumnItemCell.swift in Sources */,
 				935374122C9C5C6900794A63 /* FavoritesViewController.swift in Sources */,
 				93DB1D2D2C43D82200BA2CC1 /* OrderSectionHeaderView.swift in Sources */,
+				93B7B5672CD9066D00E0205A /* OrderConfirmationHandlerDelegate.swift in Sources */,
 				935374552CB93F6D00794A63 /* OrderCustomerDetailsSectionHeaderView.swift in Sources */,
 				935291302C875DA30018B060 /* UIView+ScaleAnimation.swift in Sources */,
 				939BDA2C2B2AC53700616D1C /* UIViewController+HideKeyboard.swift in Sources */,
 				93F9BB5E2C2E4EEA00355A87 /* GridItemCell.swift in Sources */,
+				93B7B5552CD5E28500E0205A /* OrderConfirmationHandler.swift in Sources */,
 				93B492912C3E684700E7B947 /* OrderViewInteractionDelegate.swift in Sources */,
 				932258D32C9410F4004EA2D9 /* FavoriteManager.swift in Sources */,
 				935374782CCCCC7800794A63 /* StoreSelectionMapHandlerDelegate.swift in Sources */,
@@ -1426,6 +1479,7 @@
 				93B7B53B2CD1D53E00E0205A /* SelectStoreInfoView.swift in Sources */,
 				93B9DC742C3017FB0050BC3F /* DrinksCategoryLayoutProvider.swift in Sources */,
 				939BD9EF2B2AA48B00616D1C /* LoginViewController.swift in Sources */,
+				93B7B55F2CD74A9700E0205A /* OrderrConfirmationDetailsCell.swift in Sources */,
 				937605A82C4BFA9F00B1316C /* GoogleSignInController.swift in Sources */,
 				935374702CCABDEB00794A63 /* Store.swift in Sources */,
 				9376059B2C4AAA9C00B1316C /* UIColor+CustomColors.swift in Sources */,
@@ -1460,9 +1514,13 @@
 				9353747E2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift in Sources */,
 				935374742CCAC17B00794A63 /* StoreSelectionMapView.swift in Sources */,
 				93755C352C83520A002570A5 /* MenuCollectionHandler.swift in Sources */,
+				93B7B5532CD5E23B00E0205A /* OrderConfirmationLayoutProvider.swift in Sources */,
+				93B7B55B2CD6812800E0205A /* OrderConfirmationCustomerInfoCell.swift in Sources */,
 				93755C3C2C838299002570A5 /* Website.swift in Sources */,
 				93755C162C7F2F49002570A5 /* DatePickerHandler.swift in Sources */,
+				93B7B54F2CD50CE900E0205A /* OrderConfirmationViewController.swift in Sources */,
 				939BD9EB2B2A7FB200616D1C /* UIButton+Styles.swift in Sources */,
+				93B7B5592CD6751C00E0205A /* OrderConfirmationMessageCell.swift in Sources */,
 				93B7B53D2CD1D76900E0205A /* StoreInfoView.swift in Sources */,
 				935374402CB666E800794A63 /* CustomerDetails.swift in Sources */,
 				935374722CCABE0100794A63 /* StoreManager.swift in Sources */,
@@ -1476,8 +1534,10 @@
 				93755C1B2C808202002570A5 /* UserProfileTableHandler.swift in Sources */,
 				93755C1D2C8094D0002570A5 /* ProfileHeaderCell.swift in Sources */,
 				93F9BB3A2C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift in Sources */,
+				93B7B5692CD9E22800E0205A /* OrderConfirmationSectionHeaderView.swift in Sources */,
 				939BDA742B2FB3E400616D1C /* MenuModels.swift in Sources */,
 				935374482CB6D9F600794A63 /* CustomerDetailsManager.swift in Sources */,
+				93B7B5572CD66D6100E0205A /* OrderConfirmationCheckmarkCell.swift in Sources */,
 				935374592CBB038D00794A63 /* OrderPickupMethodCell.swift in Sources */,
 				93755C0A2C7B844D002570A5 /* EditProfileTableHandler.swift in Sources */,
 				93DB1D2B2C439F8900BA2CC1 /* NavigationHelper.swift in Sources */,
@@ -1496,6 +1556,7 @@
 				935374572CB9A6B300794A63 /* OrderTermsMessageCell.swift in Sources */,
 				93DB1D332C47696000BA2CC1 /* LoginView.swift in Sources */,
 				9352913C2C8837040018B060 /* DrinksCategoryViewController.swift in Sources */,
+				93B7B5512CD5E20500E0205A /* OrderConfirmationView.swift in Sources */,
 				93755C002C79E454002570A5 /* ProfileTextFieldCell.swift in Sources */,
 				9352914C2C8D91480018B060 /* DrinkDetailHandler.swift in Sources */,
 				93755BFE2C79DEAA002570A5 /* EditProfileView.swift in Sources */,
@@ -1506,8 +1567,10 @@
 				93B9DC7A2C3181910050BC3F /* UIView+SpringAnimation.swift in Sources */,
 				935374442CB67DB100794A63 /* Order.swift in Sources */,
 				936CFFCB2C6E24AD004B8724 /* UserDetailsReceiver.swift in Sources */,
+				93B7B5612CD7912400E0205A /* OrderrConfirmationCloseButtonCell.swift in Sources */,
 				934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */,
 				93755C3E2C838516002570A5 /* WebsiteManager.swift in Sources */,
+				93B7B55D2CD70FA900E0205A /* OrderrConfirmationItemDetailsCell.swift in Sources */,
 				93755BFA2C7700FD002570A5 /* PhotoPickerManager.swift in Sources */,
 				93BD48C32C5CE5B500144E7F /* EmailSignInController.swift in Sources */,
 				93B9DC892C368DA80050BC3F /* OrderItemCollectionViewCell.swift in Sources */,
@@ -1525,6 +1588,7 @@
 				9353746C2CCABD6900794A63 /* StoreSelectionViewController.swift in Sources */,
 				93F9BB402C1C0DEA00355A87 /* DrinkSizeSelectionCollectionViewCell.swift in Sources */,
 				93B9DC852C3546150050BC3F /* UserDetails.swift in Sources */,
+				93B7B5652CD8DC9B00E0205A /* OrderConfirmation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
