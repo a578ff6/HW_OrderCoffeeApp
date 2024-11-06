@@ -163,6 +163,8 @@
 		93B7B5652CD8DC9B00E0205A /* OrderConfirmation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5642CD8DC9B00E0205A /* OrderConfirmation.swift */; };
 		93B7B5672CD9066D00E0205A /* OrderConfirmationHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5662CD9066D00E0205A /* OrderConfirmationHandlerDelegate.swift */; };
 		93B7B5692CD9E22800E0205A /* OrderConfirmationSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5682CD9E22800E0205A /* OrderConfirmationSectionHeaderView.swift */; };
+		93B7B5742CDB425B00E0205A /* OrderConfirmationSectionExpansionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5732CDB425B00E0205A /* OrderConfirmationSectionExpansionManager.swift */; };
+		93B7B5762CDB8A3500E0205A /* OrderConfirmationHeaderGestureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B7B5752CDB8A3500E0205A /* OrderConfirmationHeaderGestureHandler.swift */; };
 		93B9DC742C3017FB0050BC3F /* DrinksCategoryLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9DC732C3017FB0050BC3F /* DrinksCategoryLayoutProvider.swift */; };
 		93B9DC762C3042710050BC3F /* MenuLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9DC752C3042710050BC3F /* MenuLayoutProvider.swift */; };
 		93B9DC782C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9DC772C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift */; };
@@ -339,6 +341,8 @@
 		93B7B5642CD8DC9B00E0205A /* OrderConfirmation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderConfirmation.swift; sourceTree = "<group>"; };
 		93B7B5662CD9066D00E0205A /* OrderConfirmationHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderConfirmationHandlerDelegate.swift; sourceTree = "<group>"; };
 		93B7B5682CD9E22800E0205A /* OrderConfirmationSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderConfirmationSectionHeaderView.swift; sourceTree = "<group>"; };
+		93B7B5732CDB425B00E0205A /* OrderConfirmationSectionExpansionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderConfirmationSectionExpansionManager.swift; sourceTree = "<group>"; };
+		93B7B5752CDB8A3500E0205A /* OrderConfirmationHeaderGestureHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderConfirmationHeaderGestureHandler.swift; sourceTree = "<group>"; };
 		93B9DC732C3017FB0050BC3F /* DrinksCategoryLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinksCategoryLayoutProvider.swift; sourceTree = "<group>"; };
 		93B9DC752C3042710050BC3F /* MenuLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuLayoutProvider.swift; sourceTree = "<group>"; };
 		93B9DC772C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailLayoutProvider.swift; sourceTree = "<group>"; };
@@ -1151,6 +1155,8 @@
 			isa = PBXGroup;
 			children = (
 				93B7B5622CD80CF800E0205A /* OrderConfirmationManager.swift */,
+				93B7B5732CDB425B00E0205A /* OrderConfirmationSectionExpansionManager.swift */,
+				93B7B5752CDB8A3500E0205A /* OrderConfirmationHeaderGestureHandler.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1581,6 +1587,7 @@
 				935374402CB666E800794A63 /* CustomerDetails.swift in Sources */,
 				935374722CCABE0100794A63 /* StoreManager.swift in Sources */,
 				935374172C9C5CF300794A63 /* FavoritesView.swift in Sources */,
+				93B7B5742CDB425B00E0205A /* OrderConfirmationSectionExpansionManager.swift in Sources */,
 				93755C122C7E5542002570A5 /* UIViewController+KeyboardHandling.swift in Sources */,
 				935291412C89C1480018B060 /* DrinksCategorySectionFooterView.swift in Sources */,
 				93F9BB422C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift in Sources */,
@@ -1615,6 +1622,7 @@
 				93B7B5512CD5E20500E0205A /* OrderConfirmationView.swift in Sources */,
 				93755C002C79E454002570A5 /* ProfileTextFieldCell.swift in Sources */,
 				9352914C2C8D91480018B060 /* DrinkDetailHandler.swift in Sources */,
+				93B7B5762CDB8A3500E0205A /* OrderConfirmationHeaderGestureHandler.swift in Sources */,
 				93755BFE2C79DEAA002570A5 /* EditProfileView.swift in Sources */,
 				939BD9D22B2A1B1700616D1C /* SceneDelegate.swift in Sources */,
 				93755C022C7B179C002570A5 /* GenderSelectionCell.swift in Sources */,

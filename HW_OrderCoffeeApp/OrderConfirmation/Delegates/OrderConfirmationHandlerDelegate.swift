@@ -10,8 +10,8 @@
 
  `* 設計目的`
  
-    - `OrderConfirmationHandlerDelegate` 是一個協定（protocol），設計的目的是允許 `OrderConfirmationHandler` 與外部類別進行通信，特別是用於從外部獲取所需的訂單確認資料 (`OrderConfirmation`)，以及處理視圖中的關閉操作。
-    - 使 `OrderConfirmationHandler` 能夠依賴代理來取得資料和處理關閉操作，這樣 `OrderConfirmationHandler` 自身不需要知道資料的具體來源和具體的關閉行為，從而達到`降低耦合度`的目的。
+    - `OrderConfirmationHandlerDelegate` 是一個協定（protocol），設計的目的是允許 `OrderConfirmationHandler` 與外部類別進行通信，特別是用於從外部獲取所需的訂單確認資料 (OrderConfirmation)、處理視圖中的關閉操作，以及管理區塊（Section）的展開或收起狀態。
+    - 使 `OrderConfirmationHandler` 能夠依賴代理來取得資料和處理關閉操作和區塊狀態切換，這樣 `OrderConfirmationHandler` 自身不需要知道資料的具體來源和具體的關閉行為，從而達到`降低耦合度`的目的。
 
  `* 為什麼需要使用代理模式`
 
@@ -35,17 +35,20 @@
  `2. 接口定義：`
     - `getOrder()`：返回當前的 `OrderConfirmation` 模型。當沒有可用訂單時，返回 `nil`。
     - `didTapCloseButton()`：當用戶在訂單確認頁面中按下關閉按鈕時，代理將處理相應的關閉操作（例如返回主菜單頁面，清除相關資料）。
+    - `didToggleSection(_:)`：當用戶切換某個區塊（Section）的展開或收起狀態時，代理將處理相應的視圖更新操作，例如重新載入該區塊。
 
  `3. Delegate 具體的實現：`
     - 代理由持有訂單資料的控制器實現。
-    - `OrderConfirmationViewController` 實現了 `OrderConfirmationHandlerDelegate`，並在 `getOrder()` 方法中返回當前的 `OrderConfirmation` 實例，同時在 `didTapCloseButton()` 方法中處理返回和清除的行為。
-
+    - `OrderConfirmationViewController` 實現了 `OrderConfirmationHandlerDelegate`，並在` getOrder() `方法中返回當前的 OrderConfirmation 實例。
+    - 同時在 `didTapCloseButton()` 方法中處理返回和清除的行為，在 `didToggleSection(_:) `方法中負責處理區塊的展開與收起顯示更新。
+ 
  `### 使用案例`
 
  `* 訂單確認頁面 (`OrderConfirmationViewController`)：`
         - `OrderConfirmationViewController` 是訂單確認頁面，在這個頁面中，它通過 `OrderConfirmationHandler` 來管理 `UICollectionView` 的顯示和交互。
         - `OrderConfirmationHandler` 需要從外部獲取當前的訂單資料來更新顯示，因此它依賴於 `OrderConfirmationHandlerDelegate` 來取得這些資料。
         - 當用戶點擊關閉按鈕時，`OrderConfirmationHandler` 通過 `didTapCloseButton()` 通知代理執行相應的關閉邏輯。
+        - 當用戶點擊某個可展開的區塊時，`OrderConfirmationHandler` 通過` didToggleSection(_:) `通知代理處理區塊的展開與收起狀態，代理負責進行相關視圖的更新。
 
 ` * 降低類別之間的直接依賴：`
         - 通過 `OrderConfirmationHandlerDelegate`，`OrderConfirmationHandler` 不需要知道具體的 `OrderConfirmationViewController` 或其他持有資料的類別，而是通過代理模式來請求資料，從而使程式結構更具擴展性和維護性。
@@ -63,4 +66,7 @@ protocol OrderConfirmationHandlerDelegate: AnyObject {
     
     ///  當按下`關閉`按鈕時的操作
     func didTapCloseButton()
+    
+    /// 當切換某個 Section 展開/收起狀態時的操作
+    func didToggleSection(_ section: Int)
 }

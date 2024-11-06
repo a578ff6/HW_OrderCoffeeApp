@@ -322,20 +322,25 @@
  */
 
 
-// MARK: - 重點筆記：資料驅動的 UI 配置
+// MARK: - 重點筆記：資料驅動的 UI 配置與手勢處理獨立化
 /**
- ## 重點筆記：資料驅動的 UI 配置
+ ## 重點筆記：資料驅動的 UI 配置與手勢處理獨立化
 
  `* 問題描述`
     - `遠端資料獲取延遲`：從 Firebase 獲取訂單資料會存在一定的延遲，這可能導致 UI 在資料還未加載完成時顯示不完整或錯誤。
     - `UI 資料依賴性高`：`OrderConfirmation` 頁面中顯示的內容高度依賴於資料的完整性，因此需要在資料完全獲取後再進行配置，確保顯示的準確性。
+    - `手勢處理重複問題`：在多次創建 Header View 的情況下，手勢處理程式碼可能導致重複附加手勢辨識器的問題，使得手勢管理變得複雜且難以維護。（重要）
     - `提升用戶體驗`：用戶更能接受的是一個稍晚一點但完整的界面，而不是一個閃爍或者顯示錯誤提示的界面。
 
  `* 改進方案`
- - `採用資料驅動的 UI 配置，延遲初始化 OrderConfirmationHandler：`
  
+ `* 採用資料驅動的 UI 配置，延遲初始化 OrderConfirmationHandler：`
     - `延遲初始化 OrderConfirmationHandler`：將 `OrderConfirmationHandler` 的初始化移到資料加載完成之後進行，而不是在 `viewDidLoad()` 中。
     - 這樣可以保證在有完整訂單資料後再初始化和設置 UI，避免 UI 顯示不完整或出錯。
+ 
+ `* 手勢處理邏輯獨立化，改善責任分離和可維護性：`
+    - `獨立出手勢處理邏輯`：將與 Section Header 的點擊展開/收起相關的手勢處理從 `OrderConfirmationHandler` 中分離出來，放入新的類別 `OrderConfirmationHeaderGestureHandler` 中。
+    - `責任分離`:這樣做可以讓 `OrderConfirmationHandler` 專注於數據顯示和 UI 配置，而 `OrderConfirmationHeaderGestureHandler` 專注於手勢的添加與管理，降低耦合度並提高程式碼的可讀性和可維護性。
  
  `* 具體實現步驟`
  
@@ -347,6 +352,11 @@
     - 在` setupOrderConfirmationHandler() `方法中，初始化 `OrderConfirmationHandler` 並設置為 `collectionView` 的數據源和委託。
     - 只有在資料獲取完成後，才進行 UI 的配置。
  
+ `3.手勢處理邏輯的獨立：`（重要）
+    - 新增 `OrderConfirmationHeaderGestureHandler` 類別，用於集中管理與 Header View 相關的手勢處理邏輯。
+    - 在 `OrderConfirmationHandler` 中使用 `OrderConfirmationHeaderGestureHandler` 來為 Header View 添加手勢。
+    - 在初始化 `OrderConfirmationHandler` 時，延遲初始化 `OrderConfirmationHeaderGestureHandler`，並確保其擁有正確的 `delegate`。
+ 
  `* 改進後的邏輯流程`
  
  `1.獲取資料：`
@@ -357,13 +367,40 @@
     - 當資料成功獲取後，通過` setupOrderConfirmationHandler() `方法來初始化 `OrderConfirmationHandler`，並將其設置為 `collectionView` 的數據源和委託。
     - 確保 `collectionView` 只有在資料完全準備好後才進行顯示，從而避免不完整或錯誤的 UI。
  
+` 3. 手勢處理分離：`
+    - 當配置 Header View 時，使用 `OrderConfirmationHeaderGestureHandler` 為需要展開/收起的 Header View 添加手勢。
+    - 確保手勢只在需要時添加，並避免重複附加手勢辨識器。
+ 
  `* 改進後的好處`
  
  `1.避免顯示不完整的 UI`：在資料完全準備好後再進行 UI 初始化，這樣可以避免顯示不完整或出錯的情況。
  `2.用戶體驗提升`：用戶不會看到未加載完全的 UI，整體的界面顯得更加穩定和可靠。
- `3.更清晰的程式碼邏輯`：數據獲取和 UI 初始化分開進行，讓程式碼更加易於理解和維護。
+ `3.更清晰的程式碼邏輯`：
+    - 數據獲取和 UI 初始化分開進行，讓程式碼更加易於理解和維護。
+    - 手勢處理邏輯獨立後，`OrderConfirmationHandler` 的責任更加專一，使程式碼的可讀性和可維護性顯著提升。
  */
 
+
+// MARK: - 重點筆記：didToggleSection 的設計
+/**
+ ## 重點筆記：didToggleSection 的設計
+ 
+` * 目的與設計`
+    - `目的`：`didToggleSection(_:) `方法的目的是當使用者點擊某個 Section Header，切換該區域的展開或收起狀態時，更新顯示內容，使得使用者可以即時看到變更效果。
+    - `功能`：這個方法會使用 `reloadSections(_:) `來重新加載指定的區域，從而更新顯示狀態（例如展開/收起的 `ItemDetails` 部分）。
+ 
+ `* 工作流程`
+    - `Section Header 點擊`：當使用者點擊區域標題 (HeaderView) 時，會透過 `OrderConfirmationHandler` 中的 `handleHeaderTap(_:) `方法來通知控制器 (`OrderConfirmationViewController`) 切換展開狀態。
+    - `通知更新`：`OrderConfirmationHandler` 通過代理 (`OrderConfirmationHandlerDelegate`) 通知控制器進行狀態切換，控制器再使用` didToggleSection(_:) `方法來完成 UI 更新。
+ 
+ `* 優點`
+    - `保持控制器與 Handler 之間的低耦合`：通過代理方法將 Section 展開或收起的更新操作交由 ViewController 處理，可以保持控制器與 Handler 之間的低耦合。
+    - `便於擴展與維護`：如果未來需要改變 Section 的展開狀態顯示邏輯，這些邏輯只需在控制器內進行更新，而無需修改 Handler，有助於代碼的擴展和維護性。
+ 
+ `* 適用情境`
+    - 訂單確認頁面 (`OrderConfirmationViewController`) 中使用這個方法來切換顯示狀態，讓用戶可以更好地掌握訂單的詳細資訊或隱藏部分細節。
+    - 將展開狀態的邏輯與顯示更新分離，讓 Handler 更專注於處理數據的管理和手勢交互，ViewController 則處理具體的顯示更新，使各自的責任更為明確。
+ */
 
 // MARK: - 資料驅動的 UI 配置
 import UIKit
@@ -371,12 +408,12 @@ import Firebase
 
 /// 訂單確認頁面控制器，負責顯示訂單確認後的詳情，例如顧客資訊、訂單項目和總金額。
 class OrderConfirmationViewController: UIViewController {
-
+    
     // MARK: - Properties
-
+    
     /// 用於存放提交後的訂單資料
     var orderConfirmation: OrderConfirmation?
-     
+    
     /// 自訂的 OrderConfirmationView，用於顯示訂單確認頁面的畫面
     private let orderConfirmationView = OrderConfirmationView()
     
@@ -386,9 +423,9 @@ class OrderConfirmationViewController: UIViewController {
 
     /// 負責與 Firebase 互動以獲取訂單資料的管理器
     private let orderConfirmationManager = OrderConfirmationManager()
- 
+    
     // MARK: - Lifecycle Methods
-
+    
     override func loadView() {
         self.view = orderConfirmationView
     }
@@ -401,13 +438,15 @@ class OrderConfirmationViewController: UIViewController {
     // MARK: - Setup Methods
     
     /// 初始化並設置 `OrderConfirmationHandler`，並將其設置為 collectionView 的數據源和委託
-    /// - 需要在成功獲取訂單資料後調用此方法
+    /// - 說明：此方法需要在成功獲取訂單資料後調用，以確保在資料完整的前提下進行 UI 配置
+    /// - 設置步驟：
+    ///   1. 初始化 `OrderConfirmationHandler`，並將 `delegate` 設置為當前的 ViewController
+    ///   2. 將 `OrderConfirmationHandler` 設置為 `collectionView` 的數據源和委託
     private func setupOrderConfirmationHandler() {
         guard let orderConfirmation = orderConfirmation else { return }
         
-        // 初始化 Handler，並將其 delegate 設置為自己
-        let handler = OrderConfirmationHandler()
-        handler.delegate = self
+        // 初始化 Handler，並將自己設置為 `delegate`
+        let handler = OrderConfirmationHandler(delegate: self)
         self.orderConfirmationHandler = handler
         
         // 設置 collectionView 的數據源和委託
@@ -468,6 +507,17 @@ class OrderConfirmationViewController: UIViewController {
 
 // MARK: - OrderConfirmationHandlerDelegate
 extension OrderConfirmationViewController: OrderConfirmationHandlerDelegate {
+    
+    // MARK: - Section Handling
+
+    /// 切換指定區域的展開/收起狀態
+    /// - Parameter section: 被點擊的區域索引
+    /// - 說明：收到 `OrderConfirmationHandler` 的通知後，重新載入對應的區域顯示，以反映使用者的展開或收起操作
+    func didToggleSection(_ section: Int) {
+        // 更新指定區域的顯示，切換展開/收起狀態
+        print("Did toggle section: \(section)")
+        orderConfirmationView.collectionView.reloadSections(IndexSet(integer: section))
+    }
     
     // MARK: - Order Data Methods
 
