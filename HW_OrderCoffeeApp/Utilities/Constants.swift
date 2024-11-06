@@ -42,6 +42,8 @@ struct Constants {
         static let orderCustomerDetailsViewController = "OrderCustomerDetailsViewController"
         
         static let storeSelectionViewController = "StoreSelectionViewController"
+        
+        static let orderConfirmationViewController = "OrderConfirmationViewController"
     }
     
     /// 定義結構 `Segue`，用於存放與 Segue 相關的常數

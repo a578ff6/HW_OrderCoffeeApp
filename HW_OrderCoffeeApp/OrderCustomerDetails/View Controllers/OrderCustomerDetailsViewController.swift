@@ -344,6 +344,78 @@
  */
 
 
+// MARK: - 訂單提交結果設計
+/**
+ ## 訂單提交結果設計
+
+ `## What：處理訂單提交成功與提交失敗的設計`
+    - 在 `OrderCustomerDetailsViewController` 中設計提交訂單後的行為，包括如何處理提交成功和提交失敗的情境。
+
+ `## Why：提供用戶清晰的反饋並確保訂單流程順暢`
+    - `提交成功`：讓用戶能夠確認訂單是否成功被處理，並展示相關訂單資訊，以增強用戶的信心和體驗。
+    - `提交失敗`：迅速告知用戶錯誤原因，避免因不明錯誤導致用戶困惑，並提供簡單操作讓用戶重試提交。
+
+ `## How：提交成功與失敗的設計`
+
+` ### 提交成功`
+ 
+` 1. OrderConfirmationViewController：`
+    - 在提交成功後，導航到 `OrderConfirmationViewController`，顯示提交成功的訊息和訂單詳細資訊。
+    - 在該視圖中設置「關閉」按鈕，讓用戶可以手動確認完成訂單流程。
+    - 按下「關閉」按鈕後，清空使用者的填寫資料與訂單飲品項目，並返回上一層視圖控制器，準備新的訂單流程。
+
+` ### 提交失敗`
+ 
+` 1. 使用 Alert 通知用戶：`
+    - 在提交失敗時，彈出 Alert，告知錯誤訊息並提供可選操作（例如「重試」或「取消」）。
+    - Alert 是一個簡單且即時的解決方案，適合大多數的提交失敗情況，讓用戶能快速理解問題並做出下一步行動。
+
+` ### 做法`
+ 
+ - `提交成功`：使用 `OrderConfirmationViewController` 讓用戶確認訂單資訊，提供完整的提交確認體驗。
+ - `提交失敗`：使用 Alert 簡單有效地通知用戶並提供重試選項，以減少流程摩擦。
+ */
+
+// MARK: - 訂單提交失敗的情況設計
+/**
+ ## 訂單提交失敗的情況設計
+ 
+    - 在訂單提交失敗的情況下，通常使用 Alert 是比較適合的方式。原因是提交失敗的情況下，用戶可能只需要了解錯誤原因，然後重新提交或檢查表單內容。
+
+ `以下是兩種選擇的考量：`
+
+ `1. 使用 Alert`
+ 
+    * `Why：`
+
+    - `簡潔且即時`：Alert 能迅速吸引用戶的注意，告知錯誤原因並提供簡單的選項（如「重試」或「取消」）。
+    - `不需要額外畫面`：提交失敗通常是臨時性狀況，不需要用戶長時間停留或查看更多詳情。
+ 
+    * `How：`
+
+    - 在提交失敗後彈出 Alert，包含錯誤訊息，以及可供用戶選擇重試的按鈕。例如：
+    - 標題：訂單提交失敗
+    - 訊息：訂單提交過程中出現錯誤，請稍後再試。
+    - 按鈕：「重試」或「取消」
+ 
+ `2. 使用專門的視圖控制器`
+ 
+    * `Why`：
+
+    - `提供更豐富的反饋`：如果想要對失敗的情況提供更多的反饋和解決方案，例如更多的錯誤詳細描述、建議操作，或是希望用戶填寫更多的資訊。
+    - `設計統一體驗`：有時在某些應用中，設計一致的成功和失敗頁面可能會讓整體體驗看起來更專業。
+ 
+    * `How`：
+
+    - 在訂單提交失敗後，導航到專門的錯誤視圖控制器，該視圖會詳細顯示錯誤訊息，並提供重新提交的選項。
+ 
+  `3. 推薦做法：`
+
+    - 對於大多數 App，使用 Alert 足以解決提交失敗的情況，因為這樣可以簡單且有效地通知用戶，並減少用戶在流程中的摩擦。如果只是一些網路不穩定或表單不完整的錯誤，Alert 會比較簡便。
+    - 若是提交失敗的原因非常重要且需要用戶進行較多操作，或是你希望有更多設計統一的反饋視圖，那麼使用專門的視圖控制器會是更好的選擇。
+ */
+
+
 import UIKit
 
 /// `OrderCustomerDetailsViewController` 是一個用於顯示和處理顧客詳細資料的視圖控制器
@@ -466,13 +538,27 @@ extension OrderCustomerDetailsViewController: OrderCustomerDetailsHandlerDelegat
                 do {
                     try await OrderManager.shared.submitOrder()
                     print("訂單已成功提交")
-                    // 提交成功後的操作，例如返回上個畫面或更新 UI
+                    // 提交成功後呈現 OrderConfirmationViewController
+                    self.presentOrderConfirmationViewController()
                 } catch {
                     print("訂單提交失敗：\(error.localizedDescription)")
                     // 顯示錯誤提示(或者改成跳出一個失敗的畫面)
                     AlertService.showAlert(withTitle: "提交失敗", message: "訂單提交過程中出現錯誤，請稍後再試。", inViewController: self, showCancelButton: false, completion: nil)
                 }
             }
+        }
+    }
+    
+    // MARK: - Navigation Methods
+
+    /// 呈現 OrderConfirmationViewController 的方法
+    private func presentOrderConfirmationViewController() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let orderConfirmationVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.orderConfirmationViewController) as? OrderConfirmationViewController {
+            orderConfirmationVC.modalPresentationStyle = .fullScreen
+            self.present(orderConfirmationVC, animated: true, completion: nil)
+        } else {
+            print("無法找到 ID 為 OrderConfirmationViewController 的視圖控制器")
         }
     }
     
