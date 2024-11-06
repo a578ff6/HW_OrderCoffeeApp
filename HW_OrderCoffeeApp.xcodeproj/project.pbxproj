@@ -1081,13 +1081,29 @@
 		93B7B54D2CD4DB2100E0205A /* OrderConfirmation */ = {
 			isa = PBXGroup;
 			children = (
+				93B7B56C2CDB362400E0205A /* Delegates */,
+				93B7B56E2CDB365000E0205A /* Handler */,
+				93B7B56F2CDB365900E0205A /* Layouts */,
+				93B7B56D2CDB363500E0205A /* Views */,
+				93B7B5702CDB366900E0205A /* View Controllers */,
+				93B7B5712CDB368000E0205A /* Models */,
+				93B7B5722CDB368700E0205A /* Services */,
+			);
+			path = OrderConfirmation;
+			sourceTree = "<group>";
+		};
+		93B7B56C2CDB362400E0205A /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
 				93B7B5662CD9066D00E0205A /* OrderConfirmationHandlerDelegate.swift */,
-				93B7B5622CD80CF800E0205A /* OrderConfirmationManager.swift */,
-				93B7B5642CD8DC9B00E0205A /* OrderConfirmation.swift */,
-				93B7B5542CD5E28500E0205A /* OrderConfirmationHandler.swift */,
-				93B7B54E2CD50CE900E0205A /* OrderConfirmationViewController.swift */,
+			);
+			path = Delegates;
+			sourceTree = "<group>";
+		};
+		93B7B56D2CDB363500E0205A /* Views */ = {
+			isa = PBXGroup;
+			children = (
 				93B7B5502CD5E20500E0205A /* OrderConfirmationView.swift */,
-				93B7B5522CD5E23B00E0205A /* OrderConfirmationLayoutProvider.swift */,
 				93B7B5682CD9E22800E0205A /* OrderConfirmationSectionHeaderView.swift */,
 				93B7B5562CD66D6100E0205A /* OrderConfirmationCheckmarkCell.swift */,
 				93B7B5582CD6751C00E0205A /* OrderConfirmationMessageCell.swift */,
@@ -1096,7 +1112,47 @@
 				93B7B55E2CD74A9700E0205A /* OrderrConfirmationDetailsCell.swift */,
 				93B7B5602CD7912400E0205A /* OrderrConfirmationCloseButtonCell.swift */,
 			);
-			path = OrderConfirmation;
+			path = Views;
+			sourceTree = "<group>";
+		};
+		93B7B56E2CDB365000E0205A /* Handler */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B5542CD5E28500E0205A /* OrderConfirmationHandler.swift */,
+			);
+			path = Handler;
+			sourceTree = "<group>";
+		};
+		93B7B56F2CDB365900E0205A /* Layouts */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B5522CD5E23B00E0205A /* OrderConfirmationLayoutProvider.swift */,
+			);
+			path = Layouts;
+			sourceTree = "<group>";
+		};
+		93B7B5702CDB366900E0205A /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B54E2CD50CE900E0205A /* OrderConfirmationViewController.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		93B7B5712CDB368000E0205A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B5642CD8DC9B00E0205A /* OrderConfirmation.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		93B7B5722CDB368700E0205A /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B5622CD80CF800E0205A /* OrderConfirmationManager.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		93BD48B32C58DA0900144E7F /* Orders */ = {
