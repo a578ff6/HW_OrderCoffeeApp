@@ -28,7 +28,7 @@ class OrderrConfirmationItemDetailsCell: UICollectionViewCell {
     private let quantityImageView = createQuantityImageView(height: 20, weight: 20)
 
     private let quantityLabel = createLabel(font: UIFont.systemFont(ofSize: 14))
-    private let sizeAndQuantityStackView = createStackView(axis: .horizontal, spacing: 8, alignment: .leading, distribution: .fillProportionally)
+    private let sizeAndQuantityStackView = createStackView(axis: .horizontal, spacing: 8, alignment: .leading, distribution: .equalSpacing)
 
     // PriceLabel
     private let priceLabel = createLabel(font: UIFont.systemFont(ofSize: 15), textAlignment: .right)
