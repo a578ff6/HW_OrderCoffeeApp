@@ -64,6 +64,9 @@ class OrderrConfirmationItemDetailsCell: UICollectionViewCell {
         sizeAndQuantityStackView.addArrangedSubview(quantityImageView)
         sizeAndQuantityStackView.addArrangedSubview(quantityLabel)
         
+        // 設置 sizeLabel 的固定寬度（尺寸的文字長度不同，它的寬度也不會變動）
+        sizeLabel.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        
         // 在 titleAndSubtitleStackView 下方添加 sizeAndQuantityStackView
         let titleAndDetailsStackView = OrderrConfirmationItemDetailsCell.createStackView(axis: .vertical, spacing: 8, alignment: .leading, distribution: .fill)
         titleAndDetailsStackView.addArrangedSubview(titleAndSubtitleStackView)
