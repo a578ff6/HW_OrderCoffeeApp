@@ -165,11 +165,12 @@ class OrderConfirmationManager {
             throw OrderConfirmationError.missingField("Order Item fields")
         }
         
+        // 解析飲品資料
+        let drink = OrderConfirmationItem.Drink(name: name, subName: subName, imageUrl: imageUrl)
+        
         // 返回解碼後的訂單項目
         return OrderConfirmationItem(
-            name: name,
-            subName: subName,
-            imageUrl: imageUrl,
+            drink: drink,
             size: size,
             quantity: quantity,
             price: price

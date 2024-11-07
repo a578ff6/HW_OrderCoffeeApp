@@ -169,9 +169,10 @@ class OrderrConfirmationItemDetailsCell: UICollectionViewCell {
     /// 設置飲品項目詳情
     /// - Parameter orderItem: 訂單項目資料
     func configure(with orderItem: OrderConfirmationItem) {
-        drinkImageView.kf.setImage(with: orderItem.imageUrl, placeholder: UIImage.starbucksLogo)
-        titleLabel.text = orderItem.name
-        subtitleNameLabel.text = orderItem.subName
+        // 使用內嵌的 `drink` 屬性來設置飲品資料
+        drinkImageView.kf.setImage(with: orderItem.drink.imageUrl, placeholder: UIImage.starbucksLogo)
+        titleLabel.text = orderItem.drink.name
+        subtitleNameLabel.text = orderItem.drink.subName
         sizeLabel.text = "\(orderItem.size)"
         quantityLabel.text = "\(orderItem.quantity)"
         priceLabel.text = "\(orderItem.price) 元/杯"

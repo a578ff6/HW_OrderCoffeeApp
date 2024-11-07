@@ -84,14 +84,18 @@ struct OrderConfirmationCustomerDetails: Codable {
 
 /// 訂單項目模型
 struct OrderConfirmationItem: Codable {
-    var name: String                         // 飲品名稱
-    var subName: String                      // 飲品子名稱
-    var imageUrl: URL                        // 飲品圖片 URL
+    var drink: Drink                        // 飲品資料（包含名稱、子名稱、圖片等）
     var size: String                         // 飲品尺寸
     var quantity: Int                        // 飲品數量
     var price: Int                           // 單項飲品價格
+    
+    /// 鉗套結構，用於描述飲品的詳細資料
+    struct Drink: Codable {
+        var name: String                     // 飲品名稱
+        var subName: String                  // 飲品子名稱
+        var imageUrl: URL                    // 飲品圖片 URL
+    }
 }
-
 
 /// 用於顯示顧客的取件選擇。
 enum OrderConfirmationPickupMethod: String, Codable {
