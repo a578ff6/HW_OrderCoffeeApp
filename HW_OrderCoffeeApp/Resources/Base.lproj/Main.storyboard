@@ -327,6 +327,21 @@
             </objects>
             <point key="canvasLocation" x="7684" y="2472"/>
         </scene>
+        <!--Order History View Controller-->
+        <scene sceneID="Zle-j4-bjC">
+            <objects>
+                <viewController storyboardIdentifier="OrderHistoryViewController" id="KVg-nz-HK4" customClass="OrderHistoryViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ua7-lJ-7sn">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="UuR-nV-rCN"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Egl-81-DCf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7693" y="3184"/>
+        </scene>
         <!--Order-->
         <scene sceneID="d9b-ck-ATS">
             <objects>

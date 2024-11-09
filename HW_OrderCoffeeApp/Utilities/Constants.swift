@@ -44,6 +44,8 @@ struct Constants {
         static let storeSelectionViewController = "StoreSelectionViewController"
         
         static let orderConfirmationViewController = "OrderConfirmationViewController"
+        
+        static let orderHistoryViewController = "OrderHistoryViewController"
     }
     
     /// 定義結構 `Segue`，用於存放與 Segue 相關的常數
@@ -54,5 +56,4 @@ struct Constants {
         static let drinksToDetailSegue = "DrinksToDetailSegue"
     }
     
-
 }
