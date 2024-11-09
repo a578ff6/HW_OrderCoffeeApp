@@ -711,6 +711,14 @@ class UserProfileViewController: UIViewController {
         }
     }
     
+    /// 導航至「歷史訂單」頁面
+    func navigateToOrderHistory() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let orderHistoryVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.orderHistoryViewController) as? OrderHistoryViewController {
+            self.navigationController?.pushViewController(orderHistoryVC, animated: true)
+        }
+    }
+    
     // MARK: - Logout Setup
     
     /// 顯示登出確認彈窗並執行登出邏輯
