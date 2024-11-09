@@ -59,6 +59,48 @@
     - 負責創建排序選單，通過` createSortMenu() `提供排序按鈕的菜單。方便用戶對歷史訂單進行不同方式的排序。 
  */
 
+
+// MARK: - 刪除操作的 UI 更新問題
+/**
+## 刪除操作的 UI 更新問題
+
+`1. 問題描述`
+
+- 刪除操作後，導航欄按鈕的顯示變為「排序按鈕」和「編輯按鈕」，而不是保持在「編輯模式」的狀態。
+- 這會導致用戶在刪除後如果還想繼續編輯，需額外再次點擊「編輯」按鈕，影響使用流暢度。
+ 
+`2. 所遇到的問題`
+ 
+ * `原先的導航欄按鈕 UI 與邏輯不同`
+    - 在原本的設計中，刪除後導航欄的按鈕狀態與預期的「編輯模式」不一致，造成按鈕的行為邏輯與界面顯示不符。
+
+`3. 原因`
+
+- 在刪除操作後調用了 `setupInitialNavigationBar()`，使導航欄按鈕恢復成了非編輯狀態。
+
+`4. 解決方案`
+
+- 在 `deleteButtonTapped` 中使用 `setupEditingNavigationBar()`，確保刪除後的導航欄按鈕仍保持在編輯狀態，以優化用戶體驗。
+*/
+
+
+// MARK: - editButtonTapped 與 deleteButtonTapped 的行為差異
+/**
+## 差異分析
+
+`1. editButtonTapped 與 deleteButtonTapped 的行為差異`
+
+- `editButtonTapped`：
+    - 負責在「編輯模式」和「完成模式」之間切換。
+    - 使用 `editingHandler?.isEditing == true ? setupEditingNavigationBar() : setupInitialNavigationBar()` 來根據當前狀態動態設置導航欄按鈕。
+    - 主要給`doneButton`、`editButton`使用。
+ 
+- `deleteButtonTapped`：
+    - 負責刪除選中項目後，保持在「編輯模式」。
+    - 使用 `setupEditingNavigationBar()` 直接保持導航欄的編輯狀態配置，以確保用戶在刪除後可以繼續進行編輯操作。
+*/
+
+
 import UIKit
 
 /// 負責 `OrderHistory` 導航欄按鈕的配置和更新
@@ -102,7 +144,6 @@ class OrderHistoryNavigationBarManager {
         guard let editingHandler = editingHandler else { return }
         let editButton = UIBarButtonItem(image: UIImage(systemName: "pencil.and.list.clipboard"), style: .plain, target: self, action: #selector(editButtonTapped))
         editButton.isEnabled = !editingHandler.isOrderListEmpty()
-        print("Setup Initial Navigation Bar - Edit Button is enabled: \(editButton.isEnabled)")
 
         navigationItem?.rightBarButtonItems = [sortButton, editButton]
     }
@@ -114,7 +155,6 @@ class OrderHistoryNavigationBarManager {
         let deleteButton = UIBarButtonItem(image: UIImage(systemName: "trash"), style: .plain, target: self, action: #selector(deleteButtonTapped))
         
         navigationItem?.rightBarButtonItems = [doneButton, deleteButton]
-        print("Setup Editing Navigation Bar - Done Button added, Delete Button added")
     }
     
     // MARK: - Button Actions
@@ -128,14 +168,14 @@ class OrderHistoryNavigationBarManager {
         
         // 根據當前編輯模式更新導航欄
         editingHandler?.isEditing == true ? setupEditingNavigationBar() : setupInitialNavigationBar()
-        print("Edit button tapped - Current isEditing: \(editingHandler?.isEditing ?? false)")
     }
     
     /// 處理「刪除」按鈕的動作
     /// - 調用 `editingHandler` 來刪除選中的行
     @objc private func deleteButtonTapped() {
         editingHandler?.deleteSelectedRows()
-        print("Delete button tapped - Attempted to delete selected rows")
+        // 保持在編輯模式下，更新導航欄按鈕為編輯狀態
+        setupEditingNavigationBar()
     }
     
 }
