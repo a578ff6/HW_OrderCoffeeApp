@@ -20,19 +20,27 @@
  
  `* 主要方法與作用：`
 
- - `isEditing`：返回當前表格是否處於編輯模式，便於其他組件查詢當前狀態。
+ - `isEditing`：返回當前表格是否處於編輯模式，便於其他組件查詢當前狀態，特別是在更新導航欄按鈕狀態時使用。
  - `toggleEditingMode()`：負責進入和退出編輯模式。透過切換編輯狀態，使得視圖的使用體驗更為靈活。
  - `deleteSelectedRows()`：處理多選刪除操作。包括通知代理刪除相應數據，並且更新表格視圖以反映更改。
+ - `isOrderListEmpty()`：檢查訂單列表是否為空，讓其他組件（例如 `OrderHistoryNavigationBarManager`）可以根據這個狀態動態調整編輯按鈕的啟用狀態。
  
  `* 責任分離與模組化：`
 
- - 將 `OrderHistoryEditingHandler` 作為獨立的模組，負責編輯模式和刪除操作，使得這些邏輯更加清晰可管理。
- - 與 `OrderHistoryDelegate` 代理合作，可以在處理數據的同時保持視圖的同步更新。
+ - `將 OrderHistoryEditingHandler 作為獨立的模組`，專注於管理表格的編輯狀態和刪除操作，使得這些邏輯更加清晰可管理，並降低 `OrderHistoryViewController` 的複雜性。
+ - `與 OrderHistoryDelegate 的協作`：透過 `OrderHistoryDelegate` 的代理方法進行實際的數據刪除操作，確保資料源和表格視圖的同步更新，保持 UI 與後端資料的一致性。
  
 ` * 合作對象：`
 
- - `OrderHistoryDelegate`：負責與數據源進行互動，執行實際的刪除操作。
- - `UITableView`：由 `OrderHistoryEditingHandler` 管理表格的編輯模式和刪除行的動畫。
+ - `OrderHistoryDelegate`：：負責與數據源進行互動，執行實際的刪除操作。例如，`deleteOrders(at:)` 方法會被調用來刪除本地資料和 Firebase 中的資料，確保資料同步。
+ - `UITableView`：
+    - 由 `OrderHistoryEditingHandler` 管理表格的編輯模式和刪除行的動畫。
+    - 當進入或退出編輯模式時，`UITableView` 的狀態會根據 `toggleEditingMode()` 方法來變化。
+ 
+ `* 編輯按鈕狀態的關聯設置：`
+  
+  - `OrderHistoryEditingHandler` 與 `OrderHistoryNavigationBarManager` 協作，管理編輯模式和導航欄按鈕的狀態。當 `isOrderListEmpty()` 返回 `true` 時，`OrderHistoryNavigationBarManager` 中的編輯按鈕會被禁用，反之則啟用。
+  - 當用戶刪除所有訂單後，編輯模式也會自動禁用，並更新導航欄按鈕的狀態，使使用者無法進入空訂單的編輯模式。
  */
 
 import UIKit
@@ -88,6 +96,12 @@ class OrderHistoryEditingHandler {
         delegate?.deleteOrders(at: indices)
         // 從表格中刪除選中的行
         tableView.deleteRows(at: selectedRows, with: .automatic)
+    }
+    
+    /// 確認訂單是否為空
+    /// - Returns: 如果訂單列表為空則返回 true，否則返回 false
+    func isOrderListEmpty() -> Bool {
+        return delegate?.getOrders().isEmpty ?? true
     }
     
 }

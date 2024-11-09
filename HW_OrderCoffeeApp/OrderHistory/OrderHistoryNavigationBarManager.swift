@@ -21,8 +21,10 @@
  `3.主要方法與作用：`
 
  `* setupInitialNavigationBar()：`
-    - 設置初始的導航欄按鈕，包括「排序」和「編輯」兩個按鈕。這些按鈕通常在非編輯模式下顯示。
- 
+    - 設置初始的導航欄按鈕，包括「排序」和「編輯」按鈕。這些按鈕通常在非編輯模式下顯示。
+    - 編輯按鈕的啟用狀態根據是否有訂單進行設置（透過 `editingHandler.isOrderListEmpty()` 方法）。
+    - 當訂單列表為空時，禁用編輯按鈕；當有可編輯的訂單時，啟用編輯按鈕。
+
  `* setupEditingNavigationBar()：`
     - 設置編輯模式下的導航欄按鈕，包括「完成」和「刪除」兩個按鈕，讓使用者在編輯模式下可以完成編輯或者刪除選中的訂單。
  
@@ -32,15 +34,29 @@
  `* deleteButtonTapped()：`
     -  處理「刪除」按鈕的動作，調用 editingHandler 來執行多選刪除的邏輯。
  
-` 4.責任分離與模組化：`
+ 
+ `4. 編輯按鈕的啟用/禁用邏輯：`
+ 
+ `* 初始化導航欄按鈕的狀態：`
+    - 當首次設置導航欄按鈕時（如在視圖加載後），通過 `setupNavigationBar() `方法根據當前的訂單狀態設置編輯按鈕是否可用。
+ 
+ `* 訂單數據的變化處理：`
+    - 在 `OrderHistoryViewController` 中，每次訂單數據` (orders) `發生變化時，會調用 `updateEditButtonState()`，這個方法會通過` navigationBarManager?.setupInitialNavigationBar() `重新檢查並設置編輯按鈕的狀態，確保按鈕反映當前的訂單情況。
+    - 這種方式確保了當所有訂單都被刪除後，編輯按鈕會被禁用，防止進入不應該的編輯狀態。
+ 
+` 5.責任分離與模組化：`
 
  - `導航欄管理模組化`：`OrderHistoryNavigationBarManager` 獨立於主視圖控制器，使得導航邏輯更易於管理，並提高代碼的可讀性和可維護性。
  - `與其他處理器協作`：`OrderHistoryNavigationBarManager` 通過與 `OrderHistoryEditingHandler` 和 `SortMenuHandler` 協作，管理表格的編輯狀態及排序選單。
  
-` 5.合作對象：`
+` 6.合作對象：`
  
- - `OrderHistoryEditingHandler`：負責管理表格的編輯模式和多選刪除操作，通過 `toggleEditingMode() `和 `deleteSelectedRows() `與 `OrderHistoryNavigationBarManager` 互動。
- - `SortMenuHandler`：負責創建排序選單，通過` createSortMenu() `提供排序按鈕的菜單。
+ - `OrderHistoryEditingHandler`：
+    - 負責管理表格的編輯模式和多選刪除操作，通過 `toggleEditingMode() `和 `deleteSelectedRows() `與 `OrderHistoryNavigationBarManager` 互動。
+    - 編輯按鈕的狀態是基於 isOrderListEmpty() 來決定的，這使得按鈕的啟用狀態能動態反映當前的訂單情況。
+ 
+ - `SortMenuHandler`：
+    - 負責創建排序選單，通過` createSortMenu() `提供排序按鈕的菜單。方便用戶對歷史訂單進行不同方式的排序。 
  */
 
 import UIKit
@@ -82,8 +98,11 @@ class OrderHistoryNavigationBarManager {
         guard let sortMenuHandler = sortMenuHandler else { return }
         let sortButton = UIBarButtonItem(image: UIImage(systemName: "line.3.horizontal.decrease"), primaryAction: nil, menu: sortMenuHandler.createSortMenu())
         
-        // 設置編輯按鈕
+        // 設置編輯按鈕，根據是否有訂單決定是否啟用
+        guard let editingHandler = editingHandler else { return }
         let editButton = UIBarButtonItem(image: UIImage(systemName: "pencil.and.list.clipboard"), style: .plain, target: self, action: #selector(editButtonTapped))
+        editButton.isEnabled = !editingHandler.isOrderListEmpty()
+        print("Setup Initial Navigation Bar - Edit Button is enabled: \(editButton.isEnabled)")
 
         navigationItem?.rightBarButtonItems = [sortButton, editButton]
     }
@@ -95,6 +114,7 @@ class OrderHistoryNavigationBarManager {
         let deleteButton = UIBarButtonItem(image: UIImage(systemName: "trash"), style: .plain, target: self, action: #selector(deleteButtonTapped))
         
         navigationItem?.rightBarButtonItems = [doneButton, deleteButton]
+        print("Setup Editing Navigation Bar - Done Button added, Delete Button added")
     }
     
     // MARK: - Button Actions
@@ -107,17 +127,15 @@ class OrderHistoryNavigationBarManager {
         editingHandler?.toggleEditingMode()
         
         // 根據當前編輯模式更新導航欄
-        if editingHandler?.isEditing == true {
-            setupEditingNavigationBar()
-        } else {
-            setupInitialNavigationBar()
-        }
+        editingHandler?.isEditing == true ? setupEditingNavigationBar() : setupInitialNavigationBar()
+        print("Edit button tapped - Current isEditing: \(editingHandler?.isEditing ?? false)")
     }
     
     /// 處理「刪除」按鈕的動作
     /// - 調用 `editingHandler` 來刪除選中的行
     @objc private func deleteButtonTapped() {
         editingHandler?.deleteSelectedRows()
+        print("Delete button tapped - Attempted to delete selected rows")
     }
     
 }

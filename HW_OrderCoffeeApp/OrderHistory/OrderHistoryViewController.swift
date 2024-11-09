@@ -145,8 +145,7 @@
     -  `editingHandler`：專門管理編輯模式和多選刪除的處理器。
     -  `sortMenuHandler`：負責管理排序選單。
     -  `navigationBarManager`：管理導航欄的按鈕配置和狀態變化。
-    - `orders`：存放從 Firebase 獲取的歷史訂單資料。
- 
+    - `orders`：從 Firebase 獲取的歷史訂單資料，並根據數據的變化自動更新導航欄按鈕的狀態。
  
 ` 2.Lifecycle Methods：`
     - `loadView()：`設置自定義的主視圖 (orderHistoryView)。
@@ -154,7 +153,8 @@
 
  `3. Navigation Bar Setup：`
      - `setupNavigationBar()：`使用 `navigationBarManager` 來設置導航欄按鈕，包括排序和編輯按鈕。
-
+     - 在 `viewDidLoad()` 中初次設置導航欄，並在 `orders` 更新時重新設置導航欄，以根據訂單數據動態更新編輯按鈕的狀態。`（雖然我是採用資料驅動UI）`
+ 
  `4. Fetch Order History：`
      - `fetchOrderHistory(sortOption:)`：非同步方法，用於從 Firebase 獲取當前使用者的訂單資料，並根據選擇的排序方式進行排序。
      - 當獲取資料成功時，將資料傳遞給 `handleFetchedOrders(_:)` 進行後續處理。
@@ -167,11 +167,16 @@
         - 設置表格視圖的數據源 (dataSource) 和委託 (delegate) 為 OrderHistoryHandler。
         - 在設置完成後重新載入表格數據。
  
- `6.OrderHistoryDelegate：`
+ `6.Navigation Bar State Management：`
+    - 每次更新 `orders` 時，自動通過 `didSet` 調用 `setupNavigationBar()` 方法，以根據當前訂單數量設置編輯按鈕的狀態。
+    - 當沒有訂單時，編輯按鈕處於禁用狀態，確保在無可編輯內容時，使用者無法進入編輯模式。
+    - 在 `viewDidLoad()` 中初次設置導航欄按鈕，確保在首次進入視圖時按鈕狀態正確。
+ 
+ `7.OrderHistoryDelegate：`
     - `getOrders()`：此方法實作了 OrderHistoryDelegate 協定，用於提供訂單資料給 OrderHistoryHandler，讓它能取得需要顯示的訂單。
     - `deleteOrder(at:)`：當使用者滑動刪除訂單時，從本地 `orders` 中移除訂單，並呼叫 `OrderHistoryManager` 刪除 `Firebase` 中的資料，確保資料同步性。
  
- `7.OrderHistorySortMenuDelegate：`
+ `8.OrderHistorySortMenuDelegate：`
     - `didSelectSortOption(_:)`：用於響應使用者選擇排序選項的操作，重新獲取並顯示訂單資料。
  */
 
@@ -470,10 +475,13 @@ class OrderHistoryViewController: UIViewController {
     
     /// 導航欄管理器，用於管理導航欄按鈕的配置
     private var navigationBarManager: OrderHistoryNavigationBarManager?
-
-    /// 用於存放從 Firebase 獲取的訂單資料
-    private var orders: [OrderHistory] = []
     
+    /// 用於存放從 Firebase 獲取的訂單資料
+    private var orders: [OrderHistory] = [] {
+        didSet {
+            setupNavigationBar()                    // 每次更新 orders 後都檢查按鈕狀態
+        }
+    }
 
     // MARK: - Lifecycle Methods
 
@@ -484,7 +492,7 @@ class OrderHistoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupHandlers()                                     // 初始化排序、編輯和導航欄處理器
-        setupNavigationBar()                                // 設置導航欄按鈕
+        setupNavigationBar()                                // 設置導航欄按鈕（初始化按鈕狀態）
         fetchOrderHistory(sortOption: .byDateDescending)    // 從 Firebase 獲取歷史訂單資料，預設按照時間倒序
     }
     
@@ -587,7 +595,6 @@ extension OrderHistoryViewController: OrderHistoryDelegate {
         /// 刪除 Firebase 資料
         Task {
             guard let currentUser = Auth.auth().currentUser else { return }
-            
             let userId = currentUser.uid
             do {
                 try await orderHistoryManager.deleteOrder(userId: userId, orderId: orderId)
