@@ -167,15 +167,17 @@
         - 設置表格視圖的數據源 (dataSource) 和委託 (delegate) 為 OrderHistoryHandler。
         - 在設置完成後重新載入表格數據。
  
- `6.Navigation Bar State Management：`
+ `6.Navigation Bar State Management（導航欄狀態管理）：`
     - 每次更新 `orders` 時，自動通過 `didSet` 調用 `setupNavigationBar()` 方法，以根據當前訂單數量設置編輯按鈕的狀態。
     - 當沒有訂單時，編輯按鈕處於禁用狀態，確保在無可編輯內容時，使用者無法進入編輯模式。
     - 在 `viewDidLoad()` 中初次設置導航欄按鈕，確保在首次進入視圖時按鈕狀態正確。
- 
+    - `didChangeSelectionState()` 用於當表格中行的選取狀態改變時，更新導航欄按鈕（如「刪除」按鈕）的啟用狀態。此方法確保在`編輯模式`下，當用戶選取或取消選取訂單行時，導航欄狀態能夠及時反映當前選擇狀況。
+
  `7.OrderHistoryDelegate：`
     - `getOrders()`：此方法實作了 OrderHistoryDelegate 協定，用於提供訂單資料給 OrderHistoryHandler，讓它能取得需要顯示的訂單。
     - `deleteOrder(at:)`：當使用者滑動刪除訂單時，從本地 `orders` 中移除訂單，並呼叫 `OrderHistoryManager` 刪除 `Firebase` 中的資料，確保資料同步性。
- 
+    - `didChangeSelectionState()`：當表格中的選取狀態改變時調用，通知 `navigationBarManager` 更新「刪除」按鈕的啟用狀態，確保使用者選擇項目時，按鈕狀態能即時更新。
+
  `8.OrderHistorySortMenuDelegate：`
     - `didSelectSortOption(_:)`：用於響應使用者選擇排序選項的操作，重新獲取並顯示訂單資料。
  */
@@ -447,6 +449,35 @@
  */
 
 
+// MARK: -  刪除按鈕的啟用狀態設計
+
+/**
+ ## 刪除按鈕的啟用狀態設計
+ 
+` 1. What: 問題描述`
+ 
+ - 當進入到「編輯模式」並選取某些項目後，「刪除按鈕」未啟用，導致用戶無法進行刪除操作。
+ - 原因是導航欄按鈕的啟用狀態未根據項目的選取狀態即時更新。
+ 
+ `2. Why: 問題原因`
+ 
+ - `didSelectRowAt` 和 `didDeselectRowAt` 這兩個方法是 `UITableViewDelegate` 的委託方法，負責處理用戶選取行的操作。
+ - 但 `OrderHistoryHandler` 無法直接存取 `OrderHistoryViewController` 中的 `navigationBarManager`，因此無法通知導航欄來啟用/禁用「刪除按鈕」。
+ - 這導致在用戶選取或取消選取行後，導航欄按鈕的狀態沒有更新。
+ 
+ `3. How: 解決方案`
+ 
+` * 通過delegate模式來實現按鈕狀態的更新：`
+ 
+ - 修改 `OrderHistoryDelegate` 協定，增加一個 `didChangeSelectionState() `方法，用來通知 `OrderHistoryViewController` 當選取狀態發生變化時進行處理。
+ - 在 `OrderHistoryHandler` 中，於 `didSelectRowAt` 和 `didDeselectRowAt` 方法內呼叫 `delegate?.didChangeSelectionState()`，將行選取狀態的變更傳遞給控制器。
+ - 在 `OrderHistoryViewController` 中，透過 `didChangeSelectionState() `方法通知 `navigationBarManager`，更新導航欄的按鈕狀態（特別是「刪除按鈕」）。
+ 
+ `4. 總結`
+ - `didChangeSelectionState()` 的引入，讓導航欄在編輯模式下的狀態能夠及時根據用戶的選擇更新，這樣可以顯著改善用戶的操作體驗。
+ - 這個方法的主要作用是保持編輯模式下導航欄按鈕的同步性，特別是「刪除」按鈕的啟用狀態。當用戶選中或取消選中行時，可以即時地反映在 UI 中。
+ */
+
 
 import UIKit
 import Firebase
@@ -607,6 +638,7 @@ extension OrderHistoryViewController: OrderHistoryDelegate {
     
     /// 刪除指定的多筆訂單
     /// - Parameter indices: 要刪除的訂單在陣列中的索引列表
+    /// - 從 `orders` 中移除多筆訂單，並呼叫 `OrderHistoryManager` 刪除 Firebase 中的資料
     func deleteOrders(at indices: [Int]) {
         let orderIdsToDelete = indices.map { orders[$0].id }
         orders.removeAll { order in
@@ -623,6 +655,14 @@ extension OrderHistoryViewController: OrderHistoryDelegate {
                 print("Failed to delete orders: \(error.localizedDescription)")
             }
         }
+    }
+    
+    // MARK: - Update Navigation Bar State
+
+    /// 更新導航欄的按鈕狀態
+    /// - 說明：當表格中行的選取狀態改變時，通知 `navigationBarManager` 更新導航欄的按鈕狀態（如「刪除」按鈕的啟用狀態）
+    func didChangeSelectionState() {
+        navigationBarManager?.setupEditingNavigationBar()
     }
     
 }

@@ -26,14 +26,18 @@
     - 當訂單列表為空時，禁用編輯按鈕；當有可編輯的訂單時，啟用編輯按鈕。
 
  `* setupEditingNavigationBar()：`
-    - 設置編輯模式下的導航欄按鈕，包括「完成」和「刪除」兩個按鈕，讓使用者在編輯模式下可以完成編輯或者刪除選中的訂單。
+    - 設置編輯模式下的導航欄按鈕，包括「完成」和「刪除」兩個按鈕。
+    - 刪除按鈕的啟用/禁用邏輯：刪除按鈕的啟用狀態取決於是否有選中的訂單項目。
+        - 當有選中項目時，刪除按鈕啟用，否則禁用。
+        - 通過` editingHandler.hasSelectedRows() `方法來確定當前是否有選中的行。
+
  
  `* editButtonTapped()：`
     - 處理「編輯/完成」按鈕的切換，當用戶點擊「編輯」時進入編輯模式，並切換按鈕為「完成」和「刪除」；當用戶點擊「完成」時退出編輯模式，恢復為初始狀態。
  
  `* deleteButtonTapped()：`
-    -  處理「刪除」按鈕的動作，調用 editingHandler 來執行多選刪除的邏輯。
- 
+    -  處理「刪除」按鈕的動作，調用 `editingHandler` 來執行多選刪除的邏輯。
+    - 刪除後保持在編輯模式下，並更新導航欄按鈕狀態，確保刪除後狀態正確反映當前可操作的情況。
  
  `4. 編輯按鈕的啟用/禁用邏輯：`
  
@@ -42,7 +46,12 @@
  
  `* 訂單數據的變化處理：`
     - 在 `OrderHistoryViewController` 中，每次訂單數據` (orders) `發生變化時，會調用 `updateEditButtonState()`，這個方法會通過` navigationBarManager?.setupInitialNavigationBar() `重新檢查並設置編輯按鈕的狀態，確保按鈕反映當前的訂單情況。
-    - 這種方式確保了當所有訂單都被刪除後，編輯按鈕會被禁用，防止進入不應該的編輯狀態。
+    - 確保當所有訂單都被刪除後，編輯按鈕會被禁用，防止進入無訂單的編輯狀態。
+
+ `* 刪除按鈕狀態管理`
+    - `根據選擇的行來動態設置刪除按鈕`：新增的 `setupEditingNavigationBar() `方法中，使用 `editingHandler.hasSelectedRows() `方法來動態確定刪除按鈕的狀態。
+        - 當沒有選擇任何行時，刪除按鈕被禁用，防止誤操作。
+        - 當有選中的行時，刪除按鈕才會被啟用，允許用戶執行刪除操作。
  
 ` 5.責任分離與模組化：`
 
@@ -53,7 +62,10 @@
  
  - `OrderHistoryEditingHandler`：
     - 負責管理表格的編輯模式和多選刪除操作，通過 `toggleEditingMode() `和 `deleteSelectedRows() `與 `OrderHistoryNavigationBarManager` 互動。
-    - 編輯按鈕的狀態是基於 isOrderListEmpty() 來決定的，這使得按鈕的啟用狀態能動態反映當前的訂單情況。
+    - `編輯與刪除按鈕狀態管理`：
+        - 編輯按鈕的狀態是基於 `isOrderListEmpty() `來決定的。
+        - 而刪除按鈕則通過 `hasSelectedRows() `來動態管理。
+        - 這使得按鈕的啟用狀態能動態反映當前的訂單和選擇情況。
  
  - `SortMenuHandler`：
     - 負責創建排序選單，通過` createSortMenu() `提供排序按鈕的菜單。方便用戶對歷史訂單進行不同方式的排序。 
@@ -150,9 +162,14 @@ class OrderHistoryNavigationBarManager {
     
     /// 設置`編輯模式`下的導航欄按鈕
     /// - 包含「完成」和「刪除」按鈕，適合在進入編輯模式後使用
+    /// - 根據是否有選中的行來啟用或禁用「刪除」按鈕
     func setupEditingNavigationBar() {
         let doneButton = UIBarButtonItem(image: UIImage(systemName: "rectangle.portrait.and.arrow.right"), style: .done, target: self, action: #selector(editButtonTapped))
         let deleteButton = UIBarButtonItem(image: UIImage(systemName: "trash"), style: .plain, target: self, action: #selector(deleteButtonTapped))
+        
+        // 根據是否有選中的項目來啟用或禁用刪除按鈕
+        deleteButton.isEnabled = !(editingHandler?.isOrderListEmpty() ?? true) && (editingHandler?.hasSelectedRows() ?? false)
+        print("Delete button is enabled: \(deleteButton.isEnabled)")
         
         navigationItem?.rightBarButtonItems = [doneButton, deleteButton]
     }

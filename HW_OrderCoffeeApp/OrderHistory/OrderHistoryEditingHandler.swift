@@ -24,6 +24,7 @@
  - `toggleEditingMode()`：負責進入和退出編輯模式。透過切換編輯狀態，使得視圖的使用體驗更為靈活。
  - `deleteSelectedRows()`：處理多選刪除操作。包括通知代理刪除相應數據，並且更新表格視圖以反映更改。
  - `isOrderListEmpty()`：檢查訂單列表是否為空，讓其他組件（例如 `OrderHistoryNavigationBarManager`）可以根據這個狀態動態調整編輯按鈕的啟用狀態。
+ - `hasSelectedRows()`：檢查當前是否有被選中的行。在編輯模式下，此方法可幫助確定是否啟用「刪除」按鈕，以及其他依賴於行選擇的操作。
  
  `* 責任分離與模組化：`
 
@@ -38,9 +39,10 @@
     - 當進入或退出編輯模式時，`UITableView` 的狀態會根據 `toggleEditingMode()` 方法來變化。
  
  `* 編輯按鈕狀態的關聯設置：`
-  
-  - `OrderHistoryEditingHandler` 與 `OrderHistoryNavigationBarManager` 協作，管理編輯模式和導航欄按鈕的狀態。當 `isOrderListEmpty()` 返回 `true` 時，`OrderHistoryNavigationBarManager` 中的編輯按鈕會被禁用，反之則啟用。
-  - 當用戶刪除所有訂單後，編輯模式也會自動禁用，並更新導航欄按鈕的狀態，使使用者無法進入空訂單的編輯模式。
+
+ - `與 OrderHistoryNavigationBarManager 協作`：`OrderHistoryEditingHandler` 與 `OrderHistoryNavigationBarManager` 協作，管理編輯模式和導航欄按鈕的狀態。當` isOrderListEmpty() `返回 true 時，`OrderHistoryNavigationBarManager` 中的編輯按鈕會被禁用，反之則啟用。
+ - `編輯模式自動禁用`：當用戶刪除所有訂單後，編輯模式也會自動禁用，並更新導航欄按鈕的狀態，使使用者無法進入空訂單的編輯模式。
+ -  `選擇行狀態影響刪除按鈕`：新增的` hasSelectedRows() `方法允許 `OrderHistoryNavigationBarManager` 動態啟用或禁用「刪除」按鈕。當表格中沒有選中任何行時，「刪除」按鈕應被禁用，以防止用戶誤操作。
  */
 
 import UIKit
@@ -69,8 +71,8 @@ class OrderHistoryEditingHandler {
         self.delegate = delegate
     }
     
-    // MARK: - Edit Mode Methods
-    
+    // MARK: - Edit Mode Management
+
     /// 獲取當前是否處於編輯模式
     /// - Returns: 表示表格是否正在處於編輯模式
     var isEditing: Bool {
@@ -85,6 +87,8 @@ class OrderHistoryEditingHandler {
         tableView.setEditing(isEditing, animated: true)
     }
 
+    // MARK: - Row Deletion Methods
+
     /// 刪除選擇的行
     /// - 說明：在編輯模式下，允許使用者多選並刪除訂單
     /// - 呼叫委託來刪除訂單，然後從表格視圖中刪除相應的行
@@ -98,10 +102,21 @@ class OrderHistoryEditingHandler {
         tableView.deleteRows(at: selectedRows, with: .automatic)
     }
     
+    // MARK: - Data State Checks
+
     /// 確認訂單是否為空
     /// - Returns: 如果訂單列表為空則返回 true，否則返回 false
     func isOrderListEmpty() -> Bool {
         return delegate?.getOrders().isEmpty ?? true
+    }
+    
+    /// 確認是否有選中的行
+    /// - Returns: 如果有選中的行返回 true，否則返回 false
+    /// - 說明：此方法在`編輯模式`下用於檢查使用者是否選擇了任何行，並可以進一步決定是否啟用「刪除」按鈕。
+    func hasSelectedRows() -> Bool {
+        let selectedRows = tableView?.indexPathsForSelectedRows
+        print("Currently selected rows: \(String(describing: selectedRows))")
+        return !(selectedRows?.isEmpty ?? true)
     }
     
 }

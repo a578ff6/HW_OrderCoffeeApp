@@ -42,9 +42,9 @@
     - `tableView(_:commit:forRowAt:)`：實作滑動刪除行的功能，透過委託通知 `OrderHistoryViewController` 刪除本地和遠端的訂單資料，並從表格中移除該行。
  
  `* 多選刪除行：`
-    - `tableView(_:didSelectRowAt:)`：在編輯模式下，處理選擇行的操作，可以根據需求更新選中狀態，例如保持選中等。
-    - `deleteSelectedRows(from:)`：處理多選刪除的功能，透過委託通知 OrderHistoryViewController 刪除指定的多筆訂單，並從表格中刪除相應行。
-
+    - `tableView(_:didSelectRowAt:)`：在編輯模式下，處理選擇行的操作，並通知 `delegate` 選取狀態變更，以便更新導航欄按鈕狀態。
+    - `tableView(_:didDeselectRowAt:)`：在編輯模式下，處理取消選擇行的操作，並通知 `delegate` 選取狀態變更。
+    - `deleteSelectedRows(from:)`：處理多選刪除的功能，透過委託通知 `OrderHistoryViewController` 刪除指定的多筆訂單，並從表格中刪除相應行。
  
  `* 重點設計`
  
@@ -56,6 +56,10 @@
  
  `3.資料驅動：`
     - 當訂單資料發生變化時，由 `OrderHistoryViewController` 通知 `OrderHistoryHandler`，並通過` reloadData() `重新加載數據，確保 UI 與資料同步。
+ 
+ `4.選取狀態管理：`
+     - `didChangeSelectionState()` 方法來管理選取狀態的變更，當使用者在編輯模式下選取或取消選取行時通知控制器更新導航欄按鈕的狀態，特別是「刪除」按鈕的啟用狀態。
+     - 用途：通知 `OrderHistoryViewController` 更新導航欄按鈕的狀態（例如「刪除」按鈕的啟用與禁用），確保按鈕的狀態與選取狀態保持一致。
  */
 
 import UIKit
@@ -118,12 +122,24 @@ extension OrderHistoryHandler: UITableViewDelegate {
         tableView.deleteRows(at: [indexPath], with: .automatic)
     }
     
-    /// 在編輯模式下，處理多選刪除的功能
+    // MARK: - Selection State Changes (選取狀態變更)
+
+    /// 在編輯模式下，當選取某行時處理多選狀態變更
+    /// - 說明：通知 `delegate`，以便更新導航欄按鈕（例如啟用/禁用「刪除」按鈕）
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard tableView.isEditing else { return }
-        // 更新選中狀態的邏輯，這裡可以根據需求自定義，例如保持選中狀態等
+        delegate?.didChangeSelectionState()
     }
     
+    /// 在編輯模式下，當取消選取某行時處理多選狀態變更
+    /// - 說明：通知 `delegate`，以便更新導航欄按鈕（例如啟用/禁用「刪除」按鈕）
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        guard tableView.isEditing else { return }
+        delegate?.didChangeSelectionState()
+    }
+    
+    // MARK: - Batch Deletion (多選刪除)
+
     /// 處理多選刪除操作
     /// - Parameter tableView: 目標表格視圖
     func deleteSelectedRows(from tableView: UITableView) {
