@@ -11,14 +11,22 @@
  
 ` 1.功能概述：`
  
- - `OrderHistoryNavigationBarManager` 是一個負責管理 `OrderHistory` 導航欄按鈕配置的類別。主要目的是將導航欄按鈕的邏輯與主視圖控制器分離，減少 `OrderHistoryViewController` 的責任。
+ - `OrderHistoryNavigationBarManager` 是一個負責管理 `OrderHistory` 導航欄配置的類別。
+ - 它不僅負責導航欄按鈕的設置與更新，也管理導航欄標題及大標題顯示模式，旨在將所有與導航欄相關的邏輯從主視圖控制器分離，減少 `OrderHistoryViewController` 的責任。
  
  `2.設計決策：`
 
- - `責任分離與簡化視圖控制器`：這樣的設計有助於讓 `OrderHistoryViewController` 專注於視圖的展示和用戶操作，而 `OrderHistoryNavigationBarManager` 則專注於導航欄按鈕的設置和邏輯處理。
- - `弱引用避免循環引用`：所有的 `navigationItem`、`editingHandler`、`sortMenuHandler` 都設置為 weak，以避免強引用循環，導致記憶體泄漏。
+ `* 責任分離與簡化視圖控制器`：
+    - `OrderHistoryViewController` 專注於視圖的展示和用戶操作，而 `OrderHistoryNavigationBarManager` 則集中管理導航欄的標題、按鈕配置及邏輯處理。
+ 
+ `* 弱引用避免循環引用`：
+    - 所有的 `navigationItem`、`navigationController`、`editingHandler`、`sortMenuHandler` 都設置為 weak，以避免強引用循環，導致記憶體泄漏。
  
  `3.主要方法與作用：`
+ 
+ `* configureNavigationBarTitle(title:)：`
+    - 設置導航欄的標題及大標題顯示模式，包括顯示大標題。
+    - 使用 `largeTitleDisplayMode` 設置為 .always，並通過 navigationController?.navigationBar.prefersLargeTitles 來啟用大標題。
 
  `* setupInitialNavigationBar()：`
     - 設置初始的導航欄按鈕，包括「排序」和「編輯」按鈕。這些按鈕通常在非編輯模式下顯示。
@@ -30,7 +38,6 @@
     - 刪除按鈕的啟用/禁用邏輯：刪除按鈕的啟用狀態取決於是否有選中的訂單項目。
         - 當有選中項目時，刪除按鈕啟用，否則禁用。
         - 通過` editingHandler.hasSelectedRows() `方法來確定當前是否有選中的行。
-
  
  `* editButtonTapped()：`
     - 處理「編輯/完成」按鈕的切換，當用戶點擊「編輯」時進入編輯模式，並切換按鈕為「完成」和「刪除」；當用戶點擊「完成」時退出編輯模式，恢復為初始狀態。
@@ -55,8 +62,11 @@
  
 ` 5.責任分離與模組化：`
 
- - `導航欄管理模組化`：`OrderHistoryNavigationBarManager` 獨立於主視圖控制器，使得導航邏輯更易於管理，並提高代碼的可讀性和可維護性。
- - `與其他處理器協作`：`OrderHistoryNavigationBarManager` 通過與 `OrderHistoryEditingHandler` 和 `SortMenuHandler` 協作，管理表格的編輯狀態及排序選單。
+ `* 導航欄管理模組化`：`
+    - `OrderHistoryNavigationBarManager` 不僅獨立於主視圖控制器，負責按鈕的設置，現在也涵蓋標題和大標題顯示模式的管理，確保導航欄所有配置集中在一個類中。
+ 
+ `* 與其他處理器協作`：
+    - `OrderHistoryNavigationBarManager` 通過與 `OrderHistoryEditingHandler` 和 `SortMenuHandler` 協作，管理表格的編輯狀態及排序選單。
  
 ` 6.合作對象：`
  
@@ -211,14 +221,17 @@
 import UIKit
 
 /// 負責 `OrderHistory` 導航欄按鈕的配置和更新
-/// - 將導航欄按鈕的邏輯與主視圖控制器分離，使代碼更模組化、責任分離
+/// - 包含導航欄按鈕的設置、大標題顯示模式及標題的設置。
 class OrderHistoryNavigationBarManager {
     
     // MARK: - Properties
 
-    /// `UINavigationItem` 用於設置導航欄上的按鈕
+    /// `UINavigationItem` 用於設置導航欄上的按鈕和標題
     private weak var navigationItem: UINavigationItem?
     
+    /// `UINavigationController` 用於設置導航欄的大標題顯示模式
+    private weak var navigationController: UINavigationController?
+
     /// 負責管理編輯模式的 `OrderHistoryEditingHandler`，處理多選和刪除邏輯
     private weak var editingHandler: OrderHistoryEditingHandler?
     
@@ -229,16 +242,26 @@ class OrderHistoryNavigationBarManager {
 
     /// 初始化方法
     /// - Parameters:
-    ///   - navigationItem: 傳入的 `UINavigationItem`，用於管理導航欄上的按鈕
+    ///   - navigationItem: 傳入的 `UINavigationItem`，用於管理導航欄上的按鈕和標題
+    ///   - navigationController: 傳入的 `UINavigationController`，用於設置大標題顯示模式
     ///   - editingHandler: 負責管理編輯模式的處理器
     ///   - sortMenuHandler: 負責創建排序選單的處理器
-    init(navigationItem: UINavigationItem, editingHandler: OrderHistoryEditingHandler, sortMenuHandler: OrderHistorySortMenuHandler) {
+    init(navigationItem: UINavigationItem, navigationController: UINavigationController?, editingHandler: OrderHistoryEditingHandler, sortMenuHandler: OrderHistorySortMenuHandler) {
         self.navigationItem = navigationItem
+        self.navigationController = navigationController
         self.editingHandler = editingHandler
         self.sortMenuHandler = sortMenuHandler
     }
     
     // MARK: - Setup NavigationBar
+    
+    /// 設置導航欄上的標題及大標題顯示模式
+    /// - Parameter title: 要顯示的導航大標題
+    func configureNavigationBarTitle(title: String) {
+        navigationItem?.title = title
+        navigationItem?.largeTitleDisplayMode = .always
+        navigationController?.navigationBar.prefersLargeTitles = true
+    }
     
     /// 更新導航欄上的按鈕
     /// - Parameter buttons: 要顯示在導航欄右側的按鈕陣列

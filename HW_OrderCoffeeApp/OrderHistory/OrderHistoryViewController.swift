@@ -583,9 +583,13 @@ class OrderHistoryViewController: UIViewController {
         let tableView = orderHistoryView.tableView
         editingHandler = OrderHistoryEditingHandler(tableView: tableView, delegate: self)
         sortMenuHandler = OrderHistorySortMenuHandler(delegate: self)
-        if let editingHandler = editingHandler, let sortMenuHandler = sortMenuHandler {
+        
+        if let editingHandler = editingHandler,
+           let sortMenuHandler = sortMenuHandler,
+           let navigationController = navigationController {
             navigationBarManager = OrderHistoryNavigationBarManager(
                 navigationItem: navigationItem,
+                navigationController: navigationController,
                 editingHandler: editingHandler,
                 sortMenuHandler: sortMenuHandler
             )
@@ -594,7 +598,8 @@ class OrderHistoryViewController: UIViewController {
     
     /// 設置導航欄上的按鈕
     private func setupNavigationBar() {
-        navigationBarManager?.setupInitialNavigationBar()
+        navigationBarManager?.configureNavigationBarTitle(title: "Order History")    // 設定大標題及顯示模式
+        navigationBarManager?.setupInitialNavigationBar()                            // 設定初始的導航欄按鈕
     }
 
 }
