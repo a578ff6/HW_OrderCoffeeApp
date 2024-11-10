@@ -113,6 +113,101 @@
 */
 
 
+// MARK: - 按鈕狀態管理的層級與職責分析：以編輯與刪除按鈕為例（重要）
+/**
+ ## 按鈕狀態管理的層級與職責分析：以編輯與刪除按鈕為例
+ 
+ `1.背景：`
+ 
+ - 在設計 OrderHistory 視圖的導航欄按鈕時，考慮了「編輯按鈕」和「刪除按鈕」在狀態管理上的不同。
+
+` 2.按鈕狀態依賴性分析：`
+ 
+` * 編輯按鈕：`
+ - 依賴性：取決於是否存在訂單，即屬於靜態的數據依賴。
+ - 管理層級：更高層級，處理的是整體訂單的存在性問題。
+ - 管理方式：在 `orders` 更新時自動檢查並設置按鈕狀態，以反映是否可以進入編輯模式。
+ 
+ `* 刪除按鈕：`
+ - 依賴性：取決於當前是否有選中的行，屬於動態的用戶交互依賴。
+ - 管理層級：較低層級，具體的行選取狀態和用戶操作。
+ - 管理方式：由 `OrderHistoryHandler` 通過 `delegate` 通知 `OrderHistoryNavigationBarManager` 更新狀態。
+ 
+ `3.職責區分與管理方式選擇：`
+
+ - 編輯按鈕 的職責是「是否允許進入編輯模式」，適合基於訂單是否存在的整體層級進行管理。
+ - 刪除按鈕 的職責是「根據用戶選擇的情況進行刪除」，因此需要即時響應用戶選擇的動態變化，適合由 delegate 來進行狀態更新。
+ 
+ `4.總結：`
+
+ - 在設計按鈕的狀態管理方式時，不應為了統一而忽略各按鈕的特定職責與依賴性。
+ - 根據不同按鈕的職責、依賴性和管理層級，選擇不同的管理方式可以讓代碼結構更加清晰，也更符合各自的需求。
+ - 遵循單一責任原則（SRP），按鈕狀態的管理應基於其具體角色進行劃分，從而確保更靈活、更可維護的設計。
+ */
+
+
+// MARK: - OrderHistory NavigationBar 按鈕狀態管理的設計決策分析（重要）
+/**
+ ## OrderHistory NavigationBar 按鈕狀態管理的設計決策分析
+
+    - 主要是在設置「編輯按鈕」、「刪除按鈕」的狀態時，讓我思考兩者的管理層級問題，以及依照管理層級來決定兩者的職責該如何去區分。
+ 
+ `1. 背景與問題`
+ 
+ * 在 `OrderHistory` 的導航欄中，有「編輯」與「刪除」按鈕。這兩個按鈕的啟用狀態由於依賴不同的因素，分別通過不同的方式來進行管理。目前的設計如下：
+ 
+ - `刪除按鈕的狀態:`是通過 `delegate` 通知來決定的。
+ - `編輯按鈕的狀態:`則是在訂單數據（`orders`）變化時進行設置。
+
+ * `這引發了一個設計上的問題`：是否應該統一這些按鈕的狀態管理方式，例如都透過 `delegate` 來進行，或者說這兩者在職責層面有所不同，因此適合用不同的管理方式。
+
+ 
+`2. 目前的設計分析`
+
+ `* 刪除按鈕的狀態`
+ 
+ - `方式：` 通過 `didChangeSelectionState()` 方法，由 `OrderHistoryHandler` 通知 `OrderHistoryNavigationBarManager`，當選取狀態變更時更新刪除按鈕的啟用狀態。
+ - `適用情境：` 刪除按鈕的啟用狀態依賴於當前表格中是否有選中的行，因此使用 `delegate` 來通知是合理的設計。這是基於用戶行為的動態更新，與 UI 互動密切相關。
+
+ `* 編輯按鈕的狀態`
+ 
+ - `方式：` 在 `setupInitialNavigationBar()` 方法中，根據 `editingHandler.isOrderListEmpty()` 來設置編輯按鈕的狀態。當訂單數據（`orders`）變化時自動通過 `didSet` 更新。
+ - `適用情境：` 編輯按鈕的狀態基於是否有可編輯的訂單來決定，是一個較為靜態的狀態。由於這與訂單數據的存在性直接相關，並不依賴用戶交互，使用 `didSet` 來設置可以確保按鈕狀態始終與訂單數據一致。
+
+ 
+ `3. 是否應統一使用 delegate？`
+
+ `* 職責分離考量：`
+ 
+   - `刪除按鈕`：  其狀態管理需要根據用戶行為的動態變化，選取和取消選取行都是用戶交互的一部分，因此使用 `delegate` 通知合乎邏輯。
+   - `編輯按鈕`：  其狀態取決於數據是否存在，這是一個靜態的依賴，並不需要由用戶交互來觸發更新。因此，使用 `didSet` 來根據訂單數據的變化設置按鈕狀態是合理的。
+
+ `* 一致性與耦合度平衡：`
+ 
+   - 對所有按鈕狀態統一使用 `delegate` 處理確實可以提高 API 的一致性，但也會增加代碼的耦合度和不必要的複雜性，特別是在處理靜態數據變化時。
+   - 現有的設計保留了簡潔性，使得各個按鈕的狀態管理方式更加符合它們各自的責任，減少了不必要的耦合。
+
+ 
+ `4. 建議改進方案`
+
+ `* 保留現有設計：`
+ 
+    - 刪除按鈕使用 `delegate` 來管理，因為它需要根據用戶選擇動態更新狀態。
+    - 編輯按鈕基於訂單是否存在來設置，因此使用 `didSet` 是合理的。
+
+` * 擴展性考慮：`
+    - 如果未來的需求變得更加複雜，可以考慮使用更多的通知機制（如 `NotificationCenter` 或 `Combine`）來處理數據變化與 UI 的聯動，以解耦按鈕狀態的更新邏輯。
+
+ 
+ `5. 總結`
+ 
+ - `刪除按鈕 和 編輯按鈕` 的狀態管理方式應根據其職責進行選擇。
+ - `刪除按鈕` 依賴於用戶的動態交互，因此使用 `delegate` 是合理的。
+ - `編輯按鈕`基於訂單是否存在來設置，因此使用 `didSet` 根據數據變化設置更加合適。
+ - 不需要為了統一而統一，應該根據不同按鈕的行為特徵和職責選擇適合的管理方式。
+ */
+
+
 import UIKit
 
 /// 負責 `OrderHistory` 導航欄按鈕的配置和更新
@@ -145,33 +240,66 @@ class OrderHistoryNavigationBarManager {
     
     // MARK: - Setup NavigationBar
     
+    /// 更新導航欄上的按鈕
+    /// - Parameter buttons: 要顯示在導航欄右側的按鈕陣列
+    private func updateNavigationBarButtons(_ buttons: [UIBarButtonItem]) {
+        navigationItem?.rightBarButtonItems = buttons
+    }
+    
     /// 設置`初始`的導航欄按鈕
     /// - 包含「排序」和「編輯」按鈕，適合初始非編輯模式的情境
+    /// - `「排序」按鈕`提供多種排序選項；`「編輯」按鈕`允許進入編輯模式
+    /// - `編輯按鈕狀態`根據是否有訂單來決定是否啟用
     func setupInitialNavigationBar() {
-        // 設置排序按鈕
-        guard let sortMenuHandler = sortMenuHandler else { return }
-        let sortButton = UIBarButtonItem(image: UIImage(systemName: "line.3.horizontal.decrease"), primaryAction: nil, menu: sortMenuHandler.createSortMenu())
+        guard let sortMenuHandler = sortMenuHandler, let editingHandler = editingHandler else { return }
         
-        // 設置編輯按鈕，根據是否有訂單決定是否啟用
-        guard let editingHandler = editingHandler else { return }
-        let editButton = UIBarButtonItem(image: UIImage(systemName: "pencil.and.list.clipboard"), style: .plain, target: self, action: #selector(editButtonTapped))
+        // 創建排序按鈕
+        let sortButton = UIBarButtonItem(
+            image: UIImage(systemName: "line.3.horizontal.decrease"),
+            primaryAction: nil,
+            menu: sortMenuHandler.createSortMenu()
+        )
+                
+        // 創建編輯按鈕
+        let editButton = UIBarButtonItem(
+            image: UIImage(systemName: "pencil.and.list.clipboard"),
+            style: .plain,
+            target: self,
+            action: #selector(editButtonTapped)
+        )
+        // 根據訂單是否為空來決定編輯按鈕的啟用狀態
         editButton.isEnabled = !editingHandler.isOrderListEmpty()
 
-        navigationItem?.rightBarButtonItems = [sortButton, editButton]
+        updateNavigationBarButtons([sortButton, editButton])
     }
     
     /// 設置`編輯模式`下的導航欄按鈕
-    /// - 包含「完成」和「刪除」按鈕，適合在進入編輯模式後使用
+    /// - 說明：包含「完成」和「刪除」按鈕，適合在進入編輯模式後使用
+    /// - `「完成」按鈕`允許用戶結束編輯；`「刪除」按鈕`允許刪除選中的訂單
     /// - 根據是否有選中的行來啟用或禁用「刪除」按鈕
     func setupEditingNavigationBar() {
-        let doneButton = UIBarButtonItem(image: UIImage(systemName: "rectangle.portrait.and.arrow.right"), style: .done, target: self, action: #selector(editButtonTapped))
-        let deleteButton = UIBarButtonItem(image: UIImage(systemName: "trash"), style: .plain, target: self, action: #selector(deleteButtonTapped))
+        guard let editingHandler = editingHandler else { return }
+
+        // 創建完成按鈕
+        let doneButton = UIBarButtonItem(
+            image: UIImage(systemName: "rectangle.portrait.and.arrow.right"),
+            style: .done
+            , target: self,
+            action: #selector(editButtonTapped)
+        )
         
+        // 創建刪除按鈕
+        let deleteButton = UIBarButtonItem(
+            image: UIImage(systemName: "trash"),
+            style: .plain
+            , target: self,
+            action: #selector(deleteButtonTapped)
+        )
         // 根據是否有選中的項目來啟用或禁用刪除按鈕
-        deleteButton.isEnabled = !(editingHandler?.isOrderListEmpty() ?? true) && (editingHandler?.hasSelectedRows() ?? false)
+        deleteButton.isEnabled = !(editingHandler.isOrderListEmpty()) && (editingHandler.hasSelectedRows())
         print("Delete button is enabled: \(deleteButton.isEnabled)")
         
-        navigationItem?.rightBarButtonItems = [doneButton, deleteButton]
+        updateNavigationBarButtons([doneButton, deleteButton])
     }
     
     // MARK: - Button Actions
