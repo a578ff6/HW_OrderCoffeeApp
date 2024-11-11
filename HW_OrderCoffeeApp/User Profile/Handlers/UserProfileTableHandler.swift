@@ -137,8 +137,8 @@ extension UserProfileTableHandler: UITableViewDelegate {
                 print("Edit Profile Tapped")
                 delegate?.navigateToEditProfile()
             case 2:
-                // 這裡可以處理點擊 "Order History" 的邏輯
                 print("Order History Tapped")
+                delegate?.navigateToOrderHistory()
             case 3:
                 print("Favorites Tapped")
                 delegate?.navigateToFavorites()
