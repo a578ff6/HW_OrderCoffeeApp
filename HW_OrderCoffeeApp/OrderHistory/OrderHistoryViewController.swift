@@ -5,15 +5,6 @@
 //  Created by 曹家瑋 on 2024/11/6.
 //
 
-/*
- 使用tableView顯示歷史訂單，現階段讓 OrderHistoryViewController 專注在該使用者的總訂單orders的呈現，後續再考慮是否要在設置點擊OrderHistoryViewController會進入到下一個視圖控制器呈現該訂單的細部資訊。
- 
- 1.tableView的部分會呈現可以滑動刪除，以及後續會提供一個按鈕是清空該使用者的order。
- 2.總訂單會依照時間日期做排序。
- 3.tableView中沒有訂單的話，會呈現「無歷史訂單」
- */
-
-
 // MARK: - OrderHistoryViewController 初步構想
 /**
 ## OrderHistoryViewController 初步構想
@@ -149,11 +140,16 @@
  
 ` 2.Lifecycle Methods：`
     - `loadView()：`設置自定義的主視圖 (orderHistoryView)。
-    - `viewDidLoad()`：設置相關處理器（例如排序、編輯、導航欄），並在視圖加載後調用 `fetchOrderHistory()` 來開始獲取資料。
+    - `viewDidLoad()`：
+        - 設置相關處理器（例如排序、編輯、導航欄）。
+        - 初始化導航欄標題 (`configureNavigationTitle()`)。
+        - 在視圖加載後調用 `fetchOrderHistory()` 來開始獲取資料。
 
  `3. Navigation Bar Setup：`
+    - `configureNavigationTitle()：`設置大標題及顯示模式，通常在 `viewDidLoad()` 中調用，以確保首次進入視圖時顯示正確的標題。
      - `setupNavigationBar()：`使用 `navigationBarManager` 來設置導航欄按鈕，包括排序和編輯按鈕。
-     - 在 `viewDidLoad()` 中初次設置導航欄，並在 `orders` 更新時重新設置導航欄，以根據訂單數據動態更新編輯按鈕的狀態。`（雖然我是採用資料驅動UI）`
+        - 在 `viewDidLoad()` 中初次設置導航欄按鈕的狀態。
+        - 每次 `orders` 更新時都會重新設置導航欄，以根據訂單數據動態更新編輯按鈕的狀態。`（雖然我是採用資料驅動UI）`
  
  `4. Fetch Order History：`
      - `fetchOrderHistory(sortOption:)`：非同步方法，用於從 Firebase 獲取當前使用者的訂單資料，並根據選擇的排序方式進行排序。
@@ -168,17 +164,22 @@
         - 在設置完成後重新載入表格數據。
  
  `6.Navigation Bar State Management（導航欄狀態管理）：`
-    - 每次更新 `orders` 時，自動通過 `didSet` 調用 `setupNavigationBar()` 方法，以根據當前訂單數量設置編輯按鈕的狀態。
+    - 每次更新 `orders` 時，自動通過 `didSet` 調用 `setupNavigationBar()` 和 `updateEmptyStateView` 方法，以根據當前訂單數量設置編輯按鈕的狀態以及空狀態的顯示。
     - 當沒有訂單時，編輯按鈕處於禁用狀態，確保在無可編輯內容時，使用者無法進入編輯模式。
-    - 在 `viewDidLoad()` 中初次設置導航欄按鈕，確保在首次進入視圖時按鈕狀態正確。
+    - 在 `viewDidLoad()` 中初次設置導航欄標題 (`configureNavigationTitle()`) 和按鈕 (`setupNavigationBar()`)，確保在首次進入視圖時按鈕狀態和標題正確。
     - `didChangeSelectionState()` 用於當表格中行的選取狀態改變時，更新導航欄按鈕（如「刪除」按鈕）的啟用狀態。此方法確保在`編輯模式`下，當用戶選取或取消選取訂單行時，導航欄狀態能夠及時反映當前選擇狀況。
+ 
+ `7. Empty State Management（空狀態管理）`
+    - `updateEmptyStateView() 方法`：負責根據 `orders` 是否為空來更新 UI。當訂單為空時，顯示提示訊息「無訂單項目」，以便於用戶理解當前狀態。
+    - 每次訂單資料改變時（例如新增、刪除訂單），這個方法都會被調用，這樣可以確保 UI 狀態與資料狀態的一致性。
+    - 使用此方法可避免在多個地方手動管理空狀態視圖，提升代碼的可讀性與維護性。
 
- `7.OrderHistoryDelegate：`
+ `8.OrderHistoryDelegate：`
     - `getOrders()`：此方法實作了 OrderHistoryDelegate 協定，用於提供訂單資料給 OrderHistoryHandler，讓它能取得需要顯示的訂單。
     - `deleteOrder(at:)`：當使用者滑動刪除訂單時，從本地 `orders` 中移除訂單，並呼叫 `OrderHistoryManager` 刪除 `Firebase` 中的資料，確保資料同步性。
     - `didChangeSelectionState()`：當表格中的選取狀態改變時調用，通知 `navigationBarManager` 更新「刪除」按鈕的啟用狀態，確保使用者選擇項目時，按鈕狀態能即時更新。
 
- `8.OrderHistorySortMenuDelegate：`
+ `9.OrderHistorySortMenuDelegate：`
     - `didSelectSortOption(_:)`：用於響應使用者選擇排序選項的操作，重新獲取並顯示訂單資料。
  */
 
@@ -479,6 +480,58 @@
  */
 
 
+// MARK: - 關於「歷史訂單頁面」的空狀態顯示與狀態更新方式（重要）
+/**
+ ### 關於「歷史訂單頁面」的空狀態顯示與狀態更新方式
+
+ `## What（什麼是空狀態顯示）`
+ 
+ - 在歷史訂單頁面中，如果沒有歷史訂單，使用者介面應顯示一段「無訂單項目」的提示文字，以向使用者表達目前的資料狀態。
+ - 這可以讓使用者清楚理解目前沒有可用的訂單，提供更友善的使用者體驗。
+
+ `## Why（為何進行這些設計與調整）`
+ 
+ `1. 在 UITableView 的 numberOfRowsInSection 中`
+ 
+ - 起初，我在 `UITableView` 的 `numberOfRowsInSection` 中根據訂單的數量來動態更新是否顯示空狀態提示。
+ - 但考量到 `numberOfRowsInSection` 是 `UITableViewDataSource` 的方法，其主要職責應該是返回行的數量。
+ - 這個方法的核心目標是用來給 `UITableView` 提供行數，而不是去負責處理空狀態視圖的更新。
+ - 因此，當這個方法被用來更新 UI 狀態時，其職責就有些模糊，這可能會讓日後維護代碼變得複雜。
+ 
+ - 目前的實作中，`OrderHistoryHandler` 作為數據源的管理者，它負責處理表格數據的顯示和數據源的回應。
+ - 然而，`numberOfRowsInSection` 被用來調用 `updateEmptyState`，這讓 `UITableViewDataSource` 的職責超出了預期，參與了界面上的視圖管理（即顯示或隱藏「無訂單項目」的視圖）。這就造成了視圖層次的混淆。
+ 
+`2. 在多個地方重複手動呼叫 updateEmptyState，導致代碼冗餘。`（改到`OrderHistoryViewController`）
+ 
+ - 在原始設計中，空狀態提示的更新被多次手動呼叫，如在 `handleFetchedOrders`、`deleteOrder`、`deleteOrders` 等多個函數中。
+ - 這導致代碼變得冗餘，並且每次涉及訂單資料變動時都需要手動更新空狀態，增加了未來維護的複雜度與出錯的機會。
+ 
+ `## How（如何進行實作）`
+ 
+ `1.在 OrderHistoryView 中設置 updateEmptyState 方法`：
+    - `updateEmptyState(isEmpty:) `方法根據訂單是否存在來顯示或移除空狀態提示文字。
+    - 例如，當訂單為空時，顯示一個 UILabel 提示「無訂單項目」，並將其設置為 `tableView` 的 `backgroundView`。
+
+` 2.在 OrderHistoryViewController 中統一管理空狀態更新`：
+    - 將空狀態的更新邏輯集中在 `orders` 的 `didSet` 中。這樣可以確保每次訂單資料發生變化（如新資料載入、刪除等）時，自動觸發 UI 更新，減少手動管理的步驟。
+    - 這樣可以確保訂單資料一有變動就更新空狀態提示，不再需要手動管理多次更新邏輯。
+
+ `3.減少重複代碼`：
+    - 透過將 `updateEmptyState` 的呼叫移至 `didSet`，可以避免在多個地方（如 `handleFetchedOrders`、`deleteOrder`、`deleteOrders`）重複手動呼叫。這樣不僅提高了代碼的簡潔性，還能減少未來變更中出錯的風險。
+ 
+ `## 總結`
+ 
+ `* 問題`：
+    - 當沒有歷史訂單時，需要顯示「無訂單項目」的提示，且原始的實作方式在多個地方重複手動呼叫 `updateEmptyState`，導致代碼冗餘。
+ 
+ `* 解決方法`：
+    - 將 `updateEmptyState` 的呼叫統一移至 `orders` 的 `didSet`，以減少重複代碼並確保每次訂單資料改變時都能自動更新 UI。
+ 
+ *` 優點`：
+    - 提高了代碼的可讀性和可維護性，減少了未來改動時容易出錯的地方。
+ */
+
+
 import UIKit
 import Firebase
 
@@ -510,7 +563,8 @@ class OrderHistoryViewController: UIViewController {
     /// 用於存放從 Firebase 獲取的訂單資料
     private var orders: [OrderHistory] = [] {
         didSet {
-            setupNavigationBar()                    // 每次更新 orders 後都檢查按鈕狀態
+            setupNavigationBar()
+            updateEmptyStateView()
         }
     }
 
@@ -523,6 +577,7 @@ class OrderHistoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupHandlers()                                     // 初始化排序、編輯和導航欄處理器
+        configureNavigationTitle()                          // 設定大標題 (初始化)
         setupNavigationBar()                                // 設置導航欄按鈕（初始化按鈕狀態）
         fetchOrderHistory(sortOption: .byDateDescending)    // 從 Firebase 獲取歷史訂單資料，預設按照時間倒序
     }
@@ -560,7 +615,17 @@ class OrderHistoryViewController: UIViewController {
         setupOrderHistoryHandler()
     }
     
-    // MARK: - Setup Handlers & Navigation
+    // MARK: - Empty State Management
+
+    /// 更新空狀態的顯示
+    /// - 說明：當訂單資料改變後，根據當前訂單是否為空來顯示或隱藏空狀態提示視圖。
+    /// - 如果 `orders` 為空，則顯示「無訂單項目」的提示文字，提示使用者目前沒有任何歷史訂單；
+    ///   否則移除提示文字以顯示訂單列表。
+    private func updateEmptyStateView() {
+        orderHistoryView.updateEmptyState(isEmpty: orders.isEmpty)
+    }
+    
+    // MARK: - Setup Handlers
 
     /// 初始化 `OrderHistoryHandler`，並設置表格視圖的數據源和委託
     /// - 說明：在成功獲取資料後初始化 Handler，確保表格視圖在資料齊全時再進行配置
@@ -596,12 +661,21 @@ class OrderHistoryViewController: UIViewController {
         }
     }
     
-    /// 設置導航欄上的按鈕
-    private func setupNavigationBar() {
-        navigationBarManager?.configureNavigationBarTitle(title: "Order History")    // 設定大標題及顯示模式
-        navigationBarManager?.setupInitialNavigationBar()                            // 設定初始的導航欄按鈕
-    }
+    // MARK: - Navigation Setup
 
+    /// 設置導航欄上的按鈕
+    /// - 說明：此方法負責初始化導航欄按鈕的狀態，通常在訂單資料加載完成後調用。
+    /// - 包含「排序」和「編輯」按鈕的初始設置，適合非編輯模式下的情境。
+    /// - 在每次訂單資料 (`orders`) 更新後，都會調用此方法以確保導航欄按鈕的狀態符合當前訂單情況。
+    private func setupNavigationBar() {
+        navigationBarManager?.setupInitialNavigationBar()          // 設定初始的導航欄按鈕（如排序和編輯按鈕）
+    }
+    
+    /// 設定大標題及顯示模式
+    private func configureNavigationTitle() {
+        navigationBarManager?.configureNavigationBarTitle(title: "Order History")
+    }
+    
 }
 
 // MARK: - OrderHistoryDelegate
