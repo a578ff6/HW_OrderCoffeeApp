@@ -157,11 +157,19 @@
  
  `5.Setup Methods：`
     - `handleFetchedOrders(_:)：`處理從 Firebase 獲取的訂單資料，儲存在 orders 中，並初始化 OrderHistoryHandler。
-    - `setupHandlers()`：設置排序選單、編輯模式和導航欄管理器，將不同的職責分配給專門的處理器類別。
+ 
+    - `setupNavigationHandlers()`：設置排序選單、編輯模式和導航欄管理器，將不同的職責分配給專門的處理器類別。
+        - setupEditingHandler()：初始化編輯模式處理器，專門負責編輯和多選刪除的操作。
+        - setupSortMenuHandler()：初始化排序選單處理器，提供不同排序選項。
+        - setupNavigationBarManager()：初始化導航欄管理器，負責管理排序、編輯模式及導航按鈕。
+
     - `setupOrderHistoryHandler()：`
         - 初始化 `OrderHistoryHandler`，並將 delegate 設置為當前控制器，從而可以提供訂單資料。
-        - 設置表格視圖的數據源 (dataSource) 和委託 (delegate) 為 OrderHistoryHandler。
-        - 在設置完成後重新載入表格數據。
+        - 使用 `configureTableView(with:) `來配置表格視圖的數據源 (dataSource) 和委託 (delegate) 為 OrderHistoryHandler。
+
+    - `configureTableView(with:)：`
+        - 配置表格視圖的數據源 (dataSource) 和委託 (delegate)，以便於 OrderHistoryHandler 處理表格視圖的數據顯示與交互。
+        - 在設置完成後重新載入表格數據，以確保最新的資料顯示。
  
  `6.Navigation Bar State Management（導航欄狀態管理）：`
     - 每次更新 `orders` 時，自動通過 `didSet` 調用 `setupNavigationBar()` 和 `updateEmptyStateView` 方法，以根據當前訂單數量設置編輯按鈕的狀態以及空狀態的顯示。
@@ -576,7 +584,7 @@ class OrderHistoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupHandlers()                                     // 初始化排序、編輯和導航欄處理器
+        setupNavigationHandlers()                           // 初始化排序、編輯和導航欄處理器
         configureNavigationTitle()                          // 設定大標題 (初始化)
         setupNavigationBar()                                // 設置導航欄按鈕（初始化按鈕狀態）
         fetchOrderHistory(sortOption: .byDateDescending)    // 從 Firebase 獲取歷史訂單資料，預設按照時間倒序
@@ -625,30 +633,54 @@ class OrderHistoryViewController: UIViewController {
         orderHistoryView.updateEmptyState(isEmpty: orders.isEmpty)
     }
     
-    // MARK: - Setup Handlers
-
+    // MARK: - Order History Setup
+    
     /// 初始化 `OrderHistoryHandler`，並設置表格視圖的數據源和委託
     /// - 說明：在成功獲取資料後初始化 Handler，確保表格視圖在資料齊全時再進行配置
     private func setupOrderHistoryHandler() {
-        
         // 初始化 Handler，將自己作為 `delegate` 傳入
         let handler = OrderHistoryHandler(delegate: self)
         self.orderHistoryHandler = handler
-        
+        configureTableView(with: handler)
+    }
+
+    /// 配置表格視圖的數據源和委託
+    /// - Parameter handler: 用於處理表格數據和交互的 `OrderHistoryHandler`
+    private func configureTableView(with handler: OrderHistoryHandler) {
         let tableView = orderHistoryView.tableView
-        // 設置表格視圖的數據源、委託為 Handler
         tableView.dataSource = handler
         tableView.delegate = handler
-        
         tableView.reloadData()
     }
     
+    // MARK: - Navigation Handler Setup
+    
     /// 設置排序選單、編輯模式、導航欄管理器等的處理器
-    private func setupHandlers() {
+    private func setupNavigationHandlers() {
+        setupEditingHandler()
+        setupSortMenuHandler()
+        setupNavigationBarManager()
+    }
+    
+    // MARK: - Editing Handler Setup
+
+    /// 初始化 `OrderHistoryEditingHandler`，用於管理表格視圖的編輯模式和多選刪除功能
+    private func setupEditingHandler() {
         let tableView = orderHistoryView.tableView
         editingHandler = OrderHistoryEditingHandler(tableView: tableView, delegate: self)
+    }
+    
+    // MARK: - Sort Menu Handler Setup
+
+    /// 初始化 `OrderHistorySortMenuHandler`，用於管理排序選單邏輯
+    private func setupSortMenuHandler() {
         sortMenuHandler = OrderHistorySortMenuHandler(delegate: self)
-        
+    }
+    
+    // MARK: - Navigation Bar Manager Setup
+
+    /// 初始化 `OrderHistoryNavigationBarManager`，用於管理導航欄按鈕和顯示邏輯
+    private func setupNavigationBarManager() {
         if let editingHandler = editingHandler,
            let sortMenuHandler = sortMenuHandler,
            let navigationController = navigationController {
