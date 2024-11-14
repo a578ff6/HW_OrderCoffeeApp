@@ -14,13 +14,16 @@
     - `OrderHistoryDelegate` 協議用於解耦 `OrderHistoryHandler` 和 `OrderHistoryViewController` 之間的關係，允許 `OrderHistoryHandler` 在不知道訂單具體資料的情況下，通過委託方式獲取資料，執行操作，或更新狀態。
 
  `* 適用場景：`
-    - 當 `OrderHistoryHandler` 需要取得訂單資料來顯示、刪除訂單，或通知選取狀態變更時，它不直接持有訂單資料，而是透過 `OrderHistoryDelegate` 來請求資料或進行操作。
+    - 當 `OrderHistoryHandler` 需要取得訂單資料來顯示、刪除訂單，通知選取狀態變更，或導航到訂單詳細頁面時，它不直接持有訂單資料，而是透過 `OrderHistoryDelegate` 來請求資料或進行操作。
  
  `* 弱引用 (weak)：`
     - `OrderHistoryDelegate` 使用 AnyObject 並在 `OrderHistoryHandler` 中設置為 weak，這樣可以避免循環引用，確保控制器可以正確地被釋放以避免記憶體洩漏。
  
  `* 解耦設計：`
     - 這樣的設計有助於職責分離，`OrderHistoryHandler` 只負責表格的 UI 和邏輯處理，而資料管理留在 `OrderHistoryViewController`。這讓程式碼更容易維護，也更具擴展性。
+ 
+ `* 導航至詳細頁面：`
+    - `navigateToOrderHistoryDetail(with:)` 方法允許 `OrderHistoryHandler` 通知 `OrderHistoryViewController` 進行導航到某一訂單的詳細資訊，確保在正常模式下的點選能夠直接進入訂單詳細頁面。
  */
 
 import UIKit
@@ -48,4 +51,9 @@ protocol OrderHistoryDelegate: AnyObject {
     /// 通知選取狀態變更
     /// - 用途：在`編輯模式`下，當表格中的選取狀態發生變化時，通知 `OrderHistoryViewController` 更新導航欄按鈕（例如「刪除」按鈕）的啟用狀態。
     func didChangeSelectionState()
+    
+    /// 導航至指定的歷史訂單詳細頁面
+    /// - Parameter order: 要查看詳細的歷史訂單資料
+    func navigateToOrderHistoryDetail(with order: OrderHistory)
+    
 }

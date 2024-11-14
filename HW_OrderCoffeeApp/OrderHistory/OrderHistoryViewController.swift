@@ -186,6 +186,7 @@
     - `getOrders()`：此方法實作了 OrderHistoryDelegate 協定，用於提供訂單資料給 OrderHistoryHandler，讓它能取得需要顯示的訂單。
     - `deleteOrder(at:)`：當使用者滑動刪除訂單時，從本地 `orders` 中移除訂單，並呼叫 `OrderHistoryManager` 刪除 `Firebase` 中的資料，確保資料同步性。
     - `didChangeSelectionState()`：當表格中的選取狀態改變時調用，通知 `navigationBarManager` 更新「刪除」按鈕的啟用狀態，確保使用者選擇項目時，按鈕狀態能即時更新。
+    -  `navigateToOrderHistoryDetail(with:)`：用於導航至歷史訂單的詳細頁面，讓使用者能查看選擇的訂單詳細資料。此方法透過導航控制器 (`UINavigationController`) 導航到 `OrderHistoryDetailViewController`。
 
  `9.OrderHistorySortMenuDelegate：`
     - `didSelectSortOption(_:)`：用於響應使用者選擇排序選項的操作，重新獲取並顯示訂單資料。
@@ -712,6 +713,21 @@ class OrderHistoryViewController: UIViewController {
 
 // MARK: - OrderHistoryDelegate
 extension OrderHistoryViewController: OrderHistoryDelegate {
+    
+    // MARK: - Navigate To OrderHistoryDetail
+    
+    /// 導航至指定的歷史訂單詳細頁面
+    /// - Parameter order: 要查看詳細的歷史訂單資料
+    /// - 說明：負責在用戶點選特定歷史訂單時，導航至該歷史訂單的詳細資訊頁面。
+    /// - 主要目的：提供用戶查看歷史訂單的詳細資訊，並確保詳細頁面可以正確顯示特定訂單的資料。
+    func navigateToOrderHistoryDetail(with order: OrderHistory) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let detailVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.orderHistoryDetailViewController) as? OrderHistoryDetailViewController else {
+            return
+        }
+        detailVC.orderId = order.id
+        self.navigationController?.pushViewController(detailVC, animated: true)
+    }
     
     // MARK: - Fetch Orders
 

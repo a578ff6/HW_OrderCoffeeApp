@@ -13,7 +13,7 @@
  
  - `功能`：`OrderHistoryHandler` 是專門用於處理訂單歷史紀錄表格視圖的資料處理器，負責 UITableView 的資料源和委託邏輯。
  - `資料源 (UITableViewDataSource)`：提供表格視圖的數據顯示，確保訂單資料能夠正確展示。
- - `委託 (UITableViewDelegate)`：處理表格視圖的互動行為，例如滑動刪除、多選刪除等操作。
+ - `委託 (UITableViewDelegate)`：處理表格視圖的互動行為，例如滑動刪除、多選刪除，以及導航至詳細頁面等操作。
  
  `* 結構`
  
@@ -42,8 +42,13 @@
     - `tableView(_:commit:forRowAt:)`：實作滑動刪除行的功能，透過委託通知 `OrderHistoryViewController` 刪除本地和遠端的訂單資料，並從表格中移除該行。
  
  `* 多選刪除行：`
-    - `tableView(_:didSelectRowAt:)`：在編輯模式下，處理選擇行的操作，並通知 `delegate` 選取狀態變更，以便更新導航欄按鈕狀態。
+ 
+    - `tableView(_:didSelectRowAt:)`：在選取某行時，根據當前模式進行不同的操作。
+        - 在編輯模式下，處理多選狀態變更並通知 delegate 更新導航欄按鈕狀態。
+        - 在正常模式下，導航至訂單的詳細頁面。
+ 
     - `tableView(_:didDeselectRowAt:)`：在編輯模式下，處理取消選擇行的操作，並通知 `delegate` 選取狀態變更。
+
     - `deleteSelectedRows(from:)`：處理多選刪除的功能，透過委託通知 `OrderHistoryViewController` 刪除指定的多筆訂單，並從表格中刪除相應行。
  
  `* 重點設計`
@@ -60,13 +65,15 @@
  `4.選取狀態管理：`
      - `didChangeSelectionState()` 方法來管理選取狀態的變更，當使用者在編輯模式下選取或取消選取行時通知控制器更新導航欄按鈕的狀態，特別是「刪除」按鈕的啟用狀態。
      - 用途：通知 `OrderHistoryViewController` 更新導航欄按鈕的狀態（例如「刪除」按鈕的啟用與禁用），確保按鈕的狀態與選取狀態保持一致。
+     -  didSelectRowAt 可以根據模式來處理多選或導航行為，進一步提升了用戶體驗和邏輯的一致性。
  */
+
 
 import UIKit
 
- /// `OrderHistoryHandler` 是處理歷史訂單表格視圖數據和委託的類別。
- /// - 負責表格視圖的數據源 (`UITableViewDataSource`) 以及與 `OrderHistoryDelegate` 的協作。
- /// - 確保訂單資料能夠正確顯示在表格視圖中。
+/// `OrderHistoryHandler` 是處理歷史訂單表格視圖數據和委託的類別。
+/// - 負責表格視圖的數據源 (`UITableViewDataSource`) 以及與 `OrderHistoryDelegate` 的協作。
+/// - 確保訂單資料能夠正確顯示在表格視圖中。
 class OrderHistoryHandler: NSObject {
     
     // MARK: - Properties
@@ -123,12 +130,20 @@ extension OrderHistoryHandler: UITableViewDelegate {
     }
     
     // MARK: - Selection State Changes (選取狀態變更)
-
-    /// 在編輯模式下，當選取某行時處理多選狀態變更
-    /// - 說明：通知 `delegate`，以便更新導航欄按鈕（例如啟用/禁用「刪除」按鈕）
+ 
+    /// 在選取某行時處理`多選狀態變更`或`導航行為`
+    /// - 說明：根據當前模式（編輯模式或正常模式）進行不同的操作。
+    ///   - 如果在編輯模式下選取行，通知 `delegate` 以便更新導航欄按鈕（例如啟用/禁用「刪除」按鈕）。
+    ///   - 如果在正常模式下選取行，則導航至該訂單的詳細頁面。
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard tableView.isEditing else { return }
-        delegate?.didChangeSelectionState()
+        
+        if tableView.isEditing {
+            delegate?.didChangeSelectionState()
+        } else {
+            guard let orders = delegate?.getOrders() else { return }
+            let selectedOrder = orders[indexPath.row]
+            delegate?.navigateToOrderHistoryDetail(with: selectedOrder)
+        }
     }
     
     /// 在編輯模式下，當取消選取某行時處理多選狀態變更
