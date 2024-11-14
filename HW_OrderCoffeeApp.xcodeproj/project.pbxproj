@@ -92,6 +92,21 @@
 		937605A02C4BB6BD00B1316C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9376059F2C4BB6BD00B1316C /* GoogleSignIn */; };
 		937605A22C4BB6BD00B1316C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 937605A12C4BB6BD00B1316C /* GoogleSignInSwift */; };
 		937605A82C4BFA9F00B1316C /* GoogleSignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */; };
+		9381221F2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381221E2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift */; };
+		938122212CE286A300ADFB7B /* OrderHistoryDetailHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122202CE286A300ADFB7B /* OrderHistoryDetailHandler.swift */; };
+		938122232CE286C300ADFB7B /* OrderHistoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122222CE286C300ADFB7B /* OrderHistoryDetailView.swift */; };
+		938122252CE286E900ADFB7B /* OrderHistoryDetailManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122242CE286E900ADFB7B /* OrderHistoryDetailManager.swift */; };
+		938122272CE2870800ADFB7B /* OrderHistoryDetailDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122262CE2870800ADFB7B /* OrderHistoryDetailDelegate.swift */; };
+		938122292CE358EA00ADFB7B /* OrderHistoryDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122282CE358EA00ADFB7B /* OrderHistoryDetail.swift */; };
+		9381222B2CE3C51D00ADFB7B /* OrderHistoryDetailLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381222A2CE3C51D00ADFB7B /* OrderHistoryDetailLayoutProvider.swift */; };
+		9381222D2CE3CCF600ADFB7B /* OrderHistoryDetailSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381222C2CE3CCF600ADFB7B /* OrderHistoryDetailSectionHeaderView.swift */; };
+		9381222F2CE45A7F00ADFB7B /* OrderrHistoryDetailItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381222E2CE45A7F00ADFB7B /* OrderrHistoryDetailItemCell.swift */; };
+		938122312CE45EC500ADFB7B /* OrderHistoryDetailCustomerInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122302CE45EC500ADFB7B /* OrderHistoryDetailCustomerInfoCell.swift */; };
+		938122332CE4639900ADFB7B /* OrderrHistoryDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122322CE4639900ADFB7B /* OrderrHistoryDetailCell.swift */; };
+		938122372CE4CF8E00ADFB7B /* OrderHistoryDetailSectionExpansionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122362CE4CF8E00ADFB7B /* OrderHistoryDetailSectionExpansionManager.swift */; };
+		938122392CE4D0E200ADFB7B /* OrderHistoryDetailHeaderGestureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122382CE4D0E200ADFB7B /* OrderHistoryDetailHeaderGestureHandler.swift */; };
+		9381223B2CE57CC000ADFB7B /* OrderHistoryDetailNavigationBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381223A2CE57CC000ADFB7B /* OrderHistoryDetailNavigationBarManager.swift */; };
+		9381223D2CE58DA600ADFB7B /* OrderHistoryDetailSharingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381223C2CE58DA600ADFB7B /* OrderHistoryDetailSharingHandler.swift */; };
 		939BD9D02B2A1B1700616D1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9CF2B2A1B1700616D1C /* AppDelegate.swift */; };
 		939BD9D22B2A1B1700616D1C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9D12B2A1B1700616D1C /* SceneDelegate.swift */; };
 		939BD9D72B2A1B1700616D1C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 939BD9D52B2A1B1700616D1C /* Main.storyboard */; };
@@ -308,6 +323,21 @@
 		937605982C4A6B0300B1316C /* BottomLineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
 		9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+CustomColors.swift"; sourceTree = "<group>"; };
 		937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInController.swift; sourceTree = "<group>"; };
+		9381221E2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailViewController.swift; sourceTree = "<group>"; };
+		938122202CE286A300ADFB7B /* OrderHistoryDetailHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailHandler.swift; sourceTree = "<group>"; };
+		938122222CE286C300ADFB7B /* OrderHistoryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailView.swift; sourceTree = "<group>"; };
+		938122242CE286E900ADFB7B /* OrderHistoryDetailManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailManager.swift; sourceTree = "<group>"; };
+		938122262CE2870800ADFB7B /* OrderHistoryDetailDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailDelegate.swift; sourceTree = "<group>"; };
+		938122282CE358EA00ADFB7B /* OrderHistoryDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetail.swift; sourceTree = "<group>"; };
+		9381222A2CE3C51D00ADFB7B /* OrderHistoryDetailLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailLayoutProvider.swift; sourceTree = "<group>"; };
+		9381222C2CE3CCF600ADFB7B /* OrderHistoryDetailSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailSectionHeaderView.swift; sourceTree = "<group>"; };
+		9381222E2CE45A7F00ADFB7B /* OrderrHistoryDetailItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderrHistoryDetailItemCell.swift; sourceTree = "<group>"; };
+		938122302CE45EC500ADFB7B /* OrderHistoryDetailCustomerInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailCustomerInfoCell.swift; sourceTree = "<group>"; };
+		938122322CE4639900ADFB7B /* OrderrHistoryDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderrHistoryDetailCell.swift; sourceTree = "<group>"; };
+		938122362CE4CF8E00ADFB7B /* OrderHistoryDetailSectionExpansionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailSectionExpansionManager.swift; sourceTree = "<group>"; };
+		938122382CE4D0E200ADFB7B /* OrderHistoryDetailHeaderGestureHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailHeaderGestureHandler.swift; sourceTree = "<group>"; };
+		9381223A2CE57CC000ADFB7B /* OrderHistoryDetailNavigationBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailNavigationBarManager.swift; sourceTree = "<group>"; };
+		9381223C2CE58DA600ADFB7B /* OrderHistoryDetailSharingHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailSharingHandler.swift; sourceTree = "<group>"; };
 		939BD9CC2B2A1B1700616D1C /* HW_OrderCoffeeApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HW_OrderCoffeeApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		939BD9CF2B2A1B1700616D1C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		939BD9D12B2A1B1700616D1C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -931,6 +961,84 @@
 			path = StoreInfo;
 			sourceTree = "<group>";
 		};
+		9381221D2CE2811400ADFB7B /* OrderHistoryDetail */ = {
+			isa = PBXGroup;
+			children = (
+				9381223E2CE63E7E00ADFB7B /* Delegates */,
+				9381223F2CE63E9000ADFB7B /* Handlers */,
+				938122402CE63F6300ADFB7B /* Layouts */,
+				938122412CE63F6F00ADFB7B /* Views */,
+				938122422CE63F8800ADFB7B /* View Controllers */,
+				938122432CE63F9B00ADFB7B /* Models */,
+				938122442CE63FA700ADFB7B /* Services */,
+			);
+			path = OrderHistoryDetail;
+			sourceTree = "<group>";
+		};
+		9381223E2CE63E7E00ADFB7B /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				938122262CE2870800ADFB7B /* OrderHistoryDetailDelegate.swift */,
+			);
+			path = Delegates;
+			sourceTree = "<group>";
+		};
+		9381223F2CE63E9000ADFB7B /* Handlers */ = {
+			isa = PBXGroup;
+			children = (
+				938122202CE286A300ADFB7B /* OrderHistoryDetailHandler.swift */,
+				938122382CE4D0E200ADFB7B /* OrderHistoryDetailHeaderGestureHandler.swift */,
+				938122362CE4CF8E00ADFB7B /* OrderHistoryDetailSectionExpansionManager.swift */,
+				9381223A2CE57CC000ADFB7B /* OrderHistoryDetailNavigationBarManager.swift */,
+				9381223C2CE58DA600ADFB7B /* OrderHistoryDetailSharingHandler.swift */,
+			);
+			path = Handlers;
+			sourceTree = "<group>";
+		};
+		938122402CE63F6300ADFB7B /* Layouts */ = {
+			isa = PBXGroup;
+			children = (
+				9381222A2CE3C51D00ADFB7B /* OrderHistoryDetailLayoutProvider.swift */,
+			);
+			path = Layouts;
+			sourceTree = "<group>";
+		};
+		938122412CE63F6F00ADFB7B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				938122222CE286C300ADFB7B /* OrderHistoryDetailView.swift */,
+				9381222C2CE3CCF600ADFB7B /* OrderHistoryDetailSectionHeaderView.swift */,
+				9381222E2CE45A7F00ADFB7B /* OrderrHistoryDetailItemCell.swift */,
+				938122302CE45EC500ADFB7B /* OrderHistoryDetailCustomerInfoCell.swift */,
+				938122322CE4639900ADFB7B /* OrderrHistoryDetailCell.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		938122422CE63F8800ADFB7B /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				9381221E2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		938122432CE63F9B00ADFB7B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				938122282CE358EA00ADFB7B /* OrderHistoryDetail.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		938122442CE63FA700ADFB7B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				938122242CE286E900ADFB7B /* OrderHistoryDetailManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		939BD9C32B2A1B1700616D1C = {
 			isa = PBXGroup;
 			children = (
@@ -962,6 +1070,7 @@
 				935291592C91B3AD0018B060 /* Resources */,
 				93F9BB582C293E3E00355A87 /* Utilities */,
 				939BDA6C2B2C200F00616D1C /* Authentication */,
+				9381221D2CE2811400ADFB7B /* OrderHistoryDetail */,
 				93B7B5772CDBA58C00E0205A /* OrderHistory */,
 				93B7B54D2CD4DB2100E0205A /* OrderConfirmation */,
 				9375E2E42CD136DE002E3668 /* StoreInfo */,
@@ -1555,14 +1664,17 @@
 				93755C442C8466A4002570A5 /* WebsiteImageCell.swift in Sources */,
 				939BDA692B2B82BC00616D1C /* AlertService.swift in Sources */,
 				939BDA652B2ACBA200616D1C /* FirebaseController.swift in Sources */,
+				938122372CE4CF8E00ADFB7B /* OrderHistoryDetailSectionExpansionManager.swift in Sources */,
 				93B9DC832C33B9A00050BC3F /* OrderItem.swift in Sources */,
 				9352914A2C8D85790018B060 /* DrinkDetailView.swift in Sources */,
+				938122332CE4639900ADFB7B /* OrderrHistoryDetailCell.swift in Sources */,
 				935374362CB00E2E00794A63 /* OrderHandler.swift in Sources */,
 				9353746E2CCABDCA00794A63 /* StoreSelectionMapHandler.swift in Sources */,
 				93B7B5632CD80CF800E0205A /* OrderConfirmationManager.swift in Sources */,
 				93F9BB5C2C2E4E6200355A87 /* ColumnItemCell.swift in Sources */,
 				935374122C9C5C6900794A63 /* FavoritesViewController.swift in Sources */,
 				93DB1D2D2C43D82200BA2CC1 /* OrderSectionHeaderView.swift in Sources */,
+				938122232CE286C300ADFB7B /* OrderHistoryDetailView.swift in Sources */,
 				93B7B5672CD9066D00E0205A /* OrderConfirmationHandlerDelegate.swift in Sources */,
 				935374552CB93F6D00794A63 /* OrderCustomerDetailsSectionHeaderView.swift in Sources */,
 				935291302C875DA30018B060 /* UIView+ScaleAnimation.swift in Sources */,
@@ -1588,6 +1700,7 @@
 				935374702CCABDEB00794A63 /* Store.swift in Sources */,
 				9376059B2C4AAA9C00B1316C /* UIColor+CustomColors.swift in Sources */,
 				93B7B5912CDE0F7F00E0205A /* OrderHistorySortMenuHandler.swift in Sources */,
+				9381222D2CE3CCF600ADFB7B /* OrderHistoryDetailSectionHeaderView.swift in Sources */,
 				935374512CB80D0000794A63 /* OrderCustomerInfoCell.swift in Sources */,
 				93B7B5872CDD4A0700E0205A /* OrderHistoryDelegate.swift in Sources */,
 				93B9DC812C32D7740050BC3F /* OrderManager.swift in Sources */,
@@ -1597,6 +1710,7 @@
 				93DB1D2F2C461F9D00BA2CC1 /* KeychainManager.swift in Sources */,
 				93B492932C410A2E00E7B947 /* OrderSummaryCollectionViewCell.swift in Sources */,
 				937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */,
+				938122292CE358EA00ADFB7B /* OrderHistoryDetail.swift in Sources */,
 				9353745B2CBD43B900794A63 /* OrderCustomerNoteCell.swift in Sources */,
 				935374332CAFC29D00794A63 /* OrderLayoutProvider.swift in Sources */,
 				93B7B5852CDD3BB700E0205A /* OrderHistoryCell.swift in Sources */,
@@ -1607,6 +1721,7 @@
 				939BDA6F2B2C211200616D1C /* Constants.swift in Sources */,
 				93B7B5372CD15F0F00E0205A /* StoreInfoPanelLayout.swift in Sources */,
 				9353745F2CC3D3F800794A63 /* OrderCustomerDetailsHandlerDelegate.swift in Sources */,
+				9381223D2CE58DA600ADFB7B /* OrderHistoryDetailSharingHandler.swift in Sources */,
 				939BD9D02B2A1B1700616D1C /* AppDelegate.swift in Sources */,
 				9353745D2CBF281C00794A63 /* OrderCustomerSubmitCell.swift in Sources */,
 				935374152C9C5CD000794A63 /* FavoritesHandler.swift in Sources */,
@@ -1617,9 +1732,11 @@
 				93755C332C8351AA002570A5 /* MenuViewController.swift in Sources */,
 				9353742B2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift in Sources */,
 				93B9DC762C3042710050BC3F /* MenuLayoutProvider.swift in Sources */,
+				938122212CE286A300ADFB7B /* OrderHistoryDetailHandler.swift in Sources */,
 				935374292CA4502B00794A63 /* NoFavoritesView.swift in Sources */,
 				9353747E2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift in Sources */,
 				935374742CCAC17B00794A63 /* StoreSelectionMapView.swift in Sources */,
+				938122312CE45EC500ADFB7B /* OrderHistoryDetailCustomerInfoCell.swift in Sources */,
 				93755C352C83520A002570A5 /* MenuCollectionHandler.swift in Sources */,
 				93B7B5532CD5E23B00E0205A /* OrderConfirmationLayoutProvider.swift in Sources */,
 				93B7B55B2CD6812800E0205A /* OrderConfirmationCustomerInfoCell.swift in Sources */,
@@ -1644,6 +1761,7 @@
 				935374532CB80F1300794A63 /* OrderCustomerDetailsLayoutProvider.swift in Sources */,
 				93755C1B2C808202002570A5 /* UserProfileTableHandler.swift in Sources */,
 				93755C1D2C8094D0002570A5 /* ProfileHeaderCell.swift in Sources */,
+				9381222F2CE45A7F00ADFB7B /* OrderrHistoryDetailItemCell.swift in Sources */,
 				93F9BB3A2C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift in Sources */,
 				93B7B5692CD9E22800E0205A /* OrderConfirmationSectionHeaderView.swift in Sources */,
 				939BDA742B2FB3E400616D1C /* MenuModels.swift in Sources */,
@@ -1658,7 +1776,9 @@
 				93B7B5952CDE30C400E0205A /* OrderHistoryEditingHandler.swift in Sources */,
 				935374192C9C601200794A63 /* FavoriteDrinkCell.swift in Sources */,
 				93F9BB4A2C269AC600355A87 /* DrinkDetailSeparatorView.swift in Sources */,
+				938122272CE2870800ADFB7B /* OrderHistoryDetailDelegate.swift in Sources */,
 				93DB1D352C47EE1900BA2CC1 /* ForgotPasswordView.swift in Sources */,
+				938122392CE4D0E200ADFB7B /* OrderHistoryDetailHeaderGestureHandler.swift in Sources */,
 				93B7B5392CD1D31D00E0205A /* DefaultInfoView.swift in Sources */,
 				935374382CB06AA500794A63 /* OrderActionDelegate.swift in Sources */,
 				93755C372C835C8E002570A5 /* MenuView.swift in Sources */,
@@ -1675,9 +1795,11 @@
 				9352914C2C8D91480018B060 /* DrinkDetailHandler.swift in Sources */,
 				93B7B5762CDB8A3500E0205A /* OrderConfirmationHeaderGestureHandler.swift in Sources */,
 				93755BFE2C79DEAA002570A5 /* EditProfileView.swift in Sources */,
+				9381221F2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift in Sources */,
 				939BD9D22B2A1B1700616D1C /* SceneDelegate.swift in Sources */,
 				93755C022C7B179C002570A5 /* GenderSelectionCell.swift in Sources */,
 				93F9BB4E2C27F91400355A87 /* DottedLineView.swift in Sources */,
+				9381222B2CE3C51D00ADFB7B /* OrderHistoryDetailLayoutProvider.swift in Sources */,
 				936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */,
 				93B9DC7A2C3181910050BC3F /* UIView+SpringAnimation.swift in Sources */,
 				935374442CB67DB100794A63 /* Order.swift in Sources */,
@@ -1698,7 +1820,9 @@
 				935374462CB6A74B00794A63 /* OrderItemManager.swift in Sources */,
 				93B7B57F2CDBB6A600E0205A /* OrderHistory.swift in Sources */,
 				93BD48B22C57CB9000144E7F /* AppleSignInController.swift in Sources */,
+				9381223B2CE57CC000ADFB7B /* OrderHistoryDetailNavigationBarManager.swift in Sources */,
 				93B7B53F2CD1E4A300E0205A /* FloatingPanelHelper.swift in Sources */,
+				938122252CE286E900ADFB7B /* OrderHistoryDetailManager.swift in Sources */,
 				93B492972C416C0100E7B947 /* NoOrdersViewCell.swift in Sources */,
 				9353744F2CB7F1BF00794A63 /* OrderCustomerDetailsHandler.swift in Sources */,
 				9353746C2CCABD6900794A63 /* StoreSelectionViewController.swift in Sources */,
