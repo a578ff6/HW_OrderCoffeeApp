@@ -1039,6 +1039,59 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		938122452CE7579C00ADFB7B /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B5862CDD4A0700E0205A /* OrderHistoryDelegate.swift */,
+			);
+			path = Delegates;
+			sourceTree = "<group>";
+		};
+		938122462CE757A700ADFB7B /* Handlers */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B5822CDBB6D600E0205A /* OrderHistoryHandler.swift */,
+				93B7B5922CDE305800E0205A /* OrderHistoryNavigationBarManager.swift */,
+				93B7B5942CDE30C400E0205A /* OrderHistoryEditingHandler.swift */,
+				93B7B58C2CDE0F5200E0205A /* OrderHistorySortMenuDelegate.swift */,
+				93B7B5902CDE0F7F00E0205A /* OrderHistorySortMenuHandler.swift */,
+			);
+			path = Handlers;
+			sourceTree = "<group>";
+		};
+		938122472CE757C200ADFB7B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B57C2CDBB69500E0205A /* OrderHistoryView.swift */,
+				93B7B5842CDD3BB700E0205A /* OrderHistoryCell.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		938122482CE75ABF00ADFB7B /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B5782CDBA5D300E0205A /* OrderHistoryViewController.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		938122492CE75AD000ADFB7B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B57E2CDBB6A600E0205A /* OrderHistory.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		9381224A2CE75ADC00ADFB7B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				93B7B5802CDBB6B900E0205A /* OrderHistoryManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		939BD9C32B2A1B1700616D1C = {
 			isa = PBXGroup;
 			children = (
@@ -1255,6 +1308,8 @@
 			isa = PBXGroup;
 			children = (
 				93B7B5542CD5E28500E0205A /* OrderConfirmationHandler.swift */,
+				93B7B5732CDB425B00E0205A /* OrderConfirmationSectionExpansionManager.swift */,
+				93B7B5752CDB8A3500E0205A /* OrderConfirmationHeaderGestureHandler.swift */,
 			);
 			path = Handler;
 			sourceTree = "<group>";
@@ -1287,8 +1342,6 @@
 			isa = PBXGroup;
 			children = (
 				93B7B5622CD80CF800E0205A /* OrderConfirmationManager.swift */,
-				93B7B5732CDB425B00E0205A /* OrderConfirmationSectionExpansionManager.swift */,
-				93B7B5752CDB8A3500E0205A /* OrderConfirmationHeaderGestureHandler.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1296,17 +1349,12 @@
 		93B7B5772CDBA58C00E0205A /* OrderHistory */ = {
 			isa = PBXGroup;
 			children = (
-				93B7B57C2CDBB69500E0205A /* OrderHistoryView.swift */,
-				93B7B5842CDD3BB700E0205A /* OrderHistoryCell.swift */,
-				93B7B5922CDE305800E0205A /* OrderHistoryNavigationBarManager.swift */,
-				93B7B5942CDE30C400E0205A /* OrderHistoryEditingHandler.swift */,
-				93B7B58C2CDE0F5200E0205A /* OrderHistorySortMenuDelegate.swift */,
-				93B7B5902CDE0F7F00E0205A /* OrderHistorySortMenuHandler.swift */,
-				93B7B5862CDD4A0700E0205A /* OrderHistoryDelegate.swift */,
-				93B7B5822CDBB6D600E0205A /* OrderHistoryHandler.swift */,
-				93B7B5782CDBA5D300E0205A /* OrderHistoryViewController.swift */,
-				93B7B57E2CDBB6A600E0205A /* OrderHistory.swift */,
-				93B7B5802CDBB6B900E0205A /* OrderHistoryManager.swift */,
+				938122452CE7579C00ADFB7B /* Delegates */,
+				938122462CE757A700ADFB7B /* Handlers */,
+				938122472CE757C200ADFB7B /* Views */,
+				938122482CE75ABF00ADFB7B /* View Controllers */,
+				9381224A2CE75ADC00ADFB7B /* Services */,
+				938122492CE75AD000ADFB7B /* Models */,
 			);
 			path = OrderHistory;
 			sourceTree = "<group>";

@@ -140,6 +140,8 @@ extension OrderHistoryHandler: UITableViewDelegate {
         if tableView.isEditing {
             delegate?.didChangeSelectionState()
         } else {
+            tableView.deselectRow(at: indexPath, animated: true)
+            // 獲取訂單資料並導航至詳細頁面
             guard let orders = delegate?.getOrders() else { return }
             let selectedOrder = orders[indexPath.row]
             delegate?.navigateToOrderHistoryDetail(with: selectedOrder)
