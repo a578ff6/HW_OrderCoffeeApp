@@ -136,14 +136,22 @@
     -  `editingHandler`：專門管理編輯模式和多選刪除的處理器。
     -  `sortMenuHandler`：負責管理排序選單。
     -  `navigationBarManager`：管理導航欄的按鈕配置和狀態變化。
+    - `currentSortOption`：用於保存當前的排序選項，默認為 `byDateDescending`。
     - `orders`：從 Firebase 獲取的歷史訂單資料，並根據數據的變化自動更新導航欄按鈕的狀態。
  
 ` 2.Lifecycle Methods：`
     - `loadView()：`設置自定義的主視圖 (orderHistoryView)。
+ 
     - `viewDidLoad()`：
         - 設置相關處理器（例如排序、編輯、導航欄）。
         - 初始化導航欄標題 (`configureNavigationTitle()`)。
-        - 在視圖加載後調用 `fetchOrderHistory()` 來開始獲取資料。
+        -  使用當前的排序選項從 Firebase 獲取歷史訂單資料 ( `fetchOrderHistory(currentSortOption)` )。
+ 
+    - `viewWillAppear(_:)`：
+        - 每次視圖即將顯示時，使用當前的排序選項重新拉取訂單資料，確保資料是最新的。
+ 
+    - `viewWillDisappear(_:)`：
+        - 如果當前處於編輯模式，則退出編輯模式，並重置導航欄按鈕至初始狀態，避免在使用者切換到其他視圖後仍保持編輯模式。
 
  `3. Navigation Bar Setup：`
     - `configureNavigationTitle()：`設置大標題及顯示模式，通常在 `viewDidLoad()` 中調用，以確保首次進入視圖時顯示正確的標題。
@@ -189,7 +197,7 @@
     -  `navigateToOrderHistoryDetail(with:)`：用於導航至歷史訂單的詳細頁面，讓使用者能查看選擇的訂單詳細資料。此方法透過導航控制器 (`UINavigationController`) 導航到 `OrderHistoryDetailViewController`。
 
  `9.OrderHistorySortMenuDelegate：`
-    - `didSelectSortOption(_:)`：用於響應使用者選擇排序選項的操作，重新獲取並顯示訂單資料。
+    - `didSelectSortOption(_:)`：當使用者選擇排序選項時，更新 `currentSortOption`，並根據新選項重新獲取訂單資料，以確保用戶看到的資料符合他們的選擇。
  */
 
 
@@ -541,6 +549,95 @@
  */
 
 
+// MARK: - 重點筆記：在「Tab」切換與編輯模式中處理 UI 不一致問題（重要）
+/**
+ ## 重點筆記：在「Tab」切換與編輯模式中處理 UI 不一致問題
+ 
+ - 主要是因為可以點擊「Tab」切換到其他視圖控制器。
+ - 我原本是打算在「訂單確認完成後」，同時「`OrderHistoryViewController`」是位於Tab的最上層，那應該要去即時更新。
+ - 但我測試的過程中發現當呈現「編輯模式」時，並且去切換Tab並「完成訂單」時，這樣的做法會導致位於另一個Tab上層的OrderHistoryViewController會呈現「編輯模式」導航欄位的UI會有錯亂問題。
+ - 後來去試用一些App，發現採用TableViewController蠻多都是呈現「全畫面」的方式來處理。
+ - 直到我去觀察到`PodCast`以及`Clock`的App時，我發現這兩個App在`TableViewController`呈現「編輯模式」時，並不是「全畫面」。
+ - 而是一樣維持「push」的方式，但是在點擊Tab切換視圖的時候，會離開編輯模式。
+ - 考量到整體導航流程的一致性，我決定採用「維持「push」的方式，但是在點擊Tab切換視圖的時候，會離開編輯模式。」
+ 
+ `1.背景說明：`
+
+ - `OrderHistoryViewController` 是一個包含 `UITableView` 的視圖控制器，且設置於 Tab 的最上層。
+ - 用戶在 `OrderHistoryViewController` 進入編輯模式後，仍能夠點擊 Tab 切換到其他視圖控制器。
+ 
+ `2.遇到的問題：`
+
+ - 當 `OrderHistoryViewController` 處於編輯模式時，用戶切換到其他 Tab 並完成操作（例如訂單確認），再回到原本的 `OrderHistoryViewController` 時，導航欄仍顯示在編輯模式，導致 UI 顯示錯亂。
+
+ `3.解決方式：`
+
+ - `自動退出編輯模式`：在` viewWillDisappear(_:) `方法中，檢查是否處於編輯模式，若是則結束編輯模式，以保持界面一致。
+ - `觀察其他App的行為`：
+    - 試用一些其他的 App，例如 `PodCast` 和 `Clock`，發現它們在 `TableViewController` 進入編輯模式時，當用戶切換 Tab 時會自動退出編輯模式，這避免了 UI 不一致的問題。
+ 
+ `4.最佳實踐觀察：`
+
+ - 有些 App 在處理 `UITableViewController` 的編輯模式時，採用了「`全畫面顯示`」的方式來避免混淆和誤操作。
+ - 其他如 PodCast 和 Clock，則保持 push 的導航方式，但透過在用戶切換 Tab 時自動退出編輯模式來確保 UI 一致性。
+ 
+ `5.實作方式：`
+
+  - 在` viewWillDisappear(_:) `方法中，檢查是否目前處於編輯模式，若是，則呼叫對應方法退出編輯模式。
+  - 同時調用 `navigationBarManager?.setupInitialNavigationBar()`，確保導航欄回到初始狀態。
+ 
+ `6.結論：`
+ 
+ -  在 viewWillDisappear(_:) 中設置退出編輯模式是一個適當的做法：
+ 
+    -  `自動化退出編輯`：用戶在離開 OrderHistoryViewController 時，編輯模式會自動結束，避免進入其他視圖時依然處於編輯狀態，防止 UI 錯亂。
+    -  `維持 UI 一致性`：確保在不同視圖之間切換時，界面保持一致，不會出現編輯模式誤開啟的情況。
+    -  `職責劃分適當`：將退出編輯模式的邏輯設置在 viewWillDisappear(_:) 中，而不交由 Manager 或 Handler 處理，是合理的設計。因為編輯狀態與視圖控制器的顯示狀態直接相關，應由 ViewController 本身來管理。
+ */
+
+
+// MARK: - 重點筆記：在 viewWillAppear(_:) 中更新 OrderHistoryViewController 的資料
+/**
+ ##  重點筆記：在 viewWillAppear(_:) 中更新 OrderHistoryViewController 的資料
+ 
+ `1.背景與目的：`
+
+ - `OrderHistoryViewController` 是包含 `UITableView` 的視圖控制器，設置於 Tab 的最上層。
+ - 當使用者從 `OrderHistoryViewController` 進入編輯模式並切換到其他 Tab，可能在其他視圖完成訂單操作（例如新增、刪除訂單）。
+ - 返回 `OrderHistoryViewController` 時，需要確保顯示的是最新的訂單資料，以提供準確和一致的用戶體驗。
+ 
+ `2.做法：`
+
+ - 在 `viewWillAppear(_:) `中呼叫 `fetchOrderHistory(sortOption:) `方法來重新拉取最新的訂單資料。
+ - 使用 `currentSortOption` 屬性來保存使用者的排序選擇，確保在更新資料時不會覆蓋使用者的排序偏好。
+ 
+` 3.實現細節：`
+
+ - 定義一個 `currentSortOption` 屬性來保存當前的排序方式，默認為 `byDateDescending`。
+ - 在 `viewWillAppear(_:) `中使用這個變數去拉取資料，確保每次進入視圖時都是按照`用戶最後選擇的排序方式`顯示資料。
+ 
+` 4.好處：`
+
+ - `即時性`：`viewWillAppear(_:) `在每次視圖即將出現時被調用，因此可以確保每次顯示的資料都是最新的。
+ - `保持排序偏好`：不會覆蓋使用者的排序選擇，避免用戶重複設定排序選項，提升用戶體驗。
+ - `避免重複拉取資料`：相比於在每次進入編輯模式或完成某些操作時更新，`viewWillAppear(_:) `更適合在 Tab 切換的情境下使用，可以減少不必要的資料拉取。
+ 
+ `5.注意事項：`
+
+ - `用戶體驗`：確保每次切換回來時，訂單資料即時更新，以減少用戶因資料過時而感到困惑的情況。
+ 
+ - `資料變動頻率的考量`：
+    - 如果資料的變更頻率較低（例如訂單完成後才需要更新），在 `viewWillAppear(_:) `中更新資料是合適的做法。
+    - 如果資料變動頻繁，可以考慮使用 Firebase 的 Snapshot Listener 等方式來減少不必要的重新拉取。
+ 
+ `6.結論：`
+
+ - `在 viewWillAppear(_:) `中更新 `OrderHistoryViewController` 的資料是合適且有效的做法。
+ - 這樣做可以確保每次切換回來時，視圖顯示的是最新的訂單狀態，提升用戶體驗，同時避免因過時資料帶來的混淆。
+ */
+
+
+
 import UIKit
 import Firebase
 
@@ -569,6 +666,9 @@ class OrderHistoryViewController: UIViewController {
     /// 導航欄管理器，用於管理導航欄按鈕的配置
     private var navigationBarManager: OrderHistoryNavigationBarManager?
     
+    /// 用於保存當前排序選項
+    private var currentSortOption: OrderHistoryManager.OrderHistorySortOption = .byDateDescending
+
     /// 用於存放從 Firebase 獲取的訂單資料
     private var orders: [OrderHistory] = [] {
         didSet {
@@ -588,7 +688,28 @@ class OrderHistoryViewController: UIViewController {
         setupNavigationHandlers()                           // 初始化排序、編輯和導航欄處理器
         configureNavigationTitle()                          // 設定大標題 (初始化)
         setupNavigationBar()                                // 設置導航欄按鈕（初始化按鈕狀態）
-        fetchOrderHistory(sortOption: .byDateDescending)    // 從 Firebase 獲取歷史訂單資料，預設按照時間倒序
+        fetchOrderHistory(sortOption: currentSortOption)    // 使用預設的排序選項從 Firebase 獲取歷史訂單資料
+    }
+    
+    /// 當視圖即將顯示時更新訂單資料，確保資料是最新的
+    /// - 說明：每次視圖顯示時，重新獲取訂單資料以確保更新。保持使用者的排序選項。
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // 使用當前的排序選項來確保訂單資料的最新
+        fetchOrderHistory(sortOption: currentSortOption)
+    }
+    
+    /// 當視圖即將消失時的處理
+    /// - 說明：如果當前處於編輯模式，則退出編輯模式，並重置導航欄按鈕至初始狀態。
+    /// - 目的：避免在用戶切換到其他視圖時仍保持在編輯模式，確保狀態一致性。
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if let editingHandler = editingHandler, editingHandler.isEditing {
+            editingHandler.toggleEditingMode()
+            navigationBarManager?.setupInitialNavigationBar()
+        }
     }
     
     // MARK: - Data Fetching
@@ -596,7 +717,7 @@ class OrderHistoryViewController: UIViewController {
     /// 從 Firebase 獲取歷史訂單資料
     /// - 說明：使用非同步的方式從 Firebase 取得當前使用者的訂單資料，獲取到資料後進行處理
     private func fetchOrderHistory(sortOption: OrderHistoryManager.OrderHistorySortOption) {
-        HUDManager.shared.showLoadingInView(self.view, text: "Loading OrderHistory...")
+        HUDManager.shared.showLoading(text: "Loading OrderHistory...")
         Task {
             guard let currentUser = Auth.auth().currentUser else {
                 print("No user is currently logged in")
@@ -701,7 +822,7 @@ class OrderHistoryViewController: UIViewController {
     /// - 包含「排序」和「編輯」按鈕的初始設置，適合非編輯模式下的情境。
     /// - 在每次訂單資料 (`orders`) 更新後，都會調用此方法以確保導航欄按鈕的狀態符合當前訂單情況。
     private func setupNavigationBar() {
-        navigationBarManager?.setupInitialNavigationBar()          // 設定初始的導航欄按鈕（如排序和編輯按鈕）
+        navigationBarManager?.setupInitialNavigationBar()
     }
     
     /// 設定大標題及顯示模式
@@ -799,7 +920,9 @@ extension OrderHistoryViewController: OrderHistorySortMenuDelegate {
     
     /// 當使用者選擇排序選項後執行的方法
     /// - Parameter sortOption: 選擇的排序選項
+    /// - 更新當前的排序選項，並重新獲取訂單資料以反映選擇
     func didSelectSortOption(_ sortOption: OrderHistoryManager.OrderHistorySortOption) {
-        fetchOrderHistory(sortOption: sortOption)    // 重新根據選定排序方式獲取訂單
+        currentSortOption = sortOption
+        fetchOrderHistory(sortOption: currentSortOption)      // 根據選定的排序方式重新獲取訂單
     }
 }
