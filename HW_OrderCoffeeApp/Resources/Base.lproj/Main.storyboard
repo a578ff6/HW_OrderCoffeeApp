@@ -108,7 +108,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7P1-Bx-tYg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7682" y="306"/>
+            <point key="canvasLocation" x="7692" y="-457"/>
         </scene>
         <!--Starbucks-->
         <scene sceneID="DGh-Rz-dQZ">
@@ -127,7 +127,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="S4x-Cu-5ez" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6766" y="306"/>
+            <point key="canvasLocation" x="6766" y="-457"/>
         </scene>
         <!--Drink Detail View Controller-->
         <scene sceneID="dIz-sx-3Ft">
@@ -143,7 +143,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JKh-GK-Iqw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="8621" y="306"/>
+            <point key="canvasLocation" x="8621" y="-457"/>
         </scene>
         <!--Forgot Password View Controller-->
         <scene sceneID="6m0-Yr-LHK">
@@ -196,10 +196,11 @@
             </objects>
             <point key="canvasLocation" x="1709" y="443"/>
         </scene>
-        <!--Main Tab Bar Controller-->
+        <!--Item-->
         <scene sceneID="mlL-nw-umJ">
             <objects>
                 <tabBarController storyboardIdentifier="MainTabBarController" automaticallyAdjustsScrollViewInsets="NO" id="1sl-7f-Pun" customClass="MainTabBarController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Item" id="DQL-PV-lO5"/>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="Amu-rg-2mR"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="m0E-B4-l6c">
@@ -209,6 +210,7 @@
                     </tabBar>
                     <connections>
                         <segue destination="ktM-u5-N4T" kind="relationship" relationship="viewControllers" id="p5q-rM-27J"/>
+                        <segue destination="qNX-nm-sRV" kind="relationship" relationship="viewControllers" id="pQg-Ea-PgH"/>
                         <segue destination="Usc-9l-3QK" kind="relationship" relationship="viewControllers" id="ZC7-dC-Wof"/>
                         <segue destination="IbG-RH-B1n" kind="relationship" relationship="viewControllers" id="nLk-pP-s17"/>
                     </connections>
@@ -216,6 +218,22 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tbN-Dz-tsX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4913.740458015267" y="306.33802816901408"/>
+        </scene>
+        <!--Search View Controller-->
+        <scene sceneID="qMJ-sn-ooS">
+            <objects>
+                <viewController id="i7T-5I-DWu" customClass="SearchViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="q1R-6l-sbH">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="MAv-dK-QMk"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="4DC-86-lPg"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Prz-sw-BsU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="6766" y="306"/>
         </scene>
         <!--Order-->
         <scene sceneID="di8-Bv-nzg">
@@ -413,12 +431,32 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6Bg-8E-5WR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5927" y="306"/>
+            <point key="canvasLocation" x="5926" y="-457"/>
+        </scene>
+        <!--Search-->
+        <scene sceneID="Xmm-N2-cmF">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="qNX-nm-sRV" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Search" image="magnifyingglass" catalog="system" id="Eue-lB-KLX"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Rnp-2a-8nl">
+                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="i7T-5I-DWu" kind="relationship" relationship="rootViewController" id="hG8-io-iMl"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="aO9-YU-a5N" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5926" y="306"/>
         </scene>
     </scenes>
     <resources>
         <image name="basket" catalog="system" width="128" height="108"/>
         <image name="list.dash" catalog="system" width="128" height="85"/>
+        <image name="magnifyingglass" catalog="system" width="128" height="117"/>
         <image name="person.crop.circle" catalog="system" width="128" height="123"/>
         <image name="starbucksLogo" width="1024" height="1024"/>
         <systemColor name="systemBackgroundColor">
