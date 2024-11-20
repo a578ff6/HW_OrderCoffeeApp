@@ -65,6 +65,11 @@
 		936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */; };
 		936CFFC92C6C74DE004B8724 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC82C6C74DE004B8724 /* UserProfileView.swift */; };
 		936CFFCB2C6E24AD004B8724 /* UserDetailsReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFCA2C6E24AD004B8724 /* UserDetailsReceiver.swift */; };
+		936E09992CE9EF2D0092F246 /* SearchControllerInteractionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E09982CE9EF2D0092F246 /* SearchControllerInteractionDelegate.swift */; };
+		936E099B2CE9FD000092F246 /* SearchControllerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E099A2CE9FD000092F246 /* SearchControllerManager.swift */; };
+		936E099D2CED04010092F246 /* SearchNavigationBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E099C2CED04010092F246 /* SearchNavigationBarManager.swift */; };
+		936E099F2CED0ED20092F246 /* SearchDrinkDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E099E2CED0ED20092F246 /* SearchDrinkDataService.swift */; };
+		936E09A12CED0F8A0092F246 /* SearchCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E09A02CED0F8A0092F246 /* SearchCacheManager.swift */; };
 		93755BF52C738D77002570A5 /* EmailSignInControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BF42C738D77002570A5 /* EmailSignInControllerTests.swift */; };
 		93755BFA2C7700FD002570A5 /* PhotoPickerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */; };
 		93755BFC2C79D20C002570A5 /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BFB2C79D20C002570A5 /* EditProfileViewController.swift */; };
@@ -107,6 +112,13 @@
 		938122392CE4D0E200ADFB7B /* OrderHistoryDetailHeaderGestureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122382CE4D0E200ADFB7B /* OrderHistoryDetailHeaderGestureHandler.swift */; };
 		9381223B2CE57CC000ADFB7B /* OrderHistoryDetailNavigationBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381223A2CE57CC000ADFB7B /* OrderHistoryDetailNavigationBarManager.swift */; };
 		9381223D2CE58DA600ADFB7B /* OrderHistoryDetailSharingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381223C2CE58DA600ADFB7B /* OrderHistoryDetailSharingHandler.swift */; };
+		9381224D2CE766A300ADFB7B /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381224C2CE766A300ADFB7B /* SearchViewController.swift */; };
+		9381224F2CE775F200ADFB7B /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381224E2CE775F200ADFB7B /* SearchView.swift */; };
+		938122512CE7760800ADFB7B /* SearchHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122502CE7760800ADFB7B /* SearchHandler.swift */; };
+		938122532CE7761E00ADFB7B /* SearchResultsDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122522CE7761E00ADFB7B /* SearchResultsDelegate.swift */; };
+		938122552CE77A7F00ADFB7B /* SearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122542CE77A7F00ADFB7B /* SearchManager.swift */; };
+		938122572CE77A8A00ADFB7B /* SearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122562CE77A8A00ADFB7B /* SearchResult.swift */; };
+		938122592CE781D800ADFB7B /* SearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122582CE781D800ADFB7B /* SearchCell.swift */; };
 		939BD9D02B2A1B1700616D1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9CF2B2A1B1700616D1C /* AppDelegate.swift */; };
 		939BD9D22B2A1B1700616D1C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9D12B2A1B1700616D1C /* SceneDelegate.swift */; };
 		939BD9D72B2A1B1700616D1C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 939BD9D52B2A1B1700616D1C /* Main.storyboard */; };
@@ -299,6 +311,11 @@
 		936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		936CFFC82C6C74DE004B8724 /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
 		936CFFCA2C6E24AD004B8724 /* UserDetailsReceiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsReceiver.swift; sourceTree = "<group>"; };
+		936E09982CE9EF2D0092F246 /* SearchControllerInteractionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchControllerInteractionDelegate.swift; sourceTree = "<group>"; };
+		936E099A2CE9FD000092F246 /* SearchControllerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchControllerManager.swift; sourceTree = "<group>"; };
+		936E099C2CED04010092F246 /* SearchNavigationBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchNavigationBarManager.swift; sourceTree = "<group>"; };
+		936E099E2CED0ED20092F246 /* SearchDrinkDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchDrinkDataService.swift; sourceTree = "<group>"; };
+		936E09A02CED0F8A0092F246 /* SearchCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCacheManager.swift; sourceTree = "<group>"; };
 		93755BF42C738D77002570A5 /* EmailSignInControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSignInControllerTests.swift; sourceTree = "<group>"; };
 		93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerManager.swift; sourceTree = "<group>"; };
 		93755BFB2C79D20C002570A5 /* EditProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
@@ -338,6 +355,13 @@
 		938122382CE4D0E200ADFB7B /* OrderHistoryDetailHeaderGestureHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailHeaderGestureHandler.swift; sourceTree = "<group>"; };
 		9381223A2CE57CC000ADFB7B /* OrderHistoryDetailNavigationBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailNavigationBarManager.swift; sourceTree = "<group>"; };
 		9381223C2CE58DA600ADFB7B /* OrderHistoryDetailSharingHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailSharingHandler.swift; sourceTree = "<group>"; };
+		9381224C2CE766A300ADFB7B /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
+		9381224E2CE775F200ADFB7B /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		938122502CE7760800ADFB7B /* SearchHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchHandler.swift; sourceTree = "<group>"; };
+		938122522CE7761E00ADFB7B /* SearchResultsDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsDelegate.swift; sourceTree = "<group>"; };
+		938122542CE77A7F00ADFB7B /* SearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchManager.swift; sourceTree = "<group>"; };
+		938122562CE77A8A00ADFB7B /* SearchResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResult.swift; sourceTree = "<group>"; };
+		938122582CE781D800ADFB7B /* SearchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCell.swift; sourceTree = "<group>"; };
 		939BD9CC2B2A1B1700616D1C /* HW_OrderCoffeeApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HW_OrderCoffeeApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		939BD9CF2B2A1B1700616D1C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		939BD9D12B2A1B1700616D1C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -843,6 +867,60 @@
 			path = "User Profile";
 			sourceTree = "<group>";
 		};
+		936E09A22CEE0B980092F246 /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				938122522CE7761E00ADFB7B /* SearchResultsDelegate.swift */,
+				936E09982CE9EF2D0092F246 /* SearchControllerInteractionDelegate.swift */,
+			);
+			path = Delegates;
+			sourceTree = "<group>";
+		};
+		936E09A32CEE0BB20092F246 /* Handlers */ = {
+			isa = PBXGroup;
+			children = (
+				936E099C2CED04010092F246 /* SearchNavigationBarManager.swift */,
+				936E099A2CE9FD000092F246 /* SearchControllerManager.swift */,
+				938122502CE7760800ADFB7B /* SearchHandler.swift */,
+			);
+			path = Handlers;
+			sourceTree = "<group>";
+		};
+		936E09A42CEE0BE00092F246 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				9381224E2CE775F200ADFB7B /* SearchView.swift */,
+				938122582CE781D800ADFB7B /* SearchCell.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		936E09A52CEE0BF70092F246 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				9381224C2CE766A300ADFB7B /* SearchViewController.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		936E09A62CEE0C0C0092F246 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				938122562CE77A8A00ADFB7B /* SearchResult.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		936E09A72CEE0C1F0092F246 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				938122542CE77A7F00ADFB7B /* SearchManager.swift */,
+				936E09A02CED0F8A0092F246 /* SearchCacheManager.swift */,
+				936E099E2CED0ED20092F246 /* SearchDrinkDataService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		93755BF62C738DA3002570A5 /* AuthenticationTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -1092,6 +1170,19 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		9381224B2CE7666100ADFB7B /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				936E09A22CEE0B980092F246 /* Delegates */,
+				936E09A32CEE0BB20092F246 /* Handlers */,
+				936E09A42CEE0BE00092F246 /* Views */,
+				936E09A52CEE0BF70092F246 /* View Controllers */,
+				936E09A62CEE0C0C0092F246 /* Models */,
+				936E09A72CEE0C1F0092F246 /* Services */,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
 		939BD9C32B2A1B1700616D1C = {
 			isa = PBXGroup;
 			children = (
@@ -1123,6 +1214,7 @@
 				935291592C91B3AD0018B060 /* Resources */,
 				93F9BB582C293E3E00355A87 /* Utilities */,
 				939BDA6C2B2C200F00616D1C /* Authentication */,
+				9381224B2CE7666100ADFB7B /* Search */,
 				9381221D2CE2811400ADFB7B /* OrderHistoryDetail */,
 				93B7B5772CDBA58C00E0205A /* OrderHistory */,
 				93B7B54D2CD4DB2100E0205A /* OrderConfirmation */,
@@ -1713,6 +1805,7 @@
 				939BDA692B2B82BC00616D1C /* AlertService.swift in Sources */,
 				939BDA652B2ACBA200616D1C /* FirebaseController.swift in Sources */,
 				938122372CE4CF8E00ADFB7B /* OrderHistoryDetailSectionExpansionManager.swift in Sources */,
+				936E099B2CE9FD000092F246 /* SearchControllerManager.swift in Sources */,
 				93B9DC832C33B9A00050BC3F /* OrderItem.swift in Sources */,
 				9352914A2C8D85790018B060 /* DrinkDetailView.swift in Sources */,
 				938122332CE4639900ADFB7B /* OrderrHistoryDetailCell.swift in Sources */,
@@ -1777,12 +1870,14 @@
 				93B9DC872C3661DF0050BC3F /* MainTabBarController.swift in Sources */,
 				9353743B2CB2BAB800794A63 /* OrderActionButtonsCell.swift in Sources */,
 				9352913F2C8843E40018B060 /* DrinksCategoryHandler.swift in Sources */,
+				938122532CE7761E00ADFB7B /* SearchResultsDelegate.swift in Sources */,
 				93755C332C8351AA002570A5 /* MenuViewController.swift in Sources */,
 				9353742B2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift in Sources */,
 				93B9DC762C3042710050BC3F /* MenuLayoutProvider.swift in Sources */,
 				938122212CE286A300ADFB7B /* OrderHistoryDetailHandler.swift in Sources */,
 				935374292CA4502B00794A63 /* NoFavoritesView.swift in Sources */,
 				9353747E2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift in Sources */,
+				938122572CE77A8A00ADFB7B /* SearchResult.swift in Sources */,
 				935374742CCAC17B00794A63 /* StoreSelectionMapView.swift in Sources */,
 				938122312CE45EC500ADFB7B /* OrderHistoryDetailCustomerInfoCell.swift in Sources */,
 				93755C352C83520A002570A5 /* MenuCollectionHandler.swift in Sources */,
@@ -1799,14 +1894,18 @@
 				935374722CCABE0100794A63 /* StoreManager.swift in Sources */,
 				935374172C9C5CF300794A63 /* FavoritesView.swift in Sources */,
 				93B7B5742CDB425B00E0205A /* OrderConfirmationSectionExpansionManager.swift in Sources */,
+				938122512CE7760800ADFB7B /* SearchHandler.swift in Sources */,
 				93755C122C7E5542002570A5 /* UIViewController+KeyboardHandling.swift in Sources */,
 				935291412C89C1480018B060 /* DrinksCategorySectionFooterView.swift in Sources */,
 				93F9BB422C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift in Sources */,
 				9352912E2C873E9A0018B060 /* MenuSectionHeaderView.swift in Sources */,
+				936E099F2CED0ED20092F246 /* SearchDrinkDataService.swift in Sources */,
 				93B7B58D2CDE0F5200E0205A /* OrderHistorySortMenuDelegate.swift in Sources */,
 				93B7B57D2CDBB69500E0205A /* OrderHistoryView.swift in Sources */,
 				93755C312C82F6CF002570A5 /* HUDManager.swift in Sources */,
+				936E09A12CED0F8A0092F246 /* SearchCacheManager.swift in Sources */,
 				935374532CB80F1300794A63 /* OrderCustomerDetailsLayoutProvider.swift in Sources */,
+				9381224F2CE775F200ADFB7B /* SearchView.swift in Sources */,
 				93755C1B2C808202002570A5 /* UserProfileTableHandler.swift in Sources */,
 				93755C1D2C8094D0002570A5 /* ProfileHeaderCell.swift in Sources */,
 				9381222F2CE45A7F00ADFB7B /* OrderrHistoryDetailItemCell.swift in Sources */,
@@ -1815,6 +1914,7 @@
 				939BDA742B2FB3E400616D1C /* MenuModels.swift in Sources */,
 				935374482CB6D9F600794A63 /* CustomerDetailsManager.swift in Sources */,
 				93B7B5572CD66D6100E0205A /* OrderConfirmationCheckmarkCell.swift in Sources */,
+				938122592CE781D800ADFB7B /* SearchCell.swift in Sources */,
 				935374592CBB038D00794A63 /* OrderPickupMethodCell.swift in Sources */,
 				93755C0A2C7B844D002570A5 /* EditProfileTableHandler.swift in Sources */,
 				93DB1D2B2C439F8900BA2CC1 /* NavigationHelper.swift in Sources */,
@@ -1831,6 +1931,8 @@
 				935374382CB06AA500794A63 /* OrderActionDelegate.swift in Sources */,
 				93755C372C835C8E002570A5 /* MenuView.swift in Sources */,
 				93B7B5932CDE305800E0205A /* OrderHistoryNavigationBarManager.swift in Sources */,
+				938122552CE77A7F00ADFB7B /* SearchManager.swift in Sources */,
+				936E09992CE9EF2D0092F246 /* SearchControllerInteractionDelegate.swift in Sources */,
 				93B9DC7D2C32B0BB0050BC3F /* OrderViewController.swift in Sources */,
 				936CFFC92C6C74DE004B8724 /* UserProfileView.swift in Sources */,
 				932258D12C92F1E1004EA2D9 /* ShareManager.swift in Sources */,
@@ -1863,6 +1965,7 @@
 				939BDA852B32AD5200616D1C /* UIImageView+Styles.swift in Sources */,
 				939BD9E42B2A1B4E00616D1C /* HomePageViewController.swift in Sources */,
 				9353744D2CB7EF3900794A63 /* OrderCustomerDetailsView.swift in Sources */,
+				9381224D2CE766A300ADFB7B /* SearchViewController.swift in Sources */,
 				9353741B2C9D832E00794A63 /* FavoriteDrink.swift in Sources */,
 				93755C042C7B28AE002570A5 /* BirthdaySelectionCell.swift in Sources */,
 				935374462CB6A74B00794A63 /* OrderItemManager.swift in Sources */,
@@ -1876,6 +1979,7 @@
 				9353746C2CCABD6900794A63 /* StoreSelectionViewController.swift in Sources */,
 				93F9BB402C1C0DEA00355A87 /* DrinkSizeSelectionCollectionViewCell.swift in Sources */,
 				93B9DC852C3546150050BC3F /* UserDetails.swift in Sources */,
+				936E099D2CED04010092F246 /* SearchNavigationBarManager.swift in Sources */,
 				93B7B5652CD8DC9B00E0205A /* OrderConfirmation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
