@@ -105,7 +105,14 @@
     - `SearchControllerManager` 的設計讓搜尋行為的管理與頁面控制器分開，使得代碼更具模組化和可重用性。
     - 在 `setupNavigationBar() `中，利用 `SearchNavigationBarManager` 來設置導航欄的標題和大標題顯示模式，讓與導航欄相關的邏輯更具模組化和可重用性。
  
- `7. 搜尋流程與使用者控制權`
+` 7. 確保搜尋狀態的管理 (ensureCurrentSearchState())`
+ 
+ - 確保當前的搜尋狀態一致。
+ - 在資料加載成功後（例如網路成功回應後），透過 ensureCurrentSearchState() 確保搜尋框中的文字狀態。
+ - 若搜尋框有文字，執行相應的資料過濾操作。
+ - 使得原本在 `handleDataLoadSuccess() `方法中的狀態檢查和處理邏輯更加模組化。
+ 
+ `8. 搜尋流程與使用者控制權`
 
  - 原本設置為「飲品快取資料無效」時，進入到「搜尋視圖控制器」會立刻進行自動載入「飲品快取資料到本地」，讓使用者可以方便搜尋。
  - 但並不是每個使用者都會使用到搜尋功能，且有時候只是誤觸切換到「搜尋視圖控制器」，如果這樣就去自動載入「飲品快取資料到本地」，會讓使用者在操作上不順，並且因為使用者沒有使用到搜尋的功能，會對於這個自動載入的行為感到困惑。
@@ -803,11 +810,23 @@ class SearchViewController: UIViewController {
     
     /// 處理資料加載成功的邏輯
     /// - 當資料成功加載後，停止網路監控並隱藏載入指示器
+    /// - 確保當前搜尋框中的文字狀態，如果有搜尋文字則執行相應的資料過濾操作
     private func handleDataLoadSuccess(searchNetworkMonitor: SearchNetworkMonitor) {
         HUDManager.shared.dismiss()
         searchNetworkMonitor.stopMonitoring()
+        ensureCurrentSearchState()
     }
     
+    /// 確保當前搜尋狀態並進行必要的視圖更新
+    /// - 如果搜尋框中有文字，則根據當前輸入的關鍵字進行資料過濾
+    /// - 若搜尋框為空，則不執行任何操作
+    private func ensureCurrentSearchState() {
+        guard let searchText = searchControllerManager?.getSearchText(), !searchText.isEmpty else {
+            return
+        }
+        filterSearchData(with: searchText)
+    }
+
     /// 處理資料加載失敗的邏輯
     /// - 當資料加載失敗時，顯示錯誤訊息並停止網路監控
     private func handleDataLoadFailure(error: Error, searchNetworkMonitor: SearchNetworkMonitor) {

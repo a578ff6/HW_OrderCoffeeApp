@@ -36,7 +36,14 @@
     - `attach(to:) `方法用於將 `UISearchController` 附加到指定的視圖控制器。
     - 這樣可以靈活地使用 `SearchControllerManager` 在不同的控制器中，而不需要在每個控制器內重複設置 UISearchController 的相關邏輯。
  
- `6.使用想法`
+ `6.新增 Getter 方法以提高安全性`
+
+    - 新增了` getSearchText() `方法，提供外部訪問 `UISearchController` 搜尋框文字的安全方式，而不是直接訪問 `searchController`。
+    - `getSearchText() `的主要目的是提供安全且簡單的方式來訪問當前的搜尋文字。
+    - 例如在 `SearchViewController` 中重新加載飲品資料後，需要檢查是否有正在進行的搜尋，以決定是否應該繼續執行過濾操作 (`filterSearchData`)。
+    - 這樣做的好處是保留了 searchController 的私有保護層級，防止外部修改其屬性，並提供一個簡單的接口來獲取搜尋文字。
+ 
+ `7.使用想法`
  
     - 使用 `SearchControllerManager` 是為了避免讓視圖控制器變得臃腫，將 `UISearchController` 的設置和交互行為移至一個獨立的管理器中，提升代碼的可維護性。
     - 當需要在不同的視圖控制器中使用類似的搜尋功能時，可以重複利用這個管理器，而無需在每個視圖控制器中重新撰寫相關的 UISearchController 邏輯。
@@ -200,6 +207,13 @@ class SearchControllerManager: NSObject {
     func attach(to viewController: UIViewController) {
         viewController.navigationItem.searchController = searchController
         viewController.definesPresentationContext = true                         // 確保搜尋行為只限於當前視圖控制器
+    }
+    
+    /// 提供 `searchBar` 的搜尋文字
+    /// - Returns: 返回 `searchBar` 中當前輸入的文字
+    /// - 說明：提供一個安全的接口來獲取 `searchBar.text`，而不直接暴露 `searchController`，從而保護內部狀態
+    func getSearchText() -> String? {
+        return searchController.searchBar.text
     }
  
 }
