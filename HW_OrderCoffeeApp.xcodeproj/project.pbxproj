@@ -70,6 +70,9 @@
 		936E099D2CED04010092F246 /* SearchNavigationBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E099C2CED04010092F246 /* SearchNavigationBarManager.swift */; };
 		936E099F2CED0ED20092F246 /* SearchDrinkDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E099E2CED0ED20092F246 /* SearchDrinkDataService.swift */; };
 		936E09A12CED0F8A0092F246 /* SearchCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E09A02CED0F8A0092F246 /* SearchCacheManager.swift */; };
+		936E09AD2CF080AF0092F246 /* SearchDrinkDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E09AC2CF080AF0092F246 /* SearchDrinkDataLoader.swift */; };
+		936E09B32CF1E17A0092F246 /* SearchNetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E09B22CF1E17A0092F246 /* SearchNetworkMonitor.swift */; };
+		936E09B92CF4910A0092F246 /* SearchStatusLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E09B82CF4910A0092F246 /* SearchStatusLabel.swift */; };
 		93755BF52C738D77002570A5 /* EmailSignInControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BF42C738D77002570A5 /* EmailSignInControllerTests.swift */; };
 		93755BFA2C7700FD002570A5 /* PhotoPickerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */; };
 		93755BFC2C79D20C002570A5 /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BFB2C79D20C002570A5 /* EditProfileViewController.swift */; };
@@ -316,6 +319,9 @@
 		936E099C2CED04010092F246 /* SearchNavigationBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchNavigationBarManager.swift; sourceTree = "<group>"; };
 		936E099E2CED0ED20092F246 /* SearchDrinkDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchDrinkDataService.swift; sourceTree = "<group>"; };
 		936E09A02CED0F8A0092F246 /* SearchCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCacheManager.swift; sourceTree = "<group>"; };
+		936E09AC2CF080AF0092F246 /* SearchDrinkDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchDrinkDataLoader.swift; sourceTree = "<group>"; };
+		936E09B22CF1E17A0092F246 /* SearchNetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchNetworkMonitor.swift; sourceTree = "<group>"; };
+		936E09B82CF4910A0092F246 /* SearchStatusLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchStatusLabel.swift; sourceTree = "<group>"; };
 		93755BF42C738D77002570A5 /* EmailSignInControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSignInControllerTests.swift; sourceTree = "<group>"; };
 		93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerManager.swift; sourceTree = "<group>"; };
 		93755BFB2C79D20C002570A5 /* EditProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
@@ -890,6 +896,7 @@
 			isa = PBXGroup;
 			children = (
 				9381224E2CE775F200ADFB7B /* SearchView.swift */,
+				936E09B82CF4910A0092F246 /* SearchStatusLabel.swift */,
 				938122582CE781D800ADFB7B /* SearchCell.swift */,
 			);
 			path = Views;
@@ -915,8 +922,10 @@
 			isa = PBXGroup;
 			children = (
 				938122542CE77A7F00ADFB7B /* SearchManager.swift */,
+				936E09AC2CF080AF0092F246 /* SearchDrinkDataLoader.swift */,
 				936E09A02CED0F8A0092F246 /* SearchCacheManager.swift */,
 				936E099E2CED0ED20092F246 /* SearchDrinkDataService.swift */,
+				936E09B22CF1E17A0092F246 /* SearchNetworkMonitor.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1817,6 +1826,7 @@
 				93DB1D2D2C43D82200BA2CC1 /* OrderSectionHeaderView.swift in Sources */,
 				938122232CE286C300ADFB7B /* OrderHistoryDetailView.swift in Sources */,
 				93B7B5672CD9066D00E0205A /* OrderConfirmationHandlerDelegate.swift in Sources */,
+				936E09AD2CF080AF0092F246 /* SearchDrinkDataLoader.swift in Sources */,
 				935374552CB93F6D00794A63 /* OrderCustomerDetailsSectionHeaderView.swift in Sources */,
 				935291302C875DA30018B060 /* UIView+ScaleAnimation.swift in Sources */,
 				939BDA2C2B2AC53700616D1C /* UIViewController+HideKeyboard.swift in Sources */,
@@ -1825,6 +1835,7 @@
 				93B492912C3E684700E7B947 /* OrderViewInteractionDelegate.swift in Sources */,
 				932258D32C9410F4004EA2D9 /* FavoriteManager.swift in Sources */,
 				935374782CCCCC7800794A63 /* StoreSelectionMapHandlerDelegate.swift in Sources */,
+				936E09B92CF4910A0092F246 /* SearchStatusLabel.swift in Sources */,
 				93B7B5792CDBA5D300E0205A /* OrderHistoryViewController.swift in Sources */,
 				93DB1D3A2C49618C00BA2CC1 /* SignUpView.swift in Sources */,
 				93755C1F2C80971F002570A5 /* ProfileOptionCell.swift in Sources */,
@@ -1965,6 +1976,7 @@
 				939BDA852B32AD5200616D1C /* UIImageView+Styles.swift in Sources */,
 				939BD9E42B2A1B4E00616D1C /* HomePageViewController.swift in Sources */,
 				9353744D2CB7EF3900794A63 /* OrderCustomerDetailsView.swift in Sources */,
+				936E09B32CF1E17A0092F246 /* SearchNetworkMonitor.swift in Sources */,
 				9381224D2CE766A300ADFB7B /* SearchViewController.swift in Sources */,
 				9353741B2C9D832E00794A63 /* FavoriteDrink.swift in Sources */,
 				93755C042C7B28AE002570A5 /* BirthdaySelectionCell.swift in Sources */,
