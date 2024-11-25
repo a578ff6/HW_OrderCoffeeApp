@@ -923,11 +923,18 @@
 			children = (
 				938122542CE77A7F00ADFB7B /* SearchManager.swift */,
 				936E09AC2CF080AF0092F246 /* SearchDrinkDataLoader.swift */,
-				936E09A02CED0F8A0092F246 /* SearchCacheManager.swift */,
 				936E099E2CED0ED20092F246 /* SearchDrinkDataService.swift */,
-				936E09B22CF1E17A0092F246 /* SearchNetworkMonitor.swift */,
+				936E09A02CED0F8A0092F246 /* SearchCacheManager.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		936E09BA2CF4ABAF0092F246 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				936E09B22CF1E17A0092F246 /* SearchNetworkMonitor.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 		93755BF62C738DA3002570A5 /* AuthenticationTests */ = {
@@ -1188,6 +1195,7 @@
 				936E09A52CEE0BF70092F246 /* View Controllers */,
 				936E09A62CEE0C0C0092F246 /* Models */,
 				936E09A72CEE0C1F0092F246 /* Services */,
+				936E09BA2CF4ABAF0092F246 /* Network */,
 			);
 			path = Search;
 			sourceTree = "<group>";
