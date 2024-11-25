@@ -14,7 +14,7 @@
  
 ` * SearchView 是一個自定義的 UIView，主要用於定義搜尋頁面的佈局，包括：`
     - 搜尋結果列表的 UITableView。
-    -  根據搜尋狀態 (SearchViewState) 更新視圖的背景，例如提示輸入搜尋字詞、顯示無結果的提示等。
+    -  根據搜尋狀態 (SearchViewState) 更新視圖的背景，為使用者提供即時的狀態提示，例如「請輸入搜尋關鍵字」或「沒有符合的結果」。
 
  `2. UI 元素`
 
@@ -52,12 +52,14 @@
 
   `* updateView(for:) `
     - 根據 SearchViewState 更新 tableView 的背景視圖，確保在不同的搜尋階段提供適當的使用者介面提示。
+    -  由 SearchStatusLabel  來處理，這樣可以提高代碼的可讀性和可維護性，同時也使得狀態提示更加集中與一致。
  
  `8.重點整理`
     - SearchView 中的主要組件是 tableView，這個表格視圖用來顯示搜尋到的飲品結果。
     - 使用 registerCells() 方法來註冊自定義的 SearchCell，這樣可以確保 tableView 正確使用你設計的客製化 cell，避免錯誤。
     - 使用 setupUI() 設置 Auto Layout 約束，確保 tableView 正確顯示且滿足不同螢幕大小的需求。
     - 使用 SearchViewState 管理搜尋狀態，讓 SearchView 能夠根據不同的搜尋狀態提供不同的 UI 提示和顯示效果，提升使用者體驗。
+    -  狀態顯示現在由 SearchStatusLabel 處理，讓不同的搜尋狀態下，顯示的提示更加清晰、簡潔。
 
  `9.未來想法：`（已完成）
  - 可以使用 UISearchController，考慮將 UISearchController 的相關邏輯整合到 SearchViewController 中，進一步完善搜尋功能。
@@ -154,6 +156,7 @@ class SearchView: UIView {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Setup Methods
@@ -189,28 +192,17 @@ class SearchView: UIView {
         return tableView
     }
     
-    /// 建立並配置 UILabel
-    private static func createLabel(text: String? = nil, font: UIFont = UIFont.systemFont(ofSize: 18, weight: .medium), textAlignment: NSTextAlignment = .center, textColor: UIColor = .gray) -> UILabel {
-        let label = UILabel()
-        // `translatesAutoresizingMaskIntoConstraints` 在此情境中保持默認 `true`，使背景視圖能自動居中
-        label.text = text
-        label.font = font
-        label.textAlignment = textAlignment
-        label.textColor = textColor
-        return label
-    }
-    
     // MARK: - No Result State Management
-    
+        
     /// 根據搜尋的狀態更新表格視圖的背景視圖
     /// - Parameter state: `SearchViewState` 用於決定顯示的內容，例如初始提示、無結果提示或結果列表。
     /// - 根據提供的 `state` 參數，更新 `tableView` 的背景視圖，確保符合當前的搜尋狀態。
     func updateView(for state: SearchViewState) {
         switch state {
         case .initial:
-            tableView.backgroundView = SearchView.createLabel(text: "Please enter search keywords")
+            tableView.backgroundView = SearchStatusLabel(text: "Please enter search keywords")
         case .noResults:
-            tableView.backgroundView = SearchView.createLabel(text: "No Results")
+            tableView.backgroundView = SearchStatusLabel(text: "No Results")
         case .results:
             tableView.backgroundView = nil
         }
