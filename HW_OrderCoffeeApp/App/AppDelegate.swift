@@ -84,9 +84,6 @@
  
  `5. 其他考量與改進點`
  
- `* 重試機制：`
-    - 在資料加載失敗的情況下，可以設置一個重試機制，讓系統在網絡狀況恢復後自動重新嘗試加載資料，提升應用的可靠性。
- 
  `* 用戶通知：`
     - 如果資料加載失敗，應考慮通知用戶（例如顯示錯誤提示），讓用戶知道目前無法使用搜尋功能，這樣可以避免用戶在搜尋時遇到無結果的情況而感到困惑。
  
@@ -227,7 +224,7 @@ extension AppDelegate {
     private func preloadDrinksData() {
         Task {
             do {
-                try await SearchManager.shared.loadAllDrinksIfNeeded()
+                try await SearchDrinkDataLoader.shared.loadOrRefreshDrinksData()
                 print("應用啟動時成功預加載飲品資料")
             } catch {
                 print("應用啟動時預加載飲品資料失敗: \(error.localizedDescription)")
