@@ -2,14 +2,21 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <!-- 照片庫使用描述 -->
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>我們需要訪問您的照片庫來讓您選擇大頭照。</string>
+    
+    <!-- 相機使用描述 -->
 	<key>NSCameraUsageDescription</key>
 	<string>我們需要使用您的相機來讓您拍攝照片。</string>
+    
+    <!-- 位置使用描述 -->
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>我們需要訪問您的位置以顯示距離最近的店鋪。</string>
     <key>NSLocationAlwaysUsageDescription</key>
     <string>我們需要持續使用您的位置來提供最佳的店鋪導航服務。</string>
+    
+    <!-- URL 類型設置 -->
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -21,6 +28,8 @@
 			</array>
 		</dict>
 	</array>
+    
+    <!-- Scene 配置 -->
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
