@@ -605,6 +605,37 @@
  */
 
 
+// MARK: - SearchManager 和 SearchControllerManager 的分離設計
+
+/**
+
+ ## SearchManager 和 SearchControllerManager 的分離設計
+
+ `1. 單一職責原則`
+    - `SearchManager` 的職責是負責飲品資料的搜尋和過濾，它專注於處理與數據有關的操作，包括利用本地快取來加快搜尋速度，並降低 Firebase 請求次數。
+    - `SearchControllerManager` 則專注於處理 `UISearchController` 的設置和與使用者的交互。它負責管理搜尋框、設置代理，以及處理搜尋文字的更新和取消操作。
+    - 保持單一職責能夠確保每個類只專注於一個特定的任務，使得代碼更具可讀性和可維護性。
+
+ `2. 模組化設計與低耦合性`
+    - 保持 `SearchManager` 和 `SearchControllerManager` 分離，使它們可以被單獨修改而不影響到其他模組，這提升了代碼的靈活性。
+    - 例如，如果想要更換搜尋的數據源，可以直接在 `SearchManager` 中進行修改，而不必考慮 `UISearchController` 的設置。
+    - 這樣的設計確保每個模組之間的依賴最小化，使系統更易於維護和擴展。
+
+ `3. 提高可重用性`
+    - `SearchManager` 作為一個獨立的數據處理模組，可以在其他需要飲品資料搜尋的地方被重用，而不需要帶有與 `UISearchController` 相關的邏輯。
+    - 同樣地，`SearchControllerManager` 可以在任何需要使用 `UISearchController` 的情況下被重用，而不依賴於特定的搜尋邏輯或數據來源。
+
+ `4. 增量開發與測試`
+    - 將 `SearchManager` 和 `SearchControllerManager` 分離，有助於逐步開發和測試應用程式。
+    - 例如，可以在 `SearchManager` 中開發新的搜尋邏輯並進行單元測試，而不用考慮 `UISearchController` 的設置和交互行為。
+    - 測試 `SearchControllerManager` 的互動行為時，可以模擬 `SearchControllerInteractionDelegate`，不需要同時考慮搜尋邏輯的正確性。
+
+ `5. UI 與數據處理邏輯分離`
+    - `SearchControllerManager` 是針對 UI 的交互處理，包含了搜尋框的配置、事件監聽及 UI 更新的邏輯，而 `SearchManager` 則是處理具體的數據操作。
+    - 將 UI 相關邏輯與數據處理邏輯分離，符合 MVC 設計模式，使得 `SearchViewController` 可以更輕鬆地管理這些不同職責的模組，提高代碼的整潔度和結構的清晰性。
+ */
+
+
 // MARK: - 啟動 App 時加載搜尋資料 & 設置載入功能（避免飲品資料快取無效）
 
 import UIKit

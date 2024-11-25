@@ -194,6 +194,41 @@
  */
 
 
+// MARK: - 重點筆記：關於資料加載與網路狀態監控的職責分離（未來可以考慮）
+
+/**
+ 
+ ## 重點筆記：關於資料加載與網路狀態監控的職責分離（未來可以考慮）
+   
+ `1.背景問題：資料重複加載`
+ 
+ - 當網路狀態不穩定（例如斷網並立即恢復）時，容易多次觸發資料加載操作，導致重複請求，增加不必要的網路流量，且影響用戶體驗。
+ 
+ `2.解決方案：使用 isLoadingData 標誌`
+
+ - 在資料加載過程中引入 isLoadingData 標誌：
+ - 當進行資料加載時，將 isLoadingData 設為 true，避免多次重複加載。
+ - 當資料加載完成或失敗後，將 isLoadingData 設回 false。
+ - 在每次開始資料加載前檢查 isLoadingData，如果為 true 則不再執行新的加載操作。
+ 
+ `3.職責分離的原則`
+
+ - `SearchNetworkMonitor`：僅負責 網路狀態監控 和通知外部系統網路狀態的變化，保持單一職責原則（Single Responsibility Principle），使其簡單且專注。
+ - `SearchViewController`：負責處理搜尋邏輯，包括 決定何時進行資料加載。因此， isLoadingData 的檢查和資料加載的控制應該在 SearchViewController 中進行。
+ 
+ `4.設計優勢`
+
+ - `避免重複加載`：利用 isLoadingData 防止在不穩定網路下多次重複加載資料，特別是在網路狀態頻繁變化時。
+ - `職責分離`： SearchNetworkMonitor 專注於網路狀態監控，而 SearchViewController 負責資料加載決策，這樣每個類都只專注於自己的職責，代碼更清晰，容易維護和擴展。
+ 
+ `5.具體實現建議`
+
+ - 在 SearchViewController 中增加 isLoadingData 屬性來管理資料加載狀態。
+ - 在資料加載開始和結束時，正確設置 isLoadingData 的值。
+ - 在網路狀態變化回調（來自 SearchNetworkMonitor）中，由 SearchViewController 決定是否加載資料。
+ */
+
+
 import UIKit
 import Network
 
