@@ -100,7 +100,7 @@ class StoreInfoViewController: UIViewController {
     /// - Parameter store: 店鋪資料
     private func setupCallPhoneAction(for store: Store) {
         storeInfoView.selectStoreInfoView.onCallPhoneTapped = {
-            AlertService.showActionSheet(withTitle: "撥打電話", message: "確定要撥打電話給「\(store.name)」嗎？", inViewController: self, showCancelButton: true) {
+            AlertService.showActionSheet(withTitle: "撥打電話", message: "確定要撥打電話給「\(store.name)」嗎？", inViewController: self, confirmButtonTitle: "撥打", showCancelButton: true) {
                 guard let phoneURL = URL(string: "tel://\(store.phoneNumber)") else {
                     print("Invalid phone number")
                     return
