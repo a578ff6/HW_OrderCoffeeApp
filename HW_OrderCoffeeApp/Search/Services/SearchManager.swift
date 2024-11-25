@@ -5,71 +5,228 @@
 //  Created by 曹家瑋 on 2024/11/15.
 //
 
-// MARK: - SearchManager 的筆記(重構後)
+// MARK: - SearchManager 筆記
 /**
  
- ## SearchManager 的筆記
+ ## SearchManager 筆記
  
- `1. 設計目的`
+ `1.設計目的`
+ 
+ - `SearchManager` 是飲品搜尋功能的核心，負責根據本地快取的飲品資料進行關鍵字搜尋。
+ - 將`搜尋`和`資料加載`分開，`SearchManager` 只關注資料過濾與搜尋，而資料的加載與快取由 `SearchDrinkDataLoader` 和 `SearchCacheManager` 分別負責。
+ 
+ ------------------------------------------------------------------
 
- - `SearchManager`
-    - 是飲品搜尋功能的核心，負責處理所有搜尋相關的邏輯，包括從` Firebase 加載飲品資料`、`管理快取`以及`根據關鍵字進行資料過濾`。
- 
- - `SearchDrinkDataService`
-    - 負責從 Firebase 加載各層級的飲品資料，並提供底層的數據交互服務。
-    - 為 SearchManager 提供所需的飲品數據，避免讓 SearchManager 負責太多的 Firebase 操作，保持代碼的職責單一性。
- 
- - `searchCacheManager`
-    - 負責管理快取機制，減少資料加載的重複工作，確保用戶體驗流暢。
-    - 它在 SearchManager 請求資料時，先檢查是否存在有效快取，以決定是否需要重新從 Firebase 獲取資料。
- 
  `2. 職責分配`
-
- - `searchDrinkDataService`：負責與 Firebase 之間的資料存取，提供從資料庫加載資料的功能，這些資料包括 "`Categories`"（類別）、"`Subcategories`"（子類別）和 "`Drinks`"（飲品）。
- - `searchCacheManager`：管理飲品資料的快取，包括存儲和更新快取，降低 Firebase 的請求次數以提升效能。
- - `loadAllDrinksIfNeeded()`：檢查是否需要加載飲品資料，如果快取有效則不進行加載。
- - `searchDrinks(with:)`：根據搜尋關鍵字進行資料過濾，優先使用本地快取。
  
+ - `searchCacheManager`：負責管理和提供本地飲品資料快取，減少 Firebase 的請求次數，確保搜尋能夠快速響應。
+ - `searchDrinks(with:)`：根據搜尋關鍵字從快取中加載符合的飲品資料，並進行過濾。
+ - `filterDrinks(_:with:)`：根據用戶輸入的關鍵字對本地飲品資料進行過濾。
+ 
+ ------------------------------------------------------------------
+
  `3. 快取機制`
+ 
+ - `searchCacheManager` 用於管理飲品資料的快取，包括檢查快取的有效性和獲取有效的資料。
+ - 在 `searchDrinks(with:) `中，`SearchManager` 首先使用 `searchCacheManager` 確定是否有有效的快取，如果快取無效，則會提示用戶等待資料加載完成。
+ 
+ ------------------------------------------------------------------
 
- - `searchCacheManager` 用於管理飲品資料的快取，當快取資料過期或者不可用時，`SearchManager` 會重新從 Firebase 加載資料並更新快取，確保資料的準確性和有效性。
+ `4. 搜尋資料的流程`
  
- - `searchCacheManager 的具體職責包括`：
-    - `快取資料的管理`：`cachedDrinks` 用於存儲飲品資料，`lastFetchTime` 用於追蹤最後一次加載資料的時間。
-    - `快取有效性判斷`：`shouldReloadData() `檢查是否需要重新加載資料，而 `getCachedDrinks() `會根據快取是否有效來決定返回快取資料或重新加載。
+ `* searchDrinks(with:)`
+ - 該方法負責根據給定的搜尋關鍵字，使用本地快取資料進行過濾。
+ - 如果本地快取的飲品資料不可用，會拋出錯誤，提示使用者資料尚未準備好，這樣避免了對 Firebase 的頻繁請求。
  
- -  這樣的快取設計既能減少資料庫的請求次數，又能確保用戶獲取最新的資料。
+ `* filterDrinks(_:with:)（私有方法）`
+ - 負責根據使用者的關鍵字，過濾已經快取的飲品資料。
+ - 過濾的範圍包括飲品名稱 (name) 和副名稱 (subName)，確保搜尋結果即時反應用戶的需求。
  
- `4. Firebase 加載資料的流程`
-
- - `loadAllDrinksFromFirebase()`
-    -  這是 SearchManager 中加載所有飲品資料的主方法，負責遍歷 Firebase 中所有類別 (`Categories`) 並從每個子類別 (`Subcategories`) 中逐層加載飲品資料 (`Drinks`)。
-    -  該方法依賴於 `searchDrinkDataService` 來進行資料加載，以便將資料存取的細節與業務邏輯分離，增強代碼的可讀性和可維護性。
-    - 使得 Firebase 的資料加載部分從 SearchManager 中抽離，實現了更清晰的分層。
+ ------------------------------------------------------------------
  
- - `loadDrinksForSubcategories()`
-    - 作為 `loadAllDrinksFromFirebase()`的輔助方法，專門用於從指定的子類別中加載所有飲品資料。
-    - 它的職責是更細緻地處理每個子類別的飲品資料加載，從而與主加載流程 (`loadAllDrinksFromFirebase()`) 形成層層遞進的結構。
+ `5. 資料過濾的設計`
  
- `5. 層級關係和責任分離`
- 
- - `loadAllDrinksFromFirebase()` 是整個資料加載的入口，負責管理所有類別和子類別的遍歷。
- - `loadDrinksForSubcategories() `則是對某一類別下所有子類別中的飲品資料進行加載，形成了層層深入的資料加載結構。
- - 這種層級分工使得邏輯更為清晰，每個方法專注於一層的資料加載，大大提升了可讀性和代碼的維護性。
- 
- `6. 資料過濾的設計`
-
  - `filterDrinks(_:with:)`：負責根據搜尋關鍵字對飲品資料進行過濾，確保搜尋結果能夠即時反應用戶的輸入。
  - 在搜尋時，優先使用已加載的快取資料，並對其進行過濾。
- - 過濾邏輯包括飲品名稱 (name) 和副名稱 (subName)，確保搜尋結果能夠即時反應使用者的需求。
+ - 過濾邏輯包括飲品名稱和副名稱，確保搜尋結果準確符合用戶的需求。
  
+ ------------------------------------------------------------------
+
+ `6. 職責分離`
+ 
+ - `SearchManager`：負責提供搜尋功能，僅依賴於本地快取的飲品資料進行搜尋，這樣避免頻繁訪問 Firebase 資料庫，提升搜尋效率。
+ - `SearchDrinkDataLoader`：負責從 Firebase 加載和更新飲品資料，並將最新資料存入快取，以供 SearchManager 使用。
+ - `SearchCacheManager`：負責管理快取的有效性，包括存儲、更新以及是否需要重新加載的檢查。
+ - `SearchDrinkDataService`：負責與 Firebase 進行交互，從遠端獲取飲品資料。它提供從 Firebase 加載類別、子類別和飲品的底層數據交互服務，確保資料加載的可靠性和正確性，並使資料操作與業務邏輯分離。
+ 
+ ------------------------------------------------------------------
+
  `7. 總結`
  
- - `職責分離`：`SearchManager` 利用多層方法和多個管理器 (`searchDrinkDataService`、`searchCacheManager`)，將搜尋邏輯、資料加載、快取管理等功能區分開來，使每個部分各司其職，符合單一職責原則。
- - `層級設計`：加載資料的過程從類別到子類別，再到具體飲品，是層層遞進的邏輯結構，增強代碼的模組化，提升可維護性。
- - `快取機制的應用`：有效利用 `searchCacheManager` 來減少重複的 Firebase 請求，並通過基於時間的有效期檢查來平衡資料新鮮度與效能，這樣既能減少資料庫的負擔，又能提供更好的用戶體驗。
+ `* 職責分離：`
+    - SearchManager、SearchDrinkDataLoader、SearchCacheManager、SearchDrinkDataService 四者之間分工明確，各司其職，符合單一職責原則。
+    - `SearchManager`：專注於資料的搜尋和過濾，不再處理 Firebase 資料的加載。
+    - `SearchDrinkDataLoader`：負責資料的加載和快取更新，確保在應用啟動或資料無效時進行更新。
+    - `SearchCacheManager`：管理本地快取的有效性，包括資料存取與過期檢查，減少重複的 Firebase 請求。
+    - `SearchDrinkDataService`：處理所有 Firebase 資料存取的具體細節，避免直接在其他管理器中實作數據存取操作，增強代碼的可維護性。
+ 
+ `* 快取機制的應用：`
+    - 使用 `searchCacheManager` 來管理資料的有效性，避免頻繁的 Firebase 請求，提升應用效能。
+    - `SearchDrinkDataLoader` 在應用啟動時加載資料，確保搜尋時有可用資料，並通過 SearchCacheManager 管理快取。
  */
 
+
+// MARK: - Search 功能模組重點整理筆記（重要）
+/**
+
+ ## Search 功能模組重點整理筆記
+ 
+ `1. SearchManager`
+ 
+ `* 設計目的`
+    - 提供飲品搜尋功能，負責根據使用者輸入的關鍵字從本地快取中搜尋飲品。
+    - 通過依賴`本地快取`進行搜尋，提升搜尋速度，減少對 Firebase 的頻繁請求。
+
+ `* 職責`
+    - `搜尋飲品 (searchDrinks(with:))`：根據關鍵字進行搜尋，優先使用快取資料，避免頻繁訪問 Firebase。
+    - `資料過濾 (filterDrinks(_:with:))`：對於已快取的飲品資料進行過濾，確保搜尋結果即時反應用戶的需求。
+
+ `* 與其他模組的互動`
+    - 從 `SearchCacheManager` 獲取本地快取資料進行搜尋操作。
+    - 不涉及 Firebase 直接交互，所有 Firebase 加載工作由 `SearchDrinkDataLoader` 處理。
+
+ ------------------------------------------------------------------
+ 
+ `2. SearchDrinkDataLoader`
+ 
+ `* 設計目的`
+    - 負責在應用啟動時或快取無效時從 Firebase 加載飲品資料並更新快取，以確保本地有最新的飲品資料可供搜尋和展示使用。
+
+ `* 職責`
+    - `資料加載 (loadOrRefreshDrinksData())`：在應用啟動時加載飲品資料，並將其存入快取，避免初次使用搜尋功能時資料缺失。
+
+ `* 與其他模組的互動`
+    - 通過 `SearchDrinkDataService` 從 Firebase 加載資料。
+    - 使用 `SearchCacheManager` 來管理快取資料的存儲與更新。
+
+ ------------------------------------------------------------------
+
+ 
+ `3. SearchCacheManager`
+ 
+ `* 設計目的`
+    - 負責管理飲品資料的快取，包括存儲、更新和有效性檢查，以減少不必要的 Firebase 請求，提升應用效能。
+
+ `* 職責`
+    - `快取管理 (cachedDrinks)`：存儲飲品資料，用於減少頻繁的網路請求。
+    - `資料存取 (getCachedDrinks(), cacheDrinks(_:))`：提供本地快取資料的存取，並更新快取資料。
+
+ `* 與其他模組的互動`
+    - 被 `SearchManager` 用來進行資料的搜尋。
+    - 被 `SearchDrinkDataLoader` 用來決定是否需要重新加載 Firebase 資料，並在需要時更新快取。
+
+ ------------------------------------------------------------------
+ 
+ `4. SearchDrinkDataService`
+ 
+ `* 設計目的`
+    - 與 Firebase Firestore 進行交互，負責從 Firebase 中加載飲品相關資料，包括類別、子類別及飲品詳細資訊。
+
+ `* 職責`
+ 
+ - `資料加載`：
+   - `類別 (loadCategories())`：加載所有類別，支援飲品分類展示及後續資料加載。
+   - `子類別 (loadSubcategories(for:))`：根據類別 ID 加載其下的子類別，用於進一步篩選。
+   - `飲品資料 (loadDrinks(for:, subcategoryId:))`：加載指定子類別下的飲品資料，並轉換為 `SearchResult`。
+
+ `* 與其他模組的互動`
+    - 為 `SearchDrinkDataLoader` 提供資料加載的支持。
+    - 不與 `SearchManager` 和 `SearchCacheManager` 直接交互，專注於 Firebase 資料存取。
+
+ ------------------------------------------------------------------
+
+ `5. 模組間的關係和互動總結`
+ 
+    1. `SearchManager`：只負責資料的搜尋和過濾，確保功能的單一性。
+    2. `SearchDrinkDataLoader`：負責從 Firebase 加載飲品資料並更新快取，在應用啟動時和快取失效時使用。
+    3. `SearchCacheManager`：負責快取的有效性檢查及管理，避免 Firebase 的頻繁請求。
+    4. `SearchDrinkDataService`：負責所有的 Firebase 資料交互，提供飲品資料加載的支持。
+
+ ------------------------------------------------------------------
+
+ `6. 重點結論`
+ 
+ - 這四個模組之間的分工非常明確，依賴彼此的輸出和職責，保持單一責任原則。
+ - `職責分離`：
+   - `SearchManager` 不直接訪問 Firebase，而是依賴快取資料進行搜尋。
+   - `SearchDrinkDataLoader` 專注於資料的預加載和更新，不處理搜尋邏輯。
+   - `SearchCacheManager` 集中管理資料的快取和有效性檢查，確保資料的即時性和準確性。
+   - `SearchDrinkDataService` 專門負責從 Firebase 加載飲品相關的資料，保持數據層與應用邏輯的分離。
+   
+ - `快取機制的優勢`：
+   - 透過 `SearchCacheManager` 的快取設計，減少了重複的 Firebase 請求次數。
+   - 這樣的快取機制確保了應用在資料查詢時的速度，同時避免在網絡不穩定時影響用戶體驗。
+ */
+
+
+// MARK: - 重構筆記：SearchManager 與 SearchDrinkDataLoader（重要）
+/**
+ 
+ ## 重構筆記 - SearchManager 與 SearchDrinkDataLoader
+
+ - 在原本的架構中，`SearchManager` 負責加載 Firebase Firestore 中的所有飲品資料、提供搜尋功能以及管理本地快取。
+ - 但經過重構後，部分職責被分配到了類別 `SearchDrinkDataLoader` 中，以下是本次重構的重點與改變：
+
+ ------------------------------------------------------------------
+
+ `1. 重構動機`
+ 
+ - `簡化 SearchManager 的職責`：
+    - 原本的 SearchManager 負責飲品資料加載和搜尋功能，職責範圍較大且責任不單一，導致類別相對臃腫且難以維護。
+ 
+ - `職責單一化`：
+    - 將 飲品資料的預加載和快取 職責移至 `SearchDrinkDataLoader`，使 `SearchManager` 更專注於搜尋相關的邏輯，提升可讀性和維護性。
+
+ ------------------------------------------------------------------
+
+` 2. SearchDrinkDataLoader 的主要職責`
+ 
+ - `資料預加載`：
+    - `SearchDrinkDataLoader` 在應用啟動時從 Firebase 預加載飲品資料，確保應用運行時有足夠的數據可以快速進行查詢，這樣可以顯著減少對 Firebase 的多次請求。
+ 
+ - `快取管理`：
+    - 透過 `SearchCacheManager` 來管理資料的快取，避免每次搜尋時重新從遠端加載，提升應用的效能。
+ 
+ ------------------------------------------------------------------
+
+ `3. 使用 shared 單例模式`
+ 
+ - `SearchDrinkDataLoader` 被設計成單例 (shared)，這是因為 資料預加載 和 快取管理 是全局需要且應用啟動時執行的唯一操作。
+ - 因此，單例模式有助於確保只存在一個實例來負責預加載操作，減少多次實例化的資源浪費，並確保所有地方都使用相同的快取數據。
+ 
+ ------------------------------------------------------------------
+
+ `4. 重構後的主要變化`
+ 
+ - `分離飲品加載與搜尋邏輯`：
+    - `SearchManager`：現在專注於搜尋相關的功能，根據關鍵字從快取中過濾飲品資料，簡化了其職責。
+    - `SearchDrinkDataLoader`：負責應用啟動時的資料預加載與快取管理，確保資料在快取有效時可以直接使用，提升效能。
+ 
+ ------------------------------------------------------------------
+
+ `5. loadOrRefreshDrinksData() 方法`
+ 
+ - 在 `AppDelegate` 中調用` SearchDrinkDataLoader.shared.loadOrRefreshDrinksData() `來預加載飲品資料。
+ - `快取邏輯`：如果快取無效（資料不存在或過期），則從 Firebase 重新加載資料並更新快取；如果快取有效，則直接使用現有的快取資料。
+ 
+ ------------------------------------------------------------------
+
+ `6. 重構`
+ 
+ - `職責劃分更清晰`：每個類別的職責變得更單一，SearchManager 只負責處理搜尋邏輯，而 SearchDrinkDataLoader 專注於資料加載。
+ - `提升維護性`：當資料加載方式或快取策略需要改變時，只需調整 SearchDrinkDataLoader，不會影響搜尋邏輯部分，降低耦合性。
+ - `減少重複加載`：透過 SearchDrinkDataLoader 和快取管理器，減少每次搜尋時都從 Firebase 加載資料的需求，顯著提升效能。
+ */
 
 
 // MARK: - Firestore 查詢方法選擇：方案一（本地端篩選）與方案二（後端查詢）的對比與想法（重要）
@@ -284,7 +441,6 @@
 // MARK: - 筆記：首次搜尋較慢，後續搜尋較快的原因及解決方式（重要）
 
 /**
- 
  ## 筆記：首次搜尋較慢，後續搜尋較快的原因及解決方式
  
  `* 背景說明：搜尋方式的改進與新挑戰`
@@ -384,95 +540,149 @@
  */
 
 
-// MARK: - 重構_使用「快取存取」方式（添加飲品加載邏輯）_ 啟動 App。
+// MARK: - 針對原本 SearchManager 的調整方向（重要）
+/**
+ 
+ ## 針對原本 SearchManager 的調整方向
+ 
+ `* 原本的設計流程：`
+ 
+ - 原本是「`search`」的過程主動會去判斷「飲品快取資料」是否有效，如果「無效」就自動進行加載，這會使得使用者困惑，因為不會曉得發生什麼事，以及是否成功。
+ - 因此當飲品資料快取加載無效時，將主導權給使用者。
+ 
+ `* 調整方向`
+ 
+ `1.將搜尋功能與資料加載分離`
+
+ - 搜尋功能只依賴於快取的資料，避免在搜尋過程中主動加載資料。這樣可以提升搜尋速度並減少對伺服器的壓力。
+ 
+ `* 改進方向：`
+ 
+ - 在應用啟動時使用 AppDelegate 預加載資料，將飲品資料存入快取。
+ - 在 SearchManager 的 searchDrinks 方法中，如果快取中的飲品資料無效，返回空結果並顯示「資料尚未準備好」的提示，而不是主動加載資料。
+ - 提供給用戶一個「`手動重新加載`」的選項來控制何時進行資料加載。
+ 
+ ------------------------------------------------------------------
+
+ `2.集中資料加載邏輯，避免重複處理`
+
+ - `SearchDrinkDataLoader`的`loadOrRefreshDrinksData`集中化資料加載的意圖，但可以進一步改進以更清晰地將資料加載和搜尋功能分開。
+ 
+ `* 改進方向：`
+ 
+ - `集中處理資料加載`：只有在`應用啟動`或`用戶手動觸發`時才執行資料加載，減少資料加載的複雜度。
+ - 在 `SearchDrinkDataLoader`的`loadOrRefreshDrinksData` 中處理所有資料加載的邏輯，並避免在搜尋時處理加載失敗的情況。資料加載應該是一個獨立的流程。
+ 
+ ------------------------------------------------------------------
+
+`3.提供資料不可用的處理方式`
+
+ - 在 `SearchViewController` 中，在 `didUpdateSearchText` 中加入資料狀態檢查，如果資料尚未準備好，則顯示提示。
+ - 當用戶嘗試進行搜尋時，如果資料不可用，應顯示「資料尚未準備好」的提示，並建議用戶稍候或手動重新加載。
+ 
+ ------------------------------------------------------------------
+
+` 4.調整筆記的重點`
+
+ `* 改進方向：`
+ 
+ - 強調「`資料加載的集中化`」和「`資料狀態的明確檢查`」。
+ - 在搜尋時，只能使用快取資料，使整體的資料狀態更加一致且可控。
+ 
+ ------------------------------------------------------------------
+ 
+ `5.更新後的流程`
+ 
+ `* App 啟動時：`
+
+ - 在 AppDelegate 或首次進入相關頁面時，觸發資料加載，將飲品資料存入快取。
+ - 使用 SearchCacheManager 檢查資料是否有效，如果無效，顯示提示並讓用戶決定是否重新加載。
+ 
+ `* 用戶搜尋時：`
+
+ - 用戶在 UISearchController 中輸入關鍵字。
+ - 在 `SearchManager` 中調用 `searchDrinks` 方法，先檢查資料狀態。
+    - 如果資料不可用，顯示提示，並不進行加載。
+    - 如果資料已加載，則使用快取中的資料進行搜尋並返回結果。
+
+ `* 更新後的優勢`
+ 
+ - `使用者體驗一致性`： 用戶在進行搜尋操作時，資料已準備好，因此搜尋速度快，體驗更佳。
+ - `減少伺服器負擔`： 通過集中化管理資料加載，減少不必要的 Firebase 請求，降低伺服器壓力。
+ */
+
+
+// MARK: - 顯示訊息通知用戶（重要）
+/**
+
+ ## 顯示訊息通知用戶
+ 
+ 關於「顯示訊息通知用戶」的部分，以下有兩種建議：
+
+ `1. 顯示 Alert 提示用戶`
+    - 使用 `UIAlertController` 顯示一個提示，當資料不可用時告知用戶「目前資料無法使用」。
+    - 可以設置一個「重新嘗試」的按鈕，讓用戶手動觸發資料重新加載。
+ 
+ `* 優點：`
+    - 使用 Alert 可以讓用戶在第一時間注意到資料不可用的狀況。
+    - 不會佔用畫面其他區域，有比較集中的注意力。
+
+ `2. 顯示 UI 元件讓用戶點擊`
+    - 直接在搜尋界面上顯示一個按鈕（例如「重新加載」按鈕）或者一段描述訊息，當資料不可用時提示用戶。
+    - 這樣的設計可以讓用戶有更直接的操作體驗，並且可以控制何時重新嘗試加載。
+
+ `* 優點：`
+    - 使用 UI 元件（例如按鈕）可保持用戶交互的流暢性。
+    - 更具彈性，用戶可以自主決定何時進行重試。
+
+ `* 建議`
+    - 第二種方式，即在 UI 上顯示按鈕的方式。
+    - 這樣的設計會讓使用者有更多的控制權，而且可以更好地融入整體的 UI 交互流。
+    - 例如在資料不可用的狀態下，顯示一個「重新加載資料」的按鈕，按鈕上可以設置重試次數限制，這樣可以防止用戶無意中進行過多次重試，導致不必要的資源浪費。
+    - 可以在 `SearchView` 中加入一個 `retryButton`，當快取不可用時，顯示此按鈕。
+    - 並且透過類似 `updateView(for:)` 的方法去更新當前的狀態，例如在 `noResults` 狀態下顯示該按鈕。
+ 
+ `* 額外想法：`
+ 1. 當「快取資料無效」時，輸入搜尋文字時會出現「訊息告知需要點擊ＵＩ元件去重試加載快取資料」相關訊息。
+ 2.當「快取資料無效時」，出現「UI」元件在畫面上讓使用者點擊，重載的過程中會有HUD出現。
+ */
+
+
+// MARK: - 重構_使用「快取存取」方式（添加飲品加載邏輯）_ 啟動 App。 & 單一職責 & 移除自動載入飲品資料
 
 import UIKit
 import Firebase
 
-/// `SearchManager` 負責加載 Firebase Firestore 中所有飲品資料並提供搜尋功能
+/// `SearchManager` 負責提供飲品搜尋功能，根據本地快取的飲品資料進行關鍵字搜尋。
+/// 通過使用快取來提升搜尋速度並減少對 Firebase 的請求次數。
 class SearchManager {
     
     // MARK: - Properties
-    
-    /// 飲品資料服務，用於從 Firebase 加載飲品相關的資料
-    private let searchDrinkDataService = SearchDrinkDataService()
-    
-    /// 搜尋快取管理器，用於快取飲品資料，減少 Firebase 請求次數
-    private let searchCacheManager = SearchCacheManager()
-    
-    /// 單例模式
-    static let shared = SearchManager()
+        
+    /// 搜尋快取管理器，用於獲取本地快取飲品資料
+    private let searchCacheManager = SearchCacheManager.shared
     
     // MARK: - Public Methods
     
-    /// 加載所有飲品資料並存入快取（如果需要）
-    /// - 當本地快取不存在或已過期時，從 Firebase 加載資料並更新快取
-    func loadAllDrinksIfNeeded() async throws {
-        print("開始加載飲品資料...")
-        if searchCacheManager.shouldReloadData() {
-            let drinks = try await loadAllDrinksFromFirebase()
-            searchCacheManager.cacheDrinks(drinks)
-            print("已從 Firebase 加載所有飲品資料並存入快取，共 \(drinks.count) 筆資料")
-        } else {
-            print("快取有效，無需重新加載飲品資料")
-        }
-    }
-    
-    /// 根據搜尋字串從本地快取或 Firebase 加載符合的飲品資料並轉換成 `SearchResult` 陣列
+    /// 根據搜尋字串從本地快取加載符合的飲品資料並轉換成 `SearchResult` 陣列
     /// - Parameter keyword: 搜尋關鍵字
-    /// - Returns: 轉換完成的 `[SearchResult]` 陣列
+    /// - Returns: 符合條件的 `[SearchResult]` 陣列
+    /// - 使用本地快取進行搜尋，以提高速度並減少對 Firebase 的請求次數。
+    /// - 如果資料尚未加載，會提示使用者等待資料準備好後再進行搜尋。
     func searchDrinks(with keyword: String) async throws -> [SearchResult] {
         
-        // 如果有快取資料，直接使用快取資料進行搜尋
-        if let cachedDrinks = searchCacheManager.getCachedDrinks() {
-            print("使用本地快取資料進行搜尋")
-            return filterDrinks(cachedDrinks, with: keyword)
-        } else {
-            // 如果沒有快取資料，先加載所有飲品資料
-            try await loadAllDrinksIfNeeded()
-            guard let cachedDrinks = searchCacheManager.getCachedDrinks() else {
-                print("快取資料不可用，請重試")
-                return []
-            }
-            print("使用本地快取資料進行搜尋")
-            return filterDrinks(cachedDrinks, with: keyword)
+        guard let cachedDrinks = searchCacheManager.getCachedDrinks() else {
+            print("資料尚未準備好，請稍候")
+            throw NSError(domain: "com.example.app", code: 404, userInfo: [NSLocalizedDescriptionKey: "資料尚未準備好，請稍候"])
         }
+        
+        // 使用本地快取進行搜尋操作
+        print("使用本地快取資料進行搜尋")
+        return filterDrinks(cachedDrinks, with: keyword)
     }
-    
+
     // MARK: - Private Methods
-    
-    /// 從 Firebase 加載所有飲品資料
-    /// - Returns: 所有飲品的 `SearchResult` 陣列
-    private func loadAllDrinksFromFirebase() async throws -> [SearchResult] {
-        var allDrinks: [SearchResult] = []
-        
-        // 加載所有 Categories 並遍歷每個 Category
-        let categoriesSnapshot = try await searchDrinkDataService.loadCategories()
-        for categoryDocument in categoriesSnapshot.documents {
-            let categoryId = categoryDocument.documentID
-            let subcategoriesSnapshot = try await searchDrinkDataService.loadSubcategories(for: categoryId)
-            let drinksForSubcategories = try await loadDrinksForSubcategories(subcategoriesSnapshot, categoryId: categoryId)
-            allDrinks.append(contentsOf: drinksForSubcategories)
-        }
-        
-        return allDrinks
-    }
-    
-    /// 加載所有子類別下的飲品並返回 `SearchResult` 陣列
-    /// - Parameters:
-    ///   - subcategoriesSnapshot: 子類別 (Subcategories) 的 `QuerySnapshot`
-    ///   - categoryId: 類別的 ID
-    /// - Returns: 飲品資料的 `[SearchResult]` 陣列
-    private func loadDrinksForSubcategories(_ subcategoriesSnapshot: QuerySnapshot, categoryId: String) async throws -> [SearchResult] {
-        var allDrinks: [SearchResult] = []
-        for subcategoryDocument in subcategoriesSnapshot.documents {
-            let subcategoryId = subcategoryDocument.documentID
-            let drinks = try await searchDrinkDataService.loadDrinks(for: categoryId, subcategoryId: subcategoryId)
-            allDrinks.append(contentsOf: drinks)
-        }
-        return allDrinks
-    }
-    
+
     /// 對飲品資料進行過濾
     /// - Parameters:
     ///   - drinks: 所有飲品資料

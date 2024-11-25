@@ -13,22 +13,31 @@
  `* 設計目的`
 
  - SearchDrinkDataService 是專門負責從 Firebase Firestore 加載與飲品相關資料的服務類別。
- - 提供類別、子類別以及飲品詳細資料的加載功能，以支援搜尋和瀏覽功能。
+ - 提供類別、子類別以及飲品詳細資料的加載功能，以支援資料的預加載、搜尋及展示功能。
+ - 通過將 Firebase 的交互操作集中在此類別中，讓資料加載邏輯與其他業務邏輯解耦合，提高了代碼的可讀性和可維護性。
  
  `* 屬性與責任分配`
  
  - `db`：Firebase Firestore 的資料庫實例，提供存取 Firebase 的能力。
- - `loadCategories()`：加載所有類別 (Categories)，供飲品分類的展示或搜尋使用。
- - `loadSubcategories(for categoryId:)`：根據指定類別 ID 加載該類別下的子類別，用於精細化篩選。
- - `loadDrinks(for categoryId:, subcategoryId:)`：加載指定類別及子類別下的所有飲品資料，並轉換為 SearchResult 物件。
+ - `loadCategories()`：加載所有類別 (Categories)，供`飲品分類的展示`或`資料的初始化使用`。
+ - `loadSubcategories(for categoryId:)`：根據指定類別 ID 加載該類別下的子類別，用於精細化篩選與展示。
+ - `loadDrinks(for categoryId:, subcategoryId:)`：加載指定類別及子類別下的所有飲品資料，並轉換為 SearchResult 物件用於搜尋和展示飲品詳細資訊。
  
  `* 分離責任的實踐`
 
- - `SearchDrinkDataService` 僅負責與 Firebase 互動並處理飲品相關的數據。這樣的責任分離設計使數據加載邏輯獨立於其他業務邏輯，提升代碼的可維護性和模組化程度。
+ - `SearchDrinkDataService`
+    - 僅負責與 Firebase Firestore 進行資料的存取，專注於加載飲品相關資料。
+    - 這樣的設計使得資料加載邏輯與應用的其他部分（如快取管理和搜尋邏輯）保持獨立，確保代碼更加模組化和易於維護。
  
  `* 錯誤處理機制`
-
- - 每個資料加載方法都會拋出錯誤 (throws)，這樣可以讓上層控制器處理不同情況的錯誤，例如網路連接問題或者 Firebase 資料庫錯誤。
+ 
+ - 每個資料加載方法都會拋出錯誤 (throws)，這樣可以讓上層控制器或處理器（如 SearchDrinkDataLoader 或 SearchManager）處理不同情況的錯誤，例如網路連接問題或 Firebase 資料庫讀取錯誤。
+ - 錯誤處理的分層設計使得上層可以根據具體情況進行適當的 UI 提示或重新嘗試加載，提供更好的用戶體驗。
+ 
+ `* 設計考量`
+ 
+ - `專注資料加載`：
+    - `SearchDrinkDataService` 的唯一責任是從 Firebase 獲取資料，這樣可以減少 `SearchDrinkDataLoader` 或 `SearchManager` 對底層 Firebase 操作的依賴，達到責任分離的效果。
  */
 
 
