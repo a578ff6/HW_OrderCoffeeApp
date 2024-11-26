@@ -25,15 +25,16 @@ struct Constants {
     /// 表示在 Storyboard 中設定的視圖控制器的 Identifier，方便引用。
     struct Storyboard {
         
-        static let menuViewController = "MenuViewController"
-        
+        // 主頁面、登入、註冊、忘記密碼相關
         static let homePageViewController = "HomePageViewController"
         static let loginViewController = "LoginViewController"
         static let signUpViewController = "SignUpViewController"
         static let forgotPasswordViewController = "ForgotPasswordViewController"
-    
+        
         static let mainTabBarController = "MainTabBarController"
         //static let menuCollectionViewController = "MenuCollectionViewController"
+        static let menuViewController = "MenuViewController"
+
         static let drinkDetailViewController = "DrinkDetailViewController"
         
         static let editProfileViewController = "EditProfileViewController"

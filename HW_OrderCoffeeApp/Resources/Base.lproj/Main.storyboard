@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="hQI-nO-bJh">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="bM7-8e-F7x">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
@@ -9,87 +9,20 @@
     </dependencies>
     <scenes>
         <!--Home Page View Controller-->
-        <scene sceneID="CAu-i5-P3R">
+        <scene sceneID="vQU-HQ-SgN">
             <objects>
-                <viewController storyboardIdentifier="HomePageViewController" id="hby-3X-40G" customClass="HomePageViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="NFI-J2-vPg">
+                <viewController storyboardIdentifier="HomePageViewController" id="L3a-CO-iIY" customClass="HomePageViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="xkv-Rr-vv8">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="starbucksLogo" translatesAutoresizingMaskIntoConstraints="NO" id="SeM-hc-dEN">
-                                <rect key="frame" x="54.666666666666657" y="-111.66666666666669" width="284" height="1024.3333333333333"/>
-                            </imageView>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="1ct-pB-gq2">
-                                <rect key="frame" x="25" y="663" width="343" height="115"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YM5-yJ-BvI">
-                                        <rect key="frame" x="0.0" y="0.0" width="343" height="50"/>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" title="Login">
-                                            <fontDescription key="titleFontDescription" type="system" weight="black" pointSize="20"/>
-                                        </buttonConfiguration>
-                                        <connections>
-                                            <segue destination="Dmx-MF-GGH" kind="show" id="OpW-Cr-Pnc"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bm0-rq-8jz">
-                                        <rect key="frame" x="0.0" y="65" width="343" height="50"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="50" id="hSM-vm-kOv"/>
-                                        </constraints>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" title="Sign Up">
-                                            <fontDescription key="titleFontDescription" type="system" weight="black" pointSize="20"/>
-                                        </buttonConfiguration>
-                                        <connections>
-                                            <segue destination="xvH-gW-Pob" kind="show" id="I9F-gs-7nJ"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="bm0-rq-8jz" firstAttribute="height" secondItem="YM5-yJ-BvI" secondAttribute="height" id="l72-vU-O2G"/>
-                                </constraints>
-                            </stackView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="ESY-2z-9Ls"/>
-                        <color key="backgroundColor" red="0.0" green="0.4392156862745098" blue="0.29019607843137252" alpha="1" colorSpace="calibratedRGB"/>
-                        <constraints>
-                            <constraint firstItem="SeM-hc-dEN" firstAttribute="centerX" secondItem="ESY-2z-9Ls" secondAttribute="centerX" id="3z9-Q1-6FO"/>
-                            <constraint firstItem="1ct-pB-gq2" firstAttribute="leading" secondItem="ESY-2z-9Ls" secondAttribute="leading" constant="25" id="5Xb-av-MFu"/>
-                            <constraint firstItem="ESY-2z-9Ls" firstAttribute="bottom" secondItem="1ct-pB-gq2" secondAttribute="bottom" constant="40" id="Hs9-H2-472"/>
-                            <constraint firstItem="ESY-2z-9Ls" firstAttribute="trailing" secondItem="1ct-pB-gq2" secondAttribute="trailing" constant="25" id="MqU-UF-6g4"/>
-                            <constraint firstItem="SeM-hc-dEN" firstAttribute="width" secondItem="NFI-J2-vPg" secondAttribute="height" multiplier="1:3" id="Qm2-2G-Uf1"/>
-                            <constraint firstItem="SeM-hc-dEN" firstAttribute="centerY" secondItem="ESY-2z-9Ls" secondAttribute="centerY" multiplier="1:1" constant="-60" id="Rcp-7E-BXi"/>
-                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="irV-92-ZQa"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" id="0iP-B5-dAh"/>
-                    <connections>
-                        <outlet property="loginButton" destination="YM5-yJ-BvI" id="6Iw-tm-67l"/>
-                        <outlet property="signUpButton" destination="bm0-rq-8jz" id="lIN-fP-8kd"/>
-                    </connections>
+                    <navigationItem key="navigationItem" id="6sZ-mm-2dM"/>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="02u-dX-nZ7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="wc3-8X-iwk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="474.41860465116281" y="12.875536480686696"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="deb-cM-gEo">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="hQI-nO-bJh" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="49i-2X-kJp">
-                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="tintColor" red="0.0" green="0.43921568630000002" blue="0.2901960784" alpha="1" colorSpace="calibratedRGB"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="hby-3X-40G" kind="relationship" relationship="rootViewController" id="bPg-L6-QrO"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="sU8-vh-o3J" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-451.14503816793894" y="13.380281690140846"/>
+            <point key="canvasLocation" x="1680" y="-457"/>
         </scene>
         <!--Drinks Category View Controller-->
         <scene sceneID="rGH-mh-UDd">
@@ -108,7 +41,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7P1-Bx-tYg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7692" y="-457"/>
+            <point key="canvasLocation" x="8617.5572519083962" y="-457.04225352112678"/>
         </scene>
         <!--Starbucks-->
         <scene sceneID="DGh-Rz-dQZ">
@@ -127,7 +60,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="S4x-Cu-5ez" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6766" y="-457"/>
+            <point key="canvasLocation" x="7692.3664122137397" y="-457.04225352112678"/>
         </scene>
         <!--Drink Detail View Controller-->
         <scene sceneID="dIz-sx-3Ft">
@@ -143,14 +76,14 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JKh-GK-Iqw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="8621" y="-457"/>
+            <point key="canvasLocation" x="9547.3282442748095" y="-457.04225352112678"/>
         </scene>
         <!--Forgot Password View Controller-->
         <scene sceneID="6m0-Yr-LHK">
             <objects>
                 <viewController storyboardIdentifier="ForgotPasswordViewController" id="oRh-L4-Xst" customClass="ForgotPasswordViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="0Rq-hn-DSO">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="obq-Ut-37u"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -159,7 +92,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zvm-m0-EJm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2610" y="-292"/>
+            <point key="canvasLocation" x="3787" y="-457"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="k2y-sj-BxC">
@@ -178,7 +111,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0DA-IT-vvz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1708" y="-292"/>
+            <point key="canvasLocation" x="2702" y="-457"/>
         </scene>
         <!--Sign Up View Controller-->
         <scene sceneID="n0f-gY-hqa">
@@ -194,7 +127,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EIM-3D-1KN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1709" y="443"/>
+            <point key="canvasLocation" x="2702" y="306"/>
         </scene>
         <!--Item-->
         <scene sceneID="mlL-nw-umJ">
@@ -431,7 +364,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6Bg-8E-5WR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5926" y="-457"/>
+            <point key="canvasLocation" x="6852.6717557251905" y="-457.04225352112678"/>
         </scene>
         <!--Search-->
         <scene sceneID="Xmm-N2-cmF">
@@ -452,13 +385,30 @@
             </objects>
             <point key="canvasLocation" x="5926" y="306"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="f6f-eI-XAo">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="bM7-8e-F7x" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="vcY-gR-JSa">
+                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="L3a-CO-iIY" kind="relationship" relationship="rootViewController" id="fcM-g5-hM1"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4oc-ms-zju" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="593" y="-457"/>
+        </scene>
     </scenes>
     <resources>
         <image name="basket" catalog="system" width="128" height="108"/>
         <image name="list.dash" catalog="system" width="128" height="85"/>
         <image name="magnifyingglass" catalog="system" width="128" height="117"/>
         <image name="person.crop.circle" catalog="system" width="128" height="123"/>
-        <image name="starbucksLogo" width="1024" height="1024"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
