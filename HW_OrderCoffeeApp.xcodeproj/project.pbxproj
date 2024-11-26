@@ -942,11 +942,35 @@
 		936E09BB2CF4F5DD0092F246 /* HomePage */ = {
 			isa = PBXGroup;
 			children = (
-				939BD9E32B2A1B4E00616D1C /* HomePageViewController.swift */,
-				936E09BC2CF4F6310092F246 /* HomePageView.swift */,
-				936E09BE2CF5D7990092F246 /* HomePageViewDelegate.swift */,
+				936E09C22CF60CF70092F246 /* Delegates */,
+				936E09C12CF60CEB0092F246 /* Views */,
+				936E09C02CF60CD60092F246 /* View Controllers */,
 			);
 			path = HomePage;
+			sourceTree = "<group>";
+		};
+		936E09C02CF60CD60092F246 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				939BD9E32B2A1B4E00616D1C /* HomePageViewController.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		936E09C12CF60CEB0092F246 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				936E09BC2CF4F6310092F246 /* HomePageView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		936E09C22CF60CF70092F246 /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				936E09BE2CF5D7990092F246 /* HomePageViewDelegate.swift */,
+			);
+			path = Delegates;
 			sourceTree = "<group>";
 		};
 		93755BF62C738DA3002570A5 /* AuthenticationTests */ = {
