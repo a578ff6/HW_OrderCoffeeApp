@@ -83,7 +83,7 @@
             <objects>
                 <viewController storyboardIdentifier="ForgotPasswordViewController" id="oRh-L4-Xst" customClass="ForgotPasswordViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="0Rq-hn-DSO">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="obq-Ut-37u"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -105,9 +105,6 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <navigationItem key="navigationItem" id="KZi-tc-ykE"/>
-                    <connections>
-                        <segue destination="oRh-L4-Xst" kind="show" identifier="showForgotPassword" id="MPt-rQ-ZEC"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0DA-IT-vvz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
