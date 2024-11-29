@@ -521,12 +521,12 @@ import FirebaseAuth
 class LoginViewController: UIViewController {
     
     // MARK: - UI Components
-
+    
     /// `LoginView` 為登入畫面主體，用於顯示 UI 元件
     private let loginView = LoginView()
     
     // MARK: - Handlers
-
+    
     /// `LoginActionHandler` 負責處理 `LoginView` 中按鈕的行為
     /// - 設定 `LoginView` 和 `LoginViewDelegate` 以實現事件與邏輯的分離
     private var actionHandler: LoginActionHandler?
@@ -543,41 +543,58 @@ class LoginViewController: UIViewController {
     /// - 如果有記住的用戶資料，則嘗試加載用戶的登入資訊
     override func viewDidLoad() {
         super.viewDidLoad()
-        actionHandler = LoginActionHandler(view: loginView, delegate: self)
+        setupActionHandler()
         loadRememberedUser()
     }
     
+    // MARK: - Action Handler
+    
+    /// 初始化並設置 `LoginActionHandler`
+    /// - `LoginActionHandler` 負責處理 `LoginView` 中的按鈕行為
+    /// - 通過設置 view 與 delegate，將 UI 行為與邏輯解耦合，增加程式碼的模組化和可維護性
+    private func setupActionHandler() {
+        actionHandler = LoginActionHandler(view: loginView, delegate: self)
+    }
+    
     // MARK: - User Data Management
-
+    
     /// 在 App 啟動時存取並加載用戶資訊（若有記住我選項被勾選）
-    /// - 從 UserDefaults 獲取是否勾選了 "記住我" 選項，如果是，則從 Keychain 加載對應的電子郵件和密碼
-    /// - 將加載的資訊填入到 `LoginView` 的相應輸入框中
+    /// - 首先檢查 UserDefaults 中是否有勾選 "記住我" 選項
+    /// - 如果 "記住我" 選項被勾選，則設置 `RememberMe` 按鈕狀態為選中
+    /// - 隨後，從 Keychain 加載用戶的電子郵件和密碼，並填入到 `LoginView` 的相應輸入框中
     private func loadRememberedUser() {
-        // 檢查 UserDefaults 中是否有 "RememberMe" 的值且為 true
-        guard let remembered = UserDefaults.standard.value(forKey: "RememberMe") as? Bool, remembered else {
-            return
-        }
-        
-        // 設置 RememberMe 按鈕狀態為選中
+        guard shouldLoadRememberedUser() else { return }
         loginView.setRememberMeButtonSelected(true)
-        
-        // 從 Keychain 加載電子郵件和密碼資料
-        guard let emailData = KeychainManager.load(key: "userEmail"),
-              let passwordData = KeychainManager.load(key: "userPassword") else {
-            return
+        loadUserCredentials()
+    }
+    
+    /// 判斷是否應加載用戶信息
+    /// - Returns: 若應該加載用戶信息則返回 true，否則返回 false
+    private func shouldLoadRememberedUser() -> Bool {
+        return UserDefaults.standard.value(forKey: "RememberMe") as? Bool ?? false
+    }
+    
+    /// 從 Keychain 中加載用戶憑證並填入相應的輸入框
+    private func loadUserCredentials() {
+        if let emailData = KeychainManager.load(key: "userEmail"),
+           let passwordData = KeychainManager.load(key: "userPassword") {
+            setEmailAndPassword(emailData: emailData, passwordData: passwordData)
         }
-        
-        // 將加載的電子郵件設置到 loginView 中
+    }
+    
+    /// 將加載的電子郵件和密碼設置到 loginView 中
+    /// - Parameters:
+    ///   - emailData: 加載的電子郵件數據
+    ///   - passwordData: 加載的密碼數據
+    private func setEmailAndPassword(emailData: Data, passwordData: Data) {
         if let email = String(data: emailData, encoding: .utf8) {
             loginView.setEmail(email)
         }
         
-        // 將加載的密碼設置到 loginView 中
         if let password = String(data: passwordData, encoding: .utf8) {
             loginView.setPassword(password)
         }
     }
-    
 }
 
 // MARK: - LoginViewDelegate
