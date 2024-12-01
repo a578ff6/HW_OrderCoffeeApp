@@ -22,7 +22,8 @@
  
  `1.底線樣式`：在文字輸入框下方顯示一條自訂底線。
  `2.右側圖標功能`：支持在輸入框右側添加一個按鈕，該按鈕可以是靜態圖標，也可以有交互行為，例如顯示/隱藏密碼的功能。
- 
+ `3. 特定欄位屬性設置`：根據不同的欄位類型，配置合適的 `textContentType` 和 `keyboardType` 以提供最佳用戶體驗。
+
  ----------------------------------------------
  
  `* Why - 為什麼重構圖標按鈕的設計`
@@ -33,6 +34,11 @@
 
  - `提升靈活性`：
     - 使用 UIButton 允許我們根據需要輕鬆添加按鈕的點擊行為，使得圖標不僅可以靜態顯示，還可以根據場景實現相應的交互功能，比如密碼的顯示/隱藏。
+
+ - `設置 textField 屬性的動機`：
+    - 在實作密碼輸入框的過程中，遇到因 `textContentType` 設置為 `.newPassword` 或 `.password` 時，導致 iCloud Keychain 強密碼提示的問題，尤其是「Cannot show Automatic Strong Passwords...」的警告，進而導致使用者在點擊密碼欄位時出現延遲感。
+    - 為了解決這個問題，決定對密碼欄位設置 `.oneTimeCode` 作為 `textContentType`，以避免延遲及 iCloud 提示。
+    - 同時根據不同欄位類型（例如 email、name）設置相應的屬性，以提高輸入體驗的一致性和可用性。
  
  ----------------------------------------------
 
@@ -46,24 +52,29 @@
  
  `3. 靜態圖標`：
     - 只需提供圖標名稱，不需要點擊行為。
- 
- ```swift
- bottomLineTextField.configureRightButton(iconName: "envelope")
- ```
- 
+
  `4.交互按鈕（例如密碼顯示切換）：`
     - 設置 isPasswordToggle 為 true，添加按鈕的交互行為。
+
+ `5. 使用欄位類型配置輸入屬性：`
+    - `setupTextFieldProperties(fieldType:)` 方法根據不同的欄位類型，配置 `textContentType` 和 `keyboardType`，例如：
  
  ```swift
- bottomLineTextField.configureRightButton(iconName: "eye", isPasswordToggle: true)
+ bottomLineTextField.configureRightButton(iconName: "eye", isPasswordToggle: true, fieldType: .password)
  ```
  
+ - `textContentType` 設為 .`oneTimeCode` 可以避免延遲問題，並確保使用體驗的一致性。
+ - `keyboardType` 設為 .`asciiCapable` 以防止無法識別的符號輸入。
+
  ----------------------------------------------
 
  `* 職責劃分明確`
  
  - `集中圖標按鈕的設置`：
     -  通過 `configureRightButton` 方法統一處理所有右側按鈕的設置，這樣的設計提高了代碼的可讀性和易維護性。
+ 
+ - `設置特定欄位屬性`：
+    - 使用 `setupTextFieldProperties` 方法集中配置 `textContentType` 和 `keyboardType`，根據不同欄位的用途，設置合適的屬性，確保輸入體驗的一致性並解決潛在的延遲問題。
  
  - `減少代碼重複`：
     -  重構後的設計去除了對靜態圖標和交互按鈕的分別處理，改為統一管理，減少了代碼的重複和冗餘。
@@ -216,6 +227,132 @@
  */
 
 
+// MARK: - setupTextFieldProperties` 方法的筆記（重要）
+/**
+ 
+ ## setupTextFieldProperties` 方法的筆記（重要）
+ 
+`* textContentType部分：`
+ 
+ - https://reurl.cc/DKZrON （  textContentType 要設成 oneTimeCode，才不會跳出 Strong Password Overlay。 ）
+ - https://reurl.cc/yDe3oO   ( Strong password overlay on UITextField )
+ - https://reurl.cc/EgZ9D1  ( Enabling Password AutoFill on a text input view )
+ - 主要是當初在「密碼欄位」時出現「觸發強密碼自動填充的提示」導致出現延遲感。
+ - 透過設置 textContentType為oneTimeCode避免此問題。
+ 
+`* keyboardType部分：`
+ 
+ - 當初在設置「密碼欄位」的鍵盤時，我使用default，導致點擊togglePasswordVisibility切換「密碼的可見狀態」時，鍵盤的樣式不一致，進而出現佈局錯誤。
+ - 後來改成asciiCapable即可解決。
+ 
+ ----------------------------------------------
+
+` * What`
+ 
+ - `setupTextFieldProperties` 是用來配置 `UITextField` 屬性的方法，特別是根據欄位類型 (`FieldType`) 來設置相應的 `textContentType` 和 `keyboardType`。
+ - 這些屬性設定能夠讓每個輸入框根據其用途提供最佳的使用體驗。
+
+ ----------------------------------------------
+
+ `* Why `
+ 
+ `1. 提高可用性：`
+ 
+ - 不同類型的輸入框，如電子郵件、姓名、密碼等，對應不同的輸入行為和自動填寫提示。
+ - 通過 `textContentType` 設定，系統可以自動判斷如何處理輸入框的內容（如建議用戶名、自動填充等），進而提升用戶體驗。
+   
+ `2. 保持一致性：`
+ 
+ - 根據欄位類型設置 `keyboardType`，如電子郵件欄位使用 `.emailAddress` 鍵盤，而密碼欄位使用 `.asciiCapable`。
+ - 這樣可以確保用戶在填寫各種欄位時，輸入方式一致且符合預期，減少輸入錯誤的可能性。
+
+ `3. 改善密碼輸入行為：`
+ 
+ - 對於密碼欄位，使用 `textContentType = .oneTimeCode` 可以避免觸發強密碼建議以及相關的延遲問題。
+ - 同時設定 `.asciiCapable` 確保用戶只能輸入英文和數字，避免錯誤的字符輸入。
+
+ `4. 解決延遲問題：`
+ 
+ - 當初遇到的問題是設置密碼欄位為 `textContentType = .newPassword`  時會觸發「Cannot show Automatic Strong Passwords for app bundleID: com.tonytsao.HW-OrderCoffeeApp due to error: iCloud Keychain is disabled」的警告，導致輸入欄位有延遲感。
+ - 而使用 `textContentType = .oneTimeCode` 則不會有這樣的問題。
+ - 因此，選擇這種配置能夠避免不必要的延遲並提升用戶體驗。
+
+ ----------------------------------------------
+
+ `* How`
+ 
+ - 使用 `fieldType` 參數，根據欄位用途配置相應的 `textContentType` 和 `keyboardType`。
+   
+ - 電子郵件欄位 (.email):
+   - `textContentType` 設為 `.emailAddress`，方便系統自動提供電子郵件地址建議。
+   - `keyboardType` 設為 `.emailAddress`，使用戶能快速輸入電子郵件。
+
+ - 姓名欄位 (.name):
+   - `textContentType` 設為 `.name`，讓系統自動填充可能的名稱。
+   - `keyboardType` 設為 `.default`，因為用戶可能需要輸入英文字母和其他符號。
+
+ - 密碼欄位 (.password):
+   - `textContentType` 設為 `.oneTimeCode`，這樣可以避免系統建議強密碼及自動填充延遲的問題。
+   - `keyboardType` 設為 `.asciiCapable`，確保用戶只能輸入 ASCII 字符（即數字和英文字母），這樣可避免無法識別的字符。
+
+ - 其他欄位 (.none):
+   - 設置 `textContentType` 為 `.none`，表示沒有特殊的自動填充需求。
+   - `keyboardType` 設為 `.default`，提供標準鍵盤輸入。
+ */
+
+
+// MARK: - isSecureTextEntry 切換行為筆記（重要）
+/**
+ 
+ ##  isSecureTextEntry 切換行為筆記
+ 
+ - 觀察「巴哈姆特的登入」
+ - https://reurl.cc/26odAa
+ - 主要是一開始在測試的時候發現，在輸入的過程中，進行isSecureTextEntry切換，會讓原先輸入的文字被清空。
+ 
+ `* What - 什麼是 isSecureTextEntry 切換行為`
+
+ - `isSecureTextEntry` 是 `UITextField` 中用於控制是否隱藏輸入內容（例如密碼）的屬性。
+ - 當此屬性從 `true` 切換到 `false`，或反向切換時，UITextField 會自動清除當前的文字。
+ 
+ ----------------------------------------------
+
+ `* Why - 為什麼會發生這種行為？`
+
+ `1.系統安全設計：`
+
+ - 當 `isSecureTextEntry` 切換時，iOS 系統會出於安全考量而清除內容以防止潛在的敏感信息被暴露在不安全的狀況下。
+ - 這是因為在使用者切換密碼顯示/隱藏狀態時，系統重新處理了文字輸入，導致可能會清除當前的文字。
+ 
+ `2.預設行為不可更改：`
+
+ - iOS 內建的這個行為並不能通過簡單的屬性修改來避免，這是一個無法直接覆蓋的預設設計。
+ - 即使透過保存和恢復文字內容的方式，也可能因為光標位置、焦點的變化而導致文字輸入的丟失。
+ 
+ ----------------------------------------------
+
+ `* How - 如何應對這個行為`
+
+ `1.理解並接受這是系統的預設行為：`
+
+ - 目前這種行為是 iOS 系統的設計之一，目的是保護用戶敏感信息，所以開發者需要理解這個行為是無法通過簡單代碼直接解決的。
+ 
+` 2.告知用戶可能的影響：`
+
+ - 在 UI 上增加提示，告知用戶在切換密碼顯示狀態時，可能會導致輸入內容的丟失。這樣的提示可以減少用戶的困惑，讓用戶提前做好準備。
+ 
+ `3.重新考慮密碼切換的必要性：`
+
+ - 如果這個功能對於用戶體驗並非關鍵，或在切換顯示/隱藏密碼時經常出現問題，可以考慮取消這個交互，直接固定密碼的顯示狀態，以提高穩定性和一致性。
+ 
+ `* 總結：`
+
+ - 在 isSecureTextEntry 切換過程中文字丟失是 iOS 系統的正常行為，特別是在切換密碼顯示/隱藏狀態時。
+ - 這種行為源自系統的安全設計，目的是保護敏感信息不被意外暴露。
+ - 開發者在設計密碼輸入框時需要注意這個行為，並根據需求選擇適當的交互方案，或者適當地告知用戶，避免用戶在切換時感到困惑或導致輸入數據丟失。
+ */
+
+
 import UIKit
 
 /// 自訂一個帶底線樣式的文字輸入框 (TextField)
@@ -238,7 +375,7 @@ class BottomLineTextField: UITextField {
         super.init(frame: frame)
         setupBottomLine()
     }
-
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         fatalError("init(coder:) has not been implemented")
@@ -307,8 +444,25 @@ class BottomLineTextField: UITextField {
     /// - Parameters:
     ///   - iconName: 圖標的名稱
     ///   - isPasswordToggle: 是否用於密碼顯示切換
+    ///   - fieldType: 可選，用於指定欄位的用途（如姓名、郵件、電話等）
     /// - 用於設置右側的靜態或交互按鈕，例如郵件圖標或密碼切換圖標
-    func configureRightButton(iconName: String, isPasswordToggle: Bool = false) {
+    func configureRightButton(iconName: String, isPasswordToggle: Bool = false, fieldType: FieldType? = nil) {
+        
+        // 設置右側圖標
+        setupPasswordToggleIcon(iconName: iconName, isPasswordToggle: isPasswordToggle)
+        
+        // 配置欄位屬性
+        setupTextFieldProperties(fieldType: fieldType)
+        
+        // 設定按鈕作為 TextField 右側圖標
+        setRightButtonAsRightView()
+    }
+    
+    /// 配置右側圖標及其行為
+    /// - Parameters:
+    ///   - iconName: 圖標的名稱
+    ///   - isPasswordToggle: 是否為密碼切換按鈕
+    private func setupPasswordToggleIcon(iconName: String, isPasswordToggle: Bool) {
         // 設置按鈕圖標
         setRightIcon(iconName: iconName, pointSize: 14)
         
@@ -318,9 +472,45 @@ class BottomLineTextField: UITextField {
             isSecureTextEntry = true
             rightButton.addTarget(self, action: #selector(togglePasswordVisibility), for: .touchUpInside)
         }
-        
-        // 設定按鈕作為 TextField 右側圖標
+    }
+    
+    /// 配置欄位的 textContentType 和鍵盤類型
+    /// - Parameter fieldType: 欄位類型
+    private func setupTextFieldProperties(fieldType: FieldType?) {
+        switch fieldType {
+        case .email:
+            self.textContentType = .emailAddress
+            self.keyboardType = .emailAddress
+        case .name:
+            self.textContentType = .name
+            self.keyboardType = .default
+        case .password:
+            self.textContentType = .oneTimeCode
+            self.keyboardType = .asciiCapable
+        default:
+            self.textContentType = .none
+            self.keyboardType = .default
+        }
+    }
+    
+    /// 設置右側圖標為 TextField 的右側視圖
+    private func setRightButtonAsRightView() {
         rightView = rightButton
         rightViewMode = .always
     }
+    
+    // MARK: - Enum for Field Types
+    
+    /// 定義不同的欄位類型，用於配置 TextField 的行為和屬性，以符合欄位的特定用途。
+    /// - email: 電子郵件欄位，用於輸入電子郵件地址，系統會根據 textContentType 提供自動補全。
+    /// - name: 姓名欄位，用於輸入用戶的姓名，系統會根據 textContentType 提供相關自動填寫。
+    /// - password: 密碼欄位，用於輸入密碼，會設置合適的鍵盤類型並`防止系統觸發強密碼提示`。
+    /// - none: 無特定用途的欄位，表示沒有特別的自動填充需求。
+    enum FieldType {
+        case email
+        case name
+        case password
+        case none
+    }
+    
 }
