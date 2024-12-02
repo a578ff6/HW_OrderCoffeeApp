@@ -31,6 +31,15 @@
 		934FB58C2CFA9A3000757C7C /* SignUpScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB58B2CFA9A3000757C7C /* SignUpScrollView.swift */; };
 		934FB58E2CFB02C500757C7C /* SignUpViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB58D2CFB02C500757C7C /* SignUpViewDelegate.swift */; };
 		934FB5902CFB071B00757C7C /* SignUpActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB58F2CFB071B00757C7C /* SignUpActionHandler.swift */; };
+		934FB5982CFDAFFC00757C7C /* ForgotPasswordLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5972CFDAFFC00757C7C /* ForgotPasswordLabel.swift */; };
+		934FB59A2CFDC21700757C7C /* ForgotPasswordTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5992CFDC21700757C7C /* ForgotPasswordTextField.swift */; };
+		934FB59C2CFDC45D00757C7C /* ForgotPasswordFilledButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB59B2CFDC45D00757C7C /* ForgotPasswordFilledButton.swift */; };
+		934FB59E2CFDCC2300757C7C /* ForgotPasswordAttributedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB59D2CFDCC2300757C7C /* ForgotPasswordAttributedButton.swift */; };
+		934FB5A02CFDCF5800757C7C /* ForgotPasswordStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB59F2CFDCF5800757C7C /* ForgotPasswordStackView.swift */; };
+		934FB5A22CFDD64B00757C7C /* ForgotPasswordScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5A12CFDD64B00757C7C /* ForgotPasswordScrollView.swift */; };
+		934FB5A52CFDEF5500757C7C /* ForgotPasswordActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5A42CFDEF5500757C7C /* ForgotPasswordActionHandler.swift */; };
+		934FB5A72CFDEF9F00757C7C /* ForgotPasswordDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5A62CFDEF9F00757C7C /* ForgotPasswordDelegate.swift */; };
+		934FB5AA2CFE0BA000757C7C /* ForgotPasswordNavigationBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5A92CFE0BA000757C7C /* ForgotPasswordNavigationBarManager.swift */; };
 		934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */; };
 		9352912E2C873E9A0018B060 /* MenuSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */; };
 		935291302C875DA30018B060 /* UIView+ScaleAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */; };
@@ -152,7 +161,6 @@
 		939BD9D92B2A1B1900616D1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 939BD9D82B2A1B1900616D1C /* Assets.xcassets */; };
 		939BD9DC2B2A1B1900616D1C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 939BD9DA2B2A1B1900616D1C /* LaunchScreen.storyboard */; };
 		939BD9E42B2A1B4E00616D1C /* HomePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9E32B2A1B4E00616D1C /* HomePageViewController.swift */; };
-		939BD9EB2B2A7FB200616D1C /* UIButton+Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9EA2B2A7FB200616D1C /* UIButton+Styles.swift */; };
 		939BD9EF2B2AA48B00616D1C /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9EE2B2AA48B00616D1C /* LoginViewController.swift */; };
 		939BD9F12B2AB9C200616D1C /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9F02B2AB9C200616D1C /* SignUpViewController.swift */; };
 		939BD9F32B2AC27700616D1C /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9F22B2AC27700616D1C /* ForgotPasswordViewController.swift */; };
@@ -303,6 +311,15 @@
 		934FB58B2CFA9A3000757C7C /* SignUpScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpScrollView.swift; sourceTree = "<group>"; };
 		934FB58D2CFB02C500757C7C /* SignUpViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewDelegate.swift; sourceTree = "<group>"; };
 		934FB58F2CFB071B00757C7C /* SignUpActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpActionHandler.swift; sourceTree = "<group>"; };
+		934FB5972CFDAFFC00757C7C /* ForgotPasswordLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordLabel.swift; sourceTree = "<group>"; };
+		934FB5992CFDC21700757C7C /* ForgotPasswordTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordTextField.swift; sourceTree = "<group>"; };
+		934FB59B2CFDC45D00757C7C /* ForgotPasswordFilledButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordFilledButton.swift; sourceTree = "<group>"; };
+		934FB59D2CFDCC2300757C7C /* ForgotPasswordAttributedButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordAttributedButton.swift; sourceTree = "<group>"; };
+		934FB59F2CFDCF5800757C7C /* ForgotPasswordStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordStackView.swift; sourceTree = "<group>"; };
+		934FB5A12CFDD64B00757C7C /* ForgotPasswordScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordScrollView.swift; sourceTree = "<group>"; };
+		934FB5A42CFDEF5500757C7C /* ForgotPasswordActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordActionHandler.swift; sourceTree = "<group>"; };
+		934FB5A62CFDEF9F00757C7C /* ForgotPasswordDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordDelegate.swift; sourceTree = "<group>"; };
+		934FB5A92CFE0BA000757C7C /* ForgotPasswordNavigationBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordNavigationBarManager.swift; sourceTree = "<group>"; };
 		934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailViewController.swift; sourceTree = "<group>"; };
 		9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuSectionHeaderView.swift; sourceTree = "<group>"; };
 		9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ScaleAnimation.swift"; sourceTree = "<group>"; };
@@ -423,7 +440,6 @@
 		939BD9DB2B2A1B1900616D1C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		939BD9DD2B2A1B1900616D1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		939BD9E32B2A1B4E00616D1C /* HomePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageViewController.swift; sourceTree = "<group>"; };
-		939BD9EA2B2A7FB200616D1C /* UIButton+Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Styles.swift"; sourceTree = "<group>"; };
 		939BD9EE2B2AA48B00616D1C /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		939BD9F02B2AB9C200616D1C /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		939BD9F22B2AC27700616D1C /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
@@ -668,6 +684,64 @@
 			isa = PBXGroup;
 			children = (
 				934FB58F2CFB071B00757C7C /* SignUpActionHandler.swift */,
+			);
+			path = Handlers;
+			sourceTree = "<group>";
+		};
+		934FB5912CFDAF2900757C7C /* ForgotPassword */ = {
+			isa = PBXGroup;
+			children = (
+				934FB5942CFDAF6800757C7C /* Components */,
+				934FB5932CFDAF5A00757C7C /* Views */,
+				934FB5962CFDAF7B00757C7C /* Handlers */,
+				934FB5952CFDAF7000757C7C /* Delegates */,
+				934FB5922CFDAF5000757C7C /* View Controllers */,
+			);
+			path = ForgotPassword;
+			sourceTree = "<group>";
+		};
+		934FB5922CFDAF5000757C7C /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				939BD9F22B2AC27700616D1C /* ForgotPasswordViewController.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		934FB5932CFDAF5A00757C7C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				93DB1D342C47EE1900BA2CC1 /* ForgotPasswordView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		934FB5942CFDAF6800757C7C /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				934FB5A12CFDD64B00757C7C /* ForgotPasswordScrollView.swift */,
+				934FB59F2CFDCF5800757C7C /* ForgotPasswordStackView.swift */,
+				934FB5972CFDAFFC00757C7C /* ForgotPasswordLabel.swift */,
+				934FB5992CFDC21700757C7C /* ForgotPasswordTextField.swift */,
+				934FB59B2CFDC45D00757C7C /* ForgotPasswordFilledButton.swift */,
+				934FB59D2CFDCC2300757C7C /* ForgotPasswordAttributedButton.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		934FB5952CFDAF7000757C7C /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				934FB5A62CFDEF9F00757C7C /* ForgotPasswordDelegate.swift */,
+			);
+			path = Delegates;
+			sourceTree = "<group>";
+		};
+		934FB5962CFDAF7B00757C7C /* Handlers */ = {
+			isa = PBXGroup;
+			children = (
+				934FB5A42CFDEF5500757C7C /* ForgotPasswordActionHandler.swift */,
+				934FB5A92CFE0BA000757C7C /* ForgotPasswordNavigationBarManager.swift */,
 			);
 			path = Handlers;
 			sourceTree = "<group>";
@@ -1433,7 +1507,7 @@
 				936E09BB2CF4F5DD0092F246 /* HomePage */,
 				936E09C32CF610970092F246 /* Login */,
 				934FB5762CFA410200757C7C /* SignUp */,
-				939BDA6C2B2C200F00616D1C /* Authentication */,
+				934FB5912CFDAF2900757C7C /* ForgotPassword */,
 				9381224B2CE7666100ADFB7B /* Search */,
 				9381221D2CE2811400ADFB7B /* OrderHistoryDetail */,
 				93B7B5772CDBA58C00E0205A /* OrderHistory */,
@@ -1452,6 +1526,7 @@
 				93BD48B82C58DE1C00144E7F /* Security */,
 				93F9BB4F2C2916C400355A87 /* Models */,
 				939BDA702B2C25E400616D1C /* Services */,
+				939BDA6C2B2C200F00616D1C /* Authentication */,
 			);
 			path = HW_OrderCoffeeApp;
 			sourceTree = "<group>";
@@ -1459,19 +1534,11 @@
 		939BDA6C2B2C200F00616D1C /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
-				939BDA6D2B2C203500616D1C /* View Controllers */,
-				93BD48BA2C58DEE700144E7F /* Views */,
-				93BD48BB2C58DF1500144E7F /* Services */,
+				937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */,
+				93BD48B12C57CB9000144E7F /* AppleSignInController.swift */,
+				93BD48C22C5CE5B500144E7F /* EmailSignInController.swift */,
 			);
 			path = Authentication;
-			sourceTree = "<group>";
-		};
-		939BDA6D2B2C203500616D1C /* View Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				939BD9F22B2AC27700616D1C /* ForgotPasswordViewController.swift */,
-			);
-			path = "View Controllers";
 			sourceTree = "<group>";
 		};
 		939BDA702B2C25E400616D1C /* Services */ = {
@@ -1730,24 +1797,6 @@
 			path = Main;
 			sourceTree = "<group>";
 		};
-		93BD48BA2C58DEE700144E7F /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				93DB1D342C47EE1900BA2CC1 /* ForgotPasswordView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		93BD48BB2C58DF1500144E7F /* Services */ = {
-			isa = PBXGroup;
-			children = (
-				937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */,
-				93BD48B12C57CB9000144E7F /* AppleSignInController.swift */,
-				93BD48C22C5CE5B500144E7F /* EmailSignInController.swift */,
-			);
-			path = Services;
-			sourceTree = "<group>";
-		};
 		93BD48BD2C58E0B100144E7F /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -1793,7 +1842,6 @@
 				935374202CA2F02000794A63 /* Notifications.swift */,
 				939BDA2B2B2AC53700616D1C /* UIViewController+HideKeyboard.swift */,
 				93755C112C7E5541002570A5 /* UIViewController+KeyboardHandling.swift */,
-				939BD9EA2B2A7FB200616D1C /* UIButton+Styles.swift */,
 				9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */,
 				93B9DC792C3181910050BC3F /* UIView+SpringAnimation.swift */,
 				9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */,
@@ -2033,6 +2081,7 @@
 				935374122C9C5C6900794A63 /* FavoritesViewController.swift in Sources */,
 				93DB1D2D2C43D82200BA2CC1 /* OrderSectionHeaderView.swift in Sources */,
 				938122232CE286C300ADFB7B /* OrderHistoryDetailView.swift in Sources */,
+				934FB5A02CFDCF5800757C7C /* ForgotPasswordStackView.swift in Sources */,
 				93B7B5672CD9066D00E0205A /* OrderConfirmationHandlerDelegate.swift in Sources */,
 				936E09AD2CF080AF0092F246 /* SearchDrinkDataLoader.swift in Sources */,
 				935374552CB93F6D00794A63 /* OrderCustomerDetailsSectionHeaderView.swift in Sources */,
@@ -2042,6 +2091,7 @@
 				93B7B5552CD5E28500E0205A /* OrderConfirmationHandler.swift in Sources */,
 				93B492912C3E684700E7B947 /* OrderViewInteractionDelegate.swift in Sources */,
 				932258D32C9410F4004EA2D9 /* FavoriteManager.swift in Sources */,
+				934FB5A72CFDEF9F00757C7C /* ForgotPasswordDelegate.swift in Sources */,
 				935374782CCCCC7800794A63 /* StoreSelectionMapHandlerDelegate.swift in Sources */,
 				936E09B92CF4910A0092F246 /* SearchStatusLabel.swift in Sources */,
 				934FB57F2CFA8DA200757C7C /* SignUpTextField.swift in Sources */,
@@ -2055,6 +2105,7 @@
 				9375E2E32CD136D8002E3668 /* StoreInfoViewController.swift in Sources */,
 				9353741D2C9EB58300794A63 /* FavoritesLayoutProvider.swift in Sources */,
 				939BD9F32B2AC27700616D1C /* ForgotPasswordViewController.swift in Sources */,
+				934FB59C2CFDC45D00757C7C /* ForgotPasswordFilledButton.swift in Sources */,
 				934FB5822CFA906400757C7C /* SignUpFilledButton.swift in Sources */,
 				93B7B53B2CD1D53E00E0205A /* SelectStoreInfoView.swift in Sources */,
 				93B9DC742C3017FB0050BC3F /* DrinksCategoryLayoutProvider.swift in Sources */,
@@ -2077,6 +2128,7 @@
 				93DB1D2F2C461F9D00BA2CC1 /* KeychainManager.swift in Sources */,
 				93B492932C410A2E00E7B947 /* OrderSummaryCollectionViewCell.swift in Sources */,
 				937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */,
+				934FB5982CFDAFFC00757C7C /* ForgotPasswordLabel.swift in Sources */,
 				938122292CE358EA00ADFB7B /* OrderHistoryDetail.swift in Sources */,
 				9353745B2CBD43B900794A63 /* OrderCustomerNoteCell.swift in Sources */,
 				935374332CAFC29D00794A63 /* OrderLayoutProvider.swift in Sources */,
@@ -2091,9 +2143,11 @@
 				9381223D2CE58DA600ADFB7B /* OrderHistoryDetailSharingHandler.swift in Sources */,
 				936E09BF2CF5D7990092F246 /* HomePageViewDelegate.swift in Sources */,
 				939BD9D02B2A1B1700616D1C /* AppDelegate.swift in Sources */,
+				934FB5A22CFDD64B00757C7C /* ForgotPasswordScrollView.swift in Sources */,
 				9353745D2CBF281C00794A63 /* OrderCustomerSubmitCell.swift in Sources */,
 				935374152C9C5CD000794A63 /* FavoritesHandler.swift in Sources */,
 				934FB58C2CFA9A3000757C7C /* SignUpScrollView.swift in Sources */,
+				934FB5AA2CFE0BA000757C7C /* ForgotPasswordNavigationBarManager.swift in Sources */,
 				9353740E2C9AD6E100794A63 /* ButtonEffectManager.swift in Sources */,
 				93B9DC872C3661DF0050BC3F /* MainTabBarController.swift in Sources */,
 				9353743B2CB2BAB800794A63 /* OrderActionButtonsCell.swift in Sources */,
@@ -2107,6 +2161,7 @@
 				935374292CA4502B00794A63 /* NoFavoritesView.swift in Sources */,
 				9353747E2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift in Sources */,
 				938122572CE77A8A00ADFB7B /* SearchResult.swift in Sources */,
+				934FB59A2CFDC21700757C7C /* ForgotPasswordTextField.swift in Sources */,
 				935374742CCAC17B00794A63 /* StoreSelectionMapView.swift in Sources */,
 				934FB5862CFA947400757C7C /* SignUpCheckBoxButton.swift in Sources */,
 				938122312CE45EC500ADFB7B /* OrderHistoryDetailCustomerInfoCell.swift in Sources */,
@@ -2117,7 +2172,6 @@
 				93755C162C7F2F49002570A5 /* DatePickerHandler.swift in Sources */,
 				934FB5582CF8A6FA00757C7C /* LoginSeparatorView.swift in Sources */,
 				93B7B54F2CD50CE900E0205A /* OrderConfirmationViewController.swift in Sources */,
-				939BD9EB2B2A7FB200616D1C /* UIButton+Styles.swift in Sources */,
 				93B7B5592CD6751C00E0205A /* OrderConfirmationMessageCell.swift in Sources */,
 				93B7B5832CDBB6D600E0205A /* OrderHistoryHandler.swift in Sources */,
 				93B7B53D2CD1D76900E0205A /* StoreInfoView.swift in Sources */,
@@ -2128,6 +2182,7 @@
 				93B7B5742CDB425B00E0205A /* OrderConfirmationSectionExpansionManager.swift in Sources */,
 				938122512CE7760800ADFB7B /* SearchHandler.swift in Sources */,
 				93755C122C7E5542002570A5 /* UIViewController+KeyboardHandling.swift in Sources */,
+				934FB5A52CFDEF5500757C7C /* ForgotPasswordActionHandler.swift in Sources */,
 				934FB5682CF8DA6700757C7C /* LoginStackView.swift in Sources */,
 				935291412C89C1480018B060 /* DrinksCategorySectionFooterView.swift in Sources */,
 				93F9BB422C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift in Sources */,
@@ -2157,6 +2212,7 @@
 				93F9BB5A2C2A566D00355A87 /* DrinkOrderOptionsCollectionViewCell.swift in Sources */,
 				93B7B5952CDE30C400E0205A /* OrderHistoryEditingHandler.swift in Sources */,
 				934FB5842CFA936B00757C7C /* SignUpSeparatorView.swift in Sources */,
+				934FB59E2CFDCC2300757C7C /* ForgotPasswordAttributedButton.swift in Sources */,
 				935374192C9C601200794A63 /* FavoriteDrinkCell.swift in Sources */,
 				93F9BB4A2C269AC600355A87 /* DrinkDetailSeparatorView.swift in Sources */,
 				938122272CE2870800ADFB7B /* OrderHistoryDetailDelegate.swift in Sources */,
