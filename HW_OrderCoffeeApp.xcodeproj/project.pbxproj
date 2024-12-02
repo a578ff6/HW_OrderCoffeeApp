@@ -21,6 +21,16 @@
 		934FB5682CF8DA6700757C7C /* LoginStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5672CF8DA6700757C7C /* LoginStackView.swift */; };
 		934FB56A2CF8DAA400757C7C /* LoginScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5692CF8DAA400757C7C /* LoginScrollView.swift */; };
 		934FB5702CF9007C00757C7C /* LoginActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB56F2CF9007C00757C7C /* LoginActionHandler.swift */; };
+		934FB57D2CFA8A4300757C7C /* SignUpLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB57C2CFA8A4300757C7C /* SignUpLabel.swift */; };
+		934FB57F2CFA8DA200757C7C /* SignUpTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB57E2CFA8DA200757C7C /* SignUpTextField.swift */; };
+		934FB5822CFA906400757C7C /* SignUpFilledButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5812CFA906400757C7C /* SignUpFilledButton.swift */; };
+		934FB5842CFA936B00757C7C /* SignUpSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5832CFA936B00757C7C /* SignUpSeparatorView.swift */; };
+		934FB5862CFA947400757C7C /* SignUpCheckBoxButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5852CFA947400757C7C /* SignUpCheckBoxButton.swift */; };
+		934FB5882CFA962400757C7C /* SignUpAttributedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5872CFA962400757C7C /* SignUpAttributedButton.swift */; };
+		934FB58A2CFA977600757C7C /* SignUpStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5892CFA977600757C7C /* SignUpStackView.swift */; };
+		934FB58C2CFA9A3000757C7C /* SignUpScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB58B2CFA9A3000757C7C /* SignUpScrollView.swift */; };
+		934FB58E2CFB02C500757C7C /* SignUpViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB58D2CFB02C500757C7C /* SignUpViewDelegate.swift */; };
+		934FB5902CFB071B00757C7C /* SignUpActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB58F2CFB071B00757C7C /* SignUpActionHandler.swift */; };
 		934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */; };
 		9352912E2C873E9A0018B060 /* MenuSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */; };
 		935291302C875DA30018B060 /* UIView+ScaleAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */; };
@@ -283,6 +293,16 @@
 		934FB5672CF8DA6700757C7C /* LoginStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginStackView.swift; sourceTree = "<group>"; };
 		934FB5692CF8DAA400757C7C /* LoginScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginScrollView.swift; sourceTree = "<group>"; };
 		934FB56F2CF9007C00757C7C /* LoginActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginActionHandler.swift; sourceTree = "<group>"; };
+		934FB57C2CFA8A4300757C7C /* SignUpLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpLabel.swift; sourceTree = "<group>"; };
+		934FB57E2CFA8DA200757C7C /* SignUpTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpTextField.swift; sourceTree = "<group>"; };
+		934FB5812CFA906400757C7C /* SignUpFilledButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpFilledButton.swift; sourceTree = "<group>"; };
+		934FB5832CFA936B00757C7C /* SignUpSeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpSeparatorView.swift; sourceTree = "<group>"; };
+		934FB5852CFA947400757C7C /* SignUpCheckBoxButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpCheckBoxButton.swift; sourceTree = "<group>"; };
+		934FB5872CFA962400757C7C /* SignUpAttributedButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpAttributedButton.swift; sourceTree = "<group>"; };
+		934FB5892CFA977600757C7C /* SignUpStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpStackView.swift; sourceTree = "<group>"; };
+		934FB58B2CFA9A3000757C7C /* SignUpScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpScrollView.swift; sourceTree = "<group>"; };
+		934FB58D2CFB02C500757C7C /* SignUpViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewDelegate.swift; sourceTree = "<group>"; };
+		934FB58F2CFB071B00757C7C /* SignUpActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpActionHandler.swift; sourceTree = "<group>"; };
 		934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailViewController.swift; sourceTree = "<group>"; };
 		9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuSectionHeaderView.swift; sourceTree = "<group>"; };
 		9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ScaleAnimation.swift"; sourceTree = "<group>"; };
@@ -591,6 +611,65 @@
 				934FB5612CF8ACE800757C7C /* LoginAttributedButton.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		934FB5762CFA410200757C7C /* SignUp */ = {
+			isa = PBXGroup;
+			children = (
+				934FB5792CFA523300757C7C /* Components */,
+				934FB5772CFA521A00757C7C /* Views */,
+				934FB57B2CFA527100757C7C /* Handlers */,
+				934FB57A2CFA526700757C7C /* Delegates */,
+				934FB5782CFA522400757C7C /* View Controllers */,
+			);
+			path = SignUp;
+			sourceTree = "<group>";
+		};
+		934FB5772CFA521A00757C7C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				93DB1D392C49618C00BA2CC1 /* SignUpView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		934FB5782CFA522400757C7C /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				939BD9F02B2AB9C200616D1C /* SignUpViewController.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		934FB5792CFA523300757C7C /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				934FB58B2CFA9A3000757C7C /* SignUpScrollView.swift */,
+				934FB5892CFA977600757C7C /* SignUpStackView.swift */,
+				934FB57C2CFA8A4300757C7C /* SignUpLabel.swift */,
+				934FB57E2CFA8DA200757C7C /* SignUpTextField.swift */,
+				934FB5812CFA906400757C7C /* SignUpFilledButton.swift */,
+				934FB5832CFA936B00757C7C /* SignUpSeparatorView.swift */,
+				934FB5852CFA947400757C7C /* SignUpCheckBoxButton.swift */,
+				934FB5872CFA962400757C7C /* SignUpAttributedButton.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		934FB57A2CFA526700757C7C /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				934FB58D2CFB02C500757C7C /* SignUpViewDelegate.swift */,
+			);
+			path = Delegates;
+			sourceTree = "<group>";
+		};
+		934FB57B2CFA527100757C7C /* Handlers */ = {
+			isa = PBXGroup;
+			children = (
+				934FB58F2CFB071B00757C7C /* SignUpActionHandler.swift */,
+			);
+			path = Handlers;
 			sourceTree = "<group>";
 		};
 		935291322C8779B70018B060 /* View Controllers */ = {
@@ -1049,10 +1128,10 @@
 		936E09C32CF610970092F246 /* Login */ = {
 			isa = PBXGroup;
 			children = (
-				934FB5712CFA37E600757C7C /* Delegates */,
-				934FB5742CFA399600757C7C /* Handlers */,
 				934FB5752CFA39CD00757C7C /* Components */,
 				934FB5722CFA380A00757C7C /* Views */,
+				934FB5742CFA399600757C7C /* Handlers */,
+				934FB5712CFA37E600757C7C /* Delegates */,
 				934FB5732CFA398000757C7C /* View Controllers */,
 			);
 			path = Login;
@@ -1353,6 +1432,7 @@
 				93F9BB582C293E3E00355A87 /* Utilities */,
 				936E09BB2CF4F5DD0092F246 /* HomePage */,
 				936E09C32CF610970092F246 /* Login */,
+				934FB5762CFA410200757C7C /* SignUp */,
 				939BDA6C2B2C200F00616D1C /* Authentication */,
 				9381224B2CE7666100ADFB7B /* Search */,
 				9381221D2CE2811400ADFB7B /* OrderHistoryDetail */,
@@ -1390,7 +1470,6 @@
 			isa = PBXGroup;
 			children = (
 				939BD9F22B2AC27700616D1C /* ForgotPasswordViewController.swift */,
-				939BD9F02B2AB9C200616D1C /* SignUpViewController.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -1655,7 +1734,6 @@
 			isa = PBXGroup;
 			children = (
 				93DB1D342C47EE1900BA2CC1 /* ForgotPasswordView.swift */,
-				93DB1D392C49618C00BA2CC1 /* SignUpView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1966,14 +2044,18 @@
 				932258D32C9410F4004EA2D9 /* FavoriteManager.swift in Sources */,
 				935374782CCCCC7800794A63 /* StoreSelectionMapHandlerDelegate.swift in Sources */,
 				936E09B92CF4910A0092F246 /* SearchStatusLabel.swift in Sources */,
+				934FB57F2CFA8DA200757C7C /* SignUpTextField.swift in Sources */,
 				93B7B5792CDBA5D300E0205A /* OrderHistoryViewController.swift in Sources */,
 				93DB1D3A2C49618C00BA2CC1 /* SignUpView.swift in Sources */,
+				934FB57D2CFA8A4300757C7C /* SignUpLabel.swift in Sources */,
 				93755C1F2C80971F002570A5 /* ProfileOptionCell.swift in Sources */,
 				935374312CAD6F1500794A63 /* OrderView.swift in Sources */,
 				93B9DC782C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift in Sources */,
+				934FB5902CFB071B00757C7C /* SignUpActionHandler.swift in Sources */,
 				9375E2E32CD136D8002E3668 /* StoreInfoViewController.swift in Sources */,
 				9353741D2C9EB58300794A63 /* FavoritesLayoutProvider.swift in Sources */,
 				939BD9F32B2AC27700616D1C /* ForgotPasswordViewController.swift in Sources */,
+				934FB5822CFA906400757C7C /* SignUpFilledButton.swift in Sources */,
 				93B7B53B2CD1D53E00E0205A /* SelectStoreInfoView.swift in Sources */,
 				93B9DC742C3017FB0050BC3F /* DrinksCategoryLayoutProvider.swift in Sources */,
 				939BD9EF2B2AA48B00616D1C /* LoginViewController.swift in Sources */,
@@ -1989,6 +2071,7 @@
 				93B7B5872CDD4A0700E0205A /* OrderHistoryDelegate.swift in Sources */,
 				93B9DC812C32D7740050BC3F /* OrderManager.swift in Sources */,
 				9353747C2CCD7C9A00794A63 /* LocationManagerHandler.swift in Sources */,
+				934FB58A2CFA977600757C7C /* SignUpStackView.swift in Sources */,
 				935374102C9B218800794A63 /* DrinkImageCollectionViewCell.swift in Sources */,
 				939BD9F12B2AB9C200616D1C /* SignUpViewController.swift in Sources */,
 				93DB1D2F2C461F9D00BA2CC1 /* KeychainManager.swift in Sources */,
@@ -2010,9 +2093,11 @@
 				939BD9D02B2A1B1700616D1C /* AppDelegate.swift in Sources */,
 				9353745D2CBF281C00794A63 /* OrderCustomerSubmitCell.swift in Sources */,
 				935374152C9C5CD000794A63 /* FavoritesHandler.swift in Sources */,
+				934FB58C2CFA9A3000757C7C /* SignUpScrollView.swift in Sources */,
 				9353740E2C9AD6E100794A63 /* ButtonEffectManager.swift in Sources */,
 				93B9DC872C3661DF0050BC3F /* MainTabBarController.swift in Sources */,
 				9353743B2CB2BAB800794A63 /* OrderActionButtonsCell.swift in Sources */,
+				934FB58E2CFB02C500757C7C /* SignUpViewDelegate.swift in Sources */,
 				9352913F2C8843E40018B060 /* DrinksCategoryHandler.swift in Sources */,
 				938122532CE7761E00ADFB7B /* SearchResultsDelegate.swift in Sources */,
 				93755C332C8351AA002570A5 /* MenuViewController.swift in Sources */,
@@ -2023,6 +2108,7 @@
 				9353747E2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift in Sources */,
 				938122572CE77A8A00ADFB7B /* SearchResult.swift in Sources */,
 				935374742CCAC17B00794A63 /* StoreSelectionMapView.swift in Sources */,
+				934FB5862CFA947400757C7C /* SignUpCheckBoxButton.swift in Sources */,
 				938122312CE45EC500ADFB7B /* OrderHistoryDetailCustomerInfoCell.swift in Sources */,
 				93755C352C83520A002570A5 /* MenuCollectionHandler.swift in Sources */,
 				93B7B5532CD5E23B00E0205A /* OrderConfirmationLayoutProvider.swift in Sources */,
@@ -2070,6 +2156,7 @@
 				9352913A2C8835580018B060 /* DrinksCategoryView.swift in Sources */,
 				93F9BB5A2C2A566D00355A87 /* DrinkOrderOptionsCollectionViewCell.swift in Sources */,
 				93B7B5952CDE30C400E0205A /* OrderHistoryEditingHandler.swift in Sources */,
+				934FB5842CFA936B00757C7C /* SignUpSeparatorView.swift in Sources */,
 				935374192C9C601200794A63 /* FavoriteDrinkCell.swift in Sources */,
 				93F9BB4A2C269AC600355A87 /* DrinkDetailSeparatorView.swift in Sources */,
 				938122272CE2870800ADFB7B /* OrderHistoryDetailDelegate.swift in Sources */,
@@ -2103,6 +2190,7 @@
 				934FB55A2CF8A92100757C7C /* LoginLabel.swift in Sources */,
 				93B9DC7A2C3181910050BC3F /* UIView+SpringAnimation.swift in Sources */,
 				935374442CB67DB100794A63 /* Order.swift in Sources */,
+				934FB5882CFA962400757C7C /* SignUpAttributedButton.swift in Sources */,
 				936CFFCB2C6E24AD004B8724 /* UserDetailsReceiver.swift in Sources */,
 				93B7B5612CD7912400E0205A /* OrderrConfirmationCloseButtonCell.swift in Sources */,
 				934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */,
