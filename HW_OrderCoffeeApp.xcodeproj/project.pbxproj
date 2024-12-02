@@ -40,6 +40,7 @@
 		934FB5A52CFDEF5500757C7C /* ForgotPasswordActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5A42CFDEF5500757C7C /* ForgotPasswordActionHandler.swift */; };
 		934FB5A72CFDEF9F00757C7C /* ForgotPasswordDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5A62CFDEF9F00757C7C /* ForgotPasswordDelegate.swift */; };
 		934FB5AA2CFE0BA000757C7C /* ForgotPasswordNavigationBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5A92CFE0BA000757C7C /* ForgotPasswordNavigationBarManager.swift */; };
+		934FB5AC2CFE36F200757C7C /* TabIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5AB2CFE36F200757C7C /* TabIndex.swift */; };
 		934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */; };
 		9352912E2C873E9A0018B060 /* MenuSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */; };
 		935291302C875DA30018B060 /* UIView+ScaleAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */; };
@@ -320,6 +321,7 @@
 		934FB5A42CFDEF5500757C7C /* ForgotPasswordActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordActionHandler.swift; sourceTree = "<group>"; };
 		934FB5A62CFDEF9F00757C7C /* ForgotPasswordDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordDelegate.swift; sourceTree = "<group>"; };
 		934FB5A92CFE0BA000757C7C /* ForgotPasswordNavigationBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordNavigationBarManager.swift; sourceTree = "<group>"; };
+		934FB5AB2CFE36F200757C7C /* TabIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabIndex.swift; sourceTree = "<group>"; };
 		934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailViewController.swift; sourceTree = "<group>"; };
 		9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuSectionHeaderView.swift; sourceTree = "<group>"; };
 		9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ScaleAnimation.swift"; sourceTree = "<group>"; };
@@ -1544,6 +1546,7 @@
 		939BDA702B2C25E400616D1C /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				934FB5AB2CFE36F200757C7C /* TabIndex.swift */,
 				93B9DC7E2C32C5BC0050BC3F /* MenuController.swift */,
 				93B9DC802C32D7740050BC3F /* OrderManager.swift */,
 				939BDA642B2ACBA200616D1C /* FirebaseController.swift */,
@@ -2139,6 +2142,7 @@
 				9353743E2CB5149700794A63 /* OrderCustomerDetailsViewController.swift in Sources */,
 				939BDA6F2B2C211200616D1C /* Constants.swift in Sources */,
 				93B7B5372CD15F0F00E0205A /* StoreInfoPanelLayout.swift in Sources */,
+				934FB5AC2CFE36F200757C7C /* TabIndex.swift in Sources */,
 				9353745F2CC3D3F800794A63 /* OrderCustomerDetailsHandlerDelegate.swift in Sources */,
 				9381223D2CE58DA600ADFB7B /* OrderHistoryDetailSharingHandler.swift in Sources */,
 				936E09BF2CF5D7990092F246 /* HomePageViewDelegate.swift in Sources */,

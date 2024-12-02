@@ -228,7 +228,7 @@
     - 在實作返回主菜單（MenuViewController）的過程中，遇到了一些視覺上的問題。這些問題主要包括：
 
 `1.過渡視圖層級複雜：`
-    - 由於 `OrderConfirmationViewController` 是由 `OrderCustomerDetailsViewController` 全螢幕呈現 (modalPresentationStyle.fullScreen)，返回到 MenuViewController 的過程涉及多層視圖控制器的解散，並且還需要正確切換 UITabBarController 的選中索引。這使得返回過程較為複雜，容易出現視覺上的跳動或不順暢。
+    - 由於 `OrderConfirmationViewController` 是由 `OrderCustomerDetailsViewController` 全螢幕呈現 (`modalPresentationStyle.fullScreen`)，返回到 MenuViewController 的過程涉及多層視圖控制器的解散，並且還需要正確切換 UITabBarController 的選中索引。這使得返回過程較為複雜，容易出現視覺上的跳動或不順暢。
  
 `2.視覺上不流暢的跳動感：`
     - 在執行返回動畫時，有些視圖控制器會交疊出現，特別是 `TabBar` 和 `MenuViewController`，會感覺到一些“彈跳”效果，這會影響用戶的視覺體驗。
@@ -238,7 +238,7 @@
     - 成功地實作這個過程，是因為採取了一些關鍵的改變，這些改變讓過渡動畫變得更平順，具體有以下幾個：
  
 `1.先切換 Tab，再解散視圖控制器：`
-    - 在解散 (`dismiss`) 當前的 `OrderConfirmationViewController` 之前，先將 `UITabBarController` 的選中索引設定為 `Menu` 的部分（`selectedIndex = 0`）。
+    - 在解散 (`dismiss`) 當前的 `OrderConfirmationViewController` 之前，先將 `UITabBarController` 的選中索引設定為 `Menu` 的部分（`TabIndex.menu.rawValue`）。
     - 這樣一來，當 `OrderConfirmationViewController` 被解散後，畫面會直接顯示 `MenuViewController`，不會再出現多餘的跳轉，減少了過渡過程中的重複感和跳動感，讓用戶的視覺體驗更流暢。
 
 `2.關閉視圖控制器時無動畫 (animated: false)：`
@@ -256,10 +256,44 @@
     - 將 `UITabBarController` 的 `selectedIndex` 切換和 `dismiss` 視圖控制器的操作分開進行，避免了兩個動畫交疊進行，這樣能夠減少由於動畫時間不匹配而導致的不協調。
  
  `2,淡出動畫與淡入動畫的合理分配：`
-    - 在解散時選擇沒有動畫`（dismiss(animated: false)）`，避免了多重動畫之間的干擾，隨後針對具體的 `menuNavigationController.vi`ew 進行淡入動畫，使得動畫更集中在具體目標，減少了對 `TabBarController` 的影響。
+    - 在解散時選擇沒有動畫`（dismiss(animated: false)）`，避免了多重動畫之間的干擾，隨後針對具體的 `menuNavigationController.view` 進行淡入動畫，使得動畫更集中在具體目標，減少了對 `TabBarController` 的影響。
  
 ` 3.適當的動畫位置和順序：`
     - 先切換 `Tab`，再執行解散視圖控制器和導航堆疊重置，這樣可以更好地控制過渡過程，使每個動畫階段更流暢地銜接。
+ */
+
+
+// MARK: - 重點筆記：導航堆疊重置與動畫過渡調整
+/**
+ 
+ ## 重點筆記：導航堆疊重置與動畫過渡調整
+
+ `1. 功能概述`
+ 
+ - `resetNavigationStacksWithAnimation()` 方法負責重置應用中各個主要頁面的導航堆疊，使其返回到根視圖控制器。
+ - 這樣的重置操作能保證應用在某些流程（如訂單確認後）結束時，導航狀態保持一致，提升用戶的整體體驗。
+
+ `2. 具體調整與細節`
+ 
+ - `Menu 頁面 (主選單)：`
+    - 使用 `UIView.transition` 與 `transitionCrossDissolve` 動畫效果返回到根視圖控制器。
+    - 動畫的設計使過渡更加平順，提升用戶對主要頁面的視覺體驗。
+    
+ - `Search、Order、UserProfile 頁面：`
+      - 使用 `popToRootViewController(animated: false)` 返回根視圖控制器，不使用動畫。
+      - 頁面主要關注操作效率，因此不需要額外的動畫過渡。
+
+ `3. 使用這樣設計的好處`
+ 
+ - 一致性：每次結束操作後，所有主要頁面都回到根視圖控制器，保證導航狀態一致，避免用戶再次訪問時看到未預期的內容。
+ - 簡化導航狀態管理：回到根視圖能減少導航堆疊的深度，降低因不一致狀態引發的錯誤。
+ - 平衡體驗與效率：對主頁面（Menu）使用動畫過渡，增強體驗，而對於其他次要頁面（Search、Order、UserProfile），使用簡潔直接的返回，保證操作的流暢性和效率。
+
+ `4. 遇到的問題與解決方案`
+ 
+ - `問題`： 在訂單確認流程結束後，返回到主菜單時，某些頁面未回到根視圖控制器，導致用戶再次訪問時出現不一致的導航狀態。
+ - `解決方案`： 使用 `TabIndex` 確保正確定位各個頁面的 `NavigationController`，並通過 `popToRootViewController` 方法，將導航堆疊重置到根視圖控制器，並且根據不同頁面的性質，選擇是否使用過渡動畫。
+ 
  */
 
 
@@ -270,24 +304,24 @@
 
  `1. 問題背景`
  
-    - `訂單完成後的處理`：當用戶完成訂單並確認後，應對訂單資料進行清理，並返回主菜單頁面。
+    - `訂單完成後的處理`：當用戶完成訂單並確認後，應對訂單資料進行清理，確保下一次訂單開始於一個乾淨的狀態。並返回主菜單頁面。
     -` 視覺體驗需求`：返回頁面的過程應當流暢，避免多重動畫干擾帶來的跳動或不自然感。
  
  `2. 訂單完成後的資料清除`
  
  `* 清空 OrderItem：`
-    - 使用 OrderItemManager.shared.clearOrder() 方法清空所有訂單項目。
+    - 使用` OrderItemManager.shared.clearOrder()` 清空所有訂單項目。
     - 這樣設計的原因在於每個訂單都是獨立的，完成後應清空舊訂單項目，為下一次訂單做好準備。
  
  `* 重置 CustomerDetails：`
-    - 使用 CustomerDetailsManager.shared.resetCustomerDetails() 方法重置顧客詳細資料。
+    - 使用 `CustomerDetailsManager.shared.resetCustomerDetails() `方法重置顧客詳細資料。
     - 清除的資料包含顧客的姓名、電話、地址等，以防止這些資料影響下一次訂單。
     - 這樣可以確保顧客每次下訂單時都從新開始，尤其是當顧客的資料在本次訂單中有修改時。
  
  `3. 頁面返回操作的步驟`
  
  `* 先切換 Tab，再解散視圖控制器：`
-    - 在執行 dismiss（關閉視圖控制器）之前，先將 UITabBarController 的 selectedIndex 設置為 0，即 MenuViewController 對應的索引。
+    - 在執行 dismiss（關閉視圖控制器）之前，先將 `UITabBarController` 的 `selectedIndex` 設置為` TabIndex.menu.rawValue`，即 MenuViewController 對應的索引。
     - 這樣可以保證當前視圖控制器解散後，主頁面會正確顯示為菜單頁，而不是原來的訂單頁。
  
  `* 解散呈現的視圖控制器：`
@@ -300,7 +334,7 @@
  `4. 實作細節說明`
  
  `* 先切換 Tab，避免動畫交叉影響：`
-    - 在關閉 `OrderConfirmationViewController` 之前，先將 `tabBarController.selectedIndex` 設置為 0（主菜單）。
+    - 在關閉 `OrderConfirmationViewController` 之前，先將 `tabBarController.selectedIndex` 設置為` TabIndex.menu.rawValue`（主菜單）。
     - 這樣做的目的是減少在解散動畫與 Tab 切換動畫之間的干擾，防止多重動畫疊加導致不流暢。
  
  `* 清空資料：`
@@ -310,6 +344,7 @@
  `* 加入淡入動畫的導航堆疊重置：`
     - 在 `resetNavigationStacksWithAnimation() `方法中，使用 UIView.transition 對 `menuNavigationController.view` 進行淡入動畫。
     - 確保畫面過渡更加自然，減少用戶看到多層視圖重疊或跳轉的感覺。
+    - 同樣地，對於其他的 NavigationController（如 Search、Order、UserProfile）也應確保其返回根視圖控制器，避免殘留的視圖影響後續操作。
  
  `5. 這樣設計的好處`
     - `資料清理`：保證每次訂單都是獨立的，完成訂單後所有相關資料會被清除，為下一次訂單做好準備。
@@ -549,8 +584,8 @@ extension OrderConfirmationViewController: OrderConfirmationHandlerDelegate {
     /// 切換至主菜單頁面的 Tab
     private func switchToMenuTab() {
         guard let tabBarController = getTabBarController() else { return }
-        // 設置 TabBarController 選擇的索引為 Menu 頁面 (Menu 是索引0)
-        tabBarController.selectedIndex = 0
+        // 設置 TabBarController 選擇的索引為 Menu 頁面 (使用 TabIndex)
+        tabBarController.selectedIndex = TabIndex.menu.rawValue
     }
     
     /// 清空顧客資料和訂單項目
@@ -574,17 +609,23 @@ extension OrderConfirmationViewController: OrderConfirmationHandlerDelegate {
     private func resetNavigationStacksWithAnimation() {
         guard let tabBarController = getTabBarController() else { return }
         
-        // 確保選中的 NavigationController 回到根視圖控制器。
-        if let menuNavigationController = tabBarController.viewControllers?[0] as? UINavigationController {
-            // 使用淡入動畫返回根視圖控制器
-            UIView.transition(with: menuNavigationController.view, duration: 0.5, options: .transitionCrossDissolve, animations: {
-                menuNavigationController.popToRootViewController(animated: false)
-            })
+        let tabIndicesWithAnimation: [TabIndex] = [.menu]
+        let tabIndicesWithoutAnimation: [TabIndex] = [.search, .order, .userProfile]
+        
+        // 回到根視圖控制器，使用動畫效果（例如 Menu）
+        for tabIndex in tabIndicesWithAnimation {
+            if let navigationController = tabBarController.viewControllers?[tabIndex.rawValue] as? UINavigationController {
+                UIView.transition(with: navigationController.view, duration: 0.5, options: .transitionCrossDissolve, animations: {
+                    navigationController.popToRootViewController(animated: false)
+                })
+            }
         }
         
-        // 確保 Order 的 NavigationController 也回到根視圖控制器，但不加動畫。
-        if let orderNavigationController = tabBarController.viewControllers?[1] as? UINavigationController {
-            orderNavigationController.popToRootViewController(animated: false)
+        // 回到根視圖控制器，不使用動畫效果（例如 Search、Order、UserProfile）
+        for tabIndex in tabIndicesWithoutAnimation {
+            if let navigationController = tabBarController.viewControllers?[tabIndex.rawValue] as? UINavigationController {
+                navigationController.popToRootViewController(animated: false)
+            }
         }
     }
     
