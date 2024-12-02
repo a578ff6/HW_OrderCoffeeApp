@@ -330,6 +330,81 @@
  */
 
 
+// MARK: - `dismissKeyboard()` 的設置筆記
+/**
+
+ ## `dismissKeyboard()` 的設置筆記
+
+ - 雖然在有設置 IQKeyboardManager 點擊空白處收起鍵盤
+ - 但是在輸入欄位的時候保持著`鍵盤呈現狀態`，這時候去點擊「登入」、「Google」、「Apple」按鈕時，鍵盤並不會收起鍵盤，這時候會與HUD重疊。
+ - 因此設置` dismissKeyboard()` 再點擊按鈕的時候就收起鍵盤。
+ 
+` * What - 什麼是  dismissKeyboard()`
+ 
+ - `dismissKeyboard()` 是一個用來收起鍵盤的方法，當用戶在輸入框中輸入完畢後點擊某些按鈕（如註冊或登入）時，自動隱藏鍵盤，確保頁面的整體視覺狀態乾淨整齊。
+ - 在 `LoginViewController` 中，這個方法被設置為當用戶點擊「登入」或其他按鈕後，鍵盤會被自動收起，從而改善使用者的操作體驗。
+
+ -------------------------------
+
+` * Why - 為什麼需要 dismissKeyboard()`
+ 
+ `1. 提升用戶體驗：`
+ 
+    - 當用戶在完成表單輸入後，點擊註冊或登入按鈕時，如果鍵盤依然存在，會影響頁面的顯示和操作。
+    - 隱藏鍵盤可以讓頁面變得整潔，讓用戶的注意力集中在登入過程的其他部分，例如確認訊息或錯誤提示。
+
+ `2. 避免鍵盤遮擋視圖：`
+ 
+    - 若不收起鍵盤，畫面可能會被鍵盤遮擋，特別是在顯示 `HUD` 時，鍵盤可能影響到加載指示器的顯示，導致頁面操作的流暢度變差。
+
+ `3. 提升頁面的整體性：`
+ 
+    - 當用戶完成操作，例如點擊註冊或登入按鈕，鍵盤已經不再是所需的界面元素。
+    - 通過收起鍵盤，可以讓頁面進入下一步的狀態（例如顯示成功提示或進行頁面跳轉），更符合用戶的操作邏輯。
+
+ -------------------------------
+
+ `* How - 如何使用 dismissKeyboard()`
+ 
+ `1. 方法設置：`
+ 
+    - `dismissKeyboard()` 被設置在 `LoginViewController` 中，以集中管理所有與鍵盤有關的頁面行為。這樣能保持控制器對整體視圖的控制，符合 MVC 模式中「控制器管理頁面狀態」的原則。
+    - 具體實現上，透過 `view.endEditing(true)` 來結束當前的輸入操作並收起鍵盤。
+ 
+    ```swift
+    private func dismissKeyboard() {
+        view?.endEditing(true)
+    }
+    ```
+
+ `2. 使用時機：`
+ 
+    - 當用戶點擊註冊或登入等按鈕時，會在這些按鈕的事件處理方法中調用 `dismissKeyboard()`。
+    - 例如：
+ 
+    ```swift
+    func loginViewDidTapLoginButton() {
+        dismissKeyboard()  // 點擊註冊按鈕後先收起鍵盤
+        // 進行其他註冊操作...
+    }
+    ```
+ 
+    - 此方法可以被多次重複使用在需要收起鍵盤的地方，如點擊「Google 登入」或「Apple 登入」時，確保操作的統一性。
+
+ `3. 位置設置：`
+ 
+    - `dismissKeyboard()` 設置在 `LoginViewController` 中，而不是 `LoginActionHandler`，因為這樣符合控制器管理整個頁面狀態的職責，保持 `LoginActionHandler` 專注於按鈕行為的處理，不涉及整體視圖管理的邏輯。
+
+ -------------------------------
+
+ `* 總結`
+ 
+ - `dismissKeyboard()` 用於在用戶提交註冊或登入表單時隱藏鍵盤，提供乾淨的視覺效果和良好的用戶體驗。
+ - 將其放置在控制器中，可以集中管理鍵盤收起的行為，讓整體頁面狀態更易於維護。
+ - 它不僅提高了代碼的清晰性，也改善了用戶的交互流暢度，使應用的行為更符合用戶的操作邏輯。
+ */
+
+
 
 // MARK: - 視圖佈局分離版本
 /*
@@ -556,6 +631,15 @@ class LoginViewController: UIViewController {
         actionHandler = LoginActionHandler(view: loginView, delegate: self)
     }
     
+    // MARK: - Dismiss Keyboard
+    
+    /// 統一的鍵盤收起方法
+    /// - 收起當前視圖中活動的鍵盤
+    /// - 使用於各種按鈕操作開始前，確保畫面整潔、避免鍵盤遮擋重要資訊或 HUD
+    private func dismissKeyboard() {
+        view?.endEditing(true)
+    }
+    
     // MARK: - User Data Management
     
     /// 在 App 啟動時存取並加載用戶資訊（若有記住我選項被勾選）
@@ -605,7 +689,9 @@ extension LoginViewController: LoginViewDelegate {
     /// 當使用者點擊登入按鈕時的處理邏輯
     /// - 檢查電子郵件和密碼是否輸入
     /// - 進行登入請求，若成功則導向主頁面
+    /// - 在登入流程開始前先收起鍵盤，確保畫面整潔並避免影響 HUD 顯示
     func loginViewDidTapLoginButton() {
+        dismissKeyboard()
         let email = loginView.getEmail()
         let password = loginView.getPassword()
         
@@ -631,7 +717,9 @@ extension LoginViewController: LoginViewDelegate {
     
     /// 當使用者點擊 Google 登入按鈕時的處理邏輯
     /// - 使用 Google 提供的方法進行登入，若成功則導向主頁面
+    /// - 登入過程開始前收起鍵盤，避免鍵盤遮擋 HUD
     func loginViewDidTapGoogleLoginButton() {
+        dismissKeyboard()
         Task {
             HUDManager.shared.showLoading(text: "Logging in...")
             do {
@@ -649,7 +737,9 @@ extension LoginViewController: LoginViewDelegate {
     
     /// 當使用者點擊 Apple 登入按鈕時的處理邏輯
     /// - 使用 Apple 提供的方法進行登入，若成功則導向主頁面
+    /// - 登入過程開始前收起鍵盤，避免鍵盤遮擋 HUD
     func loginViewDidTapAppleLoginButton() {
+        dismissKeyboard()
         Task {
             HUDManager.shared.showLoading(text: "Logging in...")
             do {

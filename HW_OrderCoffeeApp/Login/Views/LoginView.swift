@@ -594,10 +594,10 @@ class LoginView: UIView {
     private let signInLabel = LoginLabel(text: "Sign in with email", fontSize: 14, weight: .medium, textColor: .lightGray)
     
     /// Email 輸入框，用於讓使用者輸入電子郵件
-    private let emailTextField = LoginTextField(placeholder: "Email", rightIconName: "envelope")
+    private let emailTextField = LoginTextField(placeholder: "Email", rightIconName: "envelope", isPasswordField: false, fieldType: .email)
     
     /// 密碼輸入框，用於讓使用者輸入密碼
-    private let passwordTextField = LoginTextField(placeholder: "Password", rightIconName: "eye", isPasswordField: true)
+    private let passwordTextField = LoginTextField(placeholder: "Password", rightIconName: "eye", isPasswordField: true, fieldType: .password)
     
     /// "記住我" 選項按鈕，用於讓使用者選擇是否記住帳號密碼
     private let rememberMeButton = LoginCheckBoxButton(title: " Remember Me")

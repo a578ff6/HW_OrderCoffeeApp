@@ -16,7 +16,8 @@
  - `BottomLineTextField`：
    - 是一個自訂的 `UITextField`，擁有底線樣式並支援右側靜態或交互的圖標功能。
    - 右側按鈕可以是單純的圖標顯示（靜態）或具交互行為（例如切換密碼顯示）。
-   
+   - 通過 `setupTextFieldProperties` 設置合適的輸入類型和鍵盤類型，以提升用戶體驗。
+
  - `LoginTextField`：
    - 繼承自 `BottomLineTextField`，針對登入頁面中的具體需求進行擴展。
    - 根據具體用途，提供不同的輸入功能，例如電子郵件輸入框或密碼輸入框。
@@ -37,8 +38,8 @@
  `3. 靈活性提升：`
  
     - 通過在 `BottomLineTextField` 中提供 `configureRightButton` 這樣的通用方法，可以讓 `LoginTextField` 自由選擇設置靜態按鈕（例如顯示郵件圖標）或交互按鈕（例如切換密碼顯示）。
-    - 這樣的設計可以根據不同的需求來靈活配置右側按鈕行為。
-
+    - 這樣的設計可以根據不同的需求來靈活配置右側按鈕行為及輸入框屬性。
+ 
  ----------------------------------------
 
  `* How - 如何使用 LoginTextField 與 BottomLineTextField 的關聯設計？`
@@ -52,10 +53,13 @@
       - 使用 `configureRightButton(iconName:isPasswordToggle:)` 方法，可以靈活設置右側靜態圖標或具交互行為的按鈕。
       - 透過傳入 `isPasswordToggle` 參數來決定按鈕的行為，如果是密碼顯示切換，則設置點擊行為為 `togglePasswordVisibility()`。
 
+    - `欄位屬性設置`：
+      - 使用 `setupTextFieldProperties(fieldType:)` 方法來設置 `textContentType` 和 `keyboardType`，確保根據欄位類型提供適當的鍵盤和自動填充選項，以提升用戶體驗。
+
  `2. LoginTextField 的應用：`
  
     - `自訂輸入框類型`：
-      - `LoginTextField` 繼承自 `BottomLineTextField`，根據不同的需求（例如 `emailTextField` 或 `passwordTextField`），通過 `setupTextField(placeholder:rightIconName:isPasswordField:)` 來設置輸入框屬性。
+      - `LoginTextField` 繼承自 `BottomLineTextField`，根據不同的需求（例如 `emailTextField` 或 `passwordTextField`），通過 `setupTextField(placeholder:rightIconName:isPasswordField:fieldType:)` 來設置輸入框屬性。
       - `isPasswordField` 參數用於指示該輸入框是否為密碼框。如果是，則會調用 `setRightInteractiveButtonForPasswordToggle(iconName:)`，設置密碼顯示/隱藏切換按鈕。
  
     - `統一風格`：
@@ -64,10 +68,10 @@
  `3. 實際應用範例：`
  
     - `電子郵件輸入框 (emailTextField)`：
-      - 使用 `LoginTextField` 並傳入 `placeholder` 為 "Email"，`rightIconName` 為 "envelope"，設置為靜態圖標按鈕。這樣用戶能夠直觀理解這個輸入框是用於輸入郵件。
+      - 使用 `LoginTextField` 並傳入 `placeholder` 為 "Email"，`rightIconName` 為 "envelope"，以及 `fieldType` 為 `.email`，設置為靜態圖標按鈕。這樣用戶能夠直觀理解這個輸入框是用於輸入郵件。
  
     - `密碼輸入框 (passwordTextField)`：
-      - 使用 `LoginTextField` 並傳入 `placeholder` 為 "Password"，`isPasswordField` 為 `true`。這樣就自動設置了右側交互按鈕，用戶可以通過點擊按鈕來切換密碼的顯示或隱藏狀態。
+      - 使用 `LoginTextField` 並傳入 `placeholder` 為 "Password"，`isPasswordField` 為 `true`，`fieldType` 為 `.password`。這樣就自動設置了右側交互按鈕，用戶可以通過點擊按鈕來切換密碼的顯示或隱藏狀態。
 
  ----------------------------------------
 
@@ -76,6 +80,7 @@
     - `BottomLineTextField` 和 `LoginTextField` 的關聯設計在於將通用的 UI 功能抽象出來，再通過繼承來進行特定應用的擴展。
     - 這樣的設計讓代碼遵循了單一責任原則，使得每個類別的職責更加清晰，有助於提高代碼的重用性和一致性。
     - 在 `LoginView` 中，透過 `LoginTextField` 可以方便地創建具特定行為的輸入框，減少重複代碼，並且保持輸入框設計和交互的一致性，讓開發和維護更加輕鬆和直觀。
+    -  - 通過 `setupTextFieldProperties` 方法，有效解決了因強密碼提示導致的延遲問題，使登入頁面的密碼輸入更加流暢，並根據欄位類型配置合適的鍵盤，進一步提升了用戶體驗和代碼的可擴展性。
  
  */
 
@@ -98,8 +103,11 @@
  - 在登入畫面中，輸入框需要額外的功能來提升用戶體驗，例如顯示郵件圖標或支援密碼顯示切換功能。
  - `LoginTextField` 通過繼承和擴展 `BottomLineTextField`，實現了這些專屬需求，使登入頁面的代碼更簡潔和更有可讀性。
  - 此外，使用專用類別有助於提升代碼的模組化，減少重複邏輯，並且使後續的維護和調整更容易。
- -  由於 LoginTextField 繼承了 BottomLineTextField，所有底線的設置、右側按鈕的配置等通用功能都可以共享，進一步減少重複代碼。
+ -  由於 `LoginTextField` 繼承了 `BottomLineTextField`，所有底線的設置、右側按鈕的配置等通用功能都可以共享，進一步減少重複代碼。
 
+ - `文本框屬性設置的改進`：
+   - 在 `BottomLineTextField` 中，增加了 `setupTextFieldProperties(fieldType:)` 以針對不同類型的輸入框設置適合的 `textContentType` 和 `keyboardType`。
+   - 這是為了防止在密碼欄位中出現延遲及強密碼提示問題，提高登入輸入框的使用體驗。
  
  ----------------------------------------
 
@@ -115,10 +123,12 @@
     - `placeholder`：設置佔位符，幫助用戶理解要輸入的內容。
     - `rightIconName`：可選參數，設置右側靜態圖標，例如在電子郵件輸入框中顯示信封圖標。
     - `isPasswordField`：標誌是否是密碼框。如果是，則會提供顯示/隱藏密碼的功能。
+    -  `fieldType`：欄位類型，決定應使用何種 `textContentType` 和 `keyboardType`（例如，電子郵件輸入框使用 `.emailAddress` 類型）。
  
  `3. 使用 setupTextField() 方法進行配置：
  `
-    -  `setupTextField()` 方法中會根據不同的參數來設置對應的功能，包括佔位符、靜態圖標，以及密碼顯示切換功能。
+ - `setupTextField()` 方法根據不同的參數設置對應的功能，包括佔位符、靜態圖標、密碼顯示切換功能，以及根據欄位類型設置適合的 `textContentType` 和 `keyboardType`。
+ - 這樣的設計使得每個 `LoginTextField` 都能根據特定需求（如密碼或電子郵件）提供最佳的使用體驗。
 
  `4. BottomLineTextField 與 LoginTextField 的關聯性：`
 
@@ -130,20 +140,19 @@
  
     - 創建郵件輸入框：
       ```swift
-      let emailTextField = LoginTextField(placeholder: "Email", rightIconName: "envelope")
+    let emailTextField = LoginTextField(placeholder: "Email", rightIconName: "envelope", fieldType: .email)
       ```
     - 創建密碼輸入框：
       ```swift
-      let passwordTextField = LoginTextField(placeholder: "Password", isPasswordField: true)
-
+    let passwordTextField = LoginTextField(placeholder: "Password", isPasswordField: true, fieldType: .password)
       ```
  ----------------------------------------
 
  `* 總結`
  
-    - LoginTextField 通過繼承 BottomLineTextField 提供的基礎功能，實現了特定場景的功能需求，如郵件圖標的靜態顯示和密碼顯示/隱藏切換的交互功能。
-    - 此設計不僅提高了登入頁面的使用體驗，也確保代碼結構更加清晰和容易維護。
-    - 將重複的配置邏輯提取到 BottomLineTextField 中，並在 LoginTextField 中根據具體需求擴展，這樣的設計實現了高內聚低耦合的代碼結構，使元件易於重用和擴展。
+    - `LoginTextField` 通過繼承 `BottomLineTextField` 提供的基礎功能，實現了特定場景的功能需求，如郵件圖標的靜態顯示和密碼顯示/隱藏切換的交互功能。
+    - 設計上，將重複的配置邏輯提取到 `BottomLineTextField` 中，並在 `LoginTextField` 中根據具體需求擴展，實現了高內聚低耦合的代碼結構，使元件易於重用和擴展。
+    - 對於密碼輸入框，採用了 `setupTextFieldProperties(fieldType:)` 方法來避免強密碼提示引起的延遲問題，進一步提高了使用體驗和輸入框的靈活性。
  */
 
 
@@ -160,9 +169,10 @@ class LoginTextField: BottomLineTextField {
     ///   - placeholder: 文字輸入框的佔位符
     ///   - rightIconName: 右側圖標的名稱，可選
     ///   - isPasswordField: 是否為密碼輸入框（如果是，會配置密碼顯示切換功能）
-    init(placeholder: String, rightIconName: String? = nil, isPasswordField: Bool = false) {
+    ///   - fieldType: 欄位類型，用於設置自動填充功能
+    init(placeholder: String, rightIconName: String? = nil, isPasswordField: Bool = false, fieldType: FieldType? = nil) {
         super.init(frame: .zero)
-        setupTextField(placeholder: placeholder, rightIconName: rightIconName, isPasswordField: isPasswordField)
+        setupTextField(placeholder: placeholder, rightIconName: rightIconName, isPasswordField: isPasswordField, fieldType: fieldType)
     }
     
     required init?(coder: NSCoder) {
@@ -177,12 +187,13 @@ class LoginTextField: BottomLineTextField {
     ///   - placeholder: 文字輸入框的佔位符
     ///   - rightIconName: 右側圖標的名稱，可選
     ///   - isPasswordField: 是否為密碼輸入框
-    private func setupTextField(placeholder: String, rightIconName: String?, isPasswordField: Bool) {
+    ///   - fieldType: 欄位類型
+    private func setupTextField(placeholder: String, rightIconName: String?, isPasswordField: Bool, fieldType: FieldType?) {
         
         self.placeholder = placeholder
         // 如果提供了右側圖標名稱，根據是否為密碼框來設置交互行為
         if let iconName = rightIconName {
-            configureRightButton(iconName: iconName, isPasswordToggle: isPasswordField)
+            configureRightButton(iconName: iconName, isPasswordToggle: isPasswordField, fieldType: fieldType)
         }
         translatesAutoresizingMaskIntoConstraints = false
     }
