@@ -594,10 +594,10 @@ class LoginView: UIView {
     private let signInLabel = LoginLabel(text: "Sign in with email", fontSize: 14, weight: .medium, textColor: .lightGray)
     
     /// Email 輸入框，用於讓使用者輸入電子郵件
-    private let emailTextField = LoginTextField(placeholder: "Email", rightIconName: "envelope")
+    private let emailTextField = LoginTextField(placeholder: "Email", rightIconName: "envelope", isPasswordField: false, fieldType: .email)
     
     /// 密碼輸入框，用於讓使用者輸入密碼
-    private let passwordTextField = LoginTextField(placeholder: "Password", rightIconName: "eye", isPasswordField: true)
+    private let passwordTextField = LoginTextField(placeholder: "Password", rightIconName: "eye", isPasswordField: true, fieldType: .password)
     
     /// "記住我" 選項按鈕，用於讓使用者選擇是否記住帳號密碼
     private let rememberMeButton = LoginCheckBoxButton(title: " Remember Me")
@@ -638,10 +638,11 @@ class LoginView: UIView {
     /// 初始化方法，配置 LoginView 的基本佈局和元件
     override init(frame: CGRect) {
         super.init(frame: frame)
-        mainScrollView.setupConstraints(in: self)       // 設置 mainScrollView 的約束，將它添加到 LoginView 中
-        setupBackground()                               // 設置背景顏色
-        setupMainStackView()                            // 設置主要的 StackView，包括所有的 UI 元素
-        setViewHeights()                                // 設置各元件的高度
+        setupScrollView()                              // 設置 mainScrollView
+        setupMainStackView()                           // 設置主要的 StackView，包括所有的 UI 元素
+        setupMainStackViewConstraints()                // 設置主 StackView 的約束
+        setViewHeights()                               // 設置各元件的高度
+        setupBackground()                              // 設置背景顏色
     }
     
     required init?(coder: NSCoder) {
@@ -651,9 +652,9 @@ class LoginView: UIView {
     
     // MARK: - Setup Methods
     
-    /// 設置背景顏色
-    private func setupBackground() {
-        backgroundColor = .white
+    /// 設置 ScrollView
+    private func setupScrollView() {
+        mainScrollView.setupConstraints(in: self) // 將 scrollView 加入 SignUpView 並設置其約束
     }
     
     /// 設置主 StackView，包含所有主要的 UI 元件，並加入到 mainScrollView 中
@@ -681,8 +682,6 @@ class LoginView: UIView {
         
         // 將 mainStackView 設置到 mainScrollView
         mainScrollView.addSubview(mainStackView)
-        // 設置主 StackView 的約束
-        setupMainStackViewConstraints()
     }
     
     /// 設置 mainStackView 的約束條件
@@ -710,9 +709,16 @@ class LoginView: UIView {
         ])
     }
     
+    /// 設置背景顏色
+    private func setupBackground() {
+        backgroundColor = .white
+    }
 
     // MARK: - Public Getters for UI Elements
     
+    
+    // MARK: Buttons
+
     /// 提供登入按鈕的公共存取方法
     func getLoginButton() -> UIButton {
         return loginButton
@@ -743,6 +749,8 @@ class LoginView: UIView {
         return rememberMeButton
     }
     
+    // MARK: Text Fields
+
     /// 獲取使用者輸入的 Email
     /// - Returns: Email 字串
     func getEmail() -> String {
@@ -767,6 +775,8 @@ class LoginView: UIView {
         passwordTextField.text = password
     }
     
+    // MARK: RememberMe Methods
+
     /// 提供一個公共方法來設置記住我的按鈕狀態
     /// - Parameter isSelected: 是否選中
     func setRememberMeButtonSelected(_ isSelected: Bool) {
