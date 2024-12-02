@@ -7,7 +7,7 @@
 
 import UIKit
 
-/// 自訂的 ScrollView 類別，用於 Login 相關視圖中，提供標準化設置與佈局
+/// 自訂的 ScrollView 類別，用於 SignUp 相關視圖中，提供標準化設置與佈局
 class SignUpScrollView: UIScrollView {
 
     // MARK: - Initializers

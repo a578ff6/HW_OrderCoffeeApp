@@ -7,7 +7,7 @@
 
 import UIKit
 
-/// 自訂的 `SignUpStackView` 類別，用於建立 Login 畫面中使用的 StackView，統一配置
+/// 自訂的 `SignUpStackView` 類別，用於建立 SignUp 畫面中使用的 StackView，統一配置
 class SignUpStackView: UIStackView {
 
     /// 初始化 SignUpStackView，設置 StackView 的屬性
