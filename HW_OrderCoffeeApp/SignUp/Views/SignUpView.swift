@@ -603,19 +603,19 @@ class SignUpView: UIView {
     
     /// 全名標籤及輸入框
     private let fullNameLabel = SignUpLabel(text: "Full Name", fontSize: 14, weight: .medium, textColor: .darkGray)
-    private let fullNameTextField = SignUpTextField(placeholder: "Full Name", rightIconName: "person.fill")
+    private let fullNameTextField = SignUpTextField(placeholder: "Full Name", rightIconName: "person.fill", isPasswordField: false, fieldType: .name)
     
     /// 電子郵件標籤及輸入框
     private let emailLabel = SignUpLabel(text: "Email", fontSize: 14, weight: .medium, textColor: .darkGray)
-    private let emailTextField = SignUpTextField(placeholder: "Email", rightIconName: "envelope")
+    private let emailTextField = SignUpTextField(placeholder: "Email", rightIconName: "envelope", isPasswordField: false, fieldType: .email)
 
     /// 密碼標籤及輸入框
     private let passwordLabel = SignUpLabel(text: "Password", fontSize: 14, weight: .medium, textColor: .darkGray)
-    private let passwordTextField = SignUpTextField(placeholder: "Password", rightIconName: "eye", isPasswordField: true)
+    private let passwordTextField = SignUpTextField(placeholder: "Password", rightIconName: "eye", isPasswordField: true, fieldType: .password)
     
     /// 確認密碼標籤及輸入框
     private let confirmPasswordLabel = SignUpLabel(text: "Confirm Password", fontSize: 14, weight: .medium, textColor: .darkGray)
-    private let confirmPasswordTextField = SignUpTextField(placeholder: "Confirm Password", rightIconName: "eye", isPasswordField: true)
+    private let confirmPasswordTextField = SignUpTextField(placeholder: "Confirm Password", rightIconName: "eye", isPasswordField: true, fieldType: .password)
     
     /// 同意條款勾選框與按鈕
     private let termsCheckBox = SignUpCheckBoxButton(title: " I agree to the terms")
@@ -636,10 +636,10 @@ class SignUpView: UIView {
     private let mainStackView = SignUpStackView(axis: .vertical, spacing: 15, alignment: .fill, distribution: .fill)
     
     /// Label 與 TextField 的垂直 StackView
-    private let fullNameStackView = SignUpStackView(axis: .vertical, spacing: 6, alignment: .fill, distribution: .fill)
-    private let emailStackView = SignUpStackView(axis: .vertical, spacing: 6, alignment: .fill, distribution: .fill)
-    private let passwordStackView = SignUpStackView(axis: .vertical, spacing: 6, alignment: .fill, distribution: .fill)
-    private let confirmPasswordStackView = SignUpStackView(axis: .vertical, spacing: 6, alignment: .fill, distribution: .fill)
+    private let fullNameStackView = SignUpStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill)
+    private let emailStackView = SignUpStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill)
+    private let passwordStackView = SignUpStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill)
+    private let confirmPasswordStackView = SignUpStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill)
     
     /// 排列 "我同意該條款" 和 "閱讀條款" 按鈕的水平 StackView，便於水平展示這兩個按鈕
     private let iagreeToTheTermsAndReadTheTermsStackView = SignUpStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .equalSpacing)
@@ -712,7 +712,7 @@ class SignUpView: UIView {
     /// 設置主要的約束
     private func setupMainStackViewConstraints() {
         NSLayoutConstraint.activate([
-            mainStackView.topAnchor.constraint(equalTo: mainScrollView.topAnchor, constant: 20),
+            mainStackView.topAnchor.constraint(equalTo: mainScrollView.topAnchor, constant: 10),
             mainStackView.leadingAnchor.constraint(equalTo: mainScrollView.leadingAnchor, constant: 30),
             mainStackView.trailingAnchor.constraint(equalTo: mainScrollView.trailingAnchor, constant: -30),
             mainStackView.bottomAnchor.constraint(lessThanOrEqualTo: mainScrollView.bottomAnchor, constant: -10),
