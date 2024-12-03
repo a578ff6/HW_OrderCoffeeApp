@@ -1,16 +1,16 @@
 //
-//  SignUpStackView.swift
+//  ForgotPasswordStackView.swift
 //  HW_OrderCoffeeApp
 //
-//  Created by 曹家瑋 on 2024/11/30.
+//  Created by 曹家瑋 on 2024/12/2.
 //
 
 import UIKit
 
-/// 自訂的 `SignUpStackView` 類別，用於建立 SignUp 畫面中使用的 StackView，統一配置
-class SignUpStackView: UIStackView {
+/// 自訂的 `ForgotPasswordStackView` 類別，用於建立 ForgotPassword 畫面中使用的 StackView，統一配置
+class ForgotPasswordStackView: UIStackView {
 
-    /// 初始化 SignUpStackView，設置 StackView 的屬性
+    /// 初始化 ForgotPasswordStackView，設置 StackView 的屬性
     /// - Parameters:
     ///   - axis: 堆疊的方向（水平或垂直）
     ///   - spacing: 元件間的間距
@@ -29,5 +29,5 @@ class SignUpStackView: UIStackView {
         super.init(coder: coder)
         fatalError("init(coder:) has not been implemented")
     }
-    
+
 }

@@ -1,18 +1,18 @@
 //
-//  SignUpScrollView.swift
+//  ForgotPasswordScrollView.swift
 //  HW_OrderCoffeeApp
 //
-//  Created by 曹家瑋 on 2024/11/30.
+//  Created by 曹家瑋 on 2024/12/2.
 //
 
 import UIKit
 
-/// 自訂的 ScrollView 類別，用於 SignUp 相關視圖中，提供標準化設置與佈局
-class SignUpScrollView: UIScrollView {
-
+/// 自訂的 ScrollView 類別，用於 ForgotPasswordView 相關視圖中，提供標準化設置與佈局
+class ForgotPasswordScrollView: UIScrollView {
+    
     // MARK: - Initializers
     
-    /// 初始化 SignUpScrollView，並配置標準設置與佈局
+    /// 初始化 ForgotPasswordScrollView，並配置標準設置與佈局
     init() {
         super.init(frame: .zero)
         self.translatesAutoresizingMaskIntoConstraints = false
@@ -36,5 +36,5 @@ class SignUpScrollView: UIScrollView {
             self.bottomAnchor.constraint(equalTo: parentView.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ])
     }
-    
+
 }

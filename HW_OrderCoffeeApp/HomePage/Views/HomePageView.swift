@@ -223,25 +223,35 @@
 
  `2. Logo 圖片視圖`
  
-    - 使用 `createImageView()` 建立 `logoImageView`，保持可讀性及重用性。
+    - 使用 `HomePageImageView()` 建立 `logoImageView`，保持可讀性及重用性。
     - `logoImageView` 設置為 `centerYAnchor` 向上偏移 50 點，以確保 Logo 視覺上更加接近畫面上半部。
     - 保持 `logoImageView` 的比例（長寬一致），並根據父視圖寬度的 75% 設定其大小，確保在不同裝置上適應性良好。
 
  `3. 按鈕的設置`
  
-    - 使用`createButton()` 建立 `loginButton` 和 `signUpButton`，設定字體、背景顏色、文字顏色等屬性，以簡化代碼且便於重用。
+    - 使用`HomePageFilledButton()` 建立 `loginButton` 和 `signUpButton`，設定字體、背景顏色、文字顏色等屬性，以簡化代碼且便於重用。
     - 將按鈕放入 `buttonsStackView` 中，以便於管理按鈕的排列與對齊，並保持垂直方向上按鈕之間的間距一致（18 點）。
     - 設定每個按鈕的高度為 55 點，以確保在所有裝置上的一致性。
 
- `4. 按鈕的點擊事件`
+ `4. 按鈕的點擊事件移除 `delegate` 的處理方式`
  
-    - 使用 `setupActions()` 為按鈕添加點擊事件處理器，並透過委託（`delegate`）將事件通知給 `HomePageViewController`。
-    - `delegate` 的設置可以讓 `HomePageView` 與控制器分離，增強代碼的模組化和重用性。
-
- `5. 佈局設置`
+    - 原本在 `HomePageView` 中設置的 `delegate` 用於通知 `HomePageViewController` 按鈕被點擊的行為已被移除。
+    - 現在這部分的邏輯已經被移至 `HomePageActionHandler` 中，這樣能夠更好地分離視圖層和控制邏輯，增強模組化。
+ 
+ `5. 使用 Public Getters 提供按鈕存取`
+ 
+    - 使用 `getLoginButton()` 和 `getSignUpButton()` 提供公共方法來存取按鈕。
+    - 這些 getter 方法能確保按鈕屬性保持 `private`，但仍然能讓外部（例如 `HomePageActionHandler`）訪問並設置按鈕的行為。
+ 
+ `6. 佈局設置`
  
     - `logoImageView` 和 `buttonsStackView` 的 Auto Layout 是分開設置的，以便分別控制 Logo 和按鈕的佈局。
     - `buttonsStackView` 固定於畫面底部（距離安全區域底部 25 點），且水平方向上距離安全區域邊緣 30 點，保持適當的留白。
+ 
+ `7. 按鈕的行為處理由 HomePageActionHandler 負責`
+ 
+    - 透過`HomePageActionHandler` 負責所有按鈕行為的處理，包括為按鈕設置行為和向控制器回調。
+    - 這樣的架構增強了代碼的分離度，讓 `HomePageView` 專注於視圖層面的渲染，而按鈕的點擊邏輯則完全由 `ActionHandler` 處理。
  */
 
 import UIKit
@@ -251,20 +261,18 @@ class HomePageView: UIView {
     
     // MARK: - Properties
     
-    /// 委託，用來通知 HomePageViewController 發生的事件
-    weak var delegate: HomePageViewDelegate?
-    
     /// 星巴克 Logo 圖片視圖
-    private let logoImageView = HomePageView.createImageView(imageName: "starbucksLogo", contentMode: .scaleAspectFit)
-
+    private let logoImageView = HomePageImageView(imageName: "starbucksLogo", contentMode: .scaleAspectFit)
+    
     /// 建立登入按鈕
-    private let loginButton = HomePageView.createButton(title: "Login", font: UIFont.systemFont(ofSize: 22, weight: .black), backgroundColor: .deepGreen, titleColor: .deepBrown)
+    private let loginButton = HomePageFilledButton(title: "Login", font: UIFont.systemFont(ofSize: 22, weight: .black), backgroundColor: .deepGreen, titleColor: .deepBrown)
     
     /// 建立註冊按鈕
-    private let signUpButton = HomePageView.createButton(title: "Sign Up", font: UIFont.systemFont(ofSize: 22, weight: .black), backgroundColor: .deepGreen, titleColor: .deepBrown)
+    private let signUpButton = HomePageFilledButton(title: "Sign Up", font: UIFont.systemFont(ofSize: 22, weight: .black), backgroundColor: .deepGreen, titleColor: .deepBrown)
     
     /// 用來排列按鈕的垂直 StackView
-    private let buttonsStackView = HomePageView.createStackView(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill)
+    private let buttonsStackView = HomePageStackView(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill)
+    
     
     // MARK: - Initializers
     
@@ -282,15 +290,10 @@ class HomePageView: UIView {
     
     /// 初始化視圖，包含背景色、Logo、按鈕等組件的配置
     private func setupView() {
-        setupBackground()
         setupLogoImageView()
         setupButtonsStackView()
-        setupActions()
-    }
-
-    /// 設置背景色為深綠色，保持與品牌風格一致
-    private func setupBackground() {
-        backgroundColor = .deepGreen
+        setViewHeights()
+        setupBackground()
     }
     
     /// 設置` Logo 圖片視圖`，並放置於`畫面中央上方`
@@ -300,8 +303,6 @@ class HomePageView: UIView {
         NSLayoutConstraint.activate([
             logoImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
             logoImageView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -50),  // 中心向上偏移 50 點
-            logoImageView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.75),
-            logoImageView.heightAnchor.constraint(equalTo: logoImageView.widthAnchor)       // 保持長寬比一致
         ])
     }
     
@@ -318,75 +319,35 @@ class HomePageView: UIView {
             buttonsStackView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 30),
             buttonsStackView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -30)
         ])
-        
-        // 設置按鈕的高度為 55 點
+    }
+    
+    /// 設置各元件的高度
+    private func setViewHeights() {
         NSLayoutConstraint.activate([
+            logoImageView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.75),
+            logoImageView.heightAnchor.constraint(equalTo: logoImageView.widthAnchor),
             loginButton.heightAnchor.constraint(equalToConstant: 55),
             signUpButton.heightAnchor.constraint(equalToConstant: 55)
         ])
     }
     
-    /// 設置按鈕的點擊事件，透過委託將事件通知給控制器
-    private func setupActions() {
-        loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
-        signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
+    /// 設置背景色為深綠色，保持與品牌風格一致
+    private func setupBackground() {
+        backgroundColor = .deepGreen
     }
     
-    // MARK: - Actions
+    // MARK: - Public Getters for UI Elements
     
-    /// 登入按鈕被點擊，通知委託
-    @objc private func loginButtonTapped() {
-        delegate?.didTapLoginButton()
+    /// 獲取登入按鈕
+    /// - Returns: 登入按鈕
+    func getLoginButton() -> UIButton {
+        return loginButton
     }
     
-    /// 註冊按鈕被點擊，通知委託
-    @objc private func signUpButtonTapped() {
-        delegate?.didTapSignUpButton()
-    }
-    
-    // MARK: - Factory Method
-    
-    /// 建立 UIImageView，設定圖片名稱及顯示模式
-    private static func createImageView(imageName: String, contentMode: UIView.ContentMode) -> UIImageView {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: imageName)
-        imageView.contentMode = contentMode
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }
-
-    /// 建立按鈕，並設置其樣式和外觀，包括標題、字體、背景色、邊框等屬性
-    private static func createButton(title: String, font: UIFont, backgroundColor: UIColor, titleColor: UIColor) -> UIButton {
-        var config = UIButton.Configuration.filled()
-        config.title = title
-        config.baseBackgroundColor = backgroundColor
-        config.baseForegroundColor = titleColor
-        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
-            var outgoing = incoming
-            outgoing.font = font
-            return outgoing
-        }
-        
-        let button = UIButton(configuration: config)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        // 設置邊框屬性
-        button.layer.borderColor = UIColor.deepBrown.cgColor
-        button.layer.borderWidth = 2
-        button.layer.cornerRadius = 10
-        button.layer.masksToBounds = true
-        return button
-    }
-    
-    /// 建立 UIStackView，設定排列方向、間距、對齊方式和分佈方式
-    private static func createStackView(axis: NSLayoutConstraint.Axis, spacing: CGFloat, alignment: UIStackView.Alignment, distribution: UIStackView.Distribution) -> UIStackView {
-        let stackView = UIStackView()
-        stackView.axis = axis
-        stackView.spacing = spacing
-        stackView.alignment = alignment
-        stackView.distribution = distribution
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
+    /// 獲取註冊按鈕
+    /// - Returns: 註冊按鈕
+    func getSignUpButton() -> UIButton {
+        return signUpButton
     }
     
 }
