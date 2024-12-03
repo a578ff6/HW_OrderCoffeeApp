@@ -16,9 +16,9 @@
 
  `2. 委派設置`
  
- - setupDelegate() 方法：
-    - 將委派設置部分抽取到一個單獨的 `setupDelegate()` 方法中。這樣能夠保持 `viewDidLoad()` 方法的簡潔，同時強化程式碼的結構性。
-    - 使用 `guard let` 確保 `view` 正確轉型為 `HomePageView`，若轉型失敗則輸出錯誤訊息，並避免進一步的操作。
+ - setupActionHandler() 方法：
+    - 將按鈕行為處理交給 `HomePageActionHandler`，這樣可以減少控制器內部對於按鈕點擊的直接處理，達到職責分離。
+    - 初始化 `HomePageActionHandler`，並傳入 `HomePageView` 和 `HomePageViewDelegate`，確保按鈕行為被正確處理。
 
  `3. 頁面跳轉`
  
@@ -41,7 +41,8 @@
  `6. 單一職責原則`
  
  - 遵循單一職責原則 (SRP)：
-    - 將不同的功能分別放在 `setupDelegate()` 和各自的跳轉方法中，這樣可以讓程式碼保持清晰、容易理解，並且便於後續的維護與擴展。
+    - 按鈕的行為由 `HomePageActionHandler` 管理，頁面導航邏輯則由控制器負責。
+    - 這樣的職責分離使得程式碼結構更加清晰，容易理解，也便於後續的維護與擴展。
  */
 
 import UIKit
@@ -54,6 +55,9 @@ class HomePageViewController: UIViewController {
     /// 自定義的 `HomePageView`
     private let homePageView = HomePageView()
     
+    /// `HomePageActionHandler` 負責處理按鈕行為
+    private var actionHandler: HomePageActionHandler?
+    
     // MARK: - Lifecycle Methods
     
     // 取得 HomePageView 作為主視圖
@@ -63,19 +67,15 @@ class HomePageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupDelegate()
+        setupActionHandler()
     }
     
     // MARK: - Setup Methods
-
-    /// 設置 HomePageView 的委派
-    private func setupDelegate() {
-        guard let homePageView = self.view as? HomePageView else {
-            print("無法取得 HomePageView")
-            return
-        }
-        homePageView.delegate = self
-    }
+    
+    /// 初始化 `HomePageActionHandler` 並設置按鈕行為
+     private func setupActionHandler() {
+         actionHandler = HomePageActionHandler(view: homePageView, delegate: self)
+     }
     
     // MARK: - Navigation Methods
     
