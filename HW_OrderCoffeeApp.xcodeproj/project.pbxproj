@@ -41,6 +41,10 @@
 		934FB5A72CFDEF9F00757C7C /* ForgotPasswordDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5A62CFDEF9F00757C7C /* ForgotPasswordDelegate.swift */; };
 		934FB5AA2CFE0BA000757C7C /* ForgotPasswordNavigationBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5A92CFE0BA000757C7C /* ForgotPasswordNavigationBarManager.swift */; };
 		934FB5AC2CFE36F200757C7C /* TabIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5AB2CFE36F200757C7C /* TabIndex.swift */; };
+		934FB5B02CFE6D4500757C7C /* HomePageActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5AF2CFE6D4500757C7C /* HomePageActionHandler.swift */; };
+		934FB5B22CFE6D9200757C7C /* HomePageFilledButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5B12CFE6D9200757C7C /* HomePageFilledButton.swift */; };
+		934FB5B42CFE6EB700757C7C /* HomePageStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5B32CFE6EB700757C7C /* HomePageStackView.swift */; };
+		934FB5B62CFE6F7D00757C7C /* HomePageImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5B52CFE6F7D00757C7C /* HomePageImageView.swift */; };
 		934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */; };
 		9352912E2C873E9A0018B060 /* MenuSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */; };
 		935291302C875DA30018B060 /* UIView+ScaleAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */; };
@@ -322,6 +326,10 @@
 		934FB5A62CFDEF9F00757C7C /* ForgotPasswordDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordDelegate.swift; sourceTree = "<group>"; };
 		934FB5A92CFE0BA000757C7C /* ForgotPasswordNavigationBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordNavigationBarManager.swift; sourceTree = "<group>"; };
 		934FB5AB2CFE36F200757C7C /* TabIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabIndex.swift; sourceTree = "<group>"; };
+		934FB5AF2CFE6D4500757C7C /* HomePageActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageActionHandler.swift; sourceTree = "<group>"; };
+		934FB5B12CFE6D9200757C7C /* HomePageFilledButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageFilledButton.swift; sourceTree = "<group>"; };
+		934FB5B32CFE6EB700757C7C /* HomePageStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageStackView.swift; sourceTree = "<group>"; };
+		934FB5B52CFE6F7D00757C7C /* HomePageImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageImageView.swift; sourceTree = "<group>"; };
 		934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailViewController.swift; sourceTree = "<group>"; };
 		9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuSectionHeaderView.swift; sourceTree = "<group>"; };
 		9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ScaleAnimation.swift"; sourceTree = "<group>"; };
@@ -748,6 +756,24 @@
 			path = Handlers;
 			sourceTree = "<group>";
 		};
+		934FB5AD2CFE4C1900757C7C /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				934FB5B32CFE6EB700757C7C /* HomePageStackView.swift */,
+				934FB5B12CFE6D9200757C7C /* HomePageFilledButton.swift */,
+				934FB5B52CFE6F7D00757C7C /* HomePageImageView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		934FB5AE2CFE4C3100757C7C /* Handlers */ = {
+			isa = PBXGroup;
+			children = (
+				934FB5AF2CFE6D4500757C7C /* HomePageActionHandler.swift */,
+			);
+			path = Handlers;
+			sourceTree = "<group>";
+		};
 		935291322C8779B70018B060 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1170,8 +1196,10 @@
 		936E09BB2CF4F5DD0092F246 /* HomePage */ = {
 			isa = PBXGroup;
 			children = (
-				936E09C22CF60CF70092F246 /* Delegates */,
+				934FB5AD2CFE4C1900757C7C /* Components */,
 				936E09C12CF60CEB0092F246 /* Views */,
+				934FB5AE2CFE4C3100757C7C /* Handlers */,
+				936E09C22CF60CF70092F246 /* Delegates */,
 				936E09C02CF60CD60092F246 /* View Controllers */,
 			);
 			path = HomePage;
@@ -2123,6 +2151,7 @@
 				934FB56A2CF8DAA400757C7C /* LoginScrollView.swift in Sources */,
 				935374512CB80D0000794A63 /* OrderCustomerInfoCell.swift in Sources */,
 				93B7B5872CDD4A0700E0205A /* OrderHistoryDelegate.swift in Sources */,
+				934FB5B22CFE6D9200757C7C /* HomePageFilledButton.swift in Sources */,
 				93B9DC812C32D7740050BC3F /* OrderManager.swift in Sources */,
 				9353747C2CCD7C9A00794A63 /* LocationManagerHandler.swift in Sources */,
 				934FB58A2CFA977600757C7C /* SignUpStackView.swift in Sources */,
@@ -2132,6 +2161,7 @@
 				93B492932C410A2E00E7B947 /* OrderSummaryCollectionViewCell.swift in Sources */,
 				937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */,
 				934FB5982CFDAFFC00757C7C /* ForgotPasswordLabel.swift in Sources */,
+				934FB5B42CFE6EB700757C7C /* HomePageStackView.swift in Sources */,
 				938122292CE358EA00ADFB7B /* OrderHistoryDetail.swift in Sources */,
 				9353745B2CBD43B900794A63 /* OrderCustomerNoteCell.swift in Sources */,
 				935374332CAFC29D00794A63 /* OrderLayoutProvider.swift in Sources */,
@@ -2195,6 +2225,7 @@
 				93B7B58D2CDE0F5200E0205A /* OrderHistorySortMenuDelegate.swift in Sources */,
 				93B7B57D2CDBB69500E0205A /* OrderHistoryView.swift in Sources */,
 				93755C312C82F6CF002570A5 /* HUDManager.swift in Sources */,
+				934FB5B62CFE6F7D00757C7C /* HomePageImageView.swift in Sources */,
 				936E09A12CED0F8A0092F246 /* SearchCacheManager.swift in Sources */,
 				935374532CB80F1300794A63 /* OrderCustomerDetailsLayoutProvider.swift in Sources */,
 				9381224F2CE775F200ADFB7B /* SearchView.swift in Sources */,
@@ -2254,6 +2285,7 @@
 				936CFFCB2C6E24AD004B8724 /* UserDetailsReceiver.swift in Sources */,
 				93B7B5612CD7912400E0205A /* OrderrConfirmationCloseButtonCell.swift in Sources */,
 				934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */,
+				934FB5B02CFE6D4500757C7C /* HomePageActionHandler.swift in Sources */,
 				936E09BD2CF4F6310092F246 /* HomePageView.swift in Sources */,
 				93755C3E2C838516002570A5 /* WebsiteManager.swift in Sources */,
 				93B7B55D2CD70FA900E0205A /* OrderrConfirmationItemDetailsCell.swift in Sources */,
