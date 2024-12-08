@@ -24,7 +24,7 @@
  - `.menu` 代表飲品分類頁面。
  - `.search` 代表搜尋頁面。
  - `.order` 代表訂單頁面。
- - `.userProfile` 代表用戶個人資料頁面。
+ - `.profile` 代表用戶個人資料頁面。
 
  ------------------------------------
  
@@ -110,5 +110,5 @@ enum TabIndex: Int {
     case menu = 0         // 主選單（飲品分類）
     case search           // 搜尋頁面
     case order            // 訂單頁面
-    case userProfile      // 用戶個人資料頁面
+    case profile          // 用戶個人資料頁面
 }
