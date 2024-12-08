@@ -5,140 +5,126 @@
 //  Created by 曹家瑋 on 2024/8/24.
 //
 
-/*
- ## EditProfileView
-    - 負責處理「個人資料編輯頁面」主要視圖佈局的自訂 UIView。
-    - 管理頁面中的大頭照、更換照片按鈕，以及顯示使用者資訊的表單（UITableView）。
+// MARK: - 筆記：EditProfileView
+/**
+ 
+ ## 筆記：EditProfileView
+ 
+ `* What`
+ 
+ - EditProfileView 是用於管理編輯個人資料頁面的主要視圖，包含了一個 TableView (editProfileTableView) 作為核心元件，用於顯示個人資料的各種項目（例如大頭照、文字輸入欄位、性別選擇、生日日期選擇等）。
 
- ## 主要功能
-    
-    * 大頭照顯示與更換按鈕
-        - profileImageView: 顯示使用者的大頭照，並設置為圓形邊框。
-        - changePhotoButton: 更換大頭照的按鈕，點擊後允許使用者從相機或相簿選擇照片。
+ ------------------------------
  
-    * 表單（UITableView）
-        - tableView: 顯示使用者資訊的表單，使用 UITableView 來顯示不同的欄位（如姓名、電話號碼、生日等）。
+ `* Why`
  
-    * 佈局設置
-        - setupLayout(): 設置表單（UITableView）的 Auto Layout 約束，使其填滿整個視圖。
-        - setupTableHeaderView(): 將大頭照和更改照片按鈕放置於 tableHeaderView 中，並設置相應的 Auto Layout 約束。
+ `1.分離視圖與控制器職責：`
  
-    * 重點
-        - 表單滾動時的行為: 大頭照和更換照片按鈕會隨著表單一起滾動，這是透過將這些元素放置在 tableHeaderView 中實現的。    
+ - 將 `TableView` 的設置和管理（包括佈局與 Cell 註冊）封裝在 `EditProfileView` 中，讓 `EditProfileViewController` 不需處理過多的視圖邏輯，專注於業務流程與互動。
+ 
+ `2.提高重用性與維護性：`
+ 
+ - 通過封裝與清晰的 API（例如 `getTableView`），可以更方便地修改視圖內部邏輯，而不影響外部控制器。
+ 
+ `3.保持代碼結構清晰：`
+ 
+ - 集中處理佈局與 Cell 註冊邏輯，避免散落於多處，提升可讀性。
+ 
+ ------------------------------
+
+ `* How`
+ 
+ `1.視圖初始化與佈局：`
+
+ - `setupLayout` 方法確保 `editProfileTableView` 填滿整個主視圖，且遵守 Auto Layout 規則。
+ - 使用 `NSLayoutConstraint` 創建必要的佈局約束，保持視圖結構穩定。
+ 
+ `2.Cell 註冊：`
+
+ - 在 `registerCells` 方法中，為 `editProfileTableView` 註冊所有自定義的 `UITableViewCell` 類型。
+ - 每個 Cell 使用唯一的 reuseIdentifier，確保 TableView 能夠正確重用。
+ 
+ `3.對外接口：`
+
+ - `getTableView` 方法提供 `TableView` 的訪問權限，讓控制器或其他邏輯可以操作 `TableView`（如設置數據源與代理、刷新數據等）。
+ 
+ ------------------------------
+ 
+ `* 設計優化補充`
+ 
+ `1.為什麼將 registerCells 獨立為方法？`
+
+ - 確保所有的 Cell 註冊邏輯集中管理，避免註冊遺漏或分散。
+ - 方便未來擴充新功能，例如新增類型的 Cell 時，只需在 registerCells 中添加註冊邏輯。
+ 
+ `2.為什麼使用 getTableView 而不直接公開 editProfileTableView？`
+
+ - 封裝內部細節，僅暴露必要接口。
+ - 提升元件的可維護性，避免外部直接操作內部屬性造成潛在問題。
+ 
  */
 
 
-// MARK: - 已經完善
 
 import UIKit
 
-/// 負責頁面上所有主要區塊的佈局：大頭照、更換照片按鈕、表單（UITableView）。
+/// 編輯個人資料的主視圖，包含個人資料的 TableView
 class EditProfileView: UIView {
-    
-    // MARK: - UI Elements
-    let profileImageView = createProfileImageView()
-    let changePhotoButton = createChangePhotoButton()
-    let tableView = createTableView()
 
+    // MARK: - UI Elements
+    
+    /// 顯示用戶個人資料的 TableView
+    private let editProfileTableView = EditProfileTableView()
+
+    // MARK: - Initializers
+
+    /// 初始化方法，設置佈局
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayout()
-        setupTableHeaderView()
         registerCells()        
     }
-    
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: - Layout Setup
 
-    /// 設置 tableView 約束
+    // MARK: - Setup Methods
+
+    /// 設置 TableView 的佈局，確保其填滿整個視圖。
     private func setupLayout() {
-        // 表單TableView
-        addSubview(tableView)
-        
-        // 設置Auto Layout約束
+        addSubview(editProfileTableView)
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            editProfileTableView.topAnchor.constraint(equalTo: topAnchor),
+            editProfileTableView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            editProfileTableView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            editProfileTableView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
     
-    /// 設置 tableHeaderView 包含大頭照和更改照片按鈕
-    private func setupTableHeaderView() {
-        let headerView = UIView()
-        headerView.frame = CGRect(x: 0, y: 0, width: frame.width, height: 220)  // 根據需要調整高度
-        headerView.addSubview(profileImageView)
-        headerView.addSubview(changePhotoButton)
-        
-        NSLayoutConstraint.activate([
-            profileImageView.topAnchor.constraint(equalTo: headerView.topAnchor, constant: 40),
-            profileImageView.centerXAnchor.constraint(equalTo: headerView.centerXAnchor),
-            profileImageView.widthAnchor.constraint(equalToConstant: 180),
-            profileImageView.heightAnchor.constraint(equalToConstant: 180),
-            
-            changePhotoButton.widthAnchor.constraint(equalToConstant: 40),
-            changePhotoButton.heightAnchor.constraint(equalToConstant: 40),
-            changePhotoButton.trailingAnchor.constraint(equalTo: profileImageView.trailingAnchor),
-            changePhotoButton.bottomAnchor.constraint(equalTo: profileImageView.bottomAnchor)
-        ])
-        
-        tableView.tableHeaderView = headerView
-    }
-    
-    /// 註冊 UITableView 的自定義 cell
-     private func registerCells() {
-         tableView.register(ProfileTextFieldCell.self, forCellReuseIdentifier: ProfileTextFieldCell.reuseIdentifier)
-         tableView.register(GenderSelectionCell.self, forCellReuseIdentifier: GenderSelectionCell.reuseIdentifier)
-         tableView.register(BirthdaySelectionCell.self, forCellReuseIdentifier: BirthdaySelectionCell.reuseIdentifier)
-     }
-    
-    // MARK: - UI Element Creation
-    
-    /// 創建大頭照圖片視圖
-    private static func createProfileImageView() -> UIImageView {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFill
-        imageView.backgroundColor = .white
-        imageView.layer.cornerRadius = 90
-        imageView.clipsToBounds = true
-        imageView.layer.borderWidth = 2.0
-        imageView.layer.borderColor = UIColor.black.cgColor
-        return imageView
-    }
-    
-    /// 創建更改照片按鈕
-    private static func createChangePhotoButton() -> UIButton {
-        let button = UIButton(type: .system)
-        let configuration = UIImage.SymbolConfiguration(pointSize: 24, weight: .bold)
-        let image = UIImage(systemName: "camera.circle.fill", withConfiguration: configuration)
-        button.setImage(image, for: .normal)
-        button.tintColor = .systemGray
-        button.backgroundColor = .white
-        button.layer.cornerRadius = 20
-        button.clipsToBounds = true
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }
-    
-    /// 建立 UITableView
-    private static func createTableView() -> UITableView {
-        let tableView = UITableView(frame: .zero, style: .grouped)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        return tableView
+    /// 註冊 TableView 所需的自定義 Cells。
+    /// - 使用唯一的 `reuseIdentifier`，確保 TableView 正確重用。
+    /// - 註冊的 Cells 包括：
+    ///   - `ProfileImageViewCell`：用於顯示用戶大頭照。
+    ///   - `ProfileTextFieldCell`：用於顯示用戶可編輯文字欄位。
+    ///   - `GenderSelectionCell`：用於顯示性別選擇按鈕。
+    ///   - `BirthdaySelectionCell`：用於顯示生日選擇欄位。
+    ///   - `BirthdayDatePickerCell`：用於顯示生日日期選擇器。
+    private func registerCells() {
+        editProfileTableView.register(ProfileImageViewCell.self, forCellReuseIdentifier: ProfileImageViewCell.reuseIdentifier)
+        editProfileTableView.register(ProfileTextFieldCell.self, forCellReuseIdentifier: ProfileTextFieldCell.reuseIdentifier)
+        editProfileTableView.register(GenderSelectionCell.self, forCellReuseIdentifier: GenderSelectionCell.reuseIdentifier)
+        editProfileTableView.register(BirthdaySelectionCell.self, forCellReuseIdentifier: BirthdaySelectionCell.reuseIdentifier)
+        editProfileTableView.register(BirthdayDatePickerCell.self, forCellReuseIdentifier: BirthdayDatePickerCell.reuseIdentifier)
     }
 
+    // MARK: - Public Getters
+
+    /// 提供對內部 TableView 的訪問接口。
+    /// - 回傳：內部的 `editProfileTableView`，供外部設置數據源或代理。
+    func getTableView() -> UITableView {
+        return editProfileTableView
+    }
+    
 }
-
-
-
-
-
-
-
-
