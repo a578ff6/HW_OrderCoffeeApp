@@ -45,6 +45,22 @@
 		934FB5B22CFE6D9200757C7C /* HomePageFilledButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5B12CFE6D9200757C7C /* HomePageFilledButton.swift */; };
 		934FB5B42CFE6EB700757C7C /* HomePageStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5B32CFE6EB700757C7C /* HomePageStackView.swift */; };
 		934FB5B62CFE6F7D00757C7C /* HomePageImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5B52CFE6F7D00757C7C /* HomePageImageView.swift */; };
+		934FB5BB2CFF79C800757C7C /* EditProfileTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5BA2CFF79C800757C7C /* EditProfileTableView.swift */; };
+		934FB5C02CFF988B00757C7C /* EditProfileNavigationBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5BF2CFF988B00757C7C /* EditProfileNavigationBarManager.swift */; };
+		934FB5C52CFFB76D00757C7C /* EditUserProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5C42CFFB76D00757C7C /* EditUserProfileManager.swift */; };
+		934FB5C82CFFBA1400757C7C /* ProfileEditModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5C72CFFBA1400757C7C /* ProfileEditModel.swift */; };
+		934FB5CA2D0050EF00757C7C /* EditProfileTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5C92D0050EF00757C7C /* EditProfileTextField.swift */; };
+		934FB5CC2D00739000757C7C /* EditProfileTableHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5CB2D00739000757C7C /* EditProfileTableHandlerDelegate.swift */; };
+		934FB5CE2D00E3E500757C7C /* EditProfileSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5CD2D00E3E500757C7C /* EditProfileSegmentedControl.swift */; };
+		934FB5D02D010CD700757C7C /* BirthdayDatePickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5CF2D010CD700757C7C /* BirthdayDatePickerCell.swift */; };
+		934FB5D22D01144600757C7C /* EditProfileDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5D12D01144600757C7C /* EditProfileDatePicker.swift */; };
+		934FB5D42D0121B800757C7C /* EditProfileLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5D32D0121B800757C7C /* EditProfileLabel.swift */; };
+		934FB5D62D01EBE300757C7C /* ProfileImageUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5D52D01EBE300757C7C /* ProfileImageUploader.swift */; };
+		934FB5D82D02645C00757C7C /* EditProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5D72D02645C00757C7C /* EditProfileImageView.swift */; };
+		934FB5DA2D026F1B00757C7C /* EditProfileButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5D92D026F1B00757C7C /* EditProfileButton.swift */; };
+		934FB5DC2D034E6C00757C7C /* ProfileImageViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5DB2D034E6C00757C7C /* ProfileImageViewCell.swift */; };
+		934FB5DE2D03A12B00757C7C /* ProfileImageCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5DD2D03A12B00757C7C /* ProfileImageCoordinator.swift */; };
+		934FB5E42D04B51900757C7C /* PhotoChangeHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5E32D04B51900757C7C /* PhotoChangeHandlerDelegate.swift */; };
 		934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */; };
 		9352912E2C873E9A0018B060 /* MenuSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */; };
 		935291302C875DA30018B060 /* UIView+ScaleAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */; };
@@ -120,7 +136,6 @@
 		93755C042C7B28AE002570A5 /* BirthdaySelectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C032C7B28AE002570A5 /* BirthdaySelectionCell.swift */; };
 		93755C0A2C7B844D002570A5 /* EditProfileTableHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */; };
 		93755C122C7E5542002570A5 /* UIViewController+KeyboardHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C112C7E5541002570A5 /* UIViewController+KeyboardHandling.swift */; };
-		93755C162C7F2F49002570A5 /* DatePickerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C152C7F2F49002570A5 /* DatePickerHandler.swift */; };
 		93755C1B2C808202002570A5 /* UserProfileTableHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1A2C808202002570A5 /* UserProfileTableHandler.swift */; };
 		93755C1D2C8094D0002570A5 /* ProfileHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1C2C8094D0002570A5 /* ProfileHeaderCell.swift */; };
 		93755C1F2C80971F002570A5 /* ProfileOptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1E2C80971F002570A5 /* ProfileOptionCell.swift */; };
@@ -330,6 +345,22 @@
 		934FB5B12CFE6D9200757C7C /* HomePageFilledButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageFilledButton.swift; sourceTree = "<group>"; };
 		934FB5B32CFE6EB700757C7C /* HomePageStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageStackView.swift; sourceTree = "<group>"; };
 		934FB5B52CFE6F7D00757C7C /* HomePageImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageImageView.swift; sourceTree = "<group>"; };
+		934FB5BA2CFF79C800757C7C /* EditProfileTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileTableView.swift; sourceTree = "<group>"; };
+		934FB5BF2CFF988B00757C7C /* EditProfileNavigationBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileNavigationBarManager.swift; sourceTree = "<group>"; };
+		934FB5C42CFFB76D00757C7C /* EditUserProfileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditUserProfileManager.swift; sourceTree = "<group>"; };
+		934FB5C72CFFBA1400757C7C /* ProfileEditModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditModel.swift; sourceTree = "<group>"; };
+		934FB5C92D0050EF00757C7C /* EditProfileTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileTextField.swift; sourceTree = "<group>"; };
+		934FB5CB2D00739000757C7C /* EditProfileTableHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileTableHandlerDelegate.swift; sourceTree = "<group>"; };
+		934FB5CD2D00E3E500757C7C /* EditProfileSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileSegmentedControl.swift; sourceTree = "<group>"; };
+		934FB5CF2D010CD700757C7C /* BirthdayDatePickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthdayDatePickerCell.swift; sourceTree = "<group>"; };
+		934FB5D12D01144600757C7C /* EditProfileDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileDatePicker.swift; sourceTree = "<group>"; };
+		934FB5D32D0121B800757C7C /* EditProfileLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileLabel.swift; sourceTree = "<group>"; };
+		934FB5D52D01EBE300757C7C /* ProfileImageUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageUploader.swift; sourceTree = "<group>"; };
+		934FB5D72D02645C00757C7C /* EditProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileImageView.swift; sourceTree = "<group>"; };
+		934FB5D92D026F1B00757C7C /* EditProfileButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileButton.swift; sourceTree = "<group>"; };
+		934FB5DB2D034E6C00757C7C /* ProfileImageViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageViewCell.swift; sourceTree = "<group>"; };
+		934FB5DD2D03A12B00757C7C /* ProfileImageCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageCoordinator.swift; sourceTree = "<group>"; };
+		934FB5E32D04B51900757C7C /* PhotoChangeHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoChangeHandlerDelegate.swift; sourceTree = "<group>"; };
 		934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailViewController.swift; sourceTree = "<group>"; };
 		9352912D2C873E9A0018B060 /* MenuSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuSectionHeaderView.swift; sourceTree = "<group>"; };
 		9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ScaleAnimation.swift"; sourceTree = "<group>"; };
@@ -405,7 +436,6 @@
 		93755C032C7B28AE002570A5 /* BirthdaySelectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthdaySelectionCell.swift; sourceTree = "<group>"; };
 		93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileTableHandler.swift; sourceTree = "<group>"; };
 		93755C112C7E5541002570A5 /* UIViewController+KeyboardHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+KeyboardHandling.swift"; sourceTree = "<group>"; };
-		93755C152C7F2F49002570A5 /* DatePickerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerHandler.swift; sourceTree = "<group>"; };
 		93755C1A2C808202002570A5 /* UserProfileTableHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileTableHandler.swift; sourceTree = "<group>"; };
 		93755C1C2C8094D0002570A5 /* ProfileHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderCell.swift; sourceTree = "<group>"; };
 		93755C1E2C80971F002570A5 /* ProfileOptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileOptionCell.swift; sourceTree = "<group>"; };
@@ -774,6 +804,63 @@
 			path = Handlers;
 			sourceTree = "<group>";
 		};
+		934FB5B92CFF710F00757C7C /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				934FB5BA2CFF79C800757C7C /* EditProfileTableView.swift */,
+				934FB5D72D02645C00757C7C /* EditProfileImageView.swift */,
+				934FB5C92D0050EF00757C7C /* EditProfileTextField.swift */,
+				934FB5CD2D00E3E500757C7C /* EditProfileSegmentedControl.swift */,
+				934FB5D12D01144600757C7C /* EditProfileDatePicker.swift */,
+				934FB5D32D0121B800757C7C /* EditProfileLabel.swift */,
+				934FB5D92D026F1B00757C7C /* EditProfileButton.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		934FB5BC2CFF91E500757C7C /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				934FB5CB2D00739000757C7C /* EditProfileTableHandlerDelegate.swift */,
+				934FB5E32D04B51900757C7C /* PhotoChangeHandlerDelegate.swift */,
+			);
+			path = Delegates;
+			sourceTree = "<group>";
+		};
+		934FB5C32CFFB75B00757C7C /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				934FB5C42CFFB76D00757C7C /* EditUserProfileManager.swift */,
+				934FB5D52D01EBE300757C7C /* ProfileImageUploader.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		934FB5C62CFFB8C700757C7C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				934FB5C72CFFBA1400757C7C /* ProfileEditModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		934FB5DF2D04AD8900757C7C /* Coordinators */ = {
+			isa = PBXGroup;
+			children = (
+				934FB5DD2D03A12B00757C7C /* ProfileImageCoordinator.swift */,
+			);
+			path = Coordinators;
+			sourceTree = "<group>";
+		};
+		934FB5E02D04AD9700757C7C /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */,
+				934FB5BF2CFF988B00757C7C /* EditProfileNavigationBarManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
 		935291322C8779B70018B060 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1118,7 +1205,7 @@
 			path = HW_OrderCoffeeAppUITests;
 			sourceTree = "<group>";
 		};
-		936CFFC72C6C73F2004B8724 /* User Profile */ = {
+		936CFFC72C6C73F2004B8724 /* UserProfile */ = {
 			isa = PBXGroup;
 			children = (
 				93755C212C81F535002570A5 /* ViewControllers */,
@@ -1126,7 +1213,7 @@
 				93755C232C81F576002570A5 /* Views */,
 				93755C202C81F4B7002570A5 /* Cells */,
 			);
-			path = "User Profile";
+			path = UserProfile;
 			sourceTree = "<group>";
 		};
 		936E09A22CEE0B980092F246 /* Delegates */ = {
@@ -1252,10 +1339,16 @@
 		93755C192C80658B002570A5 /* EditProfile */ = {
 			isa = PBXGroup;
 			children = (
-				93755C242C81F67A002570A5 /* ViewControllers */,
-				93755C252C81F685002570A5 /* Handlers */,
-				93755C262C81F692002570A5 /* Views */,
+				934FB5B92CFF710F00757C7C /* Components */,
 				93755C272C81F6DE002570A5 /* Cells */,
+				93755C262C81F692002570A5 /* Views */,
+				93755C252C81F685002570A5 /* Handlers */,
+				934FB5BC2CFF91E500757C7C /* Delegates */,
+				93755C242C81F67A002570A5 /* ViewControllers */,
+				934FB5DF2D04AD8900757C7C /* Coordinators */,
+				934FB5E02D04AD9700757C7C /* Managers */,
+				934FB5C32CFFB75B00757C7C /* Services */,
+				934FB5C62CFFB8C700757C7C /* Models */,
 			);
 			path = EditProfile;
 			sourceTree = "<group>";
@@ -1304,7 +1397,6 @@
 		93755C252C81F685002570A5 /* Handlers */ = {
 			isa = PBXGroup;
 			children = (
-				93755C152C7F2F49002570A5 /* DatePickerHandler.swift */,
 				93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */,
 			);
 			path = Handlers;
@@ -1321,9 +1413,11 @@
 		93755C272C81F6DE002570A5 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				934FB5DB2D034E6C00757C7C /* ProfileImageViewCell.swift */,
 				93755BFF2C79E454002570A5 /* ProfileTextFieldCell.swift */,
 				93755C012C7B179C002570A5 /* GenderSelectionCell.swift */,
 				93755C032C7B28AE002570A5 /* BirthdaySelectionCell.swift */,
+				934FB5CF2D010CD700757C7C /* BirthdayDatePickerCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -1549,7 +1643,7 @@
 				93755C382C83719A002570A5 /* Menu */,
 				9352913D2C88382D0018B060 /* DrinksCategory */,
 				935291482C8CA9E70018B060 /* DrinkDetail */,
-				936CFFC72C6C73F2004B8724 /* User Profile */,
+				936CFFC72C6C73F2004B8724 /* UserProfile */,
 				93755C192C80658B002570A5 /* EditProfile */,
 				935374132C9C5C9400794A63 /* Favorites */,
 				93BD48B92C58DE3A00144E7F /* Main */,
@@ -1583,7 +1677,6 @@
 				932258D02C92F1E1004EA2D9 /* ShareManager.swift */,
 				9353740D2C9AD6E100794A63 /* ButtonEffectManager.swift */,
 				932258D22C9410F4004EA2D9 /* FavoriteManager.swift */,
-				93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */,
 				939BDA6A2B2B97ED00616D1C /* ActivityIndicatorManager.swift */,
 			);
 			path = Services;
@@ -2118,6 +2211,7 @@
 				935374552CB93F6D00794A63 /* OrderCustomerDetailsSectionHeaderView.swift in Sources */,
 				935291302C875DA30018B060 /* UIView+ScaleAnimation.swift in Sources */,
 				939BDA2C2B2AC53700616D1C /* UIViewController+HideKeyboard.swift in Sources */,
+				934FB5E42D04B51900757C7C /* PhotoChangeHandlerDelegate.swift in Sources */,
 				93F9BB5E2C2E4EEA00355A87 /* GridItemCell.swift in Sources */,
 				93B7B5552CD5E28500E0205A /* OrderConfirmationHandler.swift in Sources */,
 				93B492912C3E684700E7B947 /* OrderViewInteractionDelegate.swift in Sources */,
@@ -2152,6 +2246,7 @@
 				935374512CB80D0000794A63 /* OrderCustomerInfoCell.swift in Sources */,
 				93B7B5872CDD4A0700E0205A /* OrderHistoryDelegate.swift in Sources */,
 				934FB5B22CFE6D9200757C7C /* HomePageFilledButton.swift in Sources */,
+				934FB5DE2D03A12B00757C7C /* ProfileImageCoordinator.swift in Sources */,
 				93B9DC812C32D7740050BC3F /* OrderManager.swift in Sources */,
 				9353747C2CCD7C9A00794A63 /* LocationManagerHandler.swift in Sources */,
 				934FB58A2CFA977600757C7C /* SignUpStackView.swift in Sources */,
@@ -2176,6 +2271,7 @@
 				9353745F2CC3D3F800794A63 /* OrderCustomerDetailsHandlerDelegate.swift in Sources */,
 				9381223D2CE58DA600ADFB7B /* OrderHistoryDetailSharingHandler.swift in Sources */,
 				936E09BF2CF5D7990092F246 /* HomePageViewDelegate.swift in Sources */,
+				934FB5CC2D00739000757C7C /* EditProfileTableHandlerDelegate.swift in Sources */,
 				939BD9D02B2A1B1700616D1C /* AppDelegate.swift in Sources */,
 				934FB5A22CFDD64B00757C7C /* ForgotPasswordScrollView.swift in Sources */,
 				9353745D2CBF281C00794A63 /* OrderCustomerSubmitCell.swift in Sources */,
@@ -2193,6 +2289,7 @@
 				93B9DC762C3042710050BC3F /* MenuLayoutProvider.swift in Sources */,
 				938122212CE286A300ADFB7B /* OrderHistoryDetailHandler.swift in Sources */,
 				935374292CA4502B00794A63 /* NoFavoritesView.swift in Sources */,
+				934FB5C82CFFBA1400757C7C /* ProfileEditModel.swift in Sources */,
 				9353747E2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift in Sources */,
 				938122572CE77A8A00ADFB7B /* SearchResult.swift in Sources */,
 				934FB59A2CFDC21700757C7C /* ForgotPasswordTextField.swift in Sources */,
@@ -2203,7 +2300,6 @@
 				93B7B5532CD5E23B00E0205A /* OrderConfirmationLayoutProvider.swift in Sources */,
 				93B7B55B2CD6812800E0205A /* OrderConfirmationCustomerInfoCell.swift in Sources */,
 				93755C3C2C838299002570A5 /* Website.swift in Sources */,
-				93755C162C7F2F49002570A5 /* DatePickerHandler.swift in Sources */,
 				934FB5582CF8A6FA00757C7C /* LoginSeparatorView.swift in Sources */,
 				93B7B54F2CD50CE900E0205A /* OrderConfirmationViewController.swift in Sources */,
 				93B7B5592CD6751C00E0205A /* OrderConfirmationMessageCell.swift in Sources */,
@@ -2211,6 +2307,7 @@
 				93B7B53D2CD1D76900E0205A /* StoreInfoView.swift in Sources */,
 				935374402CB666E800794A63 /* CustomerDetails.swift in Sources */,
 				935374722CCABE0100794A63 /* StoreManager.swift in Sources */,
+				934FB5C52CFFB76D00757C7C /* EditUserProfileManager.swift in Sources */,
 				935374172C9C5CF300794A63 /* FavoritesView.swift in Sources */,
 				934FB5602CF8AC5E00757C7C /* LoginCheckBoxButton.swift in Sources */,
 				93B7B5742CDB425B00E0205A /* OrderConfirmationSectionExpansionManager.swift in Sources */,
@@ -2222,10 +2319,13 @@
 				93F9BB422C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift in Sources */,
 				9352912E2C873E9A0018B060 /* MenuSectionHeaderView.swift in Sources */,
 				936E099F2CED0ED20092F246 /* SearchDrinkDataService.swift in Sources */,
+				934FB5D62D01EBE300757C7C /* ProfileImageUploader.swift in Sources */,
+				934FB5BB2CFF79C800757C7C /* EditProfileTableView.swift in Sources */,
 				93B7B58D2CDE0F5200E0205A /* OrderHistorySortMenuDelegate.swift in Sources */,
 				93B7B57D2CDBB69500E0205A /* OrderHistoryView.swift in Sources */,
 				93755C312C82F6CF002570A5 /* HUDManager.swift in Sources */,
 				934FB5B62CFE6F7D00757C7C /* HomePageImageView.swift in Sources */,
+				934FB5CA2D0050EF00757C7C /* EditProfileTextField.swift in Sources */,
 				936E09A12CED0F8A0092F246 /* SearchCacheManager.swift in Sources */,
 				935374532CB80F1300794A63 /* OrderCustomerDetailsLayoutProvider.swift in Sources */,
 				9381224F2CE775F200ADFB7B /* SearchView.swift in Sources */,
@@ -2241,6 +2341,8 @@
 				934FB5662CF8B07B00757C7C /* LoginTextField.swift in Sources */,
 				935374592CBB038D00794A63 /* OrderPickupMethodCell.swift in Sources */,
 				93755C0A2C7B844D002570A5 /* EditProfileTableHandler.swift in Sources */,
+				934FB5DC2D034E6C00757C7C /* ProfileImageViewCell.swift in Sources */,
+				934FB5CE2D00E3E500757C7C /* EditProfileSegmentedControl.swift in Sources */,
 				93DB1D2B2C439F8900BA2CC1 /* NavigationHelper.swift in Sources */,
 				935374212CA2F02000794A63 /* Notifications.swift in Sources */,
 				9352913A2C8835580018B060 /* DrinksCategoryView.swift in Sources */,
@@ -2255,6 +2357,7 @@
 				93DB1D352C47EE1900BA2CC1 /* ForgotPasswordView.swift in Sources */,
 				938122392CE4D0E200ADFB7B /* OrderHistoryDetailHeaderGestureHandler.swift in Sources */,
 				93B7B5392CD1D31D00E0205A /* DefaultInfoView.swift in Sources */,
+				934FB5DA2D026F1B00757C7C /* EditProfileButton.swift in Sources */,
 				935374382CB06AA500794A63 /* OrderActionDelegate.swift in Sources */,
 				93755C372C835C8E002570A5 /* MenuView.swift in Sources */,
 				93B7B5932CDE305800E0205A /* OrderHistoryNavigationBarManager.swift in Sources */,
@@ -2270,10 +2373,12 @@
 				93B7B5512CD5E20500E0205A /* OrderConfirmationView.swift in Sources */,
 				93755C002C79E454002570A5 /* ProfileTextFieldCell.swift in Sources */,
 				9352914C2C8D91480018B060 /* DrinkDetailHandler.swift in Sources */,
+				934FB5D02D010CD700757C7C /* BirthdayDatePickerCell.swift in Sources */,
 				93B7B5762CDB8A3500E0205A /* OrderConfirmationHeaderGestureHandler.swift in Sources */,
 				93755BFE2C79DEAA002570A5 /* EditProfileView.swift in Sources */,
 				9381221F2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift in Sources */,
 				939BD9D22B2A1B1700616D1C /* SceneDelegate.swift in Sources */,
+				934FB5C02CFF988B00757C7C /* EditProfileNavigationBarManager.swift in Sources */,
 				93755C022C7B179C002570A5 /* GenderSelectionCell.swift in Sources */,
 				93F9BB4E2C27F91400355A87 /* DottedLineView.swift in Sources */,
 				9381222B2CE3C51D00ADFB7B /* OrderHistoryDetailLayoutProvider.swift in Sources */,
@@ -2285,13 +2390,16 @@
 				936CFFCB2C6E24AD004B8724 /* UserDetailsReceiver.swift in Sources */,
 				93B7B5612CD7912400E0205A /* OrderrConfirmationCloseButtonCell.swift in Sources */,
 				934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */,
+				934FB5D22D01144600757C7C /* EditProfileDatePicker.swift in Sources */,
 				934FB5B02CFE6D4500757C7C /* HomePageActionHandler.swift in Sources */,
 				936E09BD2CF4F6310092F246 /* HomePageView.swift in Sources */,
 				93755C3E2C838516002570A5 /* WebsiteManager.swift in Sources */,
 				93B7B55D2CD70FA900E0205A /* OrderrConfirmationItemDetailsCell.swift in Sources */,
 				93755BFA2C7700FD002570A5 /* PhotoPickerManager.swift in Sources */,
+				934FB5D42D0121B800757C7C /* EditProfileLabel.swift in Sources */,
 				93BD48C32C5CE5B500144E7F /* EmailSignInController.swift in Sources */,
 				93B9DC892C368DA80050BC3F /* OrderItemCollectionViewCell.swift in Sources */,
+				934FB5D82D02645C00757C7C /* EditProfileImageView.swift in Sources */,
 				93B7B5422CD3126E00E0205A /* StoreSelectionResultDelegate.swift in Sources */,
 				939BD9E42B2A1B4E00616D1C /* HomePageViewController.swift in Sources */,
 				9353744D2CB7EF3900794A63 /* OrderCustomerDetailsView.swift in Sources */,

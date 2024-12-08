@@ -5,55 +5,134 @@
 //  Created by 曹家瑋 on 2024/8/24.
 //
 
-/*
-
- 使用 UITableViewCell 而不是直接使用 UITextField：
-    
-    * 與 UITableView 的整合性：
-        - 使用 UITableViewCell 可以讓 UITextField 更容易與 UITableView 進行整合。
-        - UITableViewCell 提供的佈局和配置方式可以讓 UITextField 更加符合表單中的欄位需求，且容易管理整個表單的顯示與互動。
+// MARK: - ProfileTextFieldCell 筆記
+/**
  
-    * 支援複雜佈局：
-        - UITableViewCell 可以輕鬆地擴展，例如在單個 cell 中添加其他 UI 元件（如標籤、按鈕等），以滿足複雜的佈局需求。
-        - 這使得每一個「表單欄位」可以有更多的自定義選項，而不只是單純的文字輸入。
+ ## ProfileTextFieldCell 筆記
  
-    * 一致性：
-        - 使用 UITableViewCell 可以保持整個 App 中表單欄位的樣式和行為一致，減少重複代碼，提高可維護性。
-
- ------------------------- ------------------------- ------------------------- -------------------------
+ `* What`
  
- ## ProfileTextFieldCell：
-        - 是一個自定義的 UITableViewCell，專門用於顯示表單中的文字輸入欄位。
+ - `ProfileTextFieldCell` 是一個通用的表單欄位 Cell，用於顯示可配置的文字輸入框，並支援監聽用戶輸入內容的變更。
+ - 方便用 `ProfileTextFieldCell` 在 `EditProfileTableHandler` 中 `configureCell` 時透過 `configure` 直接建設不同類型的欄位。
+ - 不需要一個欄位就設置一個 cell。
 
-    * 配置方法：
-        - configure(textFieldText:placeholder:)：用來配置 textField 的顯示內容與鍵盤類型。根據 placeholder 的內容動態設定鍵盤類型。
+ `1.功能包括：`
+ 
+ - 根據不同類型自動配置輸入框的行為和屬性（如鍵盤類型、佔位符文字）。
+ - 提供 `onTextChanged` 閉包，將用戶的文字輸入回傳給外部控制器。
+ 
+ ----------------------------
+ 
+` * Why`
+ 
+ `1.提升可重用性：`
+ 
+ - 多數表單欄位需要顯示標籤和文字輸入框，該類別可用於多種情境，避免重複實現類似功能。
+ - 使用一個通用的 `ProfileTextFieldCell` 替代多個專用 `Cell`，避免重複實現相似功能。
+ 
+ `2.減少控制器責任：`
+ 
+ - 控制器只需配置欄位類型與初始值，而無需直接管理輸入框屬性與事件。
+ 
+ `3.即時回饋：`
+ 
+ - 當用戶輸入變更時，透過閉包快速回傳內容更新，方便即時處理。
+ 
+ ----------------------------
 
-    * 事件處理：
-        - textFieldDidChange()：當 textField 內容變更時觸發。如果 textField 的 fullName的布且內容為空，會顯示紅色邊框提示。
- ------------------------- ------------------------- ------------------------- -------------------------
+ `* How`
+ 
+ `1. 配置文字輸入框屬性：configure 方法`
+ 
+ ```swift
+ 
+ /// 配置文字輸入框的屬性。
+ /// - Parameters:
+ ///   - fieldType: 欄位類型，用於設定文字輸入框的行為（如電話號碼、姓名等）。
+ ///   - text: 預設文字，用於填充輸入框的初始值。
+ func configure(fieldType: EditProfileTextField.FieldType, text: String?) {
+     profileTextField.fieldType = fieldType
+     profileTextField.text = text
+ }
+ ```
+ 
+ - `參數設置的目的：`
 
+ - `fieldType`: 確保輸入框的行為與欄位需求一致，例如姓名欄位需要自動大寫，而電話欄位需要數字鍵盤。
+ - `text`: 用於設置初始值，例如顯示已保存的用戶資料，方便用戶編輯。
+ 
+ - `使用場景：`
+
+ - 在 `EditProfileTableHandler` 中的 `configureCell` 方法中根據 `fieldType` 和現有資料動態設置輸入框：
+
+ ```swift
+ cell.configure(fieldType: .name, text: profileEditModel.fullName)
+ cell.onTextChanged = { [weak self] updatedText in
+     guard let self = self else { return }
+     var updatedModel = profileEditModel
+     updatedModel.fullName = updatedText
+     self.delegate?.updateProfileEditModel(updatedModel)
+ }
+ ```
+ 
+ `2.監聽文字變更`
+ 
+ - 使用 `addTarget` 綁定輸入框的 `editingChanged` 事件，觸發 `textFieldDidChange` 方法。
+ - 當輸入變更時，透過 onTextChanged 閉包回傳更新：
+ 
+ ```swift
+ @objc private func textFieldDidChange() {
+     onTextChanged?(profileTextField.text)
+ }
+```
+ 
+ ----------------------------
+
+ `* 補充`
+
+` 1.EditProfileTextField 的靈活性：`
+
+ - `EditProfileTextField` 通過 `FieldType` 支援多種欄位配置，避免重複代碼。
+ - 如需新增欄位，只需擴展 `FieldType` 和對應的屬性配置。
+ 
+ `2. 減少不必要的 Cell 類型：`
+
+ - 無需為每個欄位類型創建單獨的 Cell，使用一個通用的 `ProfileTextFieldCell` 即可適配多種場景。
+ 
+ `3. 關於 configure 方法`
+ 
+ - `強調統一性`： configure 方法提供了統一的接口，確保所有文字輸入框的行為和顯示邏輯集中處理。
+ - `避免重複代碼`： 外部只需設置 `fieldType` 和 `text`，內部自動完成行為配置，減少開發者的錯誤可能性。
+ 
  */
 
 
-// MARK: - 已經完善
-
 import UIKit
 
-/// 是表單中每一個欄位的 UITableViewCell，它負責顯示標籤和輸入框的佈局。
+/// 表單中每一個欄位的 UITableViewCell，用於顯示文字輸入框的佈局與行為。
+/// - `ProfileTextFieldCell` 支援多種輸入類型（如姓名、電話號碼等），並在用戶輸入變更時透過閉包回傳更新。
 class ProfileTextFieldCell: UITableViewCell {
     
     // MARK: - Properties
-
+    
     static let reuseIdentifier = "ProfileTextFieldCell"
     
+    /// 用於監聽輸入框文字變更的回調閉包。
     var onTextChanged: ((String?) -> Void)?
     
+    // MARK: - UI Elements
+    
+    /// 自訂的文字輸入框，根據不同欄位類型進行配置。
+    private let profileTextField = EditProfileTextField()
+    
     // MARK: - Initializer
-
+    
+    /// 初始化方法，設置 Cell 的佈局與行為。
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupLayout()
-        textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        setupActions()
+        setupAppearance()
     }
     
     required init?(coder: NSCoder) {
@@ -61,66 +140,49 @@ class ProfileTextFieldCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - UI Elements
-
-    let textField: UITextField = {
-        let textField = UITextField()
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.borderStyle = .roundedRect
-        return textField
-    }()
-    
     // MARK: - Layout Setup
-
-    private func setupLayout() {
-        contentView.addSubview(textField)
-        
-        NSLayoutConstraint.activate([
-            textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            textField.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
-        ])
-    }
     
-    // MARK: - Configuration Method
-
-    /// 配置 textField 的顯示內容
-    ///
-    /// - Parameter textFieldText: 用來設定 textField 的文本內容
-    /// - Parameter placeholder: 設定 textField 的 placeholder 提示文字
-    func configure(textFieldText: String?, placeholder: String? = nil) {
-        textField.text = textFieldText
-        textField.placeholder = placeholder
-        configureKeyboardType(for: placeholder)
-    }
+    /// 設置文字輸入框的佈局，
+     private func setupLayout() {
+         contentView.addSubview(profileTextField)
+         
+         NSLayoutConstraint.activate([
+             profileTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+             profileTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+             profileTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+             profileTextField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
+         ])
+     }
     
-    /// 鍵盤樣是設置
-    ///
-    /// - Parameter placeholder: 根據 TextField 的 placeholder 設置鍵盤樣式
-    private func configureKeyboardType(for placeholder: String?) {
-        if placeholder == "Enter your phone number" {
-            textField.keyboardType = .phonePad
-        } else {
-            textField.keyboardType = .default
-        }
+    /// 配置 Cell 的外觀屬性
+    private func setupAppearance() {
+        separatorInset = .zero // 確保分隔線完全禁用
+        backgroundColor = .clear // 確保背景色與 TableView 一致
+        selectionStyle = .none // 禁用點擊高亮效果
     }
     
     // MARK: - Actions
     
-    @objc private func textFieldDidChange() {
-        onTextChanged?(textField.text)
-        updateTextFieldAppearance()
+    /// 設置按鈕的行為
+    private func setupActions() {
+        profileTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
-    /// 當 fullName 欄位為空時，顯示紅色邊框
-    private func updateTextFieldAppearance() {
-        if textField.placeholder == "Enter your full name", textField.text?.isEmpty == true {
-            textField.layer.borderColor = UIColor.red.cgColor
-            textField.layer.borderWidth = 1.0
-        } else {
-            textField.layer.borderColor = UIColor.clear.cgColor
-            textField.layer.borderWidth = 0.0
-        }
+    /// 當文字輸入框內容變更時觸發，透過 `onTextChanged` 閉包回傳文字更新。
+    @objc private func textFieldDidChange() {
+        onTextChanged?(profileTextField.text)
     }
-
+    
+    // MARK: - Configuration Method
+    
+    /// 配置文字輸入框的屬性。
+    /// - Parameters:
+    ///   - fieldType: 欄位類型，用於設定文字輸入框的行為（如電話號碼、姓名等）。
+    ///   - text: 預設文字，用於填充輸入框的初始值。
+    func configure(fieldType: EditProfileTextField.FieldType, text: String?) {
+        profileTextField.fieldType = fieldType
+        profileTextField.text = text
+    }
+    
 }
+

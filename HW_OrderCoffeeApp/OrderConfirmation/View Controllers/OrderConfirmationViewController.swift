@@ -610,7 +610,7 @@ extension OrderConfirmationViewController: OrderConfirmationHandlerDelegate {
         guard let tabBarController = getTabBarController() else { return }
         
         let tabIndicesWithAnimation: [TabIndex] = [.menu]
-        let tabIndicesWithoutAnimation: [TabIndex] = [.search, .order, .userProfile]
+        let tabIndicesWithoutAnimation: [TabIndex] = [.search, .order, .profile]
         
         // 回到根視圖控制器，使用動畫效果（例如 Menu）
         for tabIndex in tabIndicesWithAnimation {
