@@ -228,7 +228,7 @@
             </objects>
             <point key="canvasLocation" x="9572" y="1045"/>
         </scene>
-        <!--User Profile-->
+        <!--User Profile View Controller-->
         <scene sceneID="db4-xi-11o">
             <objects>
                 <viewController id="PWQ-fX-J0m" customClass="UserProfileViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -238,7 +238,7 @@
                         <viewLayoutGuide key="safeArea" id="EfW-2G-Wtt"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" title="User Profile" largeTitleDisplayMode="always" id="HmT-80-9F0"/>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="HmT-80-9F0"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EN4-G6-JTk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
