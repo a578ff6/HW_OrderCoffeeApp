@@ -91,200 +91,6 @@
  */
 
 
-// MARK: - 已經使用present到編輯頁面（沒有使用tableview）
-/*
- import UIKit
- import Kingfisher
- import Firebase
-
- /// 個人資訊頁面
- ///
- /// `UserProfileViewController` 顯示使用者的個人資訊，包括名字、電子郵件和頭像。會在載入時設置使用者資料，並且實現 `UserDetailsReceiver` 協議來接收來自其他視圖控制器的使用者資訊。
- class UserProfileViewController: UIViewController {
-
-     // MARK: - Properties
-     
-     /// 用來顯示個人資訊的自定義視圖
-     private let userProfileView = UserProfileView()
-     
-     /// 保存使用者詳細資訊
-     private var userDetails: UserDetails?
-     
-     /// 處理照片選擇與上傳的管理器
-     private var photoPickerManager: PhotoPickerManager!
-     
-
-     // MARK: - Lifecycle Methods
-     
-     override func loadView() {
-         view = userProfileView
-     }
-     
-     override func viewDidLoad() {
-         super.viewDidLoad()
-         setupChangePhotoButtonAction()
-         setupLogoutButtonAction()
-         setupEditProfileButtonAction()  // 設置 Edit Profile 按鈕的動作
-         photoPickerManager = PhotoPickerManager(viewController: self)
-         ActivityIndicatorManager.shared.startLoading(on: view)          // 開始活動指示器
-         configureUserData()                                             // 配置使用者資料
-     }
-     
-     
-     // MARK: - Configuration
-
-     /// 設置使用者資料顯示在視圖上
-     ///
-     /// 若 `userDetails` 有值，則使用其資料填充 `userProfileView` 的相關 UI 元件。否則，顯示預設圖片或文字。
-     private func configureUserData() {
-         guard let userDetails = userDetails else {
-             userProfileView.nameLabel.text = "userName"
-             userProfileView.emailLabel.text = "user@example.com"
-             userProfileView.profileImageView.image = UIImage(named: "UserSymbol")
-             ActivityIndicatorManager.shared.stopLoading()
-             return
-         }
-         
-         userProfileView.nameLabel.text = userDetails.fullName
-         userProfileView.emailLabel.text = userDetails.email
-         
-         // 加載大頭照
-         if let profileImageURL = userDetails.profileImageURL {
-             userProfileView.profileImageView.kf.setImage(
-                 with: URL(string: profileImageURL),
-                 placeholder: UIImage(named: "UserSymbol"),
-                 options: nil,
-                 completionHandler: { result in
-                     // 無論成功或失敗，停止活動指示器
-                     ActivityIndicatorManager.shared.stopLoading()
-                 }
-             )
-         } else {
-             userProfileView.profileImageView.image = UIImage(named: "UserSymbol")
-             ActivityIndicatorManager.shared.stopLoading()
-         }
-     }
-
-     
-     // MARK: - Setup Button Actions
-     
-     /// 設置變更大頭照按鈕的點擊事件
-     private func setupChangePhotoButtonAction() {
-         userProfileView.changePhotoButton.addTarget(self, action: #selector(changePhotoButtonTapped), for: .touchUpInside)
-     }
-     
-     /// 設置登出按鈕的點擊事件
-     private func setupLogoutButtonAction() {
-         userProfileView.logoutButton.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
-     }
-     
-     /// 設置 Edit Profile 按鈕的點擊事件
-     private func setupEditProfileButtonAction() {
-         userProfileView.editProfileButton.addTarget(self, action: #selector(editProfileButtonTapped), for: .touchUpInside)
-     }
-     
-  
-     // MARK: - Actions
-     
-     /// 處理更改大頭照按鈕的點擊事件
-     ///
-     /// 當用戶點擊按鈕時，顯示選擇照片的選項，然後上傳選擇的圖片並更新大頭照。
-     @objc private func changePhotoButtonTapped() {
-         photoPickerManager.presentPhotoOptions { [weak self] selectedImage in
-             guard let image = selectedImage, let uid = self?.userDetails?.uid else { return }
-             self?.userProfileView.profileImageView.image = image
-             
-             ActivityIndicatorManager.shared.startLoading(on: self!.view)
-             FirebaseController.shared.uploadProfileImage(image, for: uid) { result in
-                 switch result {
-                 case .success(let url):
-                     FirebaseController.shared.updateUserProfileImageURL(url, for: uid) { updateResult in
-                         ActivityIndicatorManager.shared.stopLoading()
-                         switch updateResult {
-                         case .success:
-                             self?.userDetails?.profileImageURL = url
-                             print("Profile image updated successfully")
-                         case .failure(let error):
-                             print("Failed to update profile image URL: \(error)")
-                         }
-                     }
-                 case .failure(let error):
-                     ActivityIndicatorManager.shared.stopLoading()
-                     print("Failed to upload image: \(error)")
-                 }
-             }
-         }
-     }
-     
-     /// 處理「Edit Profile」按鈕點擊事件，推送到 EditProfileViewController
-     @objc private func editProfileButtonTapped() {
-         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-         if let editProfileVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.editProfileViewController) as? EditProfileViewController {
-             editProfileVC.setupWithUserDetails(userDetails)
-             editProfileVC.delegate = self // 設置為 delegate 以接收更新資料
-
-             let navController = UINavigationController(rootViewController: editProfileVC)
-             navController.modalPresentationStyle = .pageSheet
-             
-             if let sheet = navController.sheetPresentationController {
-                 sheet.detents = [.large()]
-             }
-             
-             present(navController, animated: true, completion: nil)
-         }
-     }
-     
-     /// 處理登出按鈕的點擊事件
-     @objc private func logoutButtonTapped() {
-         AlertService.showAlert(withTitle: "登出", message: "您確定要登出嗎？", inViewController: self, showCancelButton: true) {
-             [weak self] in self?.executeLogout()
-         }
-     }
-     
-     /// 處理登出邏輯
-     ///
-     /// 在用戶確認登出後，應該執行登出操作並顯示活動指示器。這樣可以告知用戶正在處理登出的過程。
-     private func executeLogout() {
-         ActivityIndicatorManager.shared.startLoading(on: view)
-         
-         FirebaseController.shared.signOut { [weak self] result in
-             ActivityIndicatorManager.shared.stopLoading()
-             switch result {
-             case .success:
-                 NavigationHelper.navigateToLogin(from: self!) // 登出成功後，返回到登入頁面
-             case .failure(let error):
-                 AlertService.showAlert(withTitle: "登出失敗", message: "無法登出，請稍後再試。", inViewController: self!)
-             }
-         }
-     }
-
- }
-
-
- // MARK: - UserDetailsReceiver Delegate
-
-extension UserProfileViewController: UserDetailsReceiver {
-    
-    /// 實現 UserDetailsReceiver 協議來接收使用者詳細資訊並更新 UI
-    func receiveUserDetails(_ userDetails: UserDetails?) {
-        print("Received user details: \(String(describing: userDetails))")
-        self.userDetails = userDetails
-        configureUserData()
-    }
-}
-*/
-
-
-
-
-
-
-
-
-
-
-
-
 // MARK: - ## UserProfileViewController 筆記 ##
 
 /*
@@ -376,6 +182,109 @@ extension UserProfileViewController: UserDetailsReceiver {
  */
 
 
+// MARK: - 分離 Tab Bar 和 Navigation Bar 標題設定 （重要）
+/**
+ 
+ ## 筆記：分離 Tab Bar 和 Navigation Bar 標題設定
+ 
+ - 在` Main Storyboard` 上，我已經將` Tab Bar Item `的名稱設置為 `Profile`。
+ - 而在程式碼中，我在 `UserProfileViewController` 裡將 `UIViewController` 的 `title` 屬性設置為 `User Profile`，以顯示在 `Navigation Ba`r 中。
+ - 因為 `iOS 預設情況`下，`UIViewController` 的` title` 屬性會同時影響 `Navigation Bar` 的標題 和 `Tab Bar Item` 的標題。
+ - 所以當我點擊 Tab Bar Item 進入到 UserProfileViewController 時，Tab Bar Item 的名稱從 Profile 被改為 User Profile。
+ - 這種行為是由於 `title` 和 `tabBarItem.title` 預設同步所導致的。
+ 
+ ---------------------------
+
+
+ `* 問題 (What)`
+ 
+ - 當使用者點擊 `Profile` tab 項目進入到 `UserProfileViewController` 時，發現 `tab bar item` 的名稱會從原本設定的 "`Profile`" 變成 "`User Profile`"。
+
+ ---------------------------
+
+ `* 原因 (Why)`
+ 
+ - 這個問題的發生是因為 iOS 的 `UIViewController` 中 `title` 屬性同時影響了：
+ 
+ 1. Navigation Bar 的標題 (`navigationItem.title`)
+ 2. Tab Bar 的標題 (`tabBarItem.title`)
+
+ - 在 `UserProfileViewController` 中，
+ - 這行程式碼將 `title` 設為 "User Profile"，導致 Tab Bar 的 `tabBarItem.title` 也被同步修改。
+ - 這是 iOS 的預設行為，當 `title` 被改變時，如果沒有特別指定 `tabBarItem.title`，兩者會保持一致。
+ 
+ ```swift
+ /// 設置導航欄的標題
+ private func setupNavigationTitle() {
+     title = "User Profile"     // 這行程式碼影響
+     self.navigationController?.navigationBar.prefersLargeTitles = true
+     self.navigationItem.largeTitleDisplayMode = .always
+ }
+ ```
+ 
+ ---------------------------
+
+ `* 解決方式 (How)`
+ 
+ - 要解決這個問題並保留 `Tab Bar` 的名稱為 "`Profile`"，而 `Navigation Bar` 顯示 "`User Profile`"，可以透過以下步驟進行：
+
+ 
+ `方法一：`
+ 
+ - 分開設置 `navigationItem.title` 和 `tabBarItem.title`
+ - 在 `UserProfileViewController` 中：
+
+ ```swift
+ override func viewDidLoad() {
+     super.viewDidLoad()
+     
+     // 設置 Navigation Bar 的標題
+     self.navigationItem.title = "User Profile" // 僅影響 Navigation Bar
+
+     // 確保 Tab Bar 的標題不變
+     self.tabBarItem.title = "Profile"
+ }
+ ```
+
+ `方法二：`
+ 
+ - 在 `MainTabBarController` 確保 Tab Bar 標題
+ - 在 `MainTabBarController` 中初始化 Tab Bar 項目時，明確設定每個 tab 的標題：
+
+ ```swift
+ override func viewDidLoad() {
+     super.viewDidLoad()
+
+     if let viewControllers = self.viewControllers {
+         viewControllers[TabIndex.profile.rawValue].tabBarItem.title = "Profile"
+     }
+ }
+ ```
+
+ `方法三：`
+ 
+ - 避免修改 `title`，僅修改 `navigationItem.title`
+ - 如果不需要使用 `title` 來設置 `Navigation Bar `的標題，可以直接設定 `navigationItem.title`：
+
+ ```swift
+ private func setupNavigationTitle() {
+     self.navigationItem.title = "User Profile" // 僅影響 Navigation Bar 標題
+     self.navigationController?.navigationBar.prefersLargeTitles = true
+     self.navigationItem.largeTitleDisplayMode = .always
+ }
+ ```
+
+ ---------------------------
+
+ `* 補充說明`
+ 
+ - 這種分開設置 `tabBarItem.title` 和 `navigationItem.title` 的情況是非常常見的設計需求。例如：
+ - Tab Bar 簡潔顯示 "Profile"，而頁面標題提供更多上下文，如 "User Profile"。
+ - Tab Bar 顯示 "Orders"，頁面標題可能顯示 "My Recent Orders"。
+
+ 通過以上方式，可以達到 Tab Bar 和 Navigation Bar 標題的分離，提升用戶體驗和設計一致性。
+ */
+
 
 import UIKit
 import Kingfisher
@@ -420,7 +329,7 @@ class UserProfileViewController: UIViewController {
     
     /// 設置導航欄的標題
     private func setupNavigationTitle() {
-        title = "User Profile"
+        self.navigationItem.title = "User Profile" // 只影響 Navigation Bar 標題
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.largeTitleDisplayMode = .always
     }
