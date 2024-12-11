@@ -137,8 +137,8 @@
 		93755C0A2C7B844D002570A5 /* EditProfileTableHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */; };
 		93755C122C7E5542002570A5 /* UIViewController+KeyboardHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C112C7E5541002570A5 /* UIViewController+KeyboardHandling.swift */; };
 		93755C1B2C808202002570A5 /* UserProfileTableHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1A2C808202002570A5 /* UserProfileTableHandler.swift */; };
-		93755C1D2C8094D0002570A5 /* ProfileHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1C2C8094D0002570A5 /* ProfileHeaderCell.swift */; };
-		93755C1F2C80971F002570A5 /* ProfileOptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1E2C80971F002570A5 /* ProfileOptionCell.swift */; };
+		93755C1D2C8094D0002570A5 /* UserProfileInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1C2C8094D0002570A5 /* UserProfileInfoCell.swift */; };
+		93755C1F2C80971F002570A5 /* UserProfileGeneralOptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1E2C80971F002570A5 /* UserProfileGeneralOptionCell.swift */; };
 		93755C2F2C821F0F002570A5 /* JGProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 93755C2E2C821F0F002570A5 /* JGProgressHUD */; };
 		93755C312C82F6CF002570A5 /* HUDManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C302C82F6CF002570A5 /* HUDManager.swift */; };
 		93755C332C8351AA002570A5 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C322C8351AA002570A5 /* MenuViewController.swift */; };
@@ -153,6 +153,20 @@
 		937605A02C4BB6BD00B1316C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9376059F2C4BB6BD00B1316C /* GoogleSignIn */; };
 		937605A22C4BB6BD00B1316C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 937605A12C4BB6BD00B1316C /* GoogleSignInSwift */; };
 		937605A82C4BFA9F00B1316C /* GoogleSignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */; };
+		938063DA2D06569C00537F01 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063D92D06569C00537F01 /* UserProfile.swift */; };
+		938063DD2D06576900537F01 /* UserProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063DC2D06576900537F01 /* UserProfileManager.swift */; };
+		938063DF2D06661B00537F01 /* UserProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063DE2D06661B00537F01 /* UserProfileImageView.swift */; };
+		938063E12D06662B00537F01 /* UserProfileLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063E02D06662B00537F01 /* UserProfileLabel.swift */; };
+		938063E32D067A7A00537F01 /* UserProfileStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063E22D067A7A00537F01 /* UserProfileStackView.swift */; };
+		938063E52D07280500537F01 /* UserProfileTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063E42D07280500537F01 /* UserProfileTableView.swift */; };
+		938063E72D07365500537F01 /* UserProfileIconImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063E62D07365500537F01 /* UserProfileIconImageView.swift */; };
+		938063EA2D076FAC00537F01 /* UserProfileTableHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063E92D076FAC00537F01 /* UserProfileTableHandlerDelegate.swift */; };
+		938063ED2D07841800537F01 /* UserProfileNavigationBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063EC2D07841800537F01 /* UserProfileNavigationBarManager.swift */; };
+		938063F12D07B50600537F01 /* UserProfileDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063F02D07B50600537F01 /* UserProfileDataSource.swift */; };
+		938063F32D07B60300537F01 /* UserProfileSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063F22D07B60300537F01 /* UserProfileSection.swift */; };
+		938063F52D0847C100537F01 /* UserProfileSocialLinkCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063F42D0847C100537F01 /* UserProfileSocialLinkCell.swift */; };
+		938063F72D08676F00537F01 /* UserProfileLogoutCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063F62D08676F00537F01 /* UserProfileLogoutCell.swift */; };
+		938063F92D087C7100537F01 /* UserProfileRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063F82D087C7100537F01 /* UserProfileRow.swift */; };
 		9381221F2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381221E2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift */; };
 		938122212CE286A300ADFB7B /* OrderHistoryDetailHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122202CE286A300ADFB7B /* OrderHistoryDetailHandler.swift */; };
 		938122232CE286C300ADFB7B /* OrderHistoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122222CE286C300ADFB7B /* OrderHistoryDetailView.swift */; };
@@ -437,8 +451,8 @@
 		93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileTableHandler.swift; sourceTree = "<group>"; };
 		93755C112C7E5541002570A5 /* UIViewController+KeyboardHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+KeyboardHandling.swift"; sourceTree = "<group>"; };
 		93755C1A2C808202002570A5 /* UserProfileTableHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileTableHandler.swift; sourceTree = "<group>"; };
-		93755C1C2C8094D0002570A5 /* ProfileHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderCell.swift; sourceTree = "<group>"; };
-		93755C1E2C80971F002570A5 /* ProfileOptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileOptionCell.swift; sourceTree = "<group>"; };
+		93755C1C2C8094D0002570A5 /* UserProfileInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileInfoCell.swift; sourceTree = "<group>"; };
+		93755C1E2C80971F002570A5 /* UserProfileGeneralOptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileGeneralOptionCell.swift; sourceTree = "<group>"; };
 		93755C302C82F6CF002570A5 /* HUDManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDManager.swift; sourceTree = "<group>"; };
 		93755C322C8351AA002570A5 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		93755C342C83520A002570A5 /* MenuCollectionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuCollectionHandler.swift; sourceTree = "<group>"; };
@@ -450,6 +464,20 @@
 		937605982C4A6B0300B1316C /* BottomLineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
 		9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+CustomColors.swift"; sourceTree = "<group>"; };
 		937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInController.swift; sourceTree = "<group>"; };
+		938063D92D06569C00537F01 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		938063DC2D06576900537F01 /* UserProfileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileManager.swift; sourceTree = "<group>"; };
+		938063DE2D06661B00537F01 /* UserProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileImageView.swift; sourceTree = "<group>"; };
+		938063E02D06662B00537F01 /* UserProfileLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileLabel.swift; sourceTree = "<group>"; };
+		938063E22D067A7A00537F01 /* UserProfileStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileStackView.swift; sourceTree = "<group>"; };
+		938063E42D07280500537F01 /* UserProfileTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileTableView.swift; sourceTree = "<group>"; };
+		938063E62D07365500537F01 /* UserProfileIconImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileIconImageView.swift; sourceTree = "<group>"; };
+		938063E92D076FAC00537F01 /* UserProfileTableHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileTableHandlerDelegate.swift; sourceTree = "<group>"; };
+		938063EC2D07841800537F01 /* UserProfileNavigationBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileNavigationBarManager.swift; sourceTree = "<group>"; };
+		938063F02D07B50600537F01 /* UserProfileDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileDataSource.swift; sourceTree = "<group>"; };
+		938063F22D07B60300537F01 /* UserProfileSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileSection.swift; sourceTree = "<group>"; };
+		938063F42D0847C100537F01 /* UserProfileSocialLinkCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileSocialLinkCell.swift; sourceTree = "<group>"; };
+		938063F62D08676F00537F01 /* UserProfileLogoutCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileLogoutCell.swift; sourceTree = "<group>"; };
+		938063F82D087C7100537F01 /* UserProfileRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileRow.swift; sourceTree = "<group>"; };
 		9381221E2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailViewController.swift; sourceTree = "<group>"; };
 		938122202CE286A300ADFB7B /* OrderHistoryDetailHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailHandler.swift; sourceTree = "<group>"; };
 		938122222CE286C300ADFB7B /* OrderHistoryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailView.swift; sourceTree = "<group>"; };
@@ -1208,10 +1236,16 @@
 		936CFFC72C6C73F2004B8724 /* UserProfile */ = {
 			isa = PBXGroup;
 			children = (
-				93755C212C81F535002570A5 /* ViewControllers */,
-				93755C222C81F546002570A5 /* Handlers */,
-				93755C232C81F576002570A5 /* Views */,
+				938063D72D0652AB00537F01 /* Components */,
 				93755C202C81F4B7002570A5 /* Cells */,
+				93755C232C81F576002570A5 /* Views */,
+				93755C222C81F546002570A5 /* Handlers */,
+				938063E82D076F8800537F01 /* Delegates */,
+				93755C212C81F535002570A5 /* ViewControllers */,
+				938063EB2D07840B00537F01 /* Managers */,
+				938063FA2D087CBD00537F01 /* DataSource */,
+				938063D82D06565E00537F01 /* Models */,
+				938063DB2D06574200537F01 /* Services */,
 			);
 			path = UserProfile;
 			sourceTree = "<group>";
@@ -1347,8 +1381,8 @@
 				93755C242C81F67A002570A5 /* ViewControllers */,
 				934FB5DF2D04AD8900757C7C /* Coordinators */,
 				934FB5E02D04AD9700757C7C /* Managers */,
-				934FB5C32CFFB75B00757C7C /* Services */,
 				934FB5C62CFFB8C700757C7C /* Models */,
+				934FB5C32CFFB75B00757C7C /* Services */,
 			);
 			path = EditProfile;
 			sourceTree = "<group>";
@@ -1356,8 +1390,10 @@
 		93755C202C81F4B7002570A5 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				93755C1C2C8094D0002570A5 /* ProfileHeaderCell.swift */,
-				93755C1E2C80971F002570A5 /* ProfileOptionCell.swift */,
+				93755C1C2C8094D0002570A5 /* UserProfileInfoCell.swift */,
+				93755C1E2C80971F002570A5 /* UserProfileGeneralOptionCell.swift */,
+				938063F42D0847C100537F01 /* UserProfileSocialLinkCell.swift */,
+				938063F62D08676F00537F01 /* UserProfileLogoutCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -1451,6 +1487,60 @@
 				93B7B54A2CD4D6E000E0205A /* View Controllers */,
 			);
 			path = StoreInfo;
+			sourceTree = "<group>";
+		};
+		938063D72D0652AB00537F01 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				938063E42D07280500537F01 /* UserProfileTableView.swift */,
+				938063E22D067A7A00537F01 /* UserProfileStackView.swift */,
+				938063DE2D06661B00537F01 /* UserProfileImageView.swift */,
+				938063E62D07365500537F01 /* UserProfileIconImageView.swift */,
+				938063E02D06662B00537F01 /* UserProfileLabel.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		938063D82D06565E00537F01 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				938063D92D06569C00537F01 /* UserProfile.swift */,
+				938063F22D07B60300537F01 /* UserProfileSection.swift */,
+				938063F82D087C7100537F01 /* UserProfileRow.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		938063DB2D06574200537F01 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				938063DC2D06576900537F01 /* UserProfileManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		938063E82D076F8800537F01 /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				938063E92D076FAC00537F01 /* UserProfileTableHandlerDelegate.swift */,
+			);
+			path = Delegates;
+			sourceTree = "<group>";
+		};
+		938063EB2D07840B00537F01 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				938063EC2D07841800537F01 /* UserProfileNavigationBarManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		938063FA2D087CBD00537F01 /* DataSource */ = {
+			isa = PBXGroup;
+			children = (
+				938063F02D07B50600537F01 /* UserProfileDataSource.swift */,
+			);
+			path = DataSource;
 			sourceTree = "<group>";
 		};
 		9381221D2CE2811400ADFB7B /* OrderHistoryDetail */ = {
@@ -1647,9 +1737,9 @@
 				93755C192C80658B002570A5 /* EditProfile */,
 				935374132C9C5C9400794A63 /* Favorites */,
 				93BD48B92C58DE3A00144E7F /* Main */,
-				93BD48B82C58DE1C00144E7F /* Security */,
 				93F9BB4F2C2916C400355A87 /* Models */,
 				939BDA702B2C25E400616D1C /* Services */,
+				93BD48B82C58DE1C00144E7F /* Security */,
 				939BDA6C2B2C200F00616D1C /* Authentication */,
 			);
 			path = HW_OrderCoffeeApp;
@@ -2223,7 +2313,7 @@
 				93B7B5792CDBA5D300E0205A /* OrderHistoryViewController.swift in Sources */,
 				93DB1D3A2C49618C00BA2CC1 /* SignUpView.swift in Sources */,
 				934FB57D2CFA8A4300757C7C /* SignUpLabel.swift in Sources */,
-				93755C1F2C80971F002570A5 /* ProfileOptionCell.swift in Sources */,
+				93755C1F2C80971F002570A5 /* UserProfileGeneralOptionCell.swift in Sources */,
 				935374312CAD6F1500794A63 /* OrderView.swift in Sources */,
 				93B9DC782C314F7A0050BC3F /* DrinkDetailLayoutProvider.swift in Sources */,
 				934FB5902CFB071B00757C7C /* SignUpActionHandler.swift in Sources */,
@@ -2271,12 +2361,14 @@
 				9353745F2CC3D3F800794A63 /* OrderCustomerDetailsHandlerDelegate.swift in Sources */,
 				9381223D2CE58DA600ADFB7B /* OrderHistoryDetailSharingHandler.swift in Sources */,
 				936E09BF2CF5D7990092F246 /* HomePageViewDelegate.swift in Sources */,
+				938063F32D07B60300537F01 /* UserProfileSection.swift in Sources */,
 				934FB5CC2D00739000757C7C /* EditProfileTableHandlerDelegate.swift in Sources */,
 				939BD9D02B2A1B1700616D1C /* AppDelegate.swift in Sources */,
 				934FB5A22CFDD64B00757C7C /* ForgotPasswordScrollView.swift in Sources */,
 				9353745D2CBF281C00794A63 /* OrderCustomerSubmitCell.swift in Sources */,
 				935374152C9C5CD000794A63 /* FavoritesHandler.swift in Sources */,
 				934FB58C2CFA9A3000757C7C /* SignUpScrollView.swift in Sources */,
+				938063E52D07280500537F01 /* UserProfileTableView.swift in Sources */,
 				934FB5AA2CFE0BA000757C7C /* ForgotPasswordNavigationBarManager.swift in Sources */,
 				9353740E2C9AD6E100794A63 /* ButtonEffectManager.swift in Sources */,
 				93B9DC872C3661DF0050BC3F /* MainTabBarController.swift in Sources */,
@@ -2286,6 +2378,7 @@
 				938122532CE7761E00ADFB7B /* SearchResultsDelegate.swift in Sources */,
 				93755C332C8351AA002570A5 /* MenuViewController.swift in Sources */,
 				9353742B2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift in Sources */,
+				938063DF2D06661B00537F01 /* UserProfileImageView.swift in Sources */,
 				93B9DC762C3042710050BC3F /* MenuLayoutProvider.swift in Sources */,
 				938122212CE286A300ADFB7B /* OrderHistoryDetailHandler.swift in Sources */,
 				935374292CA4502B00794A63 /* NoFavoritesView.swift in Sources */,
@@ -2298,10 +2391,13 @@
 				938122312CE45EC500ADFB7B /* OrderHistoryDetailCustomerInfoCell.swift in Sources */,
 				93755C352C83520A002570A5 /* MenuCollectionHandler.swift in Sources */,
 				93B7B5532CD5E23B00E0205A /* OrderConfirmationLayoutProvider.swift in Sources */,
+				938063DA2D06569C00537F01 /* UserProfile.swift in Sources */,
 				93B7B55B2CD6812800E0205A /* OrderConfirmationCustomerInfoCell.swift in Sources */,
 				93755C3C2C838299002570A5 /* Website.swift in Sources */,
 				934FB5582CF8A6FA00757C7C /* LoginSeparatorView.swift in Sources */,
 				93B7B54F2CD50CE900E0205A /* OrderConfirmationViewController.swift in Sources */,
+				938063E32D067A7A00537F01 /* UserProfileStackView.swift in Sources */,
+				938063EA2D076FAC00537F01 /* UserProfileTableHandlerDelegate.swift in Sources */,
 				93B7B5592CD6751C00E0205A /* OrderConfirmationMessageCell.swift in Sources */,
 				93B7B5832CDBB6D600E0205A /* OrderHistoryHandler.swift in Sources */,
 				93B7B53D2CD1D76900E0205A /* StoreInfoView.swift in Sources */,
@@ -2312,11 +2408,13 @@
 				934FB5602CF8AC5E00757C7C /* LoginCheckBoxButton.swift in Sources */,
 				93B7B5742CDB425B00E0205A /* OrderConfirmationSectionExpansionManager.swift in Sources */,
 				938122512CE7760800ADFB7B /* SearchHandler.swift in Sources */,
+				938063ED2D07841800537F01 /* UserProfileNavigationBarManager.swift in Sources */,
 				93755C122C7E5542002570A5 /* UIViewController+KeyboardHandling.swift in Sources */,
 				934FB5A52CFDEF5500757C7C /* ForgotPasswordActionHandler.swift in Sources */,
 				934FB5682CF8DA6700757C7C /* LoginStackView.swift in Sources */,
 				935291412C89C1480018B060 /* DrinksCategorySectionFooterView.swift in Sources */,
 				93F9BB422C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift in Sources */,
+				938063F52D0847C100537F01 /* UserProfileSocialLinkCell.swift in Sources */,
 				9352912E2C873E9A0018B060 /* MenuSectionHeaderView.swift in Sources */,
 				936E099F2CED0ED20092F246 /* SearchDrinkDataService.swift in Sources */,
 				934FB5D62D01EBE300757C7C /* ProfileImageUploader.swift in Sources */,
@@ -2330,12 +2428,13 @@
 				935374532CB80F1300794A63 /* OrderCustomerDetailsLayoutProvider.swift in Sources */,
 				9381224F2CE775F200ADFB7B /* SearchView.swift in Sources */,
 				93755C1B2C808202002570A5 /* UserProfileTableHandler.swift in Sources */,
-				93755C1D2C8094D0002570A5 /* ProfileHeaderCell.swift in Sources */,
+				93755C1D2C8094D0002570A5 /* UserProfileInfoCell.swift in Sources */,
 				9381222F2CE45A7F00ADFB7B /* OrderrHistoryDetailItemCell.swift in Sources */,
 				93F9BB3A2C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift in Sources */,
 				93B7B5692CD9E22800E0205A /* OrderConfirmationSectionHeaderView.swift in Sources */,
 				939BDA742B2FB3E400616D1C /* MenuModels.swift in Sources */,
 				935374482CB6D9F600794A63 /* CustomerDetailsManager.swift in Sources */,
+				938063F92D087C7100537F01 /* UserProfileRow.swift in Sources */,
 				93B7B5572CD66D6100E0205A /* OrderConfirmationCheckmarkCell.swift in Sources */,
 				938122592CE781D800ADFB7B /* SearchCell.swift in Sources */,
 				934FB5662CF8B07B00757C7C /* LoginTextField.swift in Sources */,
@@ -2348,6 +2447,7 @@
 				9352913A2C8835580018B060 /* DrinksCategoryView.swift in Sources */,
 				93F9BB5A2C2A566D00355A87 /* DrinkOrderOptionsCollectionViewCell.swift in Sources */,
 				93B7B5952CDE30C400E0205A /* OrderHistoryEditingHandler.swift in Sources */,
+				938063F12D07B50600537F01 /* UserProfileDataSource.swift in Sources */,
 				934FB5842CFA936B00757C7C /* SignUpSeparatorView.swift in Sources */,
 				934FB59E2CFDCC2300757C7C /* ForgotPasswordAttributedButton.swift in Sources */,
 				935374192C9C601200794A63 /* FavoriteDrinkCell.swift in Sources */,
@@ -2378,6 +2478,8 @@
 				93755BFE2C79DEAA002570A5 /* EditProfileView.swift in Sources */,
 				9381221F2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift in Sources */,
 				939BD9D22B2A1B1700616D1C /* SceneDelegate.swift in Sources */,
+				938063E72D07365500537F01 /* UserProfileIconImageView.swift in Sources */,
+				938063DD2D06576900537F01 /* UserProfileManager.swift in Sources */,
 				934FB5C02CFF988B00757C7C /* EditProfileNavigationBarManager.swift in Sources */,
 				93755C022C7B179C002570A5 /* GenderSelectionCell.swift in Sources */,
 				93F9BB4E2C27F91400355A87 /* DottedLineView.swift in Sources */,
@@ -2388,6 +2490,7 @@
 				935374442CB67DB100794A63 /* Order.swift in Sources */,
 				934FB5882CFA962400757C7C /* SignUpAttributedButton.swift in Sources */,
 				936CFFCB2C6E24AD004B8724 /* UserDetailsReceiver.swift in Sources */,
+				938063F72D08676F00537F01 /* UserProfileLogoutCell.swift in Sources */,
 				93B7B5612CD7912400E0205A /* OrderrConfirmationCloseButtonCell.swift in Sources */,
 				934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */,
 				934FB5D22D01144600757C7C /* EditProfileDatePicker.swift in Sources */,
@@ -2407,6 +2510,7 @@
 				9381224D2CE766A300ADFB7B /* SearchViewController.swift in Sources */,
 				9353741B2C9D832E00794A63 /* FavoriteDrink.swift in Sources */,
 				934FB5622CF8ACE800757C7C /* LoginAttributedButton.swift in Sources */,
+				938063E12D06662B00537F01 /* UserProfileLabel.swift in Sources */,
 				93755C042C7B28AE002570A5 /* BirthdaySelectionCell.swift in Sources */,
 				935374462CB6A74B00794A63 /* OrderItemManager.swift in Sources */,
 				93B7B57F2CDBB6A600E0205A /* OrderHistory.swift in Sources */,

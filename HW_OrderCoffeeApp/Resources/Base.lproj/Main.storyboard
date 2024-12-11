@@ -238,7 +238,7 @@
                         <viewLayoutGuide key="safeArea" id="EfW-2G-Wtt"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="HmT-80-9F0"/>
+                    <navigationItem key="navigationItem" id="HmT-80-9F0"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EN4-G6-JTk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
