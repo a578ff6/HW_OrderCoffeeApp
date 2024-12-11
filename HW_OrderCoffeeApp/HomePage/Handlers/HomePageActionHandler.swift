@@ -47,7 +47,7 @@
  `3.按鈕行為設置：`
 
  - setupActions()：設置登入與註冊按鈕的點擊事件。
- - 透過 getLoginButton() 和 getSignUpButton() 方法，取得按鈕並添加 target，確保點擊事件能夠由 HomePageActionHandler 處理。
+ - 取得按鈕並添加 target，確保點擊事件能夠由 HomePageActionHandler 處理。
  
  `4.行為處理方法：`
 
@@ -55,6 +55,8 @@
  - handleSignUpButtonTapped(): 當使用者點擊註冊按鈕時，通知 delegate 呼叫 didTapSignUpButton() 方法，讓控制器可以執行註冊畫面的導航。
  */
 
+
+// MARK: - (v)
 
 import UIKit
 
@@ -87,8 +89,8 @@ class HomePageActionHandler {
     private func setupActions() {
         guard let view = view else { return }
         
-        view.getLoginButton().addTarget(self, action: #selector(handleLoginButtonTapped), for: .touchUpInside)
-        view.getSignUpButton().addTarget(self, action: #selector(handleSignUpButtonTapped), for: .touchUpInside)
+        view.loginButton.addTarget(self, action: #selector(handleLoginButtonTapped), for: .touchUpInside)
+        view.signUpButton.addTarget(self, action: #selector(handleSignUpButtonTapped), for: .touchUpInside)
     }
     
     /// 處理登入按鈕的點擊事件，進行導航

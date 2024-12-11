@@ -240,7 +240,7 @@
  
  `5. 使用 Public Getters 提供按鈕存取`
  
-    - 使用 `getLoginButton()` 和 `getSignUpButton()` 提供公共方法來存取按鈕。
+    - 使用`private(set)`讓 `loginButton`、`signUpButton` 提供公共方法來存取按鈕。
     - 這些 getter 方法能確保按鈕屬性保持 `private`，但仍然能讓外部（例如 `HomePageActionHandler`）訪問並設置按鈕的行為。
  
  `6. 佈局設置`
@@ -265,10 +265,10 @@ class HomePageView: UIView {
     private let logoImageView = HomePageImageView(imageName: "starbucksLogo", contentMode: .scaleAspectFit)
     
     /// 建立登入按鈕
-    private let loginButton = HomePageFilledButton(title: "Login", font: UIFont.systemFont(ofSize: 22, weight: .black), backgroundColor: .deepGreen, titleColor: .deepBrown)
+    private(set) var loginButton = HomePageFilledButton(title: "Login", font: UIFont.systemFont(ofSize: 22, weight: .black), backgroundColor: .deepGreen, titleColor: .deepBrown)
     
     /// 建立註冊按鈕
-    private let signUpButton = HomePageFilledButton(title: "Sign Up", font: UIFont.systemFont(ofSize: 22, weight: .black), backgroundColor: .deepGreen, titleColor: .deepBrown)
+    private(set) var signUpButton = HomePageFilledButton(title: "Sign Up", font: UIFont.systemFont(ofSize: 22, weight: .black), backgroundColor: .deepGreen, titleColor: .deepBrown)
     
     /// 用來排列按鈕的垂直 StackView
     private let buttonsStackView = HomePageStackView(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill)
@@ -334,20 +334,6 @@ class HomePageView: UIView {
     /// 設置背景色為深綠色，保持與品牌風格一致
     private func setupBackground() {
         backgroundColor = .deepGreen
-    }
-    
-    // MARK: - Public Getters for UI Elements
-    
-    /// 獲取登入按鈕
-    /// - Returns: 登入按鈕
-    func getLoginButton() -> UIButton {
-        return loginButton
-    }
-    
-    /// 獲取註冊按鈕
-    /// - Returns: 註冊按鈕
-    func getSignUpButton() -> UIButton {
-        return signUpButton
     }
     
 }
