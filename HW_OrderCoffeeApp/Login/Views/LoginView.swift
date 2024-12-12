@@ -313,20 +313,38 @@
  `* 當前的情況：`
 
  - 在 `LoginViewController` 中，主要的操作是通過按鈕點擊來觸發登入流程，而不是依賴於使用者每次輸入變化。
- - 因此，並不需要監聽每次的輸入變化來進行即時處理。
+ - 因此，LoginView 不需要使用 emailTextChanged 和 passwordTextChanged 這類閉包監聽來即時回傳使用者輸入。
+
+ `* 為什麼不使用閉包監聽？`
+ 
+ `1.行為邏輯的簡化：`
+ 
+ - 當用戶輸入時，無需即時反應（如格式驗證或 UI 狀態更新）。
+ - 登入的核心邏輯在按鈕點擊後執行，無需過早處理輸入變化。
+ 
+ `2.避免不必要的複雜性：`
+ 
+ - 添加閉包監聽會引入更多依賴和回呼，增加 LoginView 的複雜性。
+ - 現階段並無需求，即時監聽輸入只會增加不必要的邏輯。
 
  `* 閉包監聽的適用場景：`
  
- - 當需要在使用者輸入的過程中即時驗證資料格式。
- - 例如即時驗證 email 格式是否正確，或即時更新 UI 的狀態（如啟用/禁用登入按鈕）時，可以使用 `emailTextChanged` 和 `passwordTextChanged` 的閉包監聽。
+ `1.即時輸入驗證：`
+ 
+ - 例如檢查 email 是否符合格式，並即時顯示錯誤提示。
+ 
+ `2.動態 UI 更新：`
+ 
+ - 根據使用者輸入動態啟用/禁用按鈕（如當 email 與 password 都非空時才啟用登入按鈕）。
 
  ------------------------------------------
+ 
  `2. 封裝性與使用者界面交互的考量`
 
  `* 封裝性：`
  
  - `LoginView` 主要應該負責顯示與收集使用者輸入，不應包含過多的邏輯或即時處理需求。
- - 因此，使用 computed properties (`emailText` 和 `passwordText`) 可以更簡潔地提供輸入值，並保持 `LoginView` 的職責單一。
+ -  提供 email 和 password 的 computed properties（計算屬性），讓 LoginViewController 能快速取得輸入值，而不直接暴露 UI 元件。
 
  `* 使用 computed properties 的好處：`
  
@@ -336,136 +354,19 @@
  ------------------------------------------
 
  `3. 想法`
-
- - 如果當前不需要在使用者每次輸入時即時反應（例如格式驗證或 UI 更新），建議移除 `emailTextChanged` 和 `passwordTextChanged`，僅保留 computed properties (`emailText` 和 `passwordText`)。
- - 當未來有即時處理需求時，可以再重新添加這些監聽閉包。這樣的設計可以根據實際需求逐步增加邏輯的複雜度，而不是一開始就加入不必要的邏輯。
- */
-
-
-// MARK: - LoginView 的封裝性與資料存取方法的重點筆記一（重要）
-/**
  
- ## LoginView 的封裝性與資料存取方法的重點筆記
+` * 當前處理方式：`
 
- 根據需求與架構考量，考慮處理 `LoginView` 的資料存取。
- 在這裡，比較了 Getter 方法與 Computed Properties 各自的優缺點。
-
- `1. Getter 方法 (getEmailText() 和 getPasswordText())`
+ - 移除閉包監聽，僅使用 `computed properties` 提供 `email` 和 `password`，符合當前需求，並保持設計簡潔。
  
- - 使用 Getter 方法來取得 `email` 和 `password`，能夠保持 `LoginView` 的封裝性，並且在需要時提供資料。
- - 這樣的設計符合單一職責原則，確保資料的取得有清楚的邏輯與控制。
+ `* 封裝與職責分離：`
 
- `* 優點：`
+ - LoginView 負責 UI 和輸入的封裝，LoginActionHandler 與 LoginViewController 負責行為邏輯，清晰劃分各類別職責。
  
-   - 明確的函式接口：外部只能通過特定的方法來取得資料，增加了安全性與控制性。
-   - 易於維護：未來若要修改資料的取得邏輯，只需更改 Getter 方法即可。
-   - 便於加入額外邏輯：可以在 Getter 中加入額外的邏輯，例如格式化、驗證等。
+ `* 漸進式設計：`
 
- `* 適用場景：`
-   - 如果需要嚴格控制 `email` 和 `password` 的存取，並且希望在資料取得時有更多邏輯控制，這種方式是合適的。
-
- ------------------------------------------------------------
+ - 根據當前需求保持簡潔設計，未來若有即時輸入驗證或 UI 更新需求，再逐步引入閉包監聽以擴展功能，避免過度設計或增加不必要的複雜度。
  
- `2. Computed Properties (emailText 和 passwordText)`
- 
- - 使用 Computed Properties，可以讓外部像存取屬性一樣簡單地取得 `email` 和 `password`，同時保持資料是動態計算的，符合 Swift 的語法風格。
-
- `* 優點：`
- 
-   - 更簡潔的存取方式：不需要調用 Getter 方法，直接通過屬性存取。
-   - Swift 語法風格：這種屬性存取方式更符合 Swift 語言的設計模式，使程式碼更自然易讀。
-   - 保持封裝性：仍然能保持封裝性，沒有直接暴露 `UITextField`，只提供了其值。
-
- `* 適用場景：`
- 
-   - 當不需要過多控制資料取得的細節，並且希望簡化存取邏輯時，這種方式很適合。
-
- ------------------------------------------------------------
-
- `## 選擇`
- 
- 依據目前架構和處理邏輯，選擇哪一種方式主要取決於以下考量：
-
- `1. 職責分離：`
-
- - `LoginView` 應該負責 UI 的顯示與使用者操作的回應，而非過多邏輯處理。兩種方式都符合這樣的架構設計，因為它們只負責提供 `email` 和 `password` 的值。
-
- `2. 程式碼簡潔性與可維護性：`
- 
- - 如果傾向於更簡潔且符合 Swift 風格的寫法，**Computed Properties** 會是一個更好的選擇。
- - 如果希望在資料取得時加入更多的控制，例如自動格式化或驗證，則 **Getter 方法** 更靈活且易於維護。
-
- ------------------------------------------------------------
-
- `## 總結`
- 
- - `Computed Properties` 適合需要簡潔且快速取得資料的場景，並且符合 Swift 的現代化語法風格。
- - `Getter 方法` 則更適合需要增加額外處理邏輯的場景，例如自動格式化、資料驗證等，便於集中管理和日後擴展。
-
- ------------------------------------------------------------
-
- `## 使用例子`
- 
- 例如，若希望在取得 `email` 時自動去除前後的空格，可以在 Getter 方法中加入這樣的邏輯：
-
- ```swift
- func getEmail() -> String {
-     return emailTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
- }
- ```
-
- 這樣每次取得 `email` 時，值已經被格式化好，確保資料的一致性與正確性。
- */
-
-
-// MARK: - LoginView 的封裝性與資料存取方法的重點筆記二（重要）
-/**
- 
- ## LoginView 的封裝性與資料存取方法的重點筆記二
- 
- `* 使用 setter 方法 vs computed properties 來管理 UI 元件的選擇`
-
- - 當需要設置如 email 和 password 等 UI 元件的值時，可以考慮以下兩種方式：使用 setter 方法（例如 `setEmail(_:)` 和 `setPassword(_:)`），或使用 computed properties（例如 `emailText` 和 `passwordText`）來讀寫值。
-
- `1. 使用 setEmail(_:) 和 setPassword(_:) 方法`
-
- `* 優點：`
- 
- - 單一責任原則：方法名稱明確，表示它們的功能是設置文本框的值，符合「單一責任原則」。
- - 更強的控制：可以在設置文本框值時加入驗證邏輯，或在設置值時觸發一些額外操作。
- - 封裝性：`emailTextField` 和 `passwordTextField` 可以保持私有，避免外部直接對文本框進行改動。
-
- `* 缺點：`
- 
- - 代碼量增加：需要多寫一些 setter 方法，增加了類的代碼量。
- - 使用稍麻煩：需要調用 getter 屬性來獲取值，調用 setter 方法來設置值，而不是使用簡單的屬性。
-
- ------------------------------------------------------------
-
- `2. 使用 emailText 和 passwordText 的 computed properties`
-
- `* 優點：`
- 
- - 簡潔：直接通過一個屬性可以同時讀取和設置文本框的值，代碼可讀性好。
- - 簡單使用：可以像普通屬性一樣使用，讀寫方便。
-
- `* 缺點：`
- 
- - 降低控制能力：如果需要在設置值時加入額外的驗證邏輯，computed properties 可能會變得過於複雜。
- - 封裝犧牲：暴露 getter/setter，外部可以隨意設置文本框的值，可能會增加修改錯誤的風險。
-
- ------------------------------------------------------------
-
- `3. 想法`
- 
- - 若需要更強的控制力（例如設置值時需要驗證或其他邏輯），建議使用 **setter 方法** (`setEmail(_:)` 和 `setPassword(_:)`)。這樣符合單一責任原則，也利於未來的擴展和維護。
- - 若追求簡潔性，且不需要額外的設置邏輯，可以選擇 **getter/setter 屬性** (`emailText` 和 `passwordText` 有 `get` 和 `set`)，代碼更簡單直觀。
- 
- ------------------------------------------------------------
-
-` 4. 總結`
- - 總結來說，如果需要設置邏輯更複雜，setter 方法會是更好的選擇；但如果只是單純的設置值，computed properties 會讓代碼更簡潔。
- - 無論選擇哪種方式，保持代碼風格一致是最重要的。統一使用 Computed Properties 或 Getter/Setter 方法，有助於減少出錯的機會，並提高代碼的可讀性和可維護性。
  */
 
 
@@ -493,15 +394,30 @@
  
  `1. LoginView 設置改動：`
  
-    - 將所有按鈕的行為移除，包括 `addTarget` 方法等。
-    - 增加公開的 `getter` 方法，例如 `getLoginButton()`，讓外部能夠取得按鈕元件。
+ - `移除按鈕的行為邏輯：`
+    - 將按鈕的 addTarget 方法移除，改由 `LoginActionHandler` 添加行為。
+ 
+ - `提供 getter 方法：`
+    - 為按鈕提供 `private(set) `存取控制，必要時使用公開的 getter 方法讓外部類別安全訪問。
+ 
+ -----
     
  `2. LoginActionHandler 設置：`
  
-    - 創建 `LoginActionHandler` 類別，並提供初始化方法來設置 `LoginView` 和 `LoginViewDelegate`。
-    - 在 `setupActions()` 中，透過 `LoginView` 的 `getter` 方法取得各按鈕，並添加按鈕點擊事件的處理邏輯。
-    - 每個按鈕事件都透過 `delegate` 將事件回傳給控制器，保持 `LoginView` 與控制器的互動。
-
+ - `集中管理按鈕行為：`
+    - 在 LoginActionHandler 中，使用 LoginView 的 getter 方法或 private(set) 的屬性來獲取按鈕，並統一添加行為邏輯。
+ 
+ - `透過 delegate 將按鈕事件通知到控制器：`
+ 
+ ```swift
+ view.loginButton.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
+ ```
+ 
+ - `初始化：`
+    - 在 `setupActions()` 方法中，完成所有按鈕行為的綁定。
+ 
+ -----
+ 
  `3. LoginViewController 設置：`
  
     - 在 `viewDidLoad()` 中初始化 `LoginActionHandler`，並將 `LoginView` 和 `LoginViewDelegate` 傳入，讓 `LoginActionHandler` 負責管理按鈕行為。
@@ -510,7 +426,7 @@
 
  `* Summary（總結）`
  
-    - 透過引入 `LoginActionHandler`，我們實現了責任分離與降低耦合度，讓 `LoginView` 專注於 UI，`LoginActionHandler` 專注於使用者行為管理。
+    - 透過引入 `LoginActionHandler`，實現了責任分離與降低耦合度，讓 `LoginView` 專注於 UI，`LoginActionHandler` 專注於使用者行為管理。
     - 這樣的設計不僅改善了程式碼的清晰度與可讀性，也讓未來的維護和擴展變得更容易。
  */
 
@@ -519,63 +435,121 @@
 /**
  ## LoginView 元件存取方式筆記
 
- - 主要是我一開始的重構順序，將「按鈕行為」分離出 LoginView 是後面才執行。
- - 我一開始採用 private 然後使用 getter 的方式來處理 `TextField 的數值``、RememberMe按鈕狀態的`取得方式。
- - 是希望藉此強調封裝性，所以當我再處理「按鈕行為」分離 LoginView ，並設置到 LoginActionHandler時，才想到這樣子連按鈕也要進行，這樣就要設置多個 getter。
- - 就在猶豫要不要改回公開（public 或 internal）。不過最後還是繼續維持 private 搭配 getter 的方式，保持封裝性。
+ * 重構背景
+ 
+ 1. 一開始設計 LoginView 時，所有元件屬性均設為 private，並透過 getter 方法提供外部存取。
+ 2. 隨後進行了「按鈕行為分離」的重構，將按鈕行為設置的邏輯轉移到 LoginActionHandler，這讓按鈕需要被外部類別訪問以綁定行為。
+ 3.在決定按鈕的存取方式時，考量過以下選項：
+ 
+ - 公開按鈕屬性（例如設為 public 或 internal）。
+ - 維持封裝性，僅透過 private(set) 或 getter 方法提供存取。
+ - 經過權衡後，選擇了使用 private(set) 與少量 getter 的方式，保持封裝性和低耦合設計。
  
  ------------------------------------------------------------
 
  `* What`
  
- - 在 `LoginView` 中，我選擇使用 **getter 方法** 來取得各個按鈕，而不是將按鈕屬性從 `private` 修改為公開（`public` 或 `internal`）。
- - 這些按鈕包括 `loginButton`、`googleLoginButton`、`appleLoginButton` 等。
-
+ 1.在 LoginView 中，所有按鈕和 UI 元件預設為 private，僅在必要時使用 `private(set)` 或 `getter` 方法 提供外部存取。
+ 
+ 2.使用了 private(set) 修飾的按鈕包括：
+ 
+ - loginButton
+ - googleLoginButton
+ - appleLoginButton
+ - forgotPasswordButton
+ - signUpButton
+ 
+ 3.同時，透過公開的 getter 和 func 方法，提供對重要狀態的安全存取，例如：
+ 
+ - email、password 為公開的唯讀屬性。
+ - 提供 setEmail(_:) 與 setPassword(_:) 方法以更新輸入框的內容。
+ - 提供 setRememberMeButtonSelected(_:) 以控制按鈕選中狀態。
+ 
  ------------------------------------------------------------
 
  `* Why`
  
- `1. 資料封裝性（Encapsulation）：`
+ `1. 強化封裝性`
  
- - 保持 UI 元件的封裝性：
-    - 將 UI 元件設置為 `private`，可以有效防止外部直接修改這些元件。這樣可以保護元件狀態，只允許必要的訪問操作來更改 UI，而不是讓外部有直接操縱的權限，從而避免不預期的改動。
-   
+ - 避免直接操縱 UI 元件狀態：
+    - 所有按鈕和輸入框設置為 private 或 private(set)，確保 UI 元件的狀態變更只能由 LoginView 控制，避免外部直接干預元件的行為。
+ 
  - 降低耦合度：
-    - 使用 getter 可以確保只暴露必須的部分，讓 `LoginView` 元件與外部類別的耦合度降低。使用 getter 方法，可以保持 UI 元件的存取點統一且可控。
-   
- `2.提高可維護性與可測試性：`
+    - 僅暴露必要的訪問接口，例如 getter 和 func 方法，確保外部類別與 LoginView 的耦合降到最低，便於未來進行修改或重構。
  
- - 可控的訪問途徑：
-    - 通過 getter 取得按鈕時，可以進行額外處理或檢查，這樣未來如果需要對取得邏輯進行擴展或修改，可以集中修改 getter 方法，而不需要修改外部代碼。這提高了程式碼的可維護性。
-  
- - 符合單一職責原則：
-    - 按鈕的狀態管理及 UI 元件本身的操作由 `LoginView` 來管理，而行為管理則由 `LoginActionHandler` 負責，避免了直接暴露 UI 元件，這更符合單一職責原則。
+ `2. 提高可維護性`
+ 
+ - 集中修改邏輯：
+    - 當需要對按鈕的存取邏輯進行修改時，只需更新 LoginView 中的 getter 方法，而無需修改外部類別的代碼，確保程式碼易於維護。
+ 
+ - 符合單一職責原則，UI 元件的管理和行為設置被明確區分：
+    - LoginView 專注於管理按鈕的狀態和顯示。
+    - LoginActionHandler 負責處理行為邏輯，例如綁定按鈕行為。
+ 
+ `3. 易於擴展`
+ 
+ - 如果未來需要對按鈕的狀態訪問進行額外處理，例如加入額外檢查或統一日誌記錄，這些邏輯可以集中在 getter 或 func 方法中，減少重複代碼。
 
  ------------------------------------------------------------
 
  `* How`
  
- `1. UI 元件保持 private：`
-    - 在 `LoginView` 中，所有 UI 元件保持 `private`，避免直接從外部修改這些按鈕屬性。
+ `1. 使用 private(set) 管理按鈕存取`
+ 
+ - 對於需要被外部訪問的按鈕，使用 private(set)，例如：
+ -  這樣可以保證按鈕屬性僅能由 LoginView 修改，但外部類別仍然可以安全訪問這些按鈕以設置行為。
 
- `2. 提供 getter 方法：`
-    - 創建公開的 getter 方法，例如 `getLoginButton()`、`getGoogleLoginButton()` 等，讓外部的 `LoginActionHandler` 或其他類別可以安全地訪問這些按鈕。
-    - 這些 getter 方法只提供讀取權限，從而保證 `LoginView` 中 UI 元件的封裝性不被破壞。
+ ```swift
+ private(set) var loginButton = LoginFilledButton(title: "Login", ...)
+ ```
+ 
+ ------
+ 
+ `2. 提供公開的 getter 和 func 方法`
+ 
+ - `公開的唯讀屬性`：
+    - 提供 email 和 password 作為公開的唯讀屬性，簡化外部的存取：
+ 
+ ```swift
+ var email: String {
+     emailTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+ }
+ ```
+ 
+ - `提供公開的操作方法`：
+    - 提供方法更新輸入框的內容或按鈕狀態，確保對元件的變更只能透過明確的操作完成：
+ 
+ ```swift
+ func setEmail(_ email: String) {
+     emailTextField.text = email
+ }
 
-` 3. LoginActionHandler 的使用：`
-    - 在 `LoginActionHandler` 中，透過呼叫 `LoginView` 的 getter 方法來設置按鈕的行為。
-    - 例如 `view.getLoginButton().addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)`。
+ func setRememberMeButtonSelected(_ isSelected: Bool) {
+     rememberMeButton.isSelected = isSelected
+ }
+ ```
+ 
+ ------
+
+ `3. 在 LoginActionHandler 中使用按鈕`
+ 
+ - 在 `LoginActionHandler` 中，透過 `private(set)` 提供的按鈕存取設置行為，例如：
+ ```swift
+ view.loginButton.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
+```
 
  ------------------------------------------------------------
 
  `* Summary（總結）`
+
+ - 維持按鈕屬性為 `private` 或 `private(set)，`僅透過 getter 或 func 方法提供存取，是一種強調封裝性與低耦合的設計方式。
+ - 此設計不僅符合單一職責原則，還能提高程式碼的可維護性和擴展性。
+ - `LoginView` 負責 UI 元件的狀態與顯示，`LoginActionHandler` 負責按鈕行為的邏輯綁定， 兩者分工明確，有助於構建高內聚低耦合的程式架構。
  
- - 使用 getter 方法來取得按鈕而非將 UI 元件屬性公開，這樣的設計強化了 `LoginView` 的封裝性和可維護性。
- - 按鈕的管理僅由 `LoginView` 進行控制，其他邏輯如行為設定則由 `LoginActionHandler` 處理，保持了各類別的單一職責，符合良好的軟體設計原則。
- - 這不僅降低了系統的耦合度，還增加了未來的擴展與修改的靈活性，讓程式碼更易於理解和維護。
  */
 
 
+// MARK: - (v)
 import UIKit
 
 /// `LoginView` 是登入頁面的主要視圖，負責佈局所有登入相關的 UI 元素
@@ -586,7 +560,7 @@ class LoginView: UIView {
     
     /// 應用程式的 logo
     private let logoImageView = LoginCustomImageView(imageName: "starbucksLogo2")
-
+    
     /// 登入標題標籤
     private let titleLabel = LoginLabel(text: "Log in to your account", fontSize: 28, weight: .black, textColor: .deepGreen)
     
@@ -600,25 +574,25 @@ class LoginView: UIView {
     private let passwordTextField = LoginTextField(placeholder: "Password", rightIconName: "eye", isPasswordField: true, fieldType: .password)
     
     /// "記住我" 選項按鈕，用於讓使用者選擇是否記住帳號密碼
-    private let rememberMeButton = LoginCheckBoxButton(title: " Remember Me")
+    private(set) var rememberMeButton = LoginCheckBoxButton(title: " Remember Me")
     
     /// "忘記密碼" 按鈕，當使用者忘記密碼時可以點擊
-    private let forgotPasswordButton = LoginTextButton(title: "Forgot your password?", fontSize: 14, fontWeight: .medium, textColor: .gray)
+    private(set) var forgotPasswordButton = LoginTextButton(title: "Forgot your password?", fontSize: 14, fontWeight: .medium, textColor: .gray)
     
     /// 登入按鈕，用於進行帳號登入
-    private let loginButton = LoginFilledButton(title: "Login", textFont: .systemFont(ofSize: 18, weight: .black), textColor: .white, backgroundColor: .deepGreen)
+    private(set) var loginButton = LoginFilledButton(title: "Login", textFont: .systemFont(ofSize: 18, weight: .black), textColor: .white, backgroundColor: .deepGreen)
     
     /// 分隔符號與提示文字視圖，用於顯示 "或繼續使用其他方式登入"
     private let separatorAndTextView = LoginSeparatorView(text: "Or continue with", textColor: .lightGray, lineColor: .lightGray)
     
     /// 使用 Google 登入的按鈕
-    private let googleLoginButton = LoginFilledButton(title: "Login with Google", textFont: .systemFont(ofSize: 16, weight: .bold), textColor: .black, backgroundColor: .lightWhiteGray.withAlphaComponent(0.8), imageName: "google48")
+    private(set) var googleLoginButton = LoginFilledButton(title: "Login with Google", textFont: .systemFont(ofSize: 16, weight: .bold), textColor: .black, backgroundColor: .lightWhiteGray.withAlphaComponent(0.8), imageName: "google48")
     
     /// 使用 Apple 登入的按鈕
-    private let appleLoginButton = LoginFilledButton(title: "Login with Apple", textFont: .systemFont(ofSize: 16, weight: .bold), textColor: .black, backgroundColor: .lightWhiteGray.withAlphaComponent(0.8), imageName: "apple50")
+    private(set) var appleLoginButton = LoginFilledButton(title: "Login with Apple", textFont: .systemFont(ofSize: 16, weight: .bold), textColor: .black, backgroundColor: .lightWhiteGray.withAlphaComponent(0.8), imageName: "apple50")
     
     /// 前往註冊頁面的按鈕
-    private let signUpButton = LoginAttributedButton(mainText: "Don't have an account? ", highlightedText: "Sign up", fontSize: 14, mainTextColor: .gray, highlightedTextColor: .deepGreen)
+    private(set) var signUpButton = LoginAttributedButton(mainText: "Don't have an account? ", highlightedText: "Sign up", fontSize: 14, mainTextColor: .gray, highlightedTextColor: .deepGreen)
     
     // MARK: - StackView
     
@@ -632,9 +606,9 @@ class LoginView: UIView {
     
     /// ScrollView 用來包裹所有 StackView，支援畫面滾動，特別是在鍵盤顯示時仍能滾動
     private let mainScrollView = LoginScrollView()
-
+    
     // MARK: - Initializers
-
+    
     /// 初始化方法，配置 LoginView 的基本佈局和元件
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -713,71 +687,32 @@ class LoginView: UIView {
     private func setupBackground() {
         backgroundColor = .white
     }
-
-    // MARK: - Public Getters for UI Elements
     
+    // MARK: - Public Getters and Setters (公開的存取方法)
     
-    // MARK: Buttons
-
-    /// 提供登入按鈕的公共存取方法
-    func getLoginButton() -> UIButton {
-        return loginButton
-    }
-
-    /// 提供 Google 登入按鈕的公共存取方法
-    func getGoogleLoginButton() -> UIButton {
-        return googleLoginButton
-    }
-
-    /// 提供 Apple 登入按鈕的公共存取方法
-    func getAppleLoginButton() -> UIButton {
-        return appleLoginButton
-    }
-
-    /// 提供忘記密碼按鈕的公共存取方法
-    func getForgotPasswordButton() -> UIButton {
-        return forgotPasswordButton
-    }
-
-    /// 提供註冊按鈕的公共存取方法
-    func getSignUpButton() -> UIButton {
-        return signUpButton
-    }
-
-    /// 提供 "記住我" 按鈕的公共存取方法
-    func getRememberMeButton() -> UIButton {
-        return rememberMeButton
+    /// 取得 Email 輸入框的值
+    var email: String {
+        emailTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
     }
     
-    // MARK: Text Fields
-
-    /// 獲取使用者輸入的 Email
-    /// - Returns: Email 字串
-    func getEmail() -> String {
-        return emailTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    /// 取得密碼輸入框的值
+    var password: String {
+        passwordTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
     }
     
-    /// 設置 Email 的值
+    /// 設定 Email 輸入框的值
     /// - Parameter email: 要設置的 Email 字串
     func setEmail(_ email: String) {
         emailTextField.text = email
     }
     
-    /// 獲取使用者輸入的密碼
-    /// - Returns: 密碼字串
-    func getPassword() -> String {
-        return passwordTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-    }
-    
-    /// 設置密碼的值
+    /// 設定密碼輸入框的值
     /// - Parameter password: 要設置的密碼字串
     func setPassword(_ password: String) {
         passwordTextField.text = password
     }
     
-    // MARK: RememberMe Methods
-
-    /// 提供一個公共方法來設置記住我的按鈕狀態
+    /// 設置 "記住我" 按鈕的選中狀態
     /// - Parameter isSelected: 是否選中
     func setRememberMeButtonSelected(_ isSelected: Bool) {
         rememberMeButton.isSelected = isSelected

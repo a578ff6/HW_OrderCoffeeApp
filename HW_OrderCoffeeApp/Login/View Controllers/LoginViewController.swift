@@ -298,7 +298,7 @@
  
  `1. 取得用戶的 Email 和密碼：`
  
-    - 使用 `loginView.getEmail()` 和 `loginView.getPassword()` 方法來取得用戶當前輸入的 Email 和密碼。
+    - 使用 `loginView.email` 和 `loginView.password` 方法來取得用戶當前輸入的 Email 和密碼。
 
  ----------------------------------------
 
@@ -583,7 +583,7 @@ class LoginViewController: UIViewController {
 */
 
 
-// MARK: - 視圖佈局分離版本（async/await）
+// MARK: - (v)
 
 import UIKit
 import FirebaseAuth
@@ -692,8 +692,8 @@ extension LoginViewController: LoginViewDelegate {
     /// - 在登入流程開始前先收起鍵盤，確保畫面整潔並避免影響 HUD 顯示
     func loginViewDidTapLoginButton() {
         dismissKeyboard()
-        let email = loginView.getEmail()
-        let password = loginView.getPassword()
+        let email = loginView.email
+        let password = loginView.password
         
         guard !email.isEmpty, !password.isEmpty else {
             AlertService.showAlert(withTitle: "錯誤", message: "請輸入電子郵件和密碼", inViewController: self)
@@ -770,8 +770,8 @@ extension LoginViewController: LoginViewDelegate {
     /// 當使用者點擊 "記住我" 按鈕時的處理邏輯
     /// - 根據用戶選擇是否保存電子郵件和密碼
     func loginViewDidTapRememberMeButton(isSelected: Bool) {
-        let email = loginView.getEmail()
-        let password = loginView.getPassword()
+        let email = loginView.email
+        let password = loginView.password
         
         if isSelected {
             handleRememberMeSelected(email: email, password: password)
