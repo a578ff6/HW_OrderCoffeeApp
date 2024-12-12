@@ -58,7 +58,7 @@
 
  `4. 提供公共存取方法`
  
- - `按鈕與輸入框的存取`：提供公共方法來取得 `resetPasswordButton`、`loginPageButton` 及輸入的電子郵件文字。
+ - `按鈕與輸入框的存取`：提供`private(set)`公共方法來取得 `resetPasswordButton`、`loginPageButton` 及輸入的電子郵件文字。
  - 這樣可以在控制器中使用這些元件來實現互動功能，而不必直接操作私有屬性。
 
  -----------------------------
@@ -81,8 +81,7 @@
 
  `3. Public Getters`
  
- - `getEmail()`：取得使用者輸入的電子郵件字串，並去除前後空白。
- - `getResetPasswordButton()`、`getLoginPageButton()`：取得按鈕元件，供外部的控制器設置事件行為。
+ - `email`：取得使用者輸入的電子郵件字串，並去除前後空白。
 
  `* Summary`
  
@@ -91,111 +90,7 @@
  */
 
 
-
-// MARK: - 職責未分離
-/*
-import UIKit
-
-/// 處理 ForgotPasswordViewController 相關 UI元件 佈局
-class ForgotPasswordView: UIView {
-
-    // MARK: - UI Elements
-    
-    let titleLabel = ForgotPasswordLabel(text: "Forgot Password ?", fontSize: 26, weight: .black, textColor: .deepGreen)
-
-    let descriptionLabel = ForgotPasswordLabel(text: "Enter your email address below and we'll send your password reset instructions by email.", fontSize: 16, weight: .medium, textColor: .black, textAlignment: .left, numberOfLines: 0)
-    
-    let emailTextField = ForgotPasswordTextField(placeholder: "Email", rightIconName: "envelope", isPasswordField: false, fieldType: .email)
-    
-    let resetPasswordButton = ForgotPasswordFilledButton(title: "Rest Password", textFont: .systemFont(ofSize: 18, weight: .black), textColor: .white, backgroundColor: .deepGreen, symbolName: "key.horizontal.fill")
-    
-    let loginPageButton = ForgotPasswordAttributedButton(mainText: "You remember your password? ", highlightedText: "Login", fontSize: 14, mainTextColor: .gray, highlightedTextColor: .deepGreen)
-    
-    // MARK: - StackView
-    
-    private let topStackView = ForgotPasswordStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
-    
-    private let bottomStackView = ForgotPasswordStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
-
-    
-    // MARK: - ScrollView
-    
-    /// ScrollView 用來包裹所有 StackView，支援畫面滾動，特別是在鍵盤顯示時仍能滾動
-    private let mainScrollView = ForgotPasswordScrollView()
-
-
-    // MARK: - Initializers
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupScrollView()
-        setupStackViews()
-        setupConstraints()
-        setViewHeights()            // 設置元件高度
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    /// 設置 ScrollView
-    private func setupScrollView() {
-        mainScrollView.setupConstraints(in: self) // 將 scrollView 加入 ForgotPasswordView 並設置其約束
-    }
-    
-    // MARK: - Setup Methods
-    
-    /// 設置 StackViews 並加入 ScrollView
-    private func setupStackViews() {
-
-        // 設置子 StackView 的元件
-        topStackView.addArrangedSubview(titleLabel)
-        topStackView.addArrangedSubview(descriptionLabel)
-        topStackView.addArrangedSubview(emailTextField)
-        
-        bottomStackView.addArrangedSubview(resetPasswordButton)
-        bottomStackView.addArrangedSubview(loginPageButton)
-        
-        // 將 StackView 添加到 ScrollView 中
-        mainScrollView.addSubview(topStackView)
-        mainScrollView.addSubview(bottomStackView)
-    }
-    
-    /// 設置 StackView 的約束
-    private func setupConstraints() {
-        NSLayoutConstraint.activate([
-            topStackView.topAnchor.constraint(equalTo: mainScrollView.topAnchor, constant: 20),
-            topStackView.leadingAnchor.constraint(equalTo: mainScrollView.leadingAnchor, constant: 30),
-            topStackView.trailingAnchor.constraint(equalTo: mainScrollView.trailingAnchor, constant: -30),
-            topStackView.widthAnchor.constraint(equalTo: mainScrollView.widthAnchor, constant: -60),
-
-            bottomStackView.topAnchor.constraint(equalTo: topStackView.bottomAnchor, constant: 40),
-            
-            bottomStackView.leadingAnchor.constraint(equalTo: mainScrollView.leadingAnchor, constant: 30),
-            bottomStackView.trailingAnchor.constraint(equalTo: mainScrollView.trailingAnchor, constant: -30),
-            bottomStackView.bottomAnchor.constraint(equalTo: mainScrollView.bottomAnchor, constant: -20),
-            bottomStackView.widthAnchor.constraint(equalTo: mainScrollView.widthAnchor, constant: -60)
-
-        ])
-    }
-
-    /// 設置元件高度
-    private func setViewHeights() {
-        NSLayoutConstraint.activate([
-            titleLabel.heightAnchor.constraint(equalToConstant: 40),
-            descriptionLabel.heightAnchor.constraint(equalToConstant: 100),
-            emailTextField.heightAnchor.constraint(equalToConstant: 40),
-            resetPasswordButton.heightAnchor.constraint(equalToConstant: 55),
-            loginPageButton.heightAnchor.constraint(equalToConstant: 55)
-        ])
-    }
-    
-}
-*/
-
-
-// MARK: - 重構職責
+// MARK: - 重構職責(v)
 
 import UIKit
 
@@ -204,16 +99,29 @@ class ForgotPasswordView: UIView {
 
     // MARK: - UI Elements
     
+    /// 標題
     private let titleLabel = ForgotPasswordLabel(text: "Forgot Password ?", fontSize: 26, weight: .black, textColor: .deepGreen)
+    
+    /// 描述
     private let descriptionLabel = ForgotPasswordLabel(text: "Enter your email address below and we'll send your password reset instructions by email.", fontSize: 16, weight: .medium, textColor: .black, textAlignment: .left, numberOfLines: 0)
+    
+    /// email輸入欄位
     private let emailTextField = ForgotPasswordTextField(placeholder: "Email", rightIconName: "envelope", isPasswordField: false, fieldType: .email)
-    private let resetPasswordButton = ForgotPasswordFilledButton(title: "Rest Password", textFont: .systemFont(ofSize: 18, weight: .black), textColor: .white, backgroundColor: .deepGreen, symbolName: "key.horizontal.fill")
-    private let loginPageButton = ForgotPasswordAttributedButton(mainText: "You remember your password? ", highlightedText: "Login", fontSize: 14, mainTextColor: .gray, highlightedTextColor: .deepGreen)
+    
+    /// 重置按鈕
+    private(set) var resetPasswordButton = ForgotPasswordFilledButton(title: "Rest Password", textFont: .systemFont(ofSize: 18, weight: .black), textColor: .white, backgroundColor: .deepGreen, symbolName: "key.horizontal.fill")
+    
+    /// 前往登入頁面按鈕
+    private(set) var loginPageButton = ForgotPasswordAttributedButton(mainText: "You remember your password? ", highlightedText: "Login", fontSize: 14, mainTextColor: .gray, highlightedTextColor: .deepGreen)
     
     // MARK: - StackView
+    
+    /// 垂直的 StackView 添加元件
     private let mainStackView = ForgotPasswordStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
     
     // MARK: - ScrollView
+    
+    /// 滾動視圖
     private let mainScrollView = ForgotPasswordScrollView()
 
     // MARK: - Initializers
@@ -281,27 +189,11 @@ class ForgotPasswordView: UIView {
     }
     
     // MARK: - Public Getters for UI Elements
-
-    // MARK: Text Fields
     
     /// 獲取使用者輸入的電子郵件地址
-    /// - Returns: 使用者輸入的電子郵件地址字串 (Email)，若無輸入則返回空字串
-    func getEmail() -> String {
-        return emailTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-    }
-    
-    // MARK: Buttons
-
-    /// 提供重置密碼按鈕的公共存取方法
-    /// - Returns: 重置密碼按鈕 (Reset Password Button)
-    func getResetPasswordButton() -> UIButton {
-        return resetPasswordButton
-    }
-    
-    /// 提供進入登入頁面按鈕的公共存取方法
-    /// - Returns: 重置密碼按鈕 (Login Page Button)
-    func getLoginPageButton() -> UIButton {
-        return loginPageButton
+    /// - Returns: 使用者輸入的電子郵件地址字串，若無輸入則返回空字串
+    var email: String {
+        emailTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
     }
     
 }

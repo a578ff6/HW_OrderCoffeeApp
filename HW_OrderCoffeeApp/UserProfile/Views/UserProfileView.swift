@@ -6,248 +6,100 @@
 //
 
 
-// MARK: - 原先對於view的一般設置
-/*
-import UIKit
+// MARK: - 重點筆記：UserProfileView 的設計理念與實現
+/**
+ 
+ ## 重點筆記：UserProfileView 的設計理念與實現
+ 
+ `* What`
+ 
+ 1.定義： UserProfileView 是專為個人資訊頁面設計的自訂視圖，封裝 UITableView 及其相關配置。
 
-/// 個人資訊頁面佈局
-class UserProfileView: UIView {
-    
-    // MARK: - UI Elements
-    let profileImageView = createProfileImageView()
-    let nameLabel = UserProfileView.createLabel(fontSize: 24, weight: .bold, textColor: .black, alignment: .center)
-    let emailLabel = UserProfileView.createLabel(fontSize: 16, weight: .regular, textColor: .gray, alignment: .center)
+ 2.功能：
 
-    private let personStackView: UIStackView = UserProfileView.createStackView(axis: .vertical, spacing: 12, alignment: .center)
-    
-    let backgroundCenteredView = createbackgroundCenteredView(backgroundColor: .deepGreen)
-    
-    // MARK: - UI Elements (Buttons)
-    let changePhotoButton = createChangePhotoButton()
-    let editProfileButton = createButton()
-    let orderHistoryButton = createButton()
-    let favoritesButton = createButton()
-    let logoutButton = createButton()
-    
-    private let actionStackView: UIStackView = createStackView(axis: .vertical, spacing: 10, alignment: .fill)
-    
-    // MARK: - Initializers
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .white
-        setupLayout()
-        
-        // 配置按鈕的外觀
-        configureButton(editProfileButton, withTitle: "Edit Profile", sfSymbolName: "person.circle")
-        configureButton(orderHistoryButton, withTitle: "Order History", sfSymbolName: "clock")
-        configureButton(favoritesButton, withTitle: "Favorites", sfSymbolName: "heart")
-        configureButton(logoutButton, withTitle: "Logout", sfSymbolName: "arrow.backward.circle")
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    
-    // MARK: - Layout Setup
-    
-    /// 佈局
-    private func setupLayout() {
-        addSubview(backgroundCenteredView)
-        addSubview(profileImageView)
-        addSubview(changePhotoButton)
-        
-        personStackView.addArrangedSubview(nameLabel)
-        personStackView.addArrangedSubview(emailLabel)
-        addSubview(personStackView)
-        
-        actionStackView.addArrangedSubview(editProfileButton)
-        actionStackView.addArrangedSubview(orderHistoryButton)
-        actionStackView.addArrangedSubview(favoritesButton)
-        actionStackView.addArrangedSubview(logoutButton)
-        addSubview(actionStackView)
-        
-        NSLayoutConstraint.activate([
-            // 設置背景視圖的約束，使其覆蓋從螢幕頂部到大頭照水平中間位置的範圍
-            backgroundCenteredView.topAnchor.constraint(equalTo: self.topAnchor),
-            backgroundCenteredView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            backgroundCenteredView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            backgroundCenteredView.bottomAnchor.constraint(equalTo: profileImageView.centerYAnchor),
-            
-            // 設置大頭照約束
-            profileImageView.widthAnchor.constraint(equalToConstant: 180),
-            profileImageView.heightAnchor.constraint(equalToConstant: 180),
-            profileImageView.centerXAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerXAnchor),
-            profileImageView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 10),
-            
-            // 將 changePhotoButton 放在 profileImageView 的右下角
-            changePhotoButton.widthAnchor.constraint(equalToConstant: 40),
-            changePhotoButton.heightAnchor.constraint(equalToConstant: 40),
-            changePhotoButton.trailingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 0),
-            changePhotoButton.bottomAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 0),
-            
-            // 設置 personStackView 和 actionStackView 的約束
-            personStackView.centerXAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerXAnchor),
-            personStackView.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 20),
-            
-            actionStackView.topAnchor.constraint(equalTo: personStackView.bottomAnchor, constant: 20),
-            actionStackView.centerXAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerXAnchor)
-        ])
-    }
-    
-    // MARK: - Helper Methods
-    
-    /// 創建標籤
-    private static func createLabel(fontSize: CGFloat, weight: UIFont.Weight, textColor: UIColor, alignment: NSTextAlignment) -> UILabel {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: fontSize, weight: weight)
-        label.textColor = textColor
-        label.textAlignment = alignment
-        label.numberOfLines = 0
-        return label
-    }
-    
-    /// 創建背景視圖（背景色）
-    private static func createbackgroundCenteredView(backgroundColor: UIColor) -> UIView {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = backgroundColor
-        return view
-    }
-    
-    /// 創建通用按鈕
-    private static func createButton() -> UIButton {
-        let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }
+ - 提供 UITableView，用於顯示使用者個人資訊與選項。
+ - 管理 UITableView 的佈局與 Cell 註冊，確保結構清晰。
+ - 外部只需訪問 tableView 屬性，即可操作表格，避免暴露內部細節。
+ 
+ -------------
+ 
+ `* Why`
+ 
+ `1.提高模組化：`
 
-    /// 創建更改照片按鈕
-    private static func createChangePhotoButton() -> UIButton {
-        let button = UIButton(type: .system)
-        let configuration = UIImage.SymbolConfiguration(pointSize: 24, weight: .bold)
-        let image = UIImage(systemName: "camera.circle.fill", withConfiguration: configuration)
-        button.setImage(image, for: .normal)
-        button.tintColor = .systemGray
-        button.backgroundColor = .white
-        button.layer.cornerRadius = 20
-        button.clipsToBounds = true
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }
-    
-    /// 創建大頭照圖片視圖
-    private static func createProfileImageView() -> UIImageView {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFill
-        imageView.backgroundColor = .white
-        imageView.layer.cornerRadius = 90
-        imageView.clipsToBounds = true
-        imageView.layer.borderWidth = 2.0
-        imageView.layer.borderColor = UIColor.black.cgColor
-        return imageView
-    }
-    
-    /// 創建堆疊視圖
-    private static func createStackView(axis: NSLayoutConstraint.Axis, spacing: CGFloat, alignment: UIStackView.Alignment) -> UIStackView {
-        let stackView = UIStackView()
-        stackView.axis = axis
-        stackView.spacing = spacing
-        stackView.alignment = alignment
-        stackView.distribution = .fill
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }
-    
-    /// 配置按鈕外觀
-    private func configureButton(_ button: UIButton, withTitle title: String, sfSymbolName: String) {
-        // 設置邊框和圓角
-        button.layer.cornerRadius = 18
-        button.clipsToBounds = true
-        button.backgroundColor = .lightGray.withAlphaComponent(0.3)
+ - 分離佈局邏輯，減少 ViewController 的負擔，提升程式碼可讀性與可維護性。
+ 
+ `2.封裝性：`
 
-        // 手動創建圖示
-        let configuration = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
-        let image = UIImage(systemName: sfSymbolName, withConfiguration: configuration)
-        let iconImageView = UIImageView(image: image)
-        iconImageView.tintColor = .deepBrown
-        iconImageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // 設置 ">" 符號
-        let chevronImage = UIImage(systemName: "chevron.right", withConfiguration: configuration)
-        let chevronImageView = UIImageView(image: chevronImage)
-        chevronImageView.tintColor = .deepBrown
-        chevronImageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // 設置按鈕文字
-        let label = UILabel()
-        label.text = title
-        label.textAlignment = .left
-        label.textColor = .deepBrown
-        label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        // 圖示、文字、 ">" 符號的 StackView
-        let stackView = UIStackView(arrangedSubviews: [iconImageView, label, chevronImageView])
-        stackView.axis = .horizontal
-        stackView.spacing = 10
-        stackView.alignment = .fill
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.isUserInteractionEnabled = false                      // 禁止 stackView 攔截互動事件（因為 stackView 再按鈕圖層上方，讓按鈕本身接收所有的互動事件。）
-        
-        // 清除按鈕標題，並將自定義的堆疊視圖作為按鈕的子視圖
-        button.setTitle(nil, for: .normal)
-        button.addSubview(stackView)
+ - 隱藏 UITableView 的實現細節，僅暴露必要的訪問介面，確保內部邏輯不被外部干擾。
+ 
+ `3.降低耦合性：`
 
-        NSLayoutConstraint.activate([
-            button.heightAnchor.constraint(equalToConstant: 55),
-            button.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
-            button.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
-            
-            iconImageView.widthAnchor.constraint(equalToConstant: 28),
-            chevronImageView.widthAnchor.constraint(equalToConstant: 16),
-            
-            stackView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
-            stackView.centerYAnchor.constraint(equalTo: button.centerYAnchor)
-        ])
-        
-        // 添加處理按鈕點擊時的高亮效果
-        button.addTarget(self, action: #selector(buttonTouchedDown(_:)), for: .touchDown)
-        button.addTarget(self, action: #selector(buttonTouchedUp(_:)), for: [.touchUpInside, .touchDragExit])
-    }
+ - 將 Cell 註冊與佈局配置集中在 View 中，ViewController 僅需專注於業務邏輯與互動。
+ 
+ `4.擴展性：`
 
-    // MARK: - 按鈕點擊效果處理
+ - 易於新增或修改 Cell，僅需在 registerCells 方法中調整，而無需更改其他程式碼。
+ 
+ -------------
 
-    @objc private func buttonTouchedDown(_ sender: UIButton) {
-        sender.backgroundColor = UIColor.gray.withAlphaComponent(0.5)
-    }
+ `* How`
+ 
+ `1.封裝 UITableView：`
 
-    @objc private func buttonTouchedUp(_ sender: UIButton) {
-        sender.backgroundColor = .lightGray.withAlphaComponent(0.3)
-    }
+ - 使用私有變數 userProfileTableView 來管理表格，避免外部直接操作。
+ 
+ `2.佈局與約束：`
 
-}
-*/
+ - 使用 setupLayout 方法，通過 Auto Layout 設定表格充滿整個視圖。
+ 
+ `3.Cell 註冊：`
+
+ - 提供 registerCells 方法，統一註冊所有使用的自訂 Cell，確保程式碼集中管理。
+ 
+ -------------
+
+ `* 補充說明`
+ 
+ `1.只讀屬性 tableView：`
+
+ - 提供一個安全的訪問方式，允許外部使用 UITableView，但無法修改內部實現。
+ 
+ `2.擴展性：`
+
+ - 若需新增更多自訂 Cell，只需在 registerCells 方法中新增註冊程式碼。
+ - 可引入動態配置方法，根據不同頁面需求，靈活設定需要註冊的 Cell。
+ 
+ `4.實踐：`
+
+ - 將 UserProfileView 作為 ViewController 的主視圖，避免在 ViewController 中直接操作其他 UI 元素，確保單一責任原則。
+ */
 
 
-
-// MARK: - 處理tableView
+// MARK: - (v)
 
 import UIKit
 
-/// 個人資訊頁面佈局
+/// 用於個人資訊頁面佈局的自訂視圖
+///
+/// 此視圖專為個人資料頁面設計，提供 `UITableView` 用於顯示使用者資訊、選項及操作功能。
+///
+/// 功能特色：
+/// - 封裝 `UITableView`，統一管理佈局與 Cell 的註冊，減少 ViewController 的負擔。
+/// - 提供 `tableView` 的只讀訪問屬性，允許外部存取 `UITableView` 而不直接暴露內部實現。
+///
+/// 使用場景：
+/// - 配合 `UserProfileViewController`，顯示使用者個人資訊頁面，包括姓名、Email、其他選項（如編輯、我的最愛）及登出功能。
 class UserProfileView: UIView {
     
     // MARK: - UI Elements
-    let tableView = createTableView()
+    
+    /// TableView，用於顯示個人資訊內容與操作選項
+    private(set) var userProfileTableView = UserProfileTableView()
     
     // MARK: - Initializers
     
+    /// 初始化視圖，設置佈局與註冊 Cell
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayout()
@@ -261,32 +113,34 @@ class UserProfileView: UIView {
     
     // MARK: - Layout Setup
     
-    /// 設置 TableView 的佈局
+    /// 配置 `TableView` 的佈局與約束條件
+    ///
+    /// - 說明：讓 `UITableView` 貼合父視圖，覆蓋整個頁面。
     private func setupLayout() {
-        addSubview(tableView)
+        addSubview(userProfileTableView)
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            userProfileTableView.topAnchor.constraint(equalTo: topAnchor),
+            userProfileTableView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            userProfileTableView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            userProfileTableView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
     
-    /// 註冊所有`自訂義的 cell`
+    // MARK: - Cell Registration
+    
+    /// 註冊個人資料頁面的所有自定義 TableView Cell
+    ///
+    /// - 包括：
+    ///   - `UserProfileInfoCell`：顯示個人資訊（姓名、Email、大頭照）
+    ///   - `UserProfileGeneralOptionCell`：顯示一般選項（如編輯個人資料）
+    ///   - `UserProfileSocialLinkCell`：顯示社交媒體連結
+    ///   - `UserProfileLogoutCell`：顯示登出按鈕
     private func registerCells() {
-        tableView.register(ProfileOptionCell.self, forCellReuseIdentifier: ProfileOptionCell.reuseIdentifier)
-        tableView.register(ProfileHeaderCell.self, forCellReuseIdentifier: ProfileHeaderCell.reuseIdentifier)
+        userProfileTableView.register(UserProfileInfoCell.self, forCellReuseIdentifier: UserProfileInfoCell.reuseIdentifier)
+        userProfileTableView.register(UserProfileGeneralOptionCell.self, forCellReuseIdentifier: UserProfileGeneralOptionCell.reuseIdentifier)
+        userProfileTableView.register(UserProfileSocialLinkCell.self, forCellReuseIdentifier: UserProfileSocialLinkCell.reuseIdentifier)
+        userProfileTableView.register(UserProfileLogoutCell.self, forCellReuseIdentifier: UserProfileLogoutCell.reuseIdentifier)
     }
-
-    // MARK: - Factory Methods
-
-    /// 建立 UITableView
-    private static func createTableView() -> UITableView {
-        let tableView = UITableView(frame: .zero, style: .insetGrouped)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.isScrollEnabled = false
-        return tableView
-    }
-
+    
 }

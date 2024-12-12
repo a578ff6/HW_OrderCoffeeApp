@@ -74,7 +74,7 @@ class EditProfileView: UIView {
     // MARK: - UI Elements
     
     /// 顯示用戶個人資料的 TableView
-    private let editProfileTableView = EditProfileTableView()
+     private(set) var editProfileTableView = EditProfileTableView()
 
     // MARK: - Initializers
 
@@ -117,14 +117,6 @@ class EditProfileView: UIView {
         editProfileTableView.register(GenderSelectionCell.self, forCellReuseIdentifier: GenderSelectionCell.reuseIdentifier)
         editProfileTableView.register(BirthdaySelectionCell.self, forCellReuseIdentifier: BirthdaySelectionCell.reuseIdentifier)
         editProfileTableView.register(BirthdayDatePickerCell.self, forCellReuseIdentifier: BirthdayDatePickerCell.reuseIdentifier)
-    }
-
-    // MARK: - Public Getters
-
-    /// 提供對內部 TableView 的訪問接口。
-    /// - 回傳：內部的 `editProfileTableView`，供外部設置數據源或代理。
-    func getTableView() -> UITableView {
-        return editProfileTableView
     }
     
 }

@@ -245,7 +245,7 @@ class EditProfileViewController: UIViewController {
     /// 初始化並設置 `EditProfileTableHandler`，負責 TableView 的邏輯處理
     private func setupTableHandler() {
         tableHandler = EditProfileTableHandler(delegate: self, photoDelegate: self)
-        let tableView = editProfileView.getTableView()
+        let tableView = editProfileView.editProfileTableView
         tableView.dataSource = tableHandler
         tableView.delegate = tableHandler
         tableView.reloadData()
@@ -376,16 +376,29 @@ extension EditProfileViewController: PhotoChangeHandlerDelegate {
                 print("用戶未選擇新圖片")
                 return
             }
-            print("更新 UI 和暫存模型數據")
-            // 更新暫存的模型數據，清除舊 URL
-            self.profileEditModel?.profileImageURL = nil
-            
-            // 通知 TableHandler 更新 UI
-            let tableView = self.editProfileView.getTableView()
-            if let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ProfileImageViewCell {
-                cell.updateProfileImageWithImage(with: selectedImage)
-            }
+            self.handleProfileImageChange(selectedImage: selectedImage)
         }
+    }
+    
+    /// 處理用戶更新大頭照的邏輯
+    ///
+    /// ### 功能描述
+    /// - 此方法負責在用戶選擇新的大頭照後，進行數據和 UI 的更新。
+    /// - 包括清除暫存的圖片 URL，並通知 `TableView` 中的 `ProfileImageViewCell` 更新顯示。
+    ///
+    /// - Parameter selectedImage: 用戶選擇的新大頭照圖片
+    private func handleProfileImageChange(selectedImage: UIImage) {
+        print("更新 UI 和暫存模型數據")
+        // 更新暫存的模型數據，清除舊 URL
+        profileEditModel?.profileImageURL = nil
+        
+        // 通知 TableHandler 更新 UI
+        let tableView = editProfileView.editProfileTableView
+        guard let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ProfileImageViewCell else {
+            print("未找到 ProfileImageViewCell，無法更新頭像")
+            return
+        }
+        cell.updateProfileImageWithImage(with: selectedImage)
     }
     
 }

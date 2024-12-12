@@ -136,7 +136,7 @@
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="m0E-B4-l6c">
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
                     <connections>
                         <segue destination="ktM-u5-N4T" kind="relationship" relationship="viewControllers" id="p5q-rM-27J"/>
@@ -238,7 +238,7 @@
                         <viewLayoutGuide key="safeArea" id="EfW-2G-Wtt"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="HmT-80-9F0"/>
+                    <navigationItem key="navigationItem" id="HmT-80-9F0"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EN4-G6-JTk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

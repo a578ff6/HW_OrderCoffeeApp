@@ -77,6 +77,8 @@
  */
 
 
+// MARK: - (v)
+
 import UIKit
 
 /// `ForgotPasswordActionHandler` 負責管理 `ForgotPasswordView` 中的使用者行為，包括處理按鈕的點擊事件並將這些行為回調至 `ForgotPasswordDelegate`
@@ -109,8 +111,8 @@ class ForgotPasswordActionHandler {
     private func setupActions() {
         guard let view = view else { return }
         
-        view.getResetPasswordButton().addTarget(self, action: #selector(handleResetPasswordButtonTapped), for: .touchUpInside)
-        view.getLoginPageButton().addTarget(self, action: #selector(handleLoginPageButtonTapped), for: .touchUpInside)
+        view.resetPasswordButton.addTarget(self, action: #selector(handleResetPasswordButtonTapped), for: .touchUpInside)
+        view.loginPageButton.addTarget(self, action: #selector(handleLoginPageButtonTapped), for: .touchUpInside)
     }
     
     // MARK: - Actions

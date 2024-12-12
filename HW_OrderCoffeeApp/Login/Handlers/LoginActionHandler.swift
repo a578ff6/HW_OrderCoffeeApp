@@ -51,8 +51,8 @@
     private func setupActions() {
         guard let view = view else { return }
         
-        view.getLoginButton().addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
-        view.getGoogleLoginButton().addTarget(self, action: #selector(didTapGoogleLoginButton), for: .touchUpInside)
+        view.loginButton.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
+        view.googleLoginButton.addTarget(self, action: #selector(didTapGoogleLoginButton), for: .touchUpInside)
         // 其他按鈕設置類似...
     }
     ```
@@ -67,8 +67,9 @@
     }
     
     @objc private func didTapRememberMeButton() {
-        let isSelected = !(view?.getRememberMeButton().isSelected ?? false)
-        view?.getRememberMeButton().isSelected = isSelected
+        guard let rememberMeButton = view?.rememberMeButton else { return }
+        let isSelected = !rememberMeButton.isSelected
+        rememberMeButton.isSelected = isSelected
         delegate?.loginViewDidTapRememberMeButton(isSelected: isSelected)
     }
     ```
@@ -86,6 +87,7 @@
 
 
 
+// MARK: - (v)
 
 import UIKit
 
@@ -118,12 +120,12 @@ class LoginActionHandler {
     private func setupActions() {
         guard let view = view else { return }
         
-        view.getLoginButton().addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
-        view.getGoogleLoginButton().addTarget(self, action: #selector(didTapGoogleLoginButton), for: .touchUpInside)
-        view.getAppleLoginButton().addTarget(self, action: #selector(didTapAppleLoginButton), for: .touchUpInside)
-        view.getForgotPasswordButton().addTarget(self, action: #selector(didTapForgotPasswordButton), for: .touchUpInside)
-        view.getSignUpButton().addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
-        view.getRememberMeButton().addTarget(self, action: #selector(didTapRememberMeButton), for: .touchUpInside)
+        view.loginButton.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
+        view.googleLoginButton.addTarget(self, action: #selector(didTapGoogleLoginButton), for: .touchUpInside)
+        view.appleLoginButton.addTarget(self, action: #selector(didTapAppleLoginButton), for: .touchUpInside)
+        view.forgotPasswordButton.addTarget(self, action: #selector(didTapForgotPasswordButton), for: .touchUpInside)
+        view.signUpButton.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
+        view.rememberMeButton.addTarget(self, action: #selector(didTapRememberMeButton), for: .touchUpInside)
     }
     
     // MARK: - Actions
@@ -155,8 +157,9 @@ class LoginActionHandler {
 
     /// 處理 "記住我" 按鈕的點擊事件，切換按鈕選中狀態，並通知 `delegate` 使用者點擊了 "記住我" 按鈕
     @objc private func didTapRememberMeButton() {
-        let isSelected = !(view?.getRememberMeButton().isSelected ?? false)
-        view?.getRememberMeButton().isSelected = isSelected
+        guard let rememberMeButton = view?.rememberMeButton else { return }
+        let isSelected = !rememberMeButton.isSelected
+        rememberMeButton.isSelected = isSelected
         delegate?.loginViewDidTapRememberMeButton(isSelected: isSelected)
     }
 }
