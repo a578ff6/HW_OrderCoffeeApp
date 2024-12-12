@@ -265,7 +265,7 @@ class UserProfileViewController: UIViewController {
     /// - 將 `tableHandler` 設為 TableView 的 DataSource 和 Delegate
     /// - 設置 `tableHandler` 的委派給當前 ViewController
     private func setupTableView() {
-        let tableView = userProfileView.tableView
+        let tableView = userProfileView.userProfileTableView
         tableView.delegate = tableHandler
         tableView.dataSource = tableHandler
         tableHandler.delegate = self
@@ -283,7 +283,7 @@ class UserProfileViewController: UIViewController {
                 let profile = try await UserProfileManager.shared.loadUserProfile()
                 print("[UserProfileViewController]: 用戶資料加載成功：\(profile)")
                 self.userProfile = profile
-                self.userProfileView.tableView.reloadData()  // 刷新表格
+                self.userProfileView.userProfileTableView.reloadData()  // 刷新表格
             } catch {
                 print("[UserProfileViewController]: 加載用戶資料失敗：\(error.localizedDescription)")
                 AlertService.showAlert(withTitle: "Error", message: "Failed to load user profile. Please try again later.", inViewController: self)

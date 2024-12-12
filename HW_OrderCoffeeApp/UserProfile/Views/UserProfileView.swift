@@ -94,13 +94,8 @@ class UserProfileView: UIView {
     
     // MARK: - UI Elements
     
-    /// 私有的 `UITableView` 實例，用於顯示個人資訊內容與操作選項
-    private let userProfileTableView = UserProfileTableView()
-    
-    /// 對外暴露的只讀屬性，允許外部存取 `UITableView`，避免直接操作內部實現
-    var tableView: UITableView {
-        return userProfileTableView
-    }
+    /// TableView，用於顯示個人資訊內容與操作選項
+    private(set) var userProfileTableView = UserProfileTableView()
     
     // MARK: - Initializers
     
