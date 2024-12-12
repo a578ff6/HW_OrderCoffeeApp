@@ -58,6 +58,8 @@
  */
 
 
+// MARK: - (v)
+
 import UIKit
 
 /// `SignUpActionHandler` 負責管理 `SignUpView` 中的使用者行為，包括處理按鈕的點擊事件並將這些行為回調至 `SignUpViewDelegate`
@@ -90,11 +92,11 @@ class SignUpActionHandler {
     private func setupActions() {
         guard let view = view else { return }
         
-        view.getSignUpButton().addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
-        view.getGoogleSignUpButton().addTarget(self, action: #selector(didTapGoogleSignUpButton), for: .touchUpInside)
-        view.getAppleSignUpButton().addTarget(self, action: #selector(didTapAppleSignUpButton), for: .touchUpInside)
-        view.getTermsButton().addTarget(self, action: #selector(didTapTermsButton), for: .touchUpInside)
-        view.getTermsCheckBox().addTarget(self, action: #selector(didTapTermsCheckBox), for: .touchUpInside)
+        view.signUpButton.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
+        view.googleLoginButton.addTarget(self, action: #selector(didTapGoogleSignUpButton), for: .touchUpInside)
+        view.appleLoginButton.addTarget(self, action: #selector(didTapAppleSignUpButton), for: .touchUpInside)
+        view.termsButton.addTarget(self, action: #selector(didTapTermsButton), for: .touchUpInside)
+        view.termsCheckBox.addTarget(self, action: #selector(didTapTermsCheckBox), for: .touchUpInside)
     }
     
     // MARK: - Actions
