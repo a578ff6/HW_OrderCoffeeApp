@@ -167,6 +167,14 @@
 		938063F52D0847C100537F01 /* UserProfileSocialLinkCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063F42D0847C100537F01 /* UserProfileSocialLinkCell.swift */; };
 		938063F72D08676F00537F01 /* UserProfileLogoutCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063F62D08676F00537F01 /* UserProfileLogoutCell.swift */; };
 		938063F92D087C7100537F01 /* UserProfileRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063F82D087C7100537F01 /* UserProfileRow.swift */; };
+		938063FE2D0B9CDD00537F01 /* FavoritesCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063FD2D0B9CDD00537F01 /* FavoritesCollectionView.swift */; };
+		938064002D0BCB1400537F01 /* FavoritesLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938063FF2D0BCB1400537F01 /* FavoritesLabel.swift */; };
+		938064022D0BD18500537F01 /* FavoritesImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938064012D0BD18500537F01 /* FavoritesImageView.swift */; };
+		938064042D0BDB9600537F01 /* FavoritesStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938064032D0BDB9600537F01 /* FavoritesStackView.swift */; };
+		938064082D0CA03700537F01 /* FavoritesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938064072D0CA03700537F01 /* FavoritesRepository.swift */; };
+		9380640B2D0CB4D200537F01 /* FavoritesHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9380640A2D0CB4D200537F01 /* FavoritesHandlerDelegate.swift */; };
+		9380640D2D0CF9F500537F01 /* FavoritesNavigationBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9380640C2D0CF9F500537F01 /* FavoritesNavigationBarManager.swift */; };
+		9380640F2D0E4C2100537F01 /* NoFavoritesViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9380640E2D0E4C2100537F01 /* NoFavoritesViewManager.swift */; };
 		9381221F2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381221E2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift */; };
 		938122212CE286A300ADFB7B /* OrderHistoryDetailHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122202CE286A300ADFB7B /* OrderHistoryDetailHandler.swift */; };
 		938122232CE286C300ADFB7B /* OrderHistoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122222CE286C300ADFB7B /* OrderHistoryDetailView.swift */; };
@@ -478,6 +486,14 @@
 		938063F42D0847C100537F01 /* UserProfileSocialLinkCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileSocialLinkCell.swift; sourceTree = "<group>"; };
 		938063F62D08676F00537F01 /* UserProfileLogoutCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileLogoutCell.swift; sourceTree = "<group>"; };
 		938063F82D087C7100537F01 /* UserProfileRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileRow.swift; sourceTree = "<group>"; };
+		938063FD2D0B9CDD00537F01 /* FavoritesCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesCollectionView.swift; sourceTree = "<group>"; };
+		938063FF2D0BCB1400537F01 /* FavoritesLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesLabel.swift; sourceTree = "<group>"; };
+		938064012D0BD18500537F01 /* FavoritesImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesImageView.swift; sourceTree = "<group>"; };
+		938064032D0BDB9600537F01 /* FavoritesStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesStackView.swift; sourceTree = "<group>"; };
+		938064072D0CA03700537F01 /* FavoritesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesRepository.swift; sourceTree = "<group>"; };
+		9380640A2D0CB4D200537F01 /* FavoritesHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesHandlerDelegate.swift; sourceTree = "<group>"; };
+		9380640C2D0CF9F500537F01 /* FavoritesNavigationBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesNavigationBarManager.swift; sourceTree = "<group>"; };
+		9380640E2D0E4C2100537F01 /* NoFavoritesViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFavoritesViewManager.swift; sourceTree = "<group>"; };
 		9381221E2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailViewController.swift; sourceTree = "<group>"; };
 		938122202CE286A300ADFB7B /* OrderHistoryDetailHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailHandler.swift; sourceTree = "<group>"; };
 		938122222CE286C300ADFB7B /* OrderHistoryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailView.swift; sourceTree = "<group>"; };
@@ -1059,20 +1075,26 @@
 		935374132C9C5C9400794A63 /* Favorites */ = {
 			isa = PBXGroup;
 			children = (
-				9353742D2CA92DD400794A63 /* Handler */,
+				938063FB2D0B95B800537F01 /* Components */,
+				938063FC2D0B95CC00537F01 /* Cells */,
 				9353742F2CA92DF700794A63 /* Layouts */,
 				9353742E2CA92DE100794A63 /* Views */,
-				9353742C2CA92DC800794A63 /* View Controllers */,
+				9353742D2CA92DD400794A63 /* Handler */,
+				938064122D0E8D5C00537F01 /* Delegates */,
+				9353742C2CA92DC800794A63 /* ViewControllers */,
+				938064092D0CAF6100537F01 /* Managers */,
+				938064062D0CA01A00537F01 /* Models */,
+				938064052D0CA00700537F01 /* Services */,
 			);
 			path = Favorites;
 			sourceTree = "<group>";
 		};
-		9353742C2CA92DC800794A63 /* View Controllers */ = {
+		9353742C2CA92DC800794A63 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
 				935374112C9C5C6900794A63 /* FavoritesViewController.swift */,
 			);
-			path = "View Controllers";
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 		9353742D2CA92DD400794A63 /* Handler */ = {
@@ -1086,9 +1108,8 @@
 		9353742E2CA92DE100794A63 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				9353742A2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift */,
 				935374162C9C5CF300794A63 /* FavoritesView.swift */,
-				935374182C9C601200794A63 /* FavoriteDrinkCell.swift */,
+				9353742A2CA8128D00794A63 /* FavoritesDrinkHeaderView.swift */,
 				935374282CA4502B00794A63 /* NoFavoritesView.swift */,
 			);
 			path = Views;
@@ -1543,6 +1564,59 @@
 			path = DataSource;
 			sourceTree = "<group>";
 		};
+		938063FB2D0B95B800537F01 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				938063FD2D0B9CDD00537F01 /* FavoritesCollectionView.swift */,
+				938064032D0BDB9600537F01 /* FavoritesStackView.swift */,
+				938063FF2D0BCB1400537F01 /* FavoritesLabel.swift */,
+				938064012D0BD18500537F01 /* FavoritesImageView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		938063FC2D0B95CC00537F01 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				935374182C9C601200794A63 /* FavoriteDrinkCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		938064052D0CA00700537F01 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				938064072D0CA03700537F01 /* FavoritesRepository.swift */,
+				932258D22C9410F4004EA2D9 /* FavoriteManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		938064062D0CA01A00537F01 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				9353741A2C9D832E00794A63 /* FavoriteDrink.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		938064092D0CAF6100537F01 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				9380640C2D0CF9F500537F01 /* FavoritesNavigationBarManager.swift */,
+				9380640E2D0E4C2100537F01 /* NoFavoritesViewManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		938064122D0E8D5C00537F01 /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				9380640A2D0CB4D200537F01 /* FavoritesHandlerDelegate.swift */,
+			);
+			path = Delegates;
+			sourceTree = "<group>";
+		};
 		9381221D2CE2811400ADFB7B /* OrderHistoryDetail */ = {
 			isa = PBXGroup;
 			children = (
@@ -1766,7 +1840,6 @@
 				93755C302C82F6CF002570A5 /* HUDManager.swift */,
 				932258D02C92F1E1004EA2D9 /* ShareManager.swift */,
 				9353740D2C9AD6E100794A63 /* ButtonEffectManager.swift */,
-				932258D22C9410F4004EA2D9 /* FavoriteManager.swift */,
 				939BDA6A2B2B97ED00616D1C /* ActivityIndicatorManager.swift */,
 			);
 			path = Services;
@@ -2043,7 +2116,6 @@
 			children = (
 				93B9DC842C3546150050BC3F /* UserDetails.swift */,
 				935374432CB67DB100794A63 /* Order.swift */,
-				9353741A2C9D832E00794A63 /* FavoriteDrink.swift */,
 				939BDA732B2FB3E400616D1C /* MenuModels.swift */,
 			);
 			path = Models;
@@ -2280,6 +2352,7 @@
 				93755C442C8466A4002570A5 /* WebsiteImageCell.swift in Sources */,
 				934FB5642CF8ADA600757C7C /* LoginCustomImageView.swift in Sources */,
 				939BDA692B2B82BC00616D1C /* AlertService.swift in Sources */,
+				9380640B2D0CB4D200537F01 /* FavoritesHandlerDelegate.swift in Sources */,
 				939BDA652B2ACBA200616D1C /* FirebaseController.swift in Sources */,
 				938122372CE4CF8E00ADFB7B /* OrderHistoryDetailSectionExpansionManager.swift in Sources */,
 				936E099B2CE9FD000092F246 /* SearchControllerManager.swift in Sources */,
@@ -2339,6 +2412,7 @@
 				934FB5DE2D03A12B00757C7C /* ProfileImageCoordinator.swift in Sources */,
 				93B9DC812C32D7740050BC3F /* OrderManager.swift in Sources */,
 				9353747C2CCD7C9A00794A63 /* LocationManagerHandler.swift in Sources */,
+				938064082D0CA03700537F01 /* FavoritesRepository.swift in Sources */,
 				934FB58A2CFA977600757C7C /* SignUpStackView.swift in Sources */,
 				935374102C9B218800794A63 /* DrinkImageCollectionViewCell.swift in Sources */,
 				939BD9F12B2AB9C200616D1C /* SignUpViewController.swift in Sources */,
@@ -2426,8 +2500,10 @@
 				934FB5CA2D0050EF00757C7C /* EditProfileTextField.swift in Sources */,
 				936E09A12CED0F8A0092F246 /* SearchCacheManager.swift in Sources */,
 				935374532CB80F1300794A63 /* OrderCustomerDetailsLayoutProvider.swift in Sources */,
+				938063FE2D0B9CDD00537F01 /* FavoritesCollectionView.swift in Sources */,
 				9381224F2CE775F200ADFB7B /* SearchView.swift in Sources */,
 				93755C1B2C808202002570A5 /* UserProfileTableHandler.swift in Sources */,
+				938064002D0BCB1400537F01 /* FavoritesLabel.swift in Sources */,
 				93755C1D2C8094D0002570A5 /* UserProfileInfoCell.swift in Sources */,
 				9381222F2CE45A7F00ADFB7B /* OrderrHistoryDetailItemCell.swift in Sources */,
 				93F9BB3A2C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift in Sources */,
@@ -2449,6 +2525,7 @@
 				93B7B5952CDE30C400E0205A /* OrderHistoryEditingHandler.swift in Sources */,
 				938063F12D07B50600537F01 /* UserProfileDataSource.swift in Sources */,
 				934FB5842CFA936B00757C7C /* SignUpSeparatorView.swift in Sources */,
+				9380640F2D0E4C2100537F01 /* NoFavoritesViewManager.swift in Sources */,
 				934FB59E2CFDCC2300757C7C /* ForgotPasswordAttributedButton.swift in Sources */,
 				935374192C9C601200794A63 /* FavoriteDrinkCell.swift in Sources */,
 				93F9BB4A2C269AC600355A87 /* DrinkDetailSeparatorView.swift in Sources */,
@@ -2475,6 +2552,7 @@
 				9352914C2C8D91480018B060 /* DrinkDetailHandler.swift in Sources */,
 				934FB5D02D010CD700757C7C /* BirthdayDatePickerCell.swift in Sources */,
 				93B7B5762CDB8A3500E0205A /* OrderConfirmationHeaderGestureHandler.swift in Sources */,
+				938064022D0BD18500537F01 /* FavoritesImageView.swift in Sources */,
 				93755BFE2C79DEAA002570A5 /* EditProfileView.swift in Sources */,
 				9381221F2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift in Sources */,
 				939BD9D22B2A1B1700616D1C /* SceneDelegate.swift in Sources */,
@@ -2491,6 +2569,7 @@
 				934FB5882CFA962400757C7C /* SignUpAttributedButton.swift in Sources */,
 				936CFFCB2C6E24AD004B8724 /* UserDetailsReceiver.swift in Sources */,
 				938063F72D08676F00537F01 /* UserProfileLogoutCell.swift in Sources */,
+				9380640D2D0CF9F500537F01 /* FavoritesNavigationBarManager.swift in Sources */,
 				93B7B5612CD7912400E0205A /* OrderrConfirmationCloseButtonCell.swift in Sources */,
 				934FE1DC2B396496001C23F0 /* DrinkDetailViewController.swift in Sources */,
 				934FB5D22D01144600757C7C /* EditProfileDatePicker.swift in Sources */,
@@ -2513,6 +2592,7 @@
 				938063E12D06662B00537F01 /* UserProfileLabel.swift in Sources */,
 				93755C042C7B28AE002570A5 /* BirthdaySelectionCell.swift in Sources */,
 				935374462CB6A74B00794A63 /* OrderItemManager.swift in Sources */,
+				938064042D0BDB9600537F01 /* FavoritesStackView.swift in Sources */,
 				93B7B57F2CDBB6A600E0205A /* OrderHistory.swift in Sources */,
 				93BD48B22C57CB9000144E7F /* AppleSignInController.swift in Sources */,
 				9381223B2CE57CC000ADFB7B /* OrderHistoryDetailNavigationBarManager.swift in Sources */,
