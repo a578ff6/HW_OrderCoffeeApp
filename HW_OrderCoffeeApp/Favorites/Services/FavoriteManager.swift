@@ -309,401 +309,9 @@ class FavoriteManager {
 
  */
 
-// MARK: - 處理 favorite的結構模式
-/*
-import UIKit
-import Firebase
-
-/// 管理飲品「加入最愛」的邏輯
-class FavoriteManager {
-    
-    // MARK: - Singleton Instance
-
-    static let shared = FavoriteManager()
-    private init() {}
-    
-    // MARK: - Public Methods
-    
-    /// 切換飲品的「加入最愛」狀態
-    /// - Parameters:
-    ///   - favoriteDrink: 需要加入或移除最愛的 `FavoriteDrink` 結構
-    ///   - viewController: 用來更新按鈕圖示的視圖控制器
-    func toggleFavorite(for favoriteDrink: FavoriteDrink, in viewController: UIViewController) async {
-        guard let user = Auth.auth().currentUser else { return }
-        do {
-            var favorites = try await getUserFavorites(userID: user.uid)
-            // 檢查是否已經在 favorites 中
-            if let index = favorites.firstIndex(where: { $0.drinkId == favoriteDrink.drinkId}) {
-                favorites.remove(at: index)  // 已在最愛中，移除
-            } else {
-                favorites.append(favoriteDrink)  // 不在最愛中，加入
-            }
-            print("當前最愛清單: \(favorites)")
-            updateFavoriteButton(for: favoriteDrink.drinkId, in: viewController, favorites: favorites)
-            try await updateUserFavorites(userID: user.uid, favorites: favorites)
-        } catch {
-            print("更新最愛失敗：\(error)")
-        }
-    }
-    
-    /// 判斷飲品是否已加入「我的最愛」
-    /// - Parameters:
-    ///   - drinkId: 要檢查的飲品的 ID
-    func isFavorite(drinkId: String) async -> Bool {
-        guard let user = Auth.auth().currentUser else { return false }
-        do {
-            let favorites = try await getUserFavorites(userID: user.uid)
-            return favorites.contains { $0.drinkId == drinkId }
-        } catch {
-            print("檢查最愛狀態失敗：\(error)")
-            return false
-        }
-    }
-    
-    // MARK: - Private Methods
-    
-    /// 獲取使用者的「我的最愛」清單
-    private func getUserFavorites(userID: String) async throws -> [FavoriteDrink] {
-        let userRef = Firestore.firestore().collection("users").document(userID)
-        let document = try await userRef.getDocument()
-        if let data = document.data(), let favoritesData = data["favorites"] as? [[String: Any]] {
-            return favoritesData.compactMap { dict in
-                guard let categoryId = dict["categoryId"] as? String, let subcategoryId = dict["subcategoryId"] as? String, let drinkId = dict["drinkId"] as? String else { return nil }
-                return FavoriteDrink(categoryId: categoryId, subcategoryId: subcategoryId, drinkId: drinkId)
-            }
-        }
-        return []
-    }
-    
-    /// 更新使用者的「我的最愛」清單到 Firebase
-    private func updateUserFavorites(userID: String, favorites: [FavoriteDrink]) async throws {
-        let userRef = Firestore.firestore().collection("users").document(userID)
-        let favoritesData = favorites.map {[
-            "categoryId": $0.categoryId,
-            "subcategoryId": $0.subcategoryId,
-            "drinkId": $0.drinkId
-        ]}
-        try await userRef.updateData(["favorites": favoritesData])
-    }
-
-    /// 更新「加入最愛」按鈕的圖示並設定不同顏色
-    private func updateFavoriteButton(for drinkId: String, in viewController: UIViewController, favorites: [FavoriteDrink]) {
-        DispatchQueue.main.async {
-            if let favoriteButton = viewController.navigationItem.rightBarButtonItems?[1] {
-                let isFavorite = favorites.contains { $0.drinkId == drinkId }
-                favoriteButton.image = isFavorite ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
-                favoriteButton.tintColor = isFavorite ? UIColor.deepGreen : UIColor.deepGreen
-            }
-        }
-    }
-    
-}
-*/
-
-
-// MARK: - 處理 favorite的結構模式( 測試 同步最新的 UserDetails )成功！
-/*
-import UIKit
-import Firebase
-
-/// 管理飲品「加入最愛」的邏輯
-class FavoriteManager {
-    
-    // MARK: - Singleton Instance
-
-    static let shared = FavoriteManager()
-    private init() {}
-    
-    // MARK: - Public Methods
-
-    /// 切換飲品的「加入最愛」狀態，並更新相關UI
-    ///
-    /// - Parameters:
-    ///   - favoriteDrink: 要加入或移除最愛的 `FavoriteDrink` 結構
-    ///   - viewController: 用於更新按鈕UI的視圖控制器
-    ///
-    /// 此方法會根據`favoriteDrink`的狀態（已存在於最愛或未存在）來決定將其加入或從清單中移除。然後會更新Firebase並同步最新的`UserDetails`資料給當前的視圖控制器。
-    func toggleFavorite(for favoriteDrink: FavoriteDrink, in viewController: UIViewController) async {
-        guard let user = Auth.auth().currentUser else { return }
-        
-        do {
-            var favorites = try await getUserFavorites(userID: user.uid)
-            /// 檢查是否已經在 favorites 中（`已在最愛中，移除` / `不在最愛中，加入`）
-            if let index = favorites.firstIndex(where: { $0.drinkId == favoriteDrink.drinkId }) {
-                favorites.remove(at: index)
-            } else {
-                favorites.append(favoriteDrink)
-            }
-            print("當前最愛清單: \(favorites)")
-            // 更新UI的「加入最愛」按鈕
-            updateFavoriteButton(for: favoriteDrink.drinkId, in: viewController, favorites: favorites)
-            // 更新Firebase的「我的最愛」清單
-            try await updateUserFavorites(userID: user.uid, favorites: favorites)
-            // 更新UserDetails資料
-            await refreshUserDetails(for: viewController)
-        } catch {
-            print("更新最愛失敗：\(error)")
-        }
-    }
-
-    /// 判斷飲品是否已加入「我的最愛」
-    ///
-    /// - Parameters:
-    ///   - drinkId: 飲品的 ID
-    /// - Returns: 如果飲品已在我的最愛中，則返回 `true`，否則返回 `false`
-    func isFavorite(drinkId: String) async -> Bool {
-        guard let user = Auth.auth().currentUser else { return false }
-        
-        do {
-            let favorites = try await getUserFavorites(userID: user.uid)
-            return favorites.contains { $0.drinkId == drinkId }
-        } catch {
-            print("檢查最愛狀態失敗：\(error)")
-            return false
-        }
-    }
-    
-    // MARK: - Private Methods
-    
-    /// 從 Firebase 獲取使用者的「我的最愛」清單
-    ///
-    /// - Parameter userID: 使用者的ID
-    /// - Returns: `FavoriteDrink` 的陣列，包含使用者所有的收藏飲品
-    private func getUserFavorites(userID: String) async throws -> [FavoriteDrink] {
-        let userRef = Firestore.firestore().collection("users").document(userID)
-        let document = try await userRef.getDocument()
-        
-        if let data = document.data(), let favoritesData = data["favorites"] as? [[String: Any]] {
-            return favoritesData.compactMap { dict in
-                guard let categoryId = dict["categoryId"] as? String, let subcategoryId = dict["subcategoryId"] as? String, let drinkId = dict["drinkId"] as? String else { return nil }
-                return FavoriteDrink(categoryId: categoryId, subcategoryId: subcategoryId, drinkId: drinkId)
-            }
-        }
-        
-        return []
-    }
-    
-    /// 將更新後的「我的最愛」清單寫入 Firebase
-    ///
-    /// - Parameters:
-    ///   - userID: 使用者的ID
-    ///   - favorites: 更新後的「我的最愛」清單
-    private func updateUserFavorites(userID: String, favorites: [FavoriteDrink]) async throws {
-        let userRef = Firestore.firestore().collection("users").document(userID)
-        let favoritesData = favorites.map {[
-            "categoryId": $0.categoryId,
-            "subcategoryId": $0.subcategoryId,
-            "drinkId": $0.drinkId
-        ]}
-        try await userRef.updateData(["favorites": favoritesData])
-    }
-
-    /// 更新「我的最愛」按鈕的狀態
-    ///
-    /// - Parameters:
-    ///   - drinkId: 飲品的 ID
-    ///   - viewController: 使用此按鈕的視圖控制器
-    ///   - favorites: 當前的「我的最愛」清單
-    private func updateFavoriteButton(for drinkId: String, in viewController: UIViewController, favorites: [FavoriteDrink]) {
-        DispatchQueue.main.async {
-            if let favoriteButton = viewController.navigationItem.rightBarButtonItems?[1] {
-                let isFavorite = favorites.contains { $0.drinkId == drinkId }
-                favoriteButton.image = isFavorite ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
-                favoriteButton.tintColor = isFavorite ? UIColor.deepGreen : UIColor.deepGreen
-            }
-        }
-    }
-    
-    /// 從 Firebase 獲取最新的 `UserDetails` 並更新視圖控制器
-    ///
-    /// - Parameter viewController: 接收並處理最新的 `UserDetails` 的視圖控制器
-    private func refreshUserDetails(for viewController: UIViewController) async {
-        FirebaseController.shared.getCurrentUserDetails { result in
-            switch result {
-            case .success(let updatedUserDetails):
-                if let viewController = viewController as? UserDetailsReceiver {
-                    viewController.receiveUserDetails(updatedUserDetails)
-                }
-                print("更新後的 userDetails: \(updatedUserDetails.favorites)")
-            case .failure(let error):
-                print("獲取更新的userDetails失敗: \(error)")
-            }
-        }
-    }
-    
-}
-*/
-
-// MARK: - 測試處理我的最愛頁面的刪除部分
-
-/*
-import UIKit
-import Firebase
-
-/// 管理飲品「加入最愛」的邏輯
-class FavoriteManager {
-    
-    // MARK: - Singleton Instance
-
-    static let shared = FavoriteManager()
-    private init() {}
-    
-    // MARK: - Public Methods
-    
-    /// 移除飲品的「我的最愛」狀態，並更新相關UI
-    ///
-    /// - Parameter drink: 要從最愛中移除的 `Drink`
-    /// 此方法會根據`drinkId`來確定該飲品是否在收藏列表中，並且移除後同步更新 Firebase 資料和 `UserDetails`
-    func removeFavorite(for drink: Drink) async {
-        guard let user = Auth.auth().currentUser else { return }
-        
-        do {
-            var favorites = try await getUserFavorites(userID: user.uid)
-            /// 在 favorites 中查找並移除該 drink
-            if let index = favorites.firstIndex(where: { $0.drinkId == drink.id }) {
-                favorites.remove(at: index)
-            } else {
-                print("無法移除，因為該飲品不在收藏清單中。")
-                return
-            }
-            print("當前最愛清單: \(favorites)")
-            try await updateUserFavorites(userID: user.uid, favorites: favorites)                   // 更新 Firebase 資料
-            await refreshUserDetails()                                                              // 更新 UserDetails
-            postFavoriteStatusChangedNotification()                                                 // 發送通知，告知「我的最愛」已變更
-        } catch {
-            print("移除最愛失敗：\(error)")
-        }
-    }
-    
-    /// 切換飲品的「加入最愛」狀態，並更新相關UI
-    ///
-    /// - Parameters:
-    ///   - favoriteDrink: 要加入或移除最愛的 `FavoriteDrink` 結構
-    ///   - viewController: 用於更新按鈕UI的視圖控制器
-    ///
-    /// 此方法會根據`favoriteDrink`的狀態（已存在於最愛或未存在）來決定將其加入或從清單中移除。然後會更新Firebase並同步最新的`UserDetails`資料給當前的視圖控制器。
-    func toggleFavorite(for favoriteDrink: FavoriteDrink, in viewController: UIViewController) async {
-        guard let user = Auth.auth().currentUser else { return }
-        
-        do {
-            var favorites = try await getUserFavorites(userID: user.uid)
-            /// 檢查是否已經在 favorites 中（`已在最愛中，移除` / `不在最愛中，加入`）
-            if let index = favorites.firstIndex(where: { $0.drinkId == favoriteDrink.drinkId }) {
-                favorites.remove(at: index)
-            } else {
-                favorites.append(favoriteDrink)
-            }
-            print("當前最愛清單: \(favorites)")
-            updateFavoriteButton(for: favoriteDrink.drinkId, in: viewController, favorites: favorites)                  // 更新UI的「加入最愛」按鈕
-            try await updateUserFavorites(userID: user.uid, favorites: favorites)                                       // 更新Firebase的「我的最愛」清單
-            await refreshUserDetails(for: viewController)                                                               // 更新UserDetails資料
-            postFavoriteStatusChangedNotification()                                                                     // 發送通知，告知「我的最愛」已變更
-        } catch {
-            print("更新最愛失敗：\(error)")
-        }
-    }
-
-    /// 判斷飲品是否已加入「我的最愛」
-    ///
-    /// - Parameters:
-    ///   - drinkId: 飲品的 ID
-    /// - Returns: 如果飲品已在我的最愛中，則返回 `true`，否則返回 `false`
-    func isFavorite(drinkId: String) async -> Bool {
-        guard let user = Auth.auth().currentUser else { return false }
-        
-        do {
-            let favorites = try await getUserFavorites(userID: user.uid)
-            return favorites.contains { $0.drinkId == drinkId }
-        } catch {
-            print("檢查最愛狀態失敗：\(error)")
-            return false
-        }
-    }
-    
-    // MARK: - Private Methods
-    
-    /// 從 Firebase 獲取使用者的「我的最愛」清單
-    ///
-    /// - Parameter userID: 使用者的ID
-    /// - Returns: `FavoriteDrink` 的陣列，包含使用者所有的收藏飲品
-    private func getUserFavorites(userID: String) async throws -> [FavoriteDrink] {
-        let userRef = Firestore.firestore().collection("users").document(userID)
-        let document = try await userRef.getDocument()
-        
-        if let data = document.data(), let favoritesData = data["favorites"] as? [[String: Any]] {
-            return favoritesData.compactMap { dict in
-                guard let categoryId = dict["categoryId"] as? String, let subcategoryId = dict["subcategoryId"] as? String, let drinkId = dict["drinkId"] as? String else { return nil }
-                return FavoriteDrink(categoryId: categoryId, subcategoryId: subcategoryId, drinkId: drinkId)
-            }
-        }
-        
-        return []
-    }
-    
-    /// 將更新後的「我的最愛」清單寫入 Firebase
-    ///
-    /// - Parameters:
-    ///   - userID: 使用者的ID
-    ///   - favorites: 更新後的「我的最愛」清單
-    private func updateUserFavorites(userID: String, favorites: [FavoriteDrink]) async throws {
-        let userRef = Firestore.firestore().collection("users").document(userID)
-        let favoritesData = favorites.map {[
-            "categoryId": $0.categoryId,
-            "subcategoryId": $0.subcategoryId,
-            "drinkId": $0.drinkId
-        ]}
-        try await userRef.updateData(["favorites": favoritesData])
-    }
-
-    /// 更新「我的最愛」按鈕的狀態
-    ///
-    /// - Parameters:
-    ///   - drinkId: 飲品的 ID
-    ///   - viewController: 使用此按鈕的視圖控制器
-    ///   - favorites: 當前的「我的最愛」清單
-    private func updateFavoriteButton(for drinkId: String, in viewController: UIViewController, favorites: [FavoriteDrink]) {
-        DispatchQueue.main.async {
-            if let favoriteButton = viewController.navigationItem.rightBarButtonItems?[1] {
-                let isFavorite = favorites.contains { $0.drinkId == drinkId }
-                favoriteButton.image = isFavorite ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
-                favoriteButton.tintColor = isFavorite ? UIColor.deepGreen : UIColor.deepGreen
-            }
-        }
-    }
-    
-    /// 從 Firebase 獲取最新的 `UserDetails` 並更新視圖控制器
-    ///
-    /// - Parameter viewController: 接收並處理最新的 `UserDetails` 的視圖控制器
-    private func refreshUserDetails(for viewController: UIViewController? = nil) async {
-        FirebaseController.shared.getCurrentUserDetails { result in
-            switch result {
-            case .success(let updatedUserDetails):
-                if let viewController = viewController as? UserDetailsReceiver {
-                    viewController.receiveUserDetails(updatedUserDetails)
-                }
-                print("更新後的 favorites: \(updatedUserDetails.favorites.map { $0.drinkId })")
-            case .failure(let error):
-                print("無法獲取更新的 userDetails: \(error)")
-            }
-        }
-    }
-    
-}
-
-// MARK: - Notifications Handling
-
-extension FavoriteManager {
-    
-    /// 發送「我的最愛」狀態改變的通知
-    func postFavoriteStatusChangedNotification() {
-        NotificationCenter.default.post(name: .favoriteStatusChanged, object: nil)
-    }
-}
-*/
-
 
 // MARK: - 測試處理我的最愛頁面的刪除部分（async/await）
-
+/*
 import UIKit
 import Firebase
 
@@ -863,4 +471,144 @@ extension FavoriteManager {
     func postFavoriteStatusChangedNotification() {
         NotificationCenter.default.post(name: .favoriteStatusChanged, object: nil)
     }
+}
+*/
+
+
+
+
+
+
+
+
+
+
+
+// MARK: - 暫時
+
+// MARK: - 筆記: FavoriteManager (v)
+/**
+ 
+ ## 筆記: FavoriteManager
+ 
+ `* What`
+ 
+ - `FavoriteManager` 是業務邏輯層，用於處理「我的最愛」的功能邏輯。
+ - 它與資料層 `FavoritesRepository` 交互，提供高層次的 API 供 UI 層使用，例如獲取、刪除收藏飲品。
+
+ `* Why`
+ 
+` 1.分離關注點:`
+
+ - 將業務邏輯從 UI 層分離，減少 UI 層的代碼複雜度。
+ - 通過依賴資料層，實現清晰的邏輯分層，提高代碼的可維護性。
+ 
+ `2.簡化操作:`
+
+ - 為 UI 提供簡單的方法，如 `fetchFavorites` 和 `removeFavorite`，隱藏 Firestore 的具體實現，降低使用門檻。
+ 
+ `3.集中管理依賴:`
+
+ - 使用單例模式保證全局只有一個 `FavoriteManager` 實例，方便統一管理「我的最愛」功能。
+ 
+ `4.可擴展性:`
+
+ - 如果需要新增功能（例如檢查某飲品是否被收藏），可以輕鬆擴展而不影響現有的代碼。
+ 
+ `* How`
+ 
+ `1.單例模式:`
+
+ - 使用 `static let shared` 實現單例，保證唯一實例。
+ - 在應用中任何地方都可以通過 `FavoriteManager.shared` 訪問。
+ 
+ `2.高層 API:`
+
+ - 提供 `fetchFavorites` 和 `removeFavorite` 等簡單方法供 UI 層使用，確保邏輯清晰且便於調試。
+ 
+ `3.依賴注入:`
+
+ - 通過 `FavoritesRepository` 處理與 `Firebase` 的交互，將資料存取的責任下放至資料層，業務層只需關注邏輯處理。
+ 
+ `4.錯誤處理:`
+
+ - 使用 async/await 配合 do-catch 處理異步錯誤，保證用戶操作的可靠性。
+
+ */
+
+
+// MARK: - 重構成專屬 (v)
+
+import UIKit
+import Firebase
+
+/// 管理使用者的「我的最愛」業務邏輯
+/// - 負責與 `FavoritesRepository` 交互，處理與 Firestore 的數據操作。
+/// - 提供獲取、刪除「我的最愛」功能，並對接使用者操作。
+///
+/// 功能:
+/// 1. 獲取使用者的「我的最愛」清單。
+/// 2. 刪除指定飲品的「我的最愛」狀態。
+///
+/// 注意事項:
+/// - 依賴 `FavoritesRepository` 作為資料層，所有的 Firestore 操作集中在資料層處理。
+/// - 包裝高層邏輯，提供簡單易用的方法給 UI 層使用。
+class FavoriteManager {
+    
+    // MARK: - Singleton Instance
+    
+    /// 提供單例實例，保證全局只有一個 `FavoriteManager`
+    static let shared = FavoriteManager()
+    
+    private init() {}
+    
+    // MARK: - Dependencies
+    
+    /// 注入資料層依賴，處理 Firestore 的數據交互
+    private let repository = FavoritesRepository()
+    
+    // MARK: - Public Methods
+    
+    /// 獲取使用者的「我的最愛」清單
+    /// - Returns: 包含使用者「我的最愛」飲品的陣列，如果獲取失敗返回 nil。
+    func fetchFavorites() async -> [FavoriteDrink]? {
+        guard let userId = getCurrentUserId() else { return nil }
+        
+        do {
+            let favorites = try await repository.getFavorites(for: userId)
+            return favorites
+        } catch {
+            print("獲取最愛清單失敗：\(error)")
+            return nil
+        }
+    }
+    
+    /// 移除飲品的「我的最愛」狀態
+    /// - Parameter favoriteDrink: 要移除的飲品數據。
+    func removeFavorite(for favoriteDrink: FavoriteDrink) async {
+        guard let userId = getCurrentUserId() else { return }
+        
+        let favoriteDocRef = Firestore.firestore().collection("users").document(userId).collection("favorites").document(favoriteDrink.drinkId)
+        
+        do {
+            print("正在刪除收藏: \(favoriteDrink.drinkId)")
+            try await favoriteDocRef.delete()
+            print("成功移除收藏: \(favoriteDrink.name)")
+        } catch {
+            print("移除收藏失敗: \(error.localizedDescription)")
+        }
+    }
+    
+    // MARK: - Private Methods
+    
+    /// 獲取當前使用者 ID
+    /// - Returns: 當前登入使用者的 ID，如果未登入返回 nil。
+    private func getCurrentUserId() -> String? {
+        guard let user = Auth.auth().currentUser else {
+            print("Error: 未登入使用者")
+            return nil
+        }
+        return user.uid
+    }
+    
 }

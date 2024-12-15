@@ -204,7 +204,7 @@ class FirebaseController {
         let gender = userData["gender"] as? String
         
         /// 解析 favorites 資料，將 Firestore 的「我的最愛」轉換為 FavoriteDrink 的陣列
-        let favorites = parseFavorites(from: userData["favorites"] as? [[String: Any]])
+//        let favorites = parseFavorites(from: userData["favorites"] as? [[String: Any]])
         
         // 將所有解析後的資料封裝進 UserDetails 結構並返回
         return UserDetails(
@@ -215,27 +215,27 @@ class FirebaseController {
             phoneNumber: phoneNumber,
             birthday: birthday,
             address: address,
-            gender: gender,
+            gender: gender
 //            orders: nil,            // 因為 orders 在大部分場景中並不需要，只有在歷史訂單的頁面才會用到。
-            favorites: favorites        // 將 favorites 轉換後的 [FavoriteDrink] 加入 UserDetails
+//            favorites: favorites        // 將 favorites 轉換後的 [FavoriteDrink] 加入 UserDetails
         )
     }
     
     /// 解析 favorites 資料
     /// 將從 Firestore 中獲取的「我的最愛」清單資料（favorites）解析為 [FavoriteDrink] 陣列。
     /// 如果資料為空或無效，則返回一個空陣列。
-    private func parseFavorites(from data: [[String: Any]]?) -> [FavoriteDrink] {
-        
-        guard let favoritesData = data else { return [] }
-        
-        // 使用 compactMap 遍歷 favoritesData 陣列，將每一個資料字典轉換為 FavoriteDrink 結構
-        return favoritesData.compactMap { dict in
-            guard let categoryId = dict["categoryId"] as? String,
-                  let subcategoryId = dict["subcategoryId"] as? String,
-                  let drinkId = dict["drinkId"] as? String else { return nil }
-            return FavoriteDrink(categoryId: categoryId, subcategoryId: subcategoryId, drinkId: drinkId)
-        }
-    }
+//    private func parseFavorites(from data: [[String: Any]]?) -> [FavoriteDrink] {
+//        
+//        guard let favoritesData = data else { return [] }
+//        
+//        // 使用 compactMap 遍歷 favoritesData 陣列，將每一個資料字典轉換為 FavoriteDrink 結構
+//        return favoritesData.compactMap { dict in
+//            guard let categoryId = dict["categoryId"] as? String,
+//                  let subcategoryId = dict["subcategoryId"] as? String,
+//                  let drinkId = dict["drinkId"] as? String else { return nil }
+//            return FavoriteDrink(categoryId: categoryId, subcategoryId: subcategoryId, drinkId: drinkId)
+//        }
+//    }
     
     /// 執行登出操作
     /// 執行 Firebase Auth 的登出操作，並清除當前的訂單資料。

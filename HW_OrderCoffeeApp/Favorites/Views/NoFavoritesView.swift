@@ -32,6 +32,7 @@
     - 如果需要「沒有內容」訊息作為 UICollectionView 的一項資料項目，且希望它參與 UICollectionView 的資料更新機制，則使用 UICollectionViewCell。
  */
 
+// MARK: - (v)
 import UIKit
 
 /// 顯示「目前沒有我的最愛」提示的自定義視圖
@@ -42,7 +43,7 @@ class NoFavoritesView: UIView {
     // MARK: - UI Elements
     
     /// 顯示「目前沒有我的最愛」的提示訊息
-    let messageLabel = createLabel(text: "No Favorites", fontSize: 20, weight: .bold, textColor: .lightWhiteGray, alignment: .center)
+    private let messageLabel = FavoritesLabel(text: "No Favorites", font: .systemFont(ofSize: 20, weight: .bold), textColor: .lightWhiteGray, alignment: .center)
     
     // MARK: - Initializer
     
@@ -67,15 +68,4 @@ class NoFavoritesView: UIView {
         ])
     }
     
-    // MARK: - Factory Methods
-    
-    private static func createLabel(text: String, fontSize: CGFloat, weight: UIFont.Weight, textColor: UIColor, alignment: NSTextAlignment) -> UILabel {
-        let label = UILabel()
-        label.text = text
-        label.font = UIFont.systemFont(ofSize: fontSize, weight: weight)
-        label.textColor = textColor
-        label.textAlignment = alignment
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }
 }
