@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		932258D12C92F1E1004EA2D9 /* ShareManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 932258D02C92F1E1004EA2D9 /* ShareManager.swift */; };
 		932258D32C9410F4004EA2D9 /* FavoriteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 932258D22C9410F4004EA2D9 /* FavoriteManager.swift */; };
 		934FB54E2CF749B500757C7C /* LoginViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB54D2CF749B500757C7C /* LoginViewDelegate.swift */; };
 		934FB5582CF8A6FA00757C7C /* LoginSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5572CF8A6FA00757C7C /* LoginSeparatorView.swift */; };
@@ -175,6 +174,24 @@
 		9380640B2D0CB4D200537F01 /* FavoritesHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9380640A2D0CB4D200537F01 /* FavoritesHandlerDelegate.swift */; };
 		9380640D2D0CF9F500537F01 /* FavoritesNavigationBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9380640C2D0CF9F500537F01 /* FavoritesNavigationBarManager.swift */; };
 		9380640F2D0E4C2100537F01 /* NoFavoritesViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9380640E2D0E4C2100537F01 /* NoFavoritesViewManager.swift */; };
+		938064162D0F63FB00537F01 /* DrinkDetailImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938064152D0F63FB00537F01 /* DrinkDetailImageView.swift */; };
+		938064182D0F668500537F01 /* DrinkDetailLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938064172D0F668500537F01 /* DrinkDetailLabel.swift */; };
+		9380641A2D0F6C2000537F01 /* DrinkDetailStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938064192D0F6C2000537F01 /* DrinkDetailStackView.swift */; };
+		9380641C2D0F723C00537F01 /* DrinkDetailSizeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9380641B2D0F723C00537F01 /* DrinkDetailSizeButton.swift */; };
+		9380641E2D0FC96300537F01 /* DrinkDetailTitleAndValueStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9380641D2D0FC96300537F01 /* DrinkDetailTitleAndValueStackView.swift */; };
+		938064202D0FED2E00537F01 /* DrinkDetaiDecoratedContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9380641F2D0FED2E00537F01 /* DrinkDetaiDecoratedContainerView.swift */; };
+		938064222D0FFE3500537F01 /* DrinkDetailStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938064212D0FFE3500537F01 /* DrinkDetailStepper.swift */; };
+		938064242D100DF200537F01 /* DrinkDetailOrderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938064232D100DF200537F01 /* DrinkDetailOrderButton.swift */; };
+		938064262D110F5400537F01 /* DrinkDetailCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938064252D110F5400537F01 /* DrinkDetailCollectionView.swift */; };
+		938064292D11387300537F01 /* DrinkDetailModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938064282D11387300537F01 /* DrinkDetailModel.swift */; };
+		9380642C2D11491300537F01 /* DrinkDetailManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9380642B2D11491300537F01 /* DrinkDetailManager.swift */; };
+		9380642F2D122C1700537F01 /* DrinkDetailHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9380642E2D122C1700537F01 /* DrinkDetailHandlerDelegate.swift */; };
+		938064312D12319B00537F01 /* DrinkDetailSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938064302D12319B00537F01 /* DrinkDetailSection.swift */; };
+		938064362D1374D300537F01 /* DrinkDetailNavigationBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938064352D1374D300537F01 /* DrinkDetailNavigationBarManager.swift */; };
+		938064382D13B11300537F01 /* DrinkDetailShareManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938064372D13B11300537F01 /* DrinkDetailShareManager.swift */; };
+		9380643A2D13B93A00537F01 /* DrinkDetailNavigationBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938064392D13B93A00537F01 /* DrinkDetailNavigationBarDelegate.swift */; };
+		9380643E2D154D1A00537F01 /* DrinkDetailFavoritesHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9380643D2D154D1A00537F01 /* DrinkDetailFavoritesHandler.swift */; };
+		938064432D191BF600537F01 /* DrinkDetailFavoriteStateCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938064422D191BF600537F01 /* DrinkDetailFavoriteStateCoordinator.swift */; };
 		9381221F2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9381221E2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift */; };
 		938122212CE286A300ADFB7B /* OrderHistoryDetailHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122202CE286A300ADFB7B /* OrderHistoryDetailHandler.swift */; };
 		938122232CE286C300ADFB7B /* OrderHistoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938122222CE286C300ADFB7B /* OrderHistoryDetailView.swift */; };
@@ -329,7 +346,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		932258D02C92F1E1004EA2D9 /* ShareManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareManager.swift; sourceTree = "<group>"; };
 		932258D22C9410F4004EA2D9 /* FavoriteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteManager.swift; sourceTree = "<group>"; };
 		934FB54D2CF749B500757C7C /* LoginViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewDelegate.swift; sourceTree = "<group>"; };
 		934FB5572CF8A6FA00757C7C /* LoginSeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginSeparatorView.swift; sourceTree = "<group>"; };
@@ -494,6 +510,24 @@
 		9380640A2D0CB4D200537F01 /* FavoritesHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesHandlerDelegate.swift; sourceTree = "<group>"; };
 		9380640C2D0CF9F500537F01 /* FavoritesNavigationBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesNavigationBarManager.swift; sourceTree = "<group>"; };
 		9380640E2D0E4C2100537F01 /* NoFavoritesViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFavoritesViewManager.swift; sourceTree = "<group>"; };
+		938064152D0F63FB00537F01 /* DrinkDetailImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailImageView.swift; sourceTree = "<group>"; };
+		938064172D0F668500537F01 /* DrinkDetailLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailLabel.swift; sourceTree = "<group>"; };
+		938064192D0F6C2000537F01 /* DrinkDetailStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailStackView.swift; sourceTree = "<group>"; };
+		9380641B2D0F723C00537F01 /* DrinkDetailSizeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailSizeButton.swift; sourceTree = "<group>"; };
+		9380641D2D0FC96300537F01 /* DrinkDetailTitleAndValueStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailTitleAndValueStackView.swift; sourceTree = "<group>"; };
+		9380641F2D0FED2E00537F01 /* DrinkDetaiDecoratedContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetaiDecoratedContainerView.swift; sourceTree = "<group>"; };
+		938064212D0FFE3500537F01 /* DrinkDetailStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailStepper.swift; sourceTree = "<group>"; };
+		938064232D100DF200537F01 /* DrinkDetailOrderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailOrderButton.swift; sourceTree = "<group>"; };
+		938064252D110F5400537F01 /* DrinkDetailCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailCollectionView.swift; sourceTree = "<group>"; };
+		938064282D11387300537F01 /* DrinkDetailModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailModel.swift; sourceTree = "<group>"; };
+		9380642B2D11491300537F01 /* DrinkDetailManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailManager.swift; sourceTree = "<group>"; };
+		9380642E2D122C1700537F01 /* DrinkDetailHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailHandlerDelegate.swift; sourceTree = "<group>"; };
+		938064302D12319B00537F01 /* DrinkDetailSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailSection.swift; sourceTree = "<group>"; };
+		938064352D1374D300537F01 /* DrinkDetailNavigationBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailNavigationBarManager.swift; sourceTree = "<group>"; };
+		938064372D13B11300537F01 /* DrinkDetailShareManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailShareManager.swift; sourceTree = "<group>"; };
+		938064392D13B93A00537F01 /* DrinkDetailNavigationBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailNavigationBarDelegate.swift; sourceTree = "<group>"; };
+		9380643D2D154D1A00537F01 /* DrinkDetailFavoritesHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailFavoritesHandler.swift; sourceTree = "<group>"; };
+		938064422D191BF600537F01 /* DrinkDetailFavoriteStateCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkDetailFavoriteStateCoordinator.swift; sourceTree = "<group>"; };
 		9381221E2CE2819300ADFB7B /* OrderHistoryDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailViewController.swift; sourceTree = "<group>"; };
 		938122202CE286A300ADFB7B /* OrderHistoryDetailHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailHandler.swift; sourceTree = "<group>"; };
 		938122222CE286C300ADFB7B /* OrderHistoryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHistoryDetailView.swift; sourceTree = "<group>"; };
@@ -1006,20 +1040,27 @@
 		935291482C8CA9E70018B060 /* DrinkDetail */ = {
 			isa = PBXGroup;
 			children = (
-				935291552C91AAE70018B060 /* Handler */,
+				938064132D0F626100537F01 /* Components */,
+				938064142D0F627100537F01 /* Cells */,
 				935291572C91AB0A0018B060 /* Layouts */,
 				935291562C91AAF70018B060 /* Views */,
-				935291542C91AAD70018B060 /* View Controllers */,
+				935291552C91AAE70018B060 /* Handler */,
+				9380642D2D122C0500537F01 /* Delegates */,
+				935291542C91AAD70018B060 /* ViewControllers */,
+				938064342D1374C200537F01 /* Managers */,
+				938064442D19522900537F01 /* Coordinator */,
+				938064272D11384100537F01 /* Models */,
+				9380642A2D1148A700537F01 /* Services */,
 			);
 			path = DrinkDetail;
 			sourceTree = "<group>";
 		};
-		935291542C91AAD70018B060 /* View Controllers */ = {
+		935291542C91AAD70018B060 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
 				934FE1DB2B396496001C23F0 /* DrinkDetailViewController.swift */,
 			);
-			path = "View Controllers";
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 		935291552C91AAE70018B060 /* Handler */ = {
@@ -1034,13 +1075,9 @@
 			isa = PBXGroup;
 			children = (
 				935291492C8D85790018B060 /* DrinkDetailView.swift */,
-				9353740F2C9B218800794A63 /* DrinkImageCollectionViewCell.swift */,
-				93F9BB392C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift */,
-				93F9BB3F2C1C0DEA00355A87 /* DrinkSizeSelectionCollectionViewCell.swift */,
-				93F9BB412C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift */,
-				93F9BB592C2A566D00355A87 /* DrinkOrderOptionsCollectionViewCell.swift */,
 				93F9BB492C269AC600355A87 /* DrinkDetailSeparatorView.swift */,
 				93F9BB4D2C27F91400355A87 /* DottedLineView.swift */,
+				9380641F2D0FED2E00537F01 /* DrinkDetaiDecoratedContainerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1617,6 +1654,77 @@
 			path = Delegates;
 			sourceTree = "<group>";
 		};
+		938064132D0F626100537F01 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				938064252D110F5400537F01 /* DrinkDetailCollectionView.swift */,
+				938064192D0F6C2000537F01 /* DrinkDetailStackView.swift */,
+				9380641D2D0FC96300537F01 /* DrinkDetailTitleAndValueStackView.swift */,
+				938064152D0F63FB00537F01 /* DrinkDetailImageView.swift */,
+				938064172D0F668500537F01 /* DrinkDetailLabel.swift */,
+				9380641B2D0F723C00537F01 /* DrinkDetailSizeButton.swift */,
+				938064212D0FFE3500537F01 /* DrinkDetailStepper.swift */,
+				938064232D100DF200537F01 /* DrinkDetailOrderButton.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		938064142D0F627100537F01 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				9353740F2C9B218800794A63 /* DrinkImageCollectionViewCell.swift */,
+				93F9BB392C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift */,
+				93F9BB3F2C1C0DEA00355A87 /* DrinkSizeSelectionCollectionViewCell.swift */,
+				93F9BB412C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift */,
+				93F9BB592C2A566D00355A87 /* DrinkOrderOptionsCollectionViewCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		938064272D11384100537F01 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				938064282D11387300537F01 /* DrinkDetailModel.swift */,
+				938064302D12319B00537F01 /* DrinkDetailSection.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		9380642A2D1148A700537F01 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				9380642B2D11491300537F01 /* DrinkDetailManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		9380642D2D122C0500537F01 /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				9380642E2D122C1700537F01 /* DrinkDetailHandlerDelegate.swift */,
+				938064392D13B93A00537F01 /* DrinkDetailNavigationBarDelegate.swift */,
+			);
+			path = Delegates;
+			sourceTree = "<group>";
+		};
+		938064342D1374C200537F01 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				938064352D1374D300537F01 /* DrinkDetailNavigationBarManager.swift */,
+				938064372D13B11300537F01 /* DrinkDetailShareManager.swift */,
+				9380643D2D154D1A00537F01 /* DrinkDetailFavoritesHandler.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		938064442D19522900537F01 /* Coordinator */ = {
+			isa = PBXGroup;
+			children = (
+				938064422D191BF600537F01 /* DrinkDetailFavoriteStateCoordinator.swift */,
+			);
+			path = Coordinator;
+			sourceTree = "<group>";
+		};
 		9381221D2CE2811400ADFB7B /* OrderHistoryDetail */ = {
 			isa = PBXGroup;
 			children = (
@@ -1838,7 +1946,6 @@
 				939BDA642B2ACBA200616D1C /* FirebaseController.swift */,
 				939BDA682B2B82BC00616D1C /* AlertService.swift */,
 				93755C302C82F6CF002570A5 /* HUDManager.swift */,
-				932258D02C92F1E1004EA2D9 /* ShareManager.swift */,
 				9353740D2C9AD6E100794A63 /* ButtonEffectManager.swift */,
 				939BDA6A2B2B97ED00616D1C /* ActivityIndicatorManager.swift */,
 			);
@@ -2347,6 +2454,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9380641C2D0F723C00537F01 /* DrinkDetailSizeButton.swift in Sources */,
+				938064432D191BF600537F01 /* DrinkDetailFavoriteStateCoordinator.swift in Sources */,
 				93755BFC2C79D20C002570A5 /* EditProfileViewController.swift in Sources */,
 				939BDA762B2FC08300616D1C /* CategoryCollectionViewCell.swift in Sources */,
 				93755C442C8466A4002570A5 /* WebsiteImageCell.swift in Sources */,
@@ -2358,11 +2467,13 @@
 				936E099B2CE9FD000092F246 /* SearchControllerManager.swift in Sources */,
 				934FB54E2CF749B500757C7C /* LoginViewDelegate.swift in Sources */,
 				93B9DC832C33B9A00050BC3F /* OrderItem.swift in Sources */,
+				9380641E2D0FC96300537F01 /* DrinkDetailTitleAndValueStackView.swift in Sources */,
 				9352914A2C8D85790018B060 /* DrinkDetailView.swift in Sources */,
 				934FB55E2CF8AC0500757C7C /* LoginTextButton.swift in Sources */,
 				938122332CE4639900ADFB7B /* OrderrHistoryDetailCell.swift in Sources */,
 				935374362CB00E2E00794A63 /* OrderHandler.swift in Sources */,
 				9353746E2CCABDCA00794A63 /* StoreSelectionMapHandler.swift in Sources */,
+				938064162D0F63FB00537F01 /* DrinkDetailImageView.swift in Sources */,
 				93B7B5632CD80CF800E0205A /* OrderConfirmationManager.swift in Sources */,
 				93F9BB5C2C2E4E6200355A87 /* ColumnItemCell.swift in Sources */,
 				935374122C9C5C6900794A63 /* FavoritesViewController.swift in Sources */,
@@ -2378,10 +2489,12 @@
 				93F9BB5E2C2E4EEA00355A87 /* GridItemCell.swift in Sources */,
 				93B7B5552CD5E28500E0205A /* OrderConfirmationHandler.swift in Sources */,
 				93B492912C3E684700E7B947 /* OrderViewInteractionDelegate.swift in Sources */,
+				938064382D13B11300537F01 /* DrinkDetailShareManager.swift in Sources */,
 				932258D32C9410F4004EA2D9 /* FavoriteManager.swift in Sources */,
 				934FB5A72CFDEF9F00757C7C /* ForgotPasswordDelegate.swift in Sources */,
 				935374782CCCCC7800794A63 /* StoreSelectionMapHandlerDelegate.swift in Sources */,
 				936E09B92CF4910A0092F246 /* SearchStatusLabel.swift in Sources */,
+				9380642F2D122C1700537F01 /* DrinkDetailHandlerDelegate.swift in Sources */,
 				934FB57F2CFA8DA200757C7C /* SignUpTextField.swift in Sources */,
 				93B7B5792CDBA5D300E0205A /* OrderHistoryViewController.swift in Sources */,
 				93DB1D3A2C49618C00BA2CC1 /* SignUpView.swift in Sources */,
@@ -2404,6 +2517,7 @@
 				935374702CCABDEB00794A63 /* Store.swift in Sources */,
 				9376059B2C4AAA9C00B1316C /* UIColor+CustomColors.swift in Sources */,
 				93B7B5912CDE0F7F00E0205A /* OrderHistorySortMenuHandler.swift in Sources */,
+				938064242D100DF200537F01 /* DrinkDetailOrderButton.swift in Sources */,
 				9381222D2CE3CCF600ADFB7B /* OrderHistoryDetailSectionHeaderView.swift in Sources */,
 				934FB56A2CF8DAA400757C7C /* LoginScrollView.swift in Sources */,
 				935374512CB80D0000794A63 /* OrderCustomerInfoCell.swift in Sources */,
@@ -2421,6 +2535,7 @@
 				937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */,
 				934FB5982CFDAFFC00757C7C /* ForgotPasswordLabel.swift in Sources */,
 				934FB5B42CFE6EB700757C7C /* HomePageStackView.swift in Sources */,
+				9380643E2D154D1A00537F01 /* DrinkDetailFavoritesHandler.swift in Sources */,
 				938122292CE358EA00ADFB7B /* OrderHistoryDetail.swift in Sources */,
 				9353745B2CBD43B900794A63 /* OrderCustomerNoteCell.swift in Sources */,
 				935374332CAFC29D00794A63 /* OrderLayoutProvider.swift in Sources */,
@@ -2465,6 +2580,7 @@
 				938122312CE45EC500ADFB7B /* OrderHistoryDetailCustomerInfoCell.swift in Sources */,
 				93755C352C83520A002570A5 /* MenuCollectionHandler.swift in Sources */,
 				93B7B5532CD5E23B00E0205A /* OrderConfirmationLayoutProvider.swift in Sources */,
+				938064362D1374D300537F01 /* DrinkDetailNavigationBarManager.swift in Sources */,
 				938063DA2D06569C00537F01 /* UserProfile.swift in Sources */,
 				93B7B55B2CD6812800E0205A /* OrderConfirmationCustomerInfoCell.swift in Sources */,
 				93755C3C2C838299002570A5 /* Website.swift in Sources */,
@@ -2504,13 +2620,17 @@
 				9381224F2CE775F200ADFB7B /* SearchView.swift in Sources */,
 				93755C1B2C808202002570A5 /* UserProfileTableHandler.swift in Sources */,
 				938064002D0BCB1400537F01 /* FavoritesLabel.swift in Sources */,
+				938064292D11387300537F01 /* DrinkDetailModel.swift in Sources */,
+				9380642C2D11491300537F01 /* DrinkDetailManager.swift in Sources */,
 				93755C1D2C8094D0002570A5 /* UserProfileInfoCell.swift in Sources */,
 				9381222F2CE45A7F00ADFB7B /* OrderrHistoryDetailItemCell.swift in Sources */,
 				93F9BB3A2C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift in Sources */,
+				938064312D12319B00537F01 /* DrinkDetailSection.swift in Sources */,
 				93B7B5692CD9E22800E0205A /* OrderConfirmationSectionHeaderView.swift in Sources */,
 				939BDA742B2FB3E400616D1C /* MenuModels.swift in Sources */,
 				935374482CB6D9F600794A63 /* CustomerDetailsManager.swift in Sources */,
 				938063F92D087C7100537F01 /* UserProfileRow.swift in Sources */,
+				9380643A2D13B93A00537F01 /* DrinkDetailNavigationBarDelegate.swift in Sources */,
 				93B7B5572CD66D6100E0205A /* OrderConfirmationCheckmarkCell.swift in Sources */,
 				938122592CE781D800ADFB7B /* SearchCell.swift in Sources */,
 				934FB5662CF8B07B00757C7C /* LoginTextField.swift in Sources */,
@@ -2541,8 +2661,9 @@
 				938122552CE77A7F00ADFB7B /* SearchManager.swift in Sources */,
 				936E09992CE9EF2D0092F246 /* SearchControllerInteractionDelegate.swift in Sources */,
 				93B9DC7D2C32B0BB0050BC3F /* OrderViewController.swift in Sources */,
+				938064222D0FFE3500537F01 /* DrinkDetailStepper.swift in Sources */,
 				936CFFC92C6C74DE004B8724 /* UserProfileView.swift in Sources */,
-				932258D12C92F1E1004EA2D9 /* ShareManager.swift in Sources */,
+				938064262D110F5400537F01 /* DrinkDetailCollectionView.swift in Sources */,
 				935374572CB9A6B300794A63 /* OrderTermsMessageCell.swift in Sources */,
 				93DB1D332C47696000BA2CC1 /* LoginView.swift in Sources */,
 				93B7B5812CDBB6B900E0205A /* OrderHistoryManager.swift in Sources */,
@@ -2561,6 +2682,7 @@
 				934FB5C02CFF988B00757C7C /* EditProfileNavigationBarManager.swift in Sources */,
 				93755C022C7B179C002570A5 /* GenderSelectionCell.swift in Sources */,
 				93F9BB4E2C27F91400355A87 /* DottedLineView.swift in Sources */,
+				938064202D0FED2E00537F01 /* DrinkDetaiDecoratedContainerView.swift in Sources */,
 				9381222B2CE3C51D00ADFB7B /* OrderHistoryDetailLayoutProvider.swift in Sources */,
 				936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */,
 				934FB55A2CF8A92100757C7C /* LoginLabel.swift in Sources */,
@@ -2598,11 +2720,13 @@
 				9381223B2CE57CC000ADFB7B /* OrderHistoryDetailNavigationBarManager.swift in Sources */,
 				93B7B53F2CD1E4A300E0205A /* FloatingPanelHelper.swift in Sources */,
 				938122252CE286E900ADFB7B /* OrderHistoryDetailManager.swift in Sources */,
+				938064182D0F668500537F01 /* DrinkDetailLabel.swift in Sources */,
 				93B492972C416C0100E7B947 /* NoOrdersViewCell.swift in Sources */,
 				9353744F2CB7F1BF00794A63 /* OrderCustomerDetailsHandler.swift in Sources */,
 				9353746C2CCABD6900794A63 /* StoreSelectionViewController.swift in Sources */,
 				93F9BB402C1C0DEA00355A87 /* DrinkSizeSelectionCollectionViewCell.swift in Sources */,
 				93B9DC852C3546150050BC3F /* UserDetails.swift in Sources */,
+				9380641A2D0F6C2000537F01 /* DrinkDetailStackView.swift in Sources */,
 				936E099D2CED04010092F246 /* SearchNavigationBarManager.swift in Sources */,
 				93B7B5652CD8DC9B00E0205A /* OrderConfirmation.swift in Sources */,
 			);

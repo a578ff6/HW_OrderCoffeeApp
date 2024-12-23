@@ -154,7 +154,7 @@
 
 
 // MARK: - 已完善（處理掉全局 drink ）
-
+/*
 import UIKit
 
 /// `DrinkDetailHandler` 負責管理 `DrinkDetailViewController` 中的 UICollectionView 的資料來源 (dataSource) 及使用者互動 (delegate)。
@@ -250,8 +250,10 @@ extension DrinkDetailHandler: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DrinkOrderOptionsCollectionViewCell.reuseIdentifier, for: indexPath) as? DrinkOrderOptionsCollectionViewCell else {
                 fatalError("Unable to dequeue DrinkOrderOptionsCollectionViewCell")
             }
-            cell.updateOrderButtonTitle(isEditing: viewController.isEditingOrderItem)
+            
+            cell.updateOrderButton(isEditing: viewController.isEditingOrderItem)
             cell.configure(with: viewController.editingOrderQuantity)
+
 
             // 當使用者點擊加入購物車時，透過 handler 傳遞數量
             cell.addToCart = { [weak self] quantity in
@@ -277,3 +279,333 @@ extension DrinkDetailHandler: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 extension DrinkDetailHandler: UICollectionViewDelegate {
 }
+*/
+
+
+
+// MARK: - 處理職責
+
+
+import UIKit
+
+/// `DrinkDetailHandler`
+///
+/// 此類負責管理飲品詳細頁面中 `UICollectionView` 的資料來源 (`dataSource`) 和使用者互動 (`delegate`)。
+///
+/// ### 設計目標：
+/// 1. 資料與邏輯分層：
+///    - 通過 `DrinkDetailHandlerDelegate` 動態訪問資料，將資料邏輯集中於控制器，降低耦合。
+/// 2. 專注處理視圖邏輯：
+///    - 單一職責，僅負責呈現資料及回應使用者的交互行為。
+///
+/// ### 功能說明：
+/// - 動態生成飲品資訊，包括圖片、描述、尺寸選擇及價格資訊。
+/// - 處理使用者互動，回傳選擇的尺寸或加入購物車的數量至控制器。
+/// - 透過委派模式與控制器通信，將更新事件與資料讀取交由控制器管理。
+class DrinkDetailHandler: NSObject {
+    
+    // MARK: - Properties
+    
+    /// 用於通知控制器處理互動事件的委派
+    /// - 透過 `DrinkDetailHandlerDelegate` 訪問資料與傳遞互動事件。
+    private weak var drinkDetailHandlerDelegate: DrinkDetailHandlerDelegate?
+    
+    
+    // MARK: - Initializer
+    
+    /// 初始化 `DrinkDetailHandler`，並設置委派
+    /// - Parameter delegate: 控制器，需實作 `DrinkDetailHandlerDelegate`
+    init(delegate: DrinkDetailHandlerDelegate) {
+        self.drinkDetailHandlerDelegate = delegate
+    }
+    
+}
+
+// MARK: - UICollectionViewDataSource
+extension DrinkDetailHandler: UICollectionViewDataSource {
+    
+    /// 返回 `UICollectionView` 的 section 數量
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return DrinkDetailSection.allCases.count
+    }
+    
+    /// 返回指定 section 的 item 數量
+    ///
+    /// ### 功能：
+    /// - 根據資料模型與選中的尺寸，動態返回不同 section 的數量。
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        guard let delegate = drinkDetailHandlerDelegate else { fatalError("Delegate is not set") }
+        let drinkDetailModel = delegate.getDrinkDetailModel()
+        let selectedSize = delegate.getSelectedSize()
+        
+        let section = DrinkDetailSection.allCases[section]
+        switch section {
+        case .image, .info, .orderOptions:
+            return 1
+        case .sizeSelection:
+            return drinkDetailModel.sortedSizes.count
+        case .priceInfo:
+            return selectedSize.isEmpty ? 0 : 1
+        }
+    }
+    
+    /// 返回指定位置的 Cell
+    ///
+    /// - 根據 section 動態返回對應的 Cell，並配置相關資料。
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let delegate = drinkDetailHandlerDelegate else { fatalError("Delegate is not set") }
+        let drinkDetailModel = delegate.getDrinkDetailModel()
+        let selectedSize = delegate.getSelectedSize()
+        
+        let section = DrinkDetailSection.allCases[indexPath.section]
+        switch section {
+        case .image:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DrinkImageCollectionViewCell.reuseIdentifier, for: indexPath) as? DrinkImageCollectionViewCell else {
+                fatalError("Cannot dequeue DrinkImageCollectionViewCell")
+            }
+            cell.configure(with: drinkDetailModel.imageUrl)
+            return cell
+            
+        case .info:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DrinkInfoCollectionViewCell.reuseIdentifier, for: indexPath) as? DrinkInfoCollectionViewCell else {
+                fatalError("Cannot dequeue DrinkInfoCollectionViewCell")
+            }
+            cell.configure(with: drinkDetailModel)
+            return cell
+            
+        case .sizeSelection:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DrinkSizeSelectionCollectionViewCell.reuseIdentifier, for: indexPath) as? DrinkSizeSelectionCollectionViewCell else {
+                fatalError("Unable to dequeue DrinkSizeSelectionCollectionViewCell")
+            }
+            let size = drinkDetailModel.sortedSizes[indexPath.item]
+            cell.configure(with: size, isSelected: size == selectedSize)
+            cell.sizeSelected = { selectedSize in
+                delegate.didSelectSize(selectedSize)
+            }
+            return cell
+            
+        case .priceInfo:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DrinkPriceInfoCollectionViewCell.reuseIdentifier, for: indexPath
+            ) as? DrinkPriceInfoCollectionViewCell else {
+                fatalError("Cannot dequeue DrinkPriceInfoCollectionViewCell")
+            }
+            let sizeInfo = drinkDetailModel.sizeInfo(for: selectedSize)
+            cell.configure(with: sizeInfo)
+            return cell
+            
+        case .orderOptions:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DrinkOrderOptionsCollectionViewCell.reuseIdentifier, for: indexPath) as? DrinkOrderOptionsCollectionViewCell else {
+                fatalError("Cannot dequeue DrinkOrderOptionsCollectionViewCell")
+            }
+            cell.addToCart = { quantity in
+                delegate.didTapAddToCart(quantity: quantity)
+            }
+            return cell
+            
+        }
+    }
+    
+    /// 處理 section 的補充視圖 (`header 和 footer`)
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        guard kind == UICollectionView.elementKindSectionFooter || kind == UICollectionView.elementKindSectionHeader else {
+            return UICollectionReusableView()
+        }
+        guard let separatorView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: DrinkDetailSeparatorView.reuseIdentifier, for: indexPath) as? DrinkDetailSeparatorView else {
+            fatalError("Cannot create separator view")
+        }
+        return separatorView
+    }
+    
+}
+
+// MARK: - UICollectionViewDelegate
+extension DrinkDetailHandler: UICollectionViewDelegate {
+
+}
+
+
+
+
+
+
+// MARK: - 筆記：處理尺寸按鈕選取狀態更新與動畫效果
+/**
+ 
+ ## 筆記：處理尺寸按鈕選取狀態更新與動畫效果
+
+ `* What`
+ 
+ - 在 `DrinkSizeSelectionCollectionViewCell` 中處理尺寸按鈕的選取狀態更新和動畫效果時，需要決定使用 `reloadItems` 還是手動更新 Cell。
+
+ - 選擇方式
+ 
+ 1. `reloadItems`
+    - 用於刷新特定的 Cell，但可能會中斷動畫效果。
+ 
+ 2. `手動處理 Cell`
+    - 精準更新目標 Cell 的狀態和顯示，不會影響動畫。
+
+ --------------------
+
+ `* Why`
+
+ `1.使用 reloadItems 的原因`
+ 
+ - 簡化邏輯：
+   - 一次性更新特定的 Cell，適合批量刷新或大範圍改變。
+ - 性能表現：
+   - 在少量更新中性能表現足夠，但頻繁使用可能導致性能下降。
+
+ `2.手動處理的原因`
+ 
+ - 動畫需求：
+   - 確保選中狀態和動畫效果的連續性，不會因刷新而中斷。
+ - 精準更新：
+   - 僅影響目標 Cell，減少不必要的刷新，提升性能和用戶體驗。
+
+ --------------------
+
+ `* How`
+
+ `1. 使用 reloadItems 的情境`
+ 
+ - 當需要批量更新 Cell，且對動畫效果沒有特殊要求時：
+ ```swift
+ let indexPaths = [currentIndexPath, previousIndexPath]
+ collectionView.reloadItems(at: indexPaths)
+ ```
+
+ `2. 手動處理 Cell 的實作`
+ 
+ - 當需要保持動畫效果並更新選中狀態時：
+ ```swift
+ func updateSelectedSize(to newSize: String, collectionView: UICollectionView, currentIndexPath: IndexPath) {
+     guard let delegate = drinkDetailHandlerDelegate else { return }
+     
+     // 獲取舊尺寸
+     let oldSize = delegate.getSelectedSize()
+     if oldSize == newSize { return } // 如果尺寸未更改則直接返回
+     
+     // 更新舊尺寸的 Cell 狀態
+     if let previousIndex = delegate.getDrinkDetailModel().sortedSizes.firstIndex(of: oldSize) {
+         let previousIndexPath = IndexPath(item: previousIndex, section: DrinkDetailSection.sizeSelection.rawValue)
+         updateCellState(at: previousIndexPath, in: collectionView, size: oldSize, isSelected: false)
+     }
+     
+     // 更新新尺寸的 Cell 狀態
+     updateCellState(at: currentIndexPath, in: collectionView, size: newSize, isSelected: true)
+}
+ ```
+
+ --------------------
+
+ `* 想法`
+ 
+ - `手動處理 Cell`：適合當前需求（選取狀態和動畫結合緊密）。
+ - `reloadItems`： 適合不需要動畫，且需要批量更新多個 Cell 的場景。
+
+ */
+
+
+
+// MARK: - DrinkDetailHandler 筆記
+/**
+ 
+ ## DrinkDetailHandler 筆記
+
+ `* What`
+ 
+ - `DrinkDetailHandler` 是一個負責管理飲品詳細頁面中 `UICollectionView` 的資料顯示和使用者互動邏輯的類別。
+ - 它依賴於 `DrinkDetailHandlerDelegate` 來訪問資料與通知控制器進行業務邏輯處理。
+ 
+ --------------------
+ 
+ `* Why`
+ 
+` 1.減少控制器的負擔：`
+ 
+ -  將 `UICollectionView` 的資料與交互邏輯抽離至 `DrinkDetailHandler`，讓控制器專注於高層邏輯與功能。
+ 
+ `2.增強模組化：`
+ 
+ - 將 UICollectionView 的資料處理邏輯與顯示邏輯集中於 Handler，方便維護與重用。
+ 
+ `3,提升可讀性與測試性：`
+ 
+ - 控制器只需實作 `DrinkDetailHandlerDelegate`，單元測試時可獨立測試視圖邏輯。
+ 
+ 
+ --------------------
+
+ `* How`
+ 
+ `1.初始化 Handler 並設置委派：`
+
+ - 在控制器中初始化 `DrinkDetailHandler`，並將控制器設為委派對象。
+
+ ```swift
+ private func setupCollectionView() {
+     guard let drinkDetailModel else { return }
+     handler = DrinkDetailHandler(delegate: self)
+     let collectionView = drinkDetailView.drinkDetailCollectionView
+     collectionView.dataSource = handler
+     collectionView.delegate = handler
+ }
+ ```
+ 
+ ----
+ 
+ `2.處理尺寸選擇邏輯：`
+
+ - 使用 `updateSelectedSize` 更新當前選中尺寸，並透過委派通知控制器刷新價格資訊。
+ 
+ ```swift
+ func updateSelectedSize(to newSize: String, collectionView: UICollectionView, currentIndexPath: IndexPath) {
+     guard let delegate = drinkDetailHandlerDelegate else { return }
+     // 更新選中尺寸並通知控制器
+     delegate.didSelectSize(newSize)
+ }
+ ```
+ 
+ ----
+
+ `3.資料來源邏輯：`
+
+ - 在 `UICollectionViewDataSource` 中配置每個 `Section` 的 Cell。
+ 
+ ```swift
+ extension DrinkDetailHandler: UICollectionViewDataSource {
+     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+         guard let delegate = drinkDetailHandlerDelegate else { return 0 }
+         return delegate.getDrinkDetailModel().sortedSizes.count
+     }
+ }
+ ```
+ 
+ ----
+ 
+ `4.通知控制器進行業務處理：`
+
+ - 當使用者操作（如選擇尺寸或加入購物車）時，透過委派模式將事件傳遞給控制器。
+ 
+ ```swift
+ delegate.didSelectSize(newSize)
+ delegate.didTapAddToCart(quantity: quantity)
+ ```
+ 
+ --------------------
+
+ `* 注意事項`
+ 
+ `1.選中狀態的同步：`
+
+ - 確保 selectedSize 與 UI 狀態一致，避免出現狀態不同步的問題。
+ 
+ `2.代碼擴展性：`
+
+ - 若需要新增更多的互動邏輯（例如飲品配料選擇），可以直接在 `DrinkDetailHandlerDelegate` 中擴展方法，並更新 `DrinkDetailHandler` 的邏輯。
+ 
+ `3.性能優化：`
+
+ - 在大型列表中，需注意避免過度頻繁的 UI 刷新，使用適當的 IndexPath 更新。
+ */

@@ -66,7 +66,7 @@ struct OrderItem: Codable, Equatable, Hashable {
     var size: String                      // 飲品的尺寸（例如小杯、中杯、大杯）
     var quantity: Int                     // 飲品的數量
     var prepTime: Int                     // 以分鐘為單位（基於飲品去設置準備時間，而不是尺寸）
-    var totalAmount: Int                  // 單項飲品的總金額（單價乘以數量）                 （可能需要調整）
+    var totalAmount: Int                  // 單項飲品的總金額（單價乘以數量）               
     var price: Int                        // 單項飲品的價格
     var categoryId: String?
     var subcategoryId: String?

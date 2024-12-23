@@ -347,10 +347,10 @@ extension OrderViewController: OrderViewInteractionDelegate {
             detailVC.drinkId = orderItem.drink.id   // 傳遞 drinkId
             detailVC.categoryId = orderItem.categoryId  // 傳遞 categoryId
             detailVC.subcategoryId = orderItem.subcategoryId // 傳遞 subcategoryId
-            detailVC.selectedSize = orderItem.size  // 傳遞已選擇的尺寸
-            detailVC.isEditingOrderItem = true      // 編輯模式
-            detailVC.editingOrderID = orderItem.id  // 設置編輯的訂單ID
-            detailVC.editingOrderQuantity = orderItem.quantity  // 設置數量
+//            detailVC.selectedSize = orderItem.size  // 傳遞已選擇的尺寸
+//            detailVC.isEditingOrderItem = true      // 編輯模式
+//            detailVC.editingOrderID = orderItem.id  // 設置編輯的訂單ID
+//            detailVC.editingOrderQuantity = orderItem.quantity  // 設置數量
             
             // 觀察傳遞的值
             print("傳遞給 DrinkDetailViewController 的資訊：drinkId: \(String(describing: orderItem.drink.id)), categoryId: \(String(describing: orderItem.categoryId)), subcategoryId: \(String(describing: orderItem.subcategoryId)), size: \(orderItem.size), quantity: \(orderItem.quantity)")
