@@ -17,7 +17,7 @@
  - 負責以下功能：
 
  1.檢查收藏狀態：檢查指定飲品是否已被收藏。
- 2.切換收藏狀態：根據當前收藏狀態執行新增或移除操作，並返回結果供控制器更新 UI。
+ 2.切換收藏狀態：根據當前收藏狀態執行新增或移除操作，並返回結果供其他模組（如 FavoriteStateCoordinator）進一步處理。
  3.數據交互封裝：與 FavoriteManager 協作，將 Firebase 的數據操作集中處理。
  
  ---------------
@@ -26,20 +26,20 @@
  
  `1.分離關注點：`
 
- - 集中處理收藏邏輯，避免 `DrinkDetailViewController` 承擔過多責任。
- - 提升代碼的模組化程度，方便維護和擴展。
+ - 將後端交互邏輯與 UI 狀態更新分離，`DrinkDetailFavoritesHandler` 僅關注後端收藏狀態的操作，避免與控制器或其他模組直接耦合。
  
- `2.提升可讀性與重用性：`
+ `2.提升模組化程度：`
 
- - 將收藏功能獨立為通用業務邏輯類別，可重用於其他功能或頁面。
- 
+ - 作為 `FavoriteStateCoordinator` 的依賴，專注處理與收藏數據有關的業務邏輯，並通過明確的接口與其他模組通信。
+
 ` 3.降低耦合：`
 
- - 控制器只需負責調用方法並根據結果更新 UI，數據交互由 `FavoriteManager` 處理。
+ - 數據交互由 `FavoriteManager` 處理。
+ - `控制器`和 `FavoriteStateCoordinator` 僅調用 `DrinkDetailFavoritesHandler` 提供的方法，無需直接操作 Firebase 的邏輯。
  
- `4.優化用戶體驗：`
+ `4.增強可測試性與可維護性：`
 
- - 提供異步操作支持，確保收藏狀態即時更新，避免阻塞主線程。
+ - 由於該模組僅專注於業務邏輯，可單獨測試 Firebase 相關的操作，方便維護和擴展。
 
  ---------------
 
@@ -47,13 +47,13 @@
  
  `1. 設置依賴：`
  
- - 通過 `FavoriteManager` 處理與 Firebase 的數據交互。
- - 提供控制器接口，如 `isFavorite(drinkId:) `和 `toggleFavorite(for:)`。
+ - `DrinkDetailFavoritesHandler` 依賴 `FavoriteManager` 進行 `Firebase` 數據交互。
+ - 作為 `FavoriteStateCoordinator` 的後端邏輯層，為其提供簡單的接口如 `isFavorite(drinkId:) `和 `toggleFavorite(for:)。`
 
  `2. 核心方法：`
  
- - `isFavorite(drinkId:)：` 檢查指定飲品是否已收藏，供控制器更新 UI。
- - `toggleFavorite(for:)：` 根據當前收藏狀態執行新增或移除操作，並返回新的收藏狀態。
+ - `isFavorite(drinkId:)：` 檢查指定飲品是否在收藏列表中，供上層模組進一步處理。
+ - `toggleFavorite(for:)：` 根據當前收藏狀態執行新增或移除操作，並返回更新後的狀態。
  
  `3. 內部封裝：`
  
@@ -61,9 +61,13 @@
  - `removeFavorite(drinkId:)：` 刪除收藏記錄。
  - `FavoriteManager 協作：` 負責與 Firebase 的交互，DrinkDetailFavoritesHandler 僅封裝業務邏輯。
  
- `4. 異步處理：`
+ `4. 與 FavoriteStateCoordinator 的協作`
  
-    - 使用 `async/await` 保證收藏操作與狀態更新能在非阻塞的情況下完成。
+ - `FavoriteStateCoordinator` 通過調用 `DrinkDetailFavoritesHandler`，處理收藏狀態的檢查和切換，並負責 UI 更新。
+ 
+ `5. 異步處理：`
+ 
+ - 使用 `async/await` 保證收藏操作與狀態更新能在非阻塞的情況下完成。
 
  ---------------
 
@@ -71,14 +75,16 @@
 
  ```
  [DrinkDetailViewController]
-           |
-           v
+        |
+        v
+ [FavoriteStateCoordinator]
+        |
+        v
  [DrinkDetailFavoritesHandler]
-           |
-      [FavoriteManager]
-           |
-  [Firebase Firestore]
-
+        |
+  [FavoriteManager]
+        |
+ [Firebase Firestore]
  ```
 
  ---------------
@@ -87,9 +93,9 @@
 
  1`.責任分工：`
 
- - `DrinkDetailFavoritesHandler` 僅處理業務邏輯，不負責 UI 操作。
+ - `DrinkDetailFavoritesHandler` 專注於後端邏輯，UI 狀態的更新完全交由 `FavoriteStateCoordinator` 或控制器處理。
  - `FavoriteManager` 集中管理 `Firebase` 數據交互，保證數據一致性。
- 
+  
  `2.狀態更新與回饋：`
 
  - 收藏操作完成後，需由控制器根據結果更新 UI，例如更新收藏按鈕圖示。
@@ -121,9 +127,6 @@ import UIKit
 /// ### 設計目標
 /// - 清晰的職責分離：
 ///   - `DrinkDetailFavoritesHandler` 專注於業務邏輯處理，不直接處理 UI 更新，將這部分責任交由控制器。
-///
-/// ### 使用情境
-/// - 由控制器（ `DrinkDetailViewController`）調用，用於檢查收藏狀態或切換收藏狀態，並根據返回結果更新 UI。
 class DrinkDetailFavoritesHandler {
     
     // MARK: - Dependencies
