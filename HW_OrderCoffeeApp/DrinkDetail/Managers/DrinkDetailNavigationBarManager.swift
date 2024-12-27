@@ -244,6 +244,7 @@ class DrinkDetailNavigationBarManager {
     
     /// 處理收藏按鈕點擊事件
     @objc private func favoriteButtonTapped() {
+        ButtonEffectManager.shared.applyHapticFeedback(style: .light)           // 添加震動反饋
         delegate?.didTapFavoriteButton()
     }
     

@@ -32,7 +32,7 @@ import UIKit
 class DrinkDetailLayoutProvider {
     
     /// 根據傳入的 section 生成對應的 `NSCollectionLayoutSection`
-    /// - Parameter section: `DrinkDetailViewController.Section`，代表要顯示的 section 類型
+    /// - Parameter section: `DrinkDetailSection`，代表要顯示的 section 類型
     /// - Returns: 對應的 `NSCollectionLayoutSection` 佈局
     func generateLayout(for section: DrinkDetailSection) -> NSCollectionLayoutSection {
         switch section {

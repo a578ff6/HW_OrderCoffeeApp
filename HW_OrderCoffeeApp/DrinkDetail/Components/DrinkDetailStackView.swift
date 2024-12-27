@@ -10,7 +10,7 @@ import UIKit
 /// 自訂的 `DrinkDetailStackView` 類別，用於建立 DrinkDetail 畫面中使用的 StackView，統一配置
 class DrinkDetailStackView: UIStackView {
     
-    /// 初始化 FavoritesStackView，設置 StackView 的屬性
+    /// 初始化 DrinkDetailStackView，設置 StackView 的屬性
     /// - Parameters:
     ///   - axis: 堆疊的方向（水平或垂直）
     ///   - spacing: 元件間的間距
