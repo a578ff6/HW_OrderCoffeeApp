@@ -78,6 +78,21 @@
             </objects>
             <point key="canvasLocation" x="9547.3282442748095" y="-457.04225352112678"/>
         </scene>
+        <!--Edit Order Item View Controller-->
+        <scene sceneID="3f8-zT-2Ov">
+            <objects>
+                <viewController storyboardIdentifier="EditOrderItemViewController" id="pxc-9d-2ml" customClass="EditOrderItemViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Epv-eg-GtX">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="DZj-tZ-FDP"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="f34-P8-ReS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7683" y="1032"/>
+        </scene>
         <!--Forgot Password View Controller-->
         <scene sceneID="6m0-Yr-LHK">
             <objects>
@@ -194,7 +209,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WBr-eq-T4n" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7682" y="1039"/>
+            <point key="canvasLocation" x="8618" y="1029"/>
         </scene>
         <!--Item-->
         <scene sceneID="rzS-Lf-Z8O">
@@ -211,7 +226,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pml-gz-DDr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="8621" y="1039"/>
+            <point key="canvasLocation" x="9555" y="1029"/>
         </scene>
         <!--Order Confirmation View Controller-->
         <scene sceneID="Yb6-PY-R0R">
@@ -226,7 +241,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nhf-oi-aN1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="9572" y="1045"/>
+            <point key="canvasLocation" x="10508" y="1035"/>
         </scene>
         <!--User Profile View Controller-->
         <scene sceneID="db4-xi-11o">

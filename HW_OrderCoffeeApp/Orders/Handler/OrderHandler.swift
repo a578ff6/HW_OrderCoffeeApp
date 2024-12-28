@@ -255,10 +255,9 @@ extension OrderHandler: UICollectionViewDelegate {
             guard OrderItemManager.shared.orderItems.count > 0 else { return }
             let orderItem = OrderItemManager.shared.orderItems[indexPath.row]
             
-            /// 通知委託處理選中的訂單項目，由委託實現訂單項目的導航邏輯，顯示`飲品詳細頁面`。
+            /// 通知委託處理選中的訂單項目，由委託實現訂單項目的導航邏輯，顯示`編輯飲品項目頁面`。
             guard let delegate = orderViewInteractionDelegate else { return }
-            delegate.modifyOrderItemToDetailViewDetail(orderItem, withID: orderItem.id)
-            
+            delegate.navigateToEditOrderItemView(with: orderItem)
         case .summary, .actionButtons:
             return
         }

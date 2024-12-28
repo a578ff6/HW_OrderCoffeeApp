@@ -5,7 +5,7 @@
 //  Created by 曹家瑋 on 2023/12/14.
 //
 
-/*
+/**
  A. addDocument 與 setData
  
  * 使用 addDocument
@@ -141,7 +141,7 @@ C. 確保使用者可以通過不同的身份驗證提供者（如電子郵件�
 
 // MARK: - 重點筆記：為何在 signOut() 中清除訂單和重置顧客資料
 
-/*
+/**
  1. 確保用戶狀態的清晰與資料一致性：
 
     - 登出操作意味著用戶即將離開應用的當前狀態，為了保證下次登入的用戶不會看到前一個用戶的資料，需要在登出時清除內存中與訂單相關的所有資料，包括 訂單項目 (orderItems) 和 顧客詳細資料 (customerDetails)。
@@ -173,6 +173,8 @@ class FirebaseController {
     
     static let shared = FirebaseController()
     
+    // MARK: - getCurrentUserDetails
+    
     /// 獲取當前用戶的詳細資料
     /// 使用 Firebase Auth 確認當前用戶是否登入，並從 Firestore 中抓取對應的使用者資料。
     /// 如果抓取成功，會返回解析後的 UserDetails 資料結構，包含用戶的基本資訊及「我的最愛」清單。
@@ -203,9 +205,6 @@ class FirebaseController {
         let address = userData["address"] as? String
         let gender = userData["gender"] as? String
         
-        /// 解析 favorites 資料，將 Firestore 的「我的最愛」轉換為 FavoriteDrink 的陣列
-//        let favorites = parseFavorites(from: userData["favorites"] as? [[String: Any]])
-        
         // 將所有解析後的資料封裝進 UserDetails 結構並返回
         return UserDetails(
             uid: user.uid,
@@ -216,26 +215,10 @@ class FirebaseController {
             birthday: birthday,
             address: address,
             gender: gender
-//            orders: nil,            // 因為 orders 在大部分場景中並不需要，只有在歷史訂單的頁面才會用到。
-//            favorites: favorites        // 將 favorites 轉換後的 [FavoriteDrink] 加入 UserDetails
         )
     }
     
-    /// 解析 favorites 資料
-    /// 將從 Firestore 中獲取的「我的最愛」清單資料（favorites）解析為 [FavoriteDrink] 陣列。
-    /// 如果資料為空或無效，則返回一個空陣列。
-//    private func parseFavorites(from data: [[String: Any]]?) -> [FavoriteDrink] {
-//        
-//        guard let favoritesData = data else { return [] }
-//        
-//        // 使用 compactMap 遍歷 favoritesData 陣列，將每一個資料字典轉換為 FavoriteDrink 結構
-//        return favoritesData.compactMap { dict in
-//            guard let categoryId = dict["categoryId"] as? String,
-//                  let subcategoryId = dict["subcategoryId"] as? String,
-//                  let drinkId = dict["drinkId"] as? String else { return nil }
-//            return FavoriteDrink(categoryId: categoryId, subcategoryId: subcategoryId, drinkId: drinkId)
-//        }
-//    }
+    // MARK: - signOut
     
     /// 執行登出操作
     /// 執行 Firebase Auth 的登出操作，並清除當前的訂單資料。

@@ -1,40 +1,19 @@
 //
-//  DrinkDetailLayoutProvider.swift
+//  EditOrderItemLayoutProvider.swift
 //  HW_OrderCoffeeApp
 //
-//  Created by 曹家瑋 on 2024/6/30.
+//  Created by 曹家瑋 on 2024/12/24.
 //
-
-
-/*
- ## DrinkDetailLayoutProvider：
- 
-    * 功能：DrinkDetailLayoutProvider 主要負責為 DrinkDetailViewController 中的各個 section 生成對應的佈局，讓每個 section 的顯示樣式與互動方式更具彈性。
- 
-    * 佈局生成：
-        - 根據傳入的 section，使用 generateLayout(for:) 方法來動態生成對應的 NSCollectionLayoutSection。
-        - 不同 section 包含不同的視覺佈局邏輯，如資訊區、尺寸選擇區、價格資訊區以及訂單選項區。
-
-    * 佈局細節：
-        - generateInfoLayout()： 為飲品資訊 section 設置垂直佈局，並預估高度 300。
-        - generateSizeSelectionLayout()： 為尺寸選擇區設置橫向滾動的 group paging 佈局，並設置 1/3 寬的正方形元素。
-        - generatePriceInfoLayout()： 為價格資訊區設置垂直佈局，並預估高度 100。
-        - generateOrderOptionsLayout()： 為訂單選項區設置垂直佈局，並預估高度 50。
-        - 每個 section 都可能包含底部的分隔線 footer，透過 createFooter() 生成。
- */
-
-
-// MARK: - 已完善重構
 
 import UIKit
 
-/// `DrinkDetailLayoutProvider` 負責為 `DrinkDetailViewController` 中的各個 section 動態生成相對應的佈局。
-class DrinkDetailLayoutProvider {
+/// `EditOrderItemLayoutProvider` 負責為 `EditOrderItemViewController` 中的各個 section 動態生成相對應的佈局。
+class EditOrderItemLayoutProvider {
     
     /// 根據傳入的 section 生成對應的 `NSCollectionLayoutSection`
-    /// - Parameter section: `DrinkDetailSection`，代表要顯示的 section 類型
+    /// - Parameter section: `EditOrderItemSection`，代表要顯示的 section 類型
     /// - Returns: 對應的 `NSCollectionLayoutSection` 佈局
-    func generateLayout(for section: DrinkDetailSection) -> NSCollectionLayoutSection {
+    func generateLayout(for section: EditOrderItemSection) -> NSCollectionLayoutSection {
         switch section {
         case .image:
             return generateImageLayout()
@@ -44,8 +23,8 @@ class DrinkDetailLayoutProvider {
             return generateSizeSelectionLayout()
         case .priceInfo:
             return generatePriceInfoLayout()
-        case .orderOptions:
-            return generateOrderOptionsLayout()
+        case .editOrderOptions:
+            return generateEditOrderOptionsLayout()
         }
     }
     
@@ -87,8 +66,8 @@ class DrinkDetailLayoutProvider {
         return section
     }
     
-    /// 生成訂單選項 (orderOptions) section 的佈局
-    private func generateOrderOptionsLayout() -> NSCollectionLayoutSection {
+    /// 生成編輯訂單選項 (editOrderOptions) section 的佈局
+    private func generateEditOrderOptionsLayout() -> NSCollectionLayoutSection {
         let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(50)))
         let group = NSCollectionLayoutGroup.vertical(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(50)), subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
@@ -107,5 +86,5 @@ class DrinkDetailLayoutProvider {
         let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(height))
         return NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
     }
-
+    
 }

@@ -25,30 +25,36 @@ struct Constants {
     /// 表示在 Storyboard 中設定的視圖控制器的 Identifier，方便引用。
     struct Storyboard {
         
-        // 主頁面、登入、註冊、忘記密碼相關
+        // MARK: - 主頁面、登入、註冊、忘記密碼相關
+        
         static let homePageViewController = "HomePageViewController"
         static let loginViewController = "LoginViewController"
         static let signUpViewController = "SignUpViewController"
         static let forgotPasswordViewController = "ForgotPasswordViewController"
         
+        // MARK: - MainTabBar
+        
         static let mainTabBarController = "MainTabBarController"
-        //static let menuCollectionViewController = "MenuCollectionViewController"
-        static let menuViewController = "MenuViewController"
 
+        // MARK: - 菜單主頁、飲品資訊相關_(Menu)
+        
+        static let menuViewController = "MenuViewController"
         static let drinkDetailViewController = "DrinkDetailViewController"
+        
+        // MARK: - 編輯個人資料、我的最愛、歷史訂單、歷史訂單項目詳細資訊_(UserProfile)
         
         static let editProfileViewController = "EditProfileViewController"
         static let favoritesViewController = "FavoritesViewController"
+        static let orderHistoryViewController = "OrderHistoryViewController"
+        static let orderHistoryDetailViewController = "OrderHistoryDetailViewController"
+
+        // MARK: - 編輯訂單、訂單使用者資訊、選取店家、訂單確認_(Order)
         
+        static let editOrderItemViewController = "EditOrderItemViewController"
         static let orderCustomerDetailsViewController = "OrderCustomerDetailsViewController"
-        
         static let storeSelectionViewController = "StoreSelectionViewController"
-        
         static let orderConfirmationViewController = "OrderConfirmationViewController"
         
-        static let orderHistoryViewController = "OrderHistoryViewController"
-        
-        static let orderHistoryDetailViewController = "OrderHistoryDetailViewController"
     }
     
     /// 定義結構 `Segue`，用於存放與 Segue 相關的常數
