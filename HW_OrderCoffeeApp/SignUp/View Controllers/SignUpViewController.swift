@@ -341,8 +341,7 @@ extension SignUpViewController: SignUpViewDelegate {
         Task {
             do {
                 _ = try await EmailSignInController.shared.registerUser(withEmail: email, password: password, fullName: fullName)
-                let userDetails = try await FirebaseController.shared.getCurrentUserDetails()
-                NavigationHelper.navigateToMainTabBar(from: self, with: userDetails)
+                NavigationHelper.navigateToMainTabBar(from: self)
             } catch {
                 AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
             }
@@ -423,8 +422,7 @@ extension SignUpViewController: SignUpViewDelegate {
             HUDManager.shared.showLoading(text: "Logging in...")
             do {
                 _ = try await GoogleSignInController.shared.signInWithGoogle(presentingViewController: self)
-                let userDetails = try await FirebaseController.shared.getCurrentUserDetails()
-                NavigationHelper.navigateToMainTabBar(from: self, with: userDetails)
+                NavigationHelper.navigateToMainTabBar(from: self)
             } catch {
                 AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
             }
@@ -443,8 +441,7 @@ extension SignUpViewController: SignUpViewDelegate {
             HUDManager.shared.showLoading(text: "Logging in...")
             do {
                 _ = try await AppleSignInController.shared.signInWithApple(presentingViewController: self)
-                let userDetails = try await FirebaseController.shared.getCurrentUserDetails()
-                NavigationHelper.navigateToMainTabBar(from: self, with: userDetails)
+                NavigationHelper.navigateToMainTabBar(from: self)
             } catch {
                 AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
             }
