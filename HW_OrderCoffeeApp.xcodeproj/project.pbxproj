@@ -115,7 +115,6 @@
 		936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */; };
 		936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */; };
 		936CFFC92C6C74DE004B8724 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC82C6C74DE004B8724 /* UserProfileView.swift */; };
-		936CFFCB2C6E24AD004B8724 /* UserDetailsReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFCA2C6E24AD004B8724 /* UserDetailsReceiver.swift */; };
 		936E09992CE9EF2D0092F246 /* SearchControllerInteractionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E09982CE9EF2D0092F246 /* SearchControllerInteractionDelegate.swift */; };
 		936E099B2CE9FD000092F246 /* SearchControllerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E099A2CE9FD000092F246 /* SearchControllerManager.swift */; };
 		936E099D2CED04010092F246 /* SearchNavigationBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E099C2CED04010092F246 /* SearchNavigationBarManager.swift */; };
@@ -134,7 +133,6 @@
 		93755C022C7B179C002570A5 /* GenderSelectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C012C7B179C002570A5 /* GenderSelectionCell.swift */; };
 		93755C042C7B28AE002570A5 /* BirthdaySelectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C032C7B28AE002570A5 /* BirthdaySelectionCell.swift */; };
 		93755C0A2C7B844D002570A5 /* EditProfileTableHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */; };
-		93755C122C7E5542002570A5 /* UIViewController+KeyboardHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C112C7E5541002570A5 /* UIViewController+KeyboardHandling.swift */; };
 		93755C1B2C808202002570A5 /* UserProfileTableHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1A2C808202002570A5 /* UserProfileTableHandler.swift */; };
 		93755C1D2C8094D0002570A5 /* UserProfileInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1C2C8094D0002570A5 /* UserProfileInfoCell.swift */; };
 		93755C1F2C80971F002570A5 /* UserProfileGeneralOptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755C1E2C80971F002570A5 /* UserProfileGeneralOptionCell.swift */; };
@@ -246,7 +244,6 @@
 		939BD9EF2B2AA48B00616D1C /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9EE2B2AA48B00616D1C /* LoginViewController.swift */; };
 		939BD9F12B2AB9C200616D1C /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9F02B2AB9C200616D1C /* SignUpViewController.swift */; };
 		939BD9F32B2AC27700616D1C /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9F22B2AC27700616D1C /* ForgotPasswordViewController.swift */; };
-		939BDA2C2B2AC53700616D1C /* UIViewController+HideKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BDA2B2B2AC53700616D1C /* UIViewController+HideKeyboard.swift */; };
 		939BDA2F2B2ACB8300616D1C /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 939BDA2E2B2ACB8300616D1C /* FirebaseAnalytics */; };
 		939BDA312B2ACB8300616D1C /* FirebaseAnalyticsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = 939BDA302B2ACB8300616D1C /* FirebaseAnalyticsOnDeviceConversion */; };
 		939BDA332B2ACB8300616D1C /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 939BDA322B2ACB8300616D1C /* FirebaseAnalyticsSwift */; };
@@ -276,7 +273,6 @@
 		939BDA632B2ACB8300616D1C /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 939BDA622B2ACB8300616D1C /* FirebaseStorageCombine-Community */; };
 		939BDA652B2ACBA200616D1C /* FirebaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BDA642B2ACBA200616D1C /* FirebaseController.swift */; };
 		939BDA692B2B82BC00616D1C /* AlertService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BDA682B2B82BC00616D1C /* AlertService.swift */; };
-		939BDA6B2B2B97ED00616D1C /* ActivityIndicatorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BDA6A2B2B97ED00616D1C /* ActivityIndicatorManager.swift */; };
 		939BDA6F2B2C211200616D1C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BDA6E2B2C211200616D1C /* Constants.swift */; };
 		939BDA742B2FB3E400616D1C /* MenuModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BDA732B2FB3E400616D1C /* MenuModels.swift */; };
 		939BDA762B2FC08300616D1C /* CategoryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BDA752B2FC08300616D1C /* CategoryCollectionViewCell.swift */; };
@@ -477,7 +473,6 @@
 		936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		936CFFC82C6C74DE004B8724 /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
-		936CFFCA2C6E24AD004B8724 /* UserDetailsReceiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsReceiver.swift; sourceTree = "<group>"; };
 		936E09982CE9EF2D0092F246 /* SearchControllerInteractionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchControllerInteractionDelegate.swift; sourceTree = "<group>"; };
 		936E099A2CE9FD000092F246 /* SearchControllerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchControllerManager.swift; sourceTree = "<group>"; };
 		936E099C2CED04010092F246 /* SearchNavigationBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchNavigationBarManager.swift; sourceTree = "<group>"; };
@@ -496,7 +491,6 @@
 		93755C012C7B179C002570A5 /* GenderSelectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenderSelectionCell.swift; sourceTree = "<group>"; };
 		93755C032C7B28AE002570A5 /* BirthdaySelectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthdaySelectionCell.swift; sourceTree = "<group>"; };
 		93755C092C7B844D002570A5 /* EditProfileTableHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileTableHandler.swift; sourceTree = "<group>"; };
-		93755C112C7E5541002570A5 /* UIViewController+KeyboardHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+KeyboardHandling.swift"; sourceTree = "<group>"; };
 		93755C1A2C808202002570A5 /* UserProfileTableHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileTableHandler.swift; sourceTree = "<group>"; };
 		93755C1C2C8094D0002570A5 /* UserProfileInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileInfoCell.swift; sourceTree = "<group>"; };
 		93755C1E2C80971F002570A5 /* UserProfileGeneralOptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileGeneralOptionCell.swift; sourceTree = "<group>"; };
@@ -607,10 +601,8 @@
 		939BD9EE2B2AA48B00616D1C /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		939BD9F02B2AB9C200616D1C /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		939BD9F22B2AC27700616D1C /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
-		939BDA2B2B2AC53700616D1C /* UIViewController+HideKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+HideKeyboard.swift"; sourceTree = "<group>"; };
 		939BDA642B2ACBA200616D1C /* FirebaseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseController.swift; sourceTree = "<group>"; };
 		939BDA682B2B82BC00616D1C /* AlertService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertService.swift; sourceTree = "<group>"; };
-		939BDA6A2B2B97ED00616D1C /* ActivityIndicatorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicatorManager.swift; sourceTree = "<group>"; };
 		939BDA6E2B2C211200616D1C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		939BDA732B2FB3E400616D1C /* MenuModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuModels.swift; sourceTree = "<group>"; };
 		939BDA752B2FC08300616D1C /* CategoryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -2010,6 +2002,42 @@
 			path = Search;
 			sourceTree = "<group>";
 		};
+		9389D1942D20CDFA00EFAA41 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				93B9DC7E2C32C5BC0050BC3F /* MenuController.swift */,
+				93B9DC802C32D7740050BC3F /* OrderManager.swift */,
+				939BDA642B2ACBA200616D1C /* FirebaseController.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		9389D1952D20CE0900EFAA41 /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				93DB1D2A2C439F8900BA2CC1 /* NavigationHelper.swift */,
+			);
+			path = Navigation;
+			sourceTree = "<group>";
+		};
+		9389D1962D20CE1900EFAA41 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				934FB5AB2CFE36F200757C7C /* TabIndex.swift */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		9389D1972D20CE2D00EFAA41 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				939BDA682B2B82BC00616D1C /* AlertService.swift */,
+				93755C302C82F6CF002570A5 /* HUDManager.swift */,
+				9353740D2C9AD6E100794A63 /* ButtonEffectManager.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 		939BD9C32B2A1B1700616D1C = {
 			isa = PBXGroup;
 			children = (
@@ -2059,7 +2087,7 @@
 				936CFFC72C6C73F2004B8724 /* UserProfile */,
 				93755C192C80658B002570A5 /* EditProfile */,
 				935374132C9C5C9400794A63 /* Favorites */,
-				93BD48B92C58DE3A00144E7F /* Main */,
+				93BD48B92C58DE3A00144E7F /* MainTab */,
 				93F9BB4F2C2916C400355A87 /* Models */,
 				939BDA702B2C25E400616D1C /* Services */,
 				93BD48B82C58DE1C00144E7F /* Security */,
@@ -2081,14 +2109,10 @@
 		939BDA702B2C25E400616D1C /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				934FB5AB2CFE36F200757C7C /* TabIndex.swift */,
-				93B9DC7E2C32C5BC0050BC3F /* MenuController.swift */,
-				93B9DC802C32D7740050BC3F /* OrderManager.swift */,
-				939BDA642B2ACBA200616D1C /* FirebaseController.swift */,
-				939BDA682B2B82BC00616D1C /* AlertService.swift */,
-				93755C302C82F6CF002570A5 /* HUDManager.swift */,
-				9353740D2C9AD6E100794A63 /* ButtonEffectManager.swift */,
-				939BDA6A2B2B97ED00616D1C /* ActivityIndicatorManager.swift */,
+				9389D1942D20CDFA00EFAA41 /* Core */,
+				9389D1952D20CE0900EFAA41 /* Navigation */,
+				9389D1962D20CE1900EFAA41 /* Constants */,
+				9389D1972D20CE2D00EFAA41 /* UI */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -2322,14 +2346,12 @@
 			path = Security;
 			sourceTree = "<group>";
 		};
-		93BD48B92C58DE3A00144E7F /* Main */ = {
+		93BD48B92C58DE3A00144E7F /* MainTab */ = {
 			isa = PBXGroup;
 			children = (
 				93B9DC862C3661DF0050BC3F /* MainTabBarController.swift */,
-				93DB1D2A2C439F8900BA2CC1 /* NavigationHelper.swift */,
-				936CFFCA2C6E24AD004B8724 /* UserDetailsReceiver.swift */,
 			);
-			path = Main;
+			path = MainTab;
 			sourceTree = "<group>";
 		};
 		93BD48BD2C58E0B100144E7F /* Services */ = {
@@ -2374,8 +2396,6 @@
 			children = (
 				939BDA6E2B2C211200616D1C /* Constants.swift */,
 				935374202CA2F02000794A63 /* Notifications.swift */,
-				939BDA2B2B2AC53700616D1C /* UIViewController+HideKeyboard.swift */,
-				93755C112C7E5541002570A5 /* UIViewController+KeyboardHandling.swift */,
 				9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */,
 				93B9DC792C3181910050BC3F /* UIView+SpringAnimation.swift */,
 				9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */,
@@ -2631,7 +2651,6 @@
 				935374552CB93F6D00794A63 /* OrderCustomerDetailsSectionHeaderView.swift in Sources */,
 				938064702D1B9D2E00537F01 /* EditOrderItemOptionsCollectionViewCell.swift in Sources */,
 				935291302C875DA30018B060 /* UIView+ScaleAnimation.swift in Sources */,
-				939BDA2C2B2AC53700616D1C /* UIViewController+HideKeyboard.swift in Sources */,
 				934FB5E42D04B51900757C7C /* PhotoChangeHandlerDelegate.swift in Sources */,
 				93F9BB5E2C2E4EEA00355A87 /* GridItemCell.swift in Sources */,
 				93B7B5552CD5E28500E0205A /* OrderConfirmationHandler.swift in Sources */,
@@ -2692,7 +2711,6 @@
 				935374332CAFC29D00794A63 /* OrderLayoutProvider.swift in Sources */,
 				93B7B5852CDD3BB700E0205A /* OrderHistoryCell.swift in Sources */,
 				939BDA812B32959700616D1C /* DrinksCategorySectionHeaderView.swift in Sources */,
-				939BDA6B2B2B97ED00616D1C /* ActivityIndicatorManager.swift in Sources */,
 				93B9DC7F2C32C5BC0050BC3F /* MenuController.swift in Sources */,
 				9353743E2CB5149700794A63 /* OrderCustomerDetailsViewController.swift in Sources */,
 				939BDA6F2B2C211200616D1C /* Constants.swift in Sources */,
@@ -2755,7 +2773,6 @@
 				93B7B5742CDB425B00E0205A /* OrderConfirmationSectionExpansionManager.swift in Sources */,
 				938122512CE7760800ADFB7B /* SearchHandler.swift in Sources */,
 				938063ED2D07841800537F01 /* UserProfileNavigationBarManager.swift in Sources */,
-				93755C122C7E5542002570A5 /* UIViewController+KeyboardHandling.swift in Sources */,
 				934FB5A52CFDEF5500757C7C /* ForgotPasswordActionHandler.swift in Sources */,
 				934FB5682CF8DA6700757C7C /* LoginStackView.swift in Sources */,
 				935291412C89C1480018B060 /* DrinksCategorySectionFooterView.swift in Sources */,
@@ -2852,7 +2869,6 @@
 				93B9DC7A2C3181910050BC3F /* UIView+SpringAnimation.swift in Sources */,
 				935374442CB67DB100794A63 /* Order.swift in Sources */,
 				934FB5882CFA962400757C7C /* SignUpAttributedButton.swift in Sources */,
-				936CFFCB2C6E24AD004B8724 /* UserDetailsReceiver.swift in Sources */,
 				938063F72D08676F00537F01 /* UserProfileLogoutCell.swift in Sources */,
 				9380640D2D0CF9F500537F01 /* FavoritesNavigationBarManager.swift in Sources */,
 				93B7B5612CD7912400E0205A /* OrderrConfirmationCloseButtonCell.swift in Sources */,
