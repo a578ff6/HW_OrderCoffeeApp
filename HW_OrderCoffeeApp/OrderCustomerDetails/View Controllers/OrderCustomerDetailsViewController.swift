@@ -155,7 +155,7 @@
 /**
  - 當初在建構 `CustomerDetailsManager` 的時候，是想說透過點擊 `submit` 按鈕後來透過「警告訊息」得知「資料」是否有填寫完成。並且也是方便去做 Test。
  - 因此原邏輯適合在「按鈕沒有啟用禁用的邏輯，並顯示警告訊息」的情況下，因為初始狀態下按鈕始終處於可點擊狀態，直到提交訂單時才會根據驗證結果顯示警告。
- - 然而，我後來決定將 `OrderCustomerDetailsViewController` 與 `OrderViewController` 的按鈕風格進行統一，希望按鈕能根據欄位的「填寫狀態」啟用或禁用時，要在畫面初始載入時應進行檢查。
+ - 然而，我後來決定將 `OrderCustomerDetailsViewController` 與 `OrderItemViewController` 的按鈕風格進行統一，希望按鈕能根據欄位的「填寫狀態」啟用或禁用時，要在畫面初始載入時應進行檢查。
  
 ` &. 選擇設計：`
 

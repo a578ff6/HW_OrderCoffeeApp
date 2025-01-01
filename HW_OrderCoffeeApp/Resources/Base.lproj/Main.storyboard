@@ -180,17 +180,17 @@
             </objects>
             <point key="canvasLocation" x="6766" y="306"/>
         </scene>
-        <!--Order-->
+        <!--Order Item View Controller-->
         <scene sceneID="di8-Bv-nzg">
             <objects>
-                <viewController id="9YN-bm-qYx" customClass="OrderViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="9YN-bm-qYx" customClass="OrderItemViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="lIs-hj-ZiC">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="CP2-12-wxj"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Order" largeTitleDisplayMode="always" id="nwb-dJ-dH7"/>
+                    <navigationItem key="navigationItem" id="nwb-dJ-dH7"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cPs-L7-0eE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -326,8 +326,8 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Usc-9l-3QK" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Order" image="basket" catalog="system" id="MGl-ZW-v0y"/>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="Qwi-Pw-Oz8">
-                        <rect key="frame" x="0.0" y="59" width="393" height="96"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Qwi-Pw-Oz8">
+                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>

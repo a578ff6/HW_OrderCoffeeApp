@@ -281,9 +281,7 @@
     OrderItemManager.shared.addOrderItem(
         drink: drink,
         size: selectedSize,
-        quantity: quantity,
-        categoryId: categoryId,
-        subcategoryId: subcategoryId
+        quantity: quantity
     )
     ```
 
@@ -919,9 +917,7 @@ extension DrinkDetailViewController: DrinkDetailHandlerDelegate {
         OrderItemManager.shared.addOrderItem(
             drink: drink,
             size: selectedSize,
-            quantity: quantity,
-            categoryId: categoryId,
-            subcategoryId: subcategoryId
+            quantity: quantity
         )
     }
     
