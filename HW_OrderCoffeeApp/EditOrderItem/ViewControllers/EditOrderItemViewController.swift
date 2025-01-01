@@ -191,7 +191,7 @@
 
 ` 2. 傳遞 OrderItem 至  EditOrderItemViewController`
  
-    - 在 `OrderViewController` 中點擊訂單項目時，將 `OrderItem` 傳遞至編輯頁面：
+    - 在 `OrderItemViewController` 中點擊訂單項目時，將 `OrderItem` 傳遞至編輯頁面：
 
     ```swift
  func navigateToEditOrderItemView(with orderItem: OrderItem) {

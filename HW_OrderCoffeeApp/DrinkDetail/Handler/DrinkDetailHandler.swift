@@ -6,10 +6,10 @@
 //
 
 
-// MARK: - UICollectionView 資料源管理方式：UICollectionViewDiffableDataSource vs UICollectionViewDataSource （對比 OrderViewController 的使用）_(重要)
+// MARK: - UICollectionView 資料源管理方式：UICollectionViewDiffableDataSource vs UICollectionViewDataSource （對比 OrderItemViewController 的使用）_(重要)
 /**
  
- ## UICollectionView 資料源管理方式：UICollectionViewDiffableDataSource vs UICollectionViewDataSource （對比 OrderViewController 的使用）
+ ## UICollectionView 資料源管理方式：UICollectionViewDiffableDataSource vs UICollectionViewDataSource （對比 OrderItemViewController 的使用）
 
  & UICollectionViewDiffableDataSource
  
