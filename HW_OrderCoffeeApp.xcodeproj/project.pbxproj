@@ -2133,7 +2133,7 @@
 				9375E2E42CD136DE002E3668 /* StoreInfo */,
 				9353746A2CCABD2300794A63 /* StoreSelection */,
 				9353743C2CB5145D00794A63 /* OrderCustomerDetails */,
-				93BD48B32C58DA0900144E7F /* Orders */,
+				93BD48B32C58DA0900144E7F /* OrderItem */,
 				938064452D19575800537F01 /* EditOrderItem */,
 				93755C382C83719A002570A5 /* Menu */,
 				9352913D2C88382D0018B060 /* DrinksCategory */,
@@ -2348,7 +2348,7 @@
 			path = OrderHistory;
 			sourceTree = "<group>";
 		};
-		93BD48B32C58DA0900144E7F /* Orders */ = {
+		93BD48B32C58DA0900144E7F /* OrderItem */ = {
 			isa = PBXGroup;
 			children = (
 				9389D1982D20F34E00EFAA41 /* Components */,
@@ -2362,7 +2362,7 @@
 				93BD48BE2C58E0D300144E7F /* Models */,
 				93BD48BD2C58E0B100144E7F /* Services */,
 			);
-			path = Orders;
+			path = OrderItem;
 			sourceTree = "<group>";
 		};
 		93BD48B42C58DA2200144E7F /* View Controllers */ = {
