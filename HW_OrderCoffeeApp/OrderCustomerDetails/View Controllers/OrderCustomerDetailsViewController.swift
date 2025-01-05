@@ -31,7 +31,7 @@
 // MARK: - 各個元件佈局的設計方向
 
 /**
- * 在建立立了 `CustomerDetailsManager` 來管理顧客資料，後會使 `OrderCustomerDetailsViewController` 變得更簡潔，專注於 UI 和與使用者的交互部分。
+ * 在建立了 `CustomerDetailsManager` 來管理顧客資料，後會使 `OrderCustomerDetailsViewController` 變得更簡潔，專注於 UI 和與使用者的交互部分。
 
  `1. OrderCustomerDetailsViewController：`
     - 負責顯示和處理與顧客資料的交互，例如讓使用者輸入姓名、電話號碼等資訊。
@@ -128,28 +128,6 @@
 */
 
 
-// MARK: - OrderCustomerDetailsViewController 重點筆記：
-
-/**
- ## OrderCustomerDetailsViewController 重點筆記：
-
-    * `視圖控制器的作用`：
-        - `OrderCustomerDetailsViewController` 是用於顯示和處理顧客詳細資料的核心視圖控制器，這些資料是訂單提交所必須的。
-        - 提供用戶填寫姓名、電話、取件方式和備註，並確保這些資料正確且完整後才能提交訂單。
- 
-    * `主要的設置方法`：
-        - `setupViewController()`：初始化視圖控制器，包括導航欄標題設置和資料處理器初始化。
-        - `fetchAndPopulateUserDetails()`：從 Firebase 獲取用戶的詳細資料，並填充到顧客資料中，最後刷新表單來顯示這些資料。資料填充完成後再初始化 `OrderCustomerDetailsHandler`，確保 Cell 初次配置時就有正確的資料。
- 
-    * `表單驗證與按鈕狀態`：
-        - `updateSubmitButtonState()`：每當顧客資料變更時，檢查資料是否完整並根據結果啟用或禁用提交按鈕，避免不完整的訂單提交。
- 
-    * `代理方法的用途`：
-        - `customerDetailsDidChange()`：當顧客資料有變更時被調用，從而觸發` updateSubmitButtonState() `確保即時更新。
-        - `submitOrder()`：當用戶點擊提交按鈕時執行，通過 `OrderManager` 進行訂單提交。
- */
-
-
 // MARK: - 「submit」按鈕的邏輯判斷，與 CustomerDetailsManager 設計方向。（重要）
 
 /**
@@ -180,8 +158,8 @@
 
 
 // MARK: - 關於 OrderCustomerDetailsViewController 的 updateSubmitButtonState() 和 cellForItemAt 中的按鈕狀態設置
-
 /**
+ 
  ## 關於 OrderCustomerDetailsViewController 的 updateSubmitButtonState() 和 cellForItemAt 中的按鈕狀態設置：
  
  - `OrderCustomerDetailsViewController` 的 `updateSubmitButtonState() `和 `OrderCustomerDetailsHandler` 中 `cellForItemAt` 的按鈕狀態設置有相似的邏輯，但它們在不同的時機被調用，因此它們在功能上還是有所區分的：
@@ -216,6 +194,7 @@
     -  若無法找到 ID 為 `storeSelectionViewController` 的視圖控制器，則會輸出錯誤訊息以便於調試和避免應用崩潰。
  */
 
+
 // MARK: -  storeSelectionDidComplete 的功能和設計
 
 /**
@@ -233,6 +212,7 @@
  * `錯誤處理`：
     - 若在更新過程中出現錯誤，可以考慮加入錯誤提示，提醒用戶重新選擇或檢查網路狀況。
  */
+
 
 // MARK: - 門市選擇流程（重要）
 
@@ -297,6 +277,7 @@
     * `資料與 UI 的同步`:
         - 在 `CustomerDetailsManager` 中更新資料後，務必確保對應的 UI 也能及時更新，例如透過回調或重新載入 collection view 的特定區域。
  */
+
 
 // MARK: - 資料驅動的 UI 配置重點筆記（重要）
 /**
@@ -376,6 +357,7 @@
  - `提交失敗`：使用 Alert 簡單有效地通知用戶並提供重試選項，以減少流程摩擦。
  */
 
+
 // MARK: - 訂單提交失敗的情況設計
 /**
  ## 訂單提交失敗的情況設計
@@ -416,23 +398,452 @@
  */
 
 
+// MARK: - 筆記：`didUpdatePickupMethod`、`didUpdateCustomerStoreName` 與 `didUpdateCustomerAddress` 的行為差異
+/**
+ 
+ ## 筆記：`didUpdatePickupMethod`、`didUpdateCustomerStoreName` 與 `didUpdateCustomerAddress` 的行為差異
+
+` * What`
+ 
+ 1. `didUpdatePickupMethod`：
+ 
+    - 當使用者切換取件方式（例如從 "外送" 切換到 "到店自取"）時，觸發此方法。
+    - 此方法負責：
+      - 更新顧客資料中的取件方式（`PickupMethod`）。
+      - 根據新的取件方式刷新 `OrderPickupMethodCell` 的 UI。
+      - 更新提交按鈕的狀態。
+
+ 2. `didUpdateCustomerStoreName` 和 `didUpdateCustomerAddress`：
+ 
+    - 當使用者更新店家名稱或外送地址時，觸發這些方法。
+    - 此方法負責：
+      - 更新顧客資料中的店家名稱或地址。
+      - 檢查資料是否完整並更新提交按鈕的狀態。
+      - 不涉及刷新整個 Cell，因為 TextField 的輸入框會即時更新。
+
+ ---
+
+ `* Why`
+ 
+ 1. `didUpdatePickupMethod` 需要刷新 Cell：
+ 
+    - 切換取件方式會影響整個 Cell 的 UI，例如：
+      - 切換為 "外送" 時需要顯示地址輸入框並隱藏選擇店家的按鈕。
+      - 切換為 "到店自取" 時需要顯示選擇店家的按鈕並隱藏地址輸入框。
+    - 因此，需要呼叫 `reloadPickupMethodCell` 確保 Cell 的顯示內容與新的取件方式一致。
+
+ 2. `didUpdateCustomerStoreName` 和 `didUpdateCustomerAddress` 不需要刷新 Cell：
+ 
+    - 這些方法僅更新單個輸入框（如店家名稱或地址），TextField 本身的回調已處理 UI 的即時更新。
+    - 不需要重新載入整個 Cell，避免額外的資源浪費與閃爍。
+
+ ---
+
+ `* How`
+
+ 1. `didUpdatePickupMethod` 的實現：
+ 
+    - 更新資料模型。
+    - 檢查提交按鈕的狀態。
+    - 呼叫 `reloadPickupMethodCell` 刷新取件方式相關的 UI。
+
+    ```swift
+    func didUpdatePickupMethod(_ method: PickupMethod) {
+        CustomerDetailsManager.shared.updatePickupMethod(method)
+        updateSubmitButtonState()
+        reloadPickupMethodCell() // 重新載入 UI
+    }
+    ```
+
+ 2. `didUpdateCustomerStoreName` 的實現：
+ 
+    - 僅更新資料模型與提交按鈕狀態，讓 TextField 即時更新內容。
+
+    ```swift
+    func didUpdateCustomerStoreName(_ storeName: String) {
+        CustomerDetailsManager.shared.updateStoredCustomerDetails(storeName: storeName)
+        updateSubmitButtonState() // 僅更新提交按鈕狀態
+    }
+    ```
+
+ 3. `didUpdateCustomerAddress` 的實現：
+ 
+    - 同樣僅更新資料模型與提交按鈕狀態。
+
+    ```swift
+    func didUpdateCustomerAddress(_ address: String) {
+        CustomerDetailsManager.shared.updateStoredCustomerDetails(address: address)
+        updateSubmitButtonState() // 僅更新提交按鈕狀態
+    }
+    ```
+
+ 4. 確認邏輯正確性：
+ 
+    - 在方法內添加 `print` 確認回調被正確觸發。
+    - 測試切換取件方式時，檢查 Cell 的 UI 是否正確更新。
+    - 測試修改地址與店家名稱時，確認輸入框即時更新且無閃爍。
+
+ ---
+
+ `* 總結`
+ 
+ - What：針對取件方式、店家名稱與地址的更新，處理方式因 UI 影響範圍不同而有所區別。
+ - Why：取件方式影響整體 UI，需刷新 Cell；地址與店家名稱僅影響局部，不需刷新 Cell。
+ - How：
+   - `didUpdatePickupMethod`：更新資料並刷新 Cell。
+   - `didUpdateCustomerStoreName` 和 `didUpdateCustomerAddress`：僅更新資料與提交按鈕狀態，避免不必要的 Cell 刷新。
+ */
+
+
+
+
+// MARK: - 筆記：OrderCustomerDetailsHandler 與 OrderCustomerDetailsViewController 中 PickupMethodCell 責任分工
+/**
+ 
+ ## 筆記：OrderCustomerDetailsHandler 與 OrderCustomerDetailsViewController 中 PickupMethodCell 責任分工
+
+ ---
+
+` * What`
+ 
+ - `OrderCustomerDetailsHandler` 和 `OrderCustomerDetailsViewController` 都使用了 `OrderPickupMethodCell` 的 `configure` 方法，但其目的和適用場景不同：
+ 
+ 1. `configurePickupMethodCell`：由 Handler 負責，初始化或重建整個 Cell 的顯示。
+ 2. `reloadPickupMethodCell`：由 ViewController 負責，用於局部刷新，更新特定 Cell 的內容。
+
+ ---
+
+ `* Why`
+ 
+ - 避免重疊功能導致責任模糊，提升程式架構的清晰度與可維護性。
+ 
+ `1. 清晰的責任分工：`
+ 
+    - Handler 專注於初次配置 Cell（靜態場景）。
+    - ViewController 負責局部數據更新（動態場景）。
+ 
+ `2. 性能優化：`
+ 
+    - 初始化場景中，`Handler` 通過 `cellForItemAt` 配置所有 Cell。
+    - 在用戶交互後，`ViewController` 只更新必要的 `Cell`，避免整體重繪。
+ 
+ `3. 統一數據源：`
+ 
+    - 確保所有顯示數據來自 `CustomerDetailsManager`，避免不同部分直接操作 Cell，導致邏輯分散。
+
+ ---
+
+ `* How`
+ 
+ `1. 清晰責任劃分`
+ 
+ - `OrderCustomerDetailsHandler`：
+ 
+   - 負責 Cell 的初始化與配置。
+   - 實現所有表單的初次加載邏輯。
+ 
+ - `OrderCustomerDetailsViewController`：
+ 
+   - 負責數據更新後的局部刷新。
+   - 僅在特定用戶交互後，更新指定 Cell。
+
+ `2.. 確保數據源統一`
+ 
+ - 所有 Cell 的數據來源應統一為 `CustomerDetailsManager`。
+ - 避免 Handler 或 ViewController 中直接操作 Cell 的屬性。
+
+ `3. 整理責任界線`
+ 
+ - `Handler：`
+   - 初次加載 CollectionView 時配置所有 Cell。
+   - 維持靜態的資料與 UI 映射邏輯。
+ 
+ - `ViewController：`
+   - 用戶交互後處理數據變更。
+   - 精準更新局部 UI（特定 Cell）。
+
+ ---
+
+ `* 總結`
+ 
+ 1. Handler 初始化，ViewController 更新：確保功能分工清晰，降低耦合。
+ 2. 性能與可維護性：局部刷新避免整體重繪，提升用戶體驗。
+ 3. 統一數據來源：所有 UI 操作統一來自 `CustomerDetailsManager`，避免分散邏輯。
+ */
+
+
+
+// MARK: - 筆記：`reloadPickupMethodCell` 更新取件方式與地址顯示
+/**
+ 
+ ### 筆記：`reloadPickupMethodCell` 更新取件方式與地址顯示
+
+ ---
+
+ `* What`
+ 
+ - `reloadPickupMethodCell` 是一個用於精確更新取件方式（`PickupMethod`）相關顯示內容的功能方法。
+ - 當用戶在 `PickupMethodCell` 中切換取件方式或修改地址時，會透過此方法重新配置對應的 Cell 顯示。
+
+ - 主要功能：
+ 
+ 1. 根據當前的顧客資料（`CustomerDetails`）更新取件方式相關的顯示內容。
+ 2. 當地址或店家名稱更新時，自動清空互斥的欄位（如地址有值時清空店家名稱）。
+
+ - 適用場景：
+ 
+ - 用戶切換取件方式（如「外送服務」到「到店自取」）。
+ - 用戶輸入或修改地址、選擇店家名稱。
+
+ -----------------
+
+ `* Why`
+ 
+ - 此功能的目的在於提升用戶體驗並確保資料一致性。
+
+ `1. 即時同步資料與顯示：`
+ 
+    - 在用戶更新資料後，UI 需要即時反映變更，以減少用戶的操作疑惑。
+    - 精確定位目標 Cell 進行更新，避免刷新整個畫面，提升性能。
+
+ `2. 資料完整性與邏輯清晰：`
+ 
+    - 地址與店家名稱互斥的邏輯由資料管理器（`CustomerDetailsManager`）統一處理，避免混亂。
+    - 確保用戶選擇的取件方式符合顯示內容，例如「外送服務」必須填寫地址、「到店自取」需要店家名稱。
+
+` 3. 提升代碼可維護性：`
+ 
+    - 責任清晰：資料更新由 `CustomerDetailsManager` 負責，UI 更新由 `reloadPickupMethodCell` 處理。
+    - 降低刷新範圍：僅更新與用戶操作相關的區域，避免對其他內容造成影響。
+
+ -----------------
+
+ `* How`
+ 
+ 以下是 `reloadPickupMethodCell` 的設計與使用方式：
+
+ `1. 資料更新邏輯：`
+ 
+    - 當用戶切換取件方式或更新地址時，`CustomerDetailsManager` 會負責更新相關資料並清空互斥欄位。
+ 
+      ```swift
+      if let address = address {
+          details.address = address
+          details.storeName = nil // 當地址有值時，清空店家名稱
+      }
+      ```
+
+ `2. 精確更新 UI：`
+ 
+    - 使用 `IndexPath` 精確定位目標 Cell，並重新配置顯示內容。
+
+ ```swift
+      private func reloadPickupMethodCell() {
+          let pickupMethodIndexPath = IndexPath(item: 0, section: OrderCustomerDetailsHandler.Section.pickupMethod.rawValue)
+          guard let pickupCell = orderCustomerDetailsView.orderCustomerDetailsCollectionView.cellForItem(at: pickupMethodIndexPath) as? OrderPickupMethodCell else { return }
+          guard let updatedCustomerDetails = CustomerDetailsManager.shared.getCustomerDetails() else { return }
+          pickupCell.configure(with: updatedCustomerDetails)
+      }
+      ```
+
+ `3. 觸發條件：`
+ 
+    - 在相關的回調方法中觸發，例如 `didUpdatePickupMethod``。
+
+ ```swift
+      func didUpdatePickupMethod(_ method: PickupMethod) {
+          CustomerDetailsManager.shared.updatePickupMethod(method)
+          reloadPickupMethodCell()
+          updateSubmitButtonState()
+      }
+      ```
+
+ `4. 測試場景：`
+ 
+    - 測試以下行為是否符合預期：
+      - 切換取件方式時，UI 是否即時切換並顯示正確內容。
+      - 地址輸入後，店家名稱是否被清空，且反映到 UI。
+      - 店家名稱選擇後，地址是否被清空，且反映到 UI。
+
+ -----------------
+
+ `* 總結`
+ 
+ - `reloadPickupMethodCell` 是實現取件方式相關更新的核心方法，通過與資料管理的緊密配合，確保用戶操作的即時性與邏輯一致性。
+ - 透過精確更新，既提升了性能又提高了代碼的可維護性。
+ */
+
+
+
+// MARK: - 筆記：OrderCustomerDetailsViewController
+/**
+ 
+ ## 筆記：OrderCustomerDetailsViewController
+
+ `* What`
+ 
+ - `OrderCustomerDetailsViewController` 是負責顯示與處理顧客詳細資料的視圖控制器。它的主要職責包括：
+ 
+ 1. 顯示表單：提供填寫顧客姓名、電話、取件方式、備註等信息的界面。
+ 2. 資料管理：透過 `CustomerDetailsManager` 獲取或更新顧客詳細資料。
+ 3. 行為處理：通過 `OrderCustomerDetailsHandler` 代理，用於監控表單內的用戶交互，觸發對應邏輯。
+ 4. 導航功能：處理選擇店家（`StoreSelectionViewController`）和提交訂單（`OrderConfirmationViewController`）的導航行為。
+
+ ------------
+
+ `* Why`
+ 
+ `1. 責任分離：`
+ 
+ - `OrderCustomerDetailsViewController` 負責用戶交互和業務邏輯。
+ - `OrderCustomerDetailsHandler` 處理表單的數據源、委託回調和內部交互。
+ - 這樣的架構清晰，便於維護和測試。
+    
+ `2. 資料一致性：`
+ 
+ - 透過 `CustomerDetailsManager` 集中管理資料，確保各部件同步更新。
+
+ `3. 提高用戶體驗：`
+ 
+ - 表單驗證：用戶僅能在資料完整時提交，減少誤操作。
+ - 即時更新：當資料變更時自動刷新表單相關區域，避免手動刷新。
+
+ ------------
+
+ `* How`
+
+ `1. 主界面設置：`
+ 
+ - 覆寫 `loadView()` 將 `OrderCustomerDetailsView` 設為主視圖，確保與表單展示一致。
+ - 初始化 `OrderCustomerDetailsHandler`，並設置其為表單的 `dataSource` 和 `delegate`。
+
+` 2. 資料處理：`
+ 
+ - 使用 `fetchAndPopulateUserDetails` 從 Firebase 獲取用戶資料，填充 `CustomerDetailsManager`。
+ - 當資料變更時，透過委託方法更新資料和提交按鈕狀態，例如 `didUpdatePickupMethod`。
+
+ `3. UI 更新：`
+ 
+ - 使用精準刷新（如 `reloadPickupMethodCell`）避免不必要的整體刷新，確保性能和用戶體驗。
+ - 使用 `updateSubmitButtonState` 根據資料驗證結果更新提交按鈕狀態。
+
+ `4. 導航操作：`
+ 
+ - `navigateToStoreSelection`：進入門市選擇界面，並通過委託回傳選擇結果。
+ - `presentOrderConfirmationViewController`：提交訂單後進入確認界面。
+
+ `5. 關鍵程式碼：`
+
+    - 資料填充：
+ 
+      ```swift
+      private func fetchAndPopulateUserDetails() {
+          HUDManager.shared.showLoading(text: "Loading Details...")
+          Task {
+              do {
+                  let userDetails = try await FirebaseController.shared.getCurrentUserDetails()
+                  CustomerDetailsManager.shared.populateCustomerDetails(from: userDetails)
+                  setupOrderDetailsHandler()
+              } catch {
+                  print("獲取用戶資料時發生錯誤：\(error)")
+              }
+              HUDManager.shared.dismiss()
+          }
+      }
+      ```
+
+    - 重新加載 PickupMethod Cell：
+ 
+      ```swift
+      private func reloadPickupMethodCell() {
+          let pickupMethodIndexPath = IndexPath(item: 0, section: OrderCustomerDetailsHandler.Section.pickupMethod.rawValue)
+          guard let pickupCell = orderCustomerDetailsView.orderCustomerDetailsCollectionView.cellForItem(at: pickupMethodIndexPath) as? OrderPickupMethodCell else { return }
+          guard let updatedCustomerDetails = CustomerDetailsManager.shared.getCustomerDetails() else { return }
+          print("[OrderCustomerDetailsViewController] Reloading PickupMethodCell with updated details: \(updatedCustomerDetails)")
+          pickupCell.configure(with: updatedCustomerDetails)
+      }
+      ```
+
+    - 更新提交按鈕狀態：
+ 
+      ```swift
+      func updateSubmitButtonState() {
+          let validationResult = CustomerDetailsManager.shared.validateCustomerDetails()
+          let isFormValid = (validationResult == .success)
+          let submitIndexPath = IndexPath(item: 0, section: OrderCustomerDetailsHandler.Section.submitAction.rawValue)
+          guard let submitCell = orderCustomerDetailsView.orderCustomerDetailsCollectionView.cellForItem(at: submitIndexPath) as? OrderCustomerSubmitCell else { return }
+          submitCell.configureSubmitButton(isEnabled: isFormValid)
+      }
+      ```
+
+ `6. 委託方法：`
+ 
+    - 更新資料：
+ 
+      ```swift
+      func didUpdateCustomerName(_ name: String) {
+          CustomerDetailsManager.shared.updateStoredCustomerDetails(fullName: name)
+          updateSubmitButtonState()
+      }
+      ```
+
+    - 導航到店家選擇：
+ 
+      ```swift
+      func navigateToStoreSelection() {
+          let storyboard = UIStoryboard(name: "Main", bundle: nil)
+          guard let storeSelectionVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.storeSelectionViewController) as? StoreSelectionViewController else {
+              return
+          }
+          storeSelectionVC.delegate = self
+          let navigationController = UINavigationController(rootViewController: storeSelectionVC)
+          present(navigationController, animated: true, completion: nil)
+      }
+      ```
+
+ ------------
+
+ `* 總結`
+
+ - 目的：`OrderCustomerDetailsViewController` 提供用戶資料填寫與表單提交功能，確保資料完整性並提升用戶體驗。
+ - 優點：責任分離清晰、資料更新即時、架構靈活，適合擴展與測試。
+ */
+
+
+// MARK: - 處理職責
+
+
 import UIKit
 
-/// `OrderCustomerDetailsViewController` 是一個用於顯示和處理顧客詳細資料的視圖控制器
+
+/// `OrderCustomerDetailsViewController` 是用於顯示與處理顧客詳細資料的視圖控制器。
 ///
-/// 主要功能包括填寫顧客的姓名、電話、取件方式、備註等資料，以便提交訂單。它包括自定義的 `OrderCustomerDetailsView`，以及使用 `OrderCustomerDetailsHandler` 來處理表單填寫的交互。
+/// ### 功能說明
+/// - 提供用戶填寫顧客姓名、電話、取件方式、備註等訂單相關資料的功能，確保訂單資料完整性。
+/// - 使用自定義的 `OrderCustomerDetailsView` 作為主視圖，負責顯示所有表單項目。
+/// - 透過 `OrderCustomerDetailsHandler` 處理表單資料的邏輯，確保資料流轉一致性。
+/// - 使用委託模式接收 `OrderCustomerDetailsHandler` 的通知，處理顧客資料變更並更新相關 UI。
+///
+/// ### 架構亮點
+/// - 責任分離:
+///   - 視圖控制器: 負責處理用戶交互（例如導航、提交按鈕狀態更新）與業務邏輯。
+///   - Handler: 集中處理資料源與表單項目交互邏輯，保持結構清晰。
+/// - 用戶體驗優化:
+///   - 透過表單驗證確保用戶只能在資料完整後提交訂單，減少誤操作。
+///   - 異步資料加載與實時更新，提高使用流暢度與反應速度。
 class OrderCustomerDetailsViewController: UIViewController {
     
     // MARK: - Properties
     
-    /// 用於存放訂單資料
-    var orderItems: [OrderItem] = []
+    /// 管理導航欄的輔助類，負責配置導航欄標題和樣式。
+    private var navigationBarManager: OrderCustomerDetailsNavigationBarManager?
     
-    /// 自訂的 OrderCustomerDetailsView，用於`展示訂單訂單填寫資訊項目`
+    /// 負責處理顧客詳細資料的數據源和交互邏輯。
+    private var ordercustomerDetailsHandler: OrderCustomerDetailsHandler?
+    
+    /// 自定義的視圖，展示顧客詳細資料的填寫項目。
     private let orderCustomerDetailsView = OrderCustomerDetailsView()
     
-    /// 處理`訂單顧客資料`的 OrderCustomerDetailsHandler
-    private var ordercustomerDetailsHandler: OrderCustomerDetailsHandler!
     
     // MARK: - Lifecycle Methods
     
@@ -441,28 +852,31 @@ class OrderCustomerDetailsViewController: UIViewController {
         view = orderCustomerDetailsView
     }
     
+    /// 配置視圖控制器的初始設置，例如導航欄、數據加載等。
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupNavigationTitle()
+        setupNavigationBar()
         fetchAndPopulateUserDetails()
-        logOrderItemsCount()
     }
     
     // MARK: - Setup Methods
     
-    /// 設置導航欄的標題
-    private func setupNavigationTitle() {
-        title = "Customer Details"
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.largeTitleDisplayMode = .always
+    /// 初始化並配置導航欄，包括標題和樣式。
+    private func setupNavigationBar() {
+        navigationBarManager = OrderCustomerDetailsNavigationBarManager(navigationItem: navigationItem, navigationController: navigationController)
+        navigationBarManager?.configureNavigationBarTitle(title: "Customer Details", prefersLargeTitles: true)
     }
     
-    /// 初始化 OrderCustomerDetailsHandler 並設置委託
-    ///
-    /// 創建 `OrderCustomerDetailsHandler` 來處理顧客詳細資料的相關交互，並將當前的視圖控制器設置為其委託，以便響應顧客資料的變更。
+    /// 初始化並設置 `OrderCustomerDetailsHandler`，負責表單的數據源和交互邏輯。
     private func setupOrderDetailsHandler() {
-        ordercustomerDetailsHandler = OrderCustomerDetailsHandler(collectionView: orderCustomerDetailsView.collectionView)
-        ordercustomerDetailsHandler.delegate = self
+        let handler = OrderCustomerDetailsHandler(orderCustomerDetailsHandlerDelegate: self)
+        self.ordercustomerDetailsHandler = handler
+        
+        // 設置 collectionView 的 dataSource 和 delegate
+        let collectionView = orderCustomerDetailsView.orderCustomerDetailsCollectionView
+        collectionView.dataSource = handler
+        collectionView.delegate = handler
+        collectionView.reloadData()
     }
     
     // MARK: - Data Handling
@@ -476,72 +890,127 @@ class OrderCustomerDetailsViewController: UIViewController {
         Task {
             do {
                 let userDetails = try await FirebaseController.shared.getCurrentUserDetails()
-                print("Fetched user details: \(userDetails)")
+                print("[OrderCustomerDetailsViewController]: Fetched user details: \(userDetails)")
                 CustomerDetailsManager.shared.populateCustomerDetails(from: userDetails)
                 
                 // 在資料填充完成後初始化 OrderCustomerDetailsHandler
                 setupOrderDetailsHandler()
                 
-                // 刷新 collection view 以顯示已填寫的資料
-                orderCustomerDetailsView.collectionView.reloadData()
-                print("Collection view reloaded after populating user details")
             } catch {
-                print("獲取用戶資料時發生錯誤：\(error)")
+                print("[OrderCustomerDetailsViewController]: 獲取用戶資料時發生錯誤：\(error)")
             }
             HUDManager.shared.dismiss()
         }
     }
     
-    /// `測試用`：觀察訂單項目數量，確認傳遞的資料是否正確
-    private func logOrderItemsCount() {
-        print("接收到的訂單項目數量：\(orderItems.count)")
-    }
+    // MARK: - UI Updates
     
-    // MARK: - 更新提交按鈕狀態
+    /// 重新加載 `PickupMethod` 相關的 cell，確保 UI 與資料同步。
+    ///
+    /// ### 功能說明
+    /// - 透過獲取當前顧客資料 (`CustomerDetailsManager.getCustomerDetails()`)，更新 `PickupMethodCell` 的顯示內容。
+    /// - 使用 `cellForItem(at:)` 精準定位 `PickupMethodCell`，避免整體刷新 `CollectionView`。
+    ///
+    /// ### 適用場景
+    /// - 當顧客的取件方式（如到店取件或外送服務）變更時，需即時更新該區域的顯示。
+    /// - 當相關數據（如地址或門市名稱）發生變更，需同步顯示最新資料。
+    private func reloadPickupMethodCell() {
+        let pickupMethodIndexPath = IndexPath(item: 0, section: OrderCustomerDetailsHandler.Section.pickupMethod.rawValue)
+        guard let pickupCell = orderCustomerDetailsView.orderCustomerDetailsCollectionView.cellForItem(at: pickupMethodIndexPath) as? OrderPickupMethodCell else { return }
+        guard let updatedCustomerDetails = CustomerDetailsManager.shared.getCustomerDetails() else { return }
+        print("[OrderCustomerDetailsViewController] Reloading PickupMethodCell with updated details: \(updatedCustomerDetails)")
+        pickupCell.configure(with: updatedCustomerDetails)
+    }
     
     /// 在每次顧客資料變更（例如姓名、電話、地址等變更）時，調用 updateSubmitButtonState() 方法來檢查資料是否完整
     ///
-    /// 根據顧客資料的驗證結果來啟用或禁用提交按鈕。這樣可以確保用戶在所有必要資料未完整前無法提交訂單。
+    /// - 根據顧客資料的驗證結果來啟用或禁用提交按鈕。這樣可以確保用戶在所有必要資料未完整前無法提交訂單。
     func updateSubmitButtonState() {
         let validationResult = CustomerDetailsManager.shared.validateCustomerDetails()
         let isFormValid = (validationResult == .success)
-        print("更新提交按鈕狀態: \(isFormValid ? "啟用" : "禁用") - 由於：\(validationResult)")
+        print("[OrderCustomerDetailsViewController]:更新提交按鈕狀態: \(isFormValid ? "啟用" : "禁用") - 由於：\(validationResult)")
         
-        // 獲取提交按鈕所在的 indexPath，並更新按鈕狀態
         let submitIndexPath = IndexPath(item: 0, section: OrderCustomerDetailsHandler.Section.submitAction.rawValue)
-        
-        if let submitCell = orderCustomerDetailsView.collectionView.cellForItem(at: submitIndexPath) as? OrderCustomerSubmitCell {
-            submitCell.configureSubmitButton(isEnabled: isFormValid)
-        }
+        guard let submitCell = orderCustomerDetailsView.orderCustomerDetailsCollectionView.cellForItem(at: submitIndexPath) as? OrderCustomerSubmitCell else { return }
+        submitCell.configureSubmitButton(isEnabled: isFormValid)
     }
+    
 }
 
 // MARK: - OrderCustomerDetailsHandlerDelegate
 extension OrderCustomerDetailsViewController: OrderCustomerDetailsHandlerDelegate {
-
-    /// 當顧客資料有變更時調用
+    
+    /// 當顧客姓名變更時觸發
     ///
-    /// 通過更新提交按鈕狀態來即時反映顧客資料的變更，以確保表單驗證邏輯始終準確。
-    func customerDetailsDidChange() {
-        print("Customer details did change, updating submit button state.")
+    /// - Parameter name: 更新後的顧客姓名
+    /// - 功能：將新的姓名更新至 `CustomerDetailsManager`，並重新檢查提交按鈕的啟用狀態。
+    func didUpdateCustomerName(_ name: String) {
+        CustomerDetailsManager.shared.updateStoredCustomerDetails(fullName: name)
         updateSubmitButtonState()
+    }
+    
+    /// 當顧客電話號碼變更時觸發
+    ///
+    /// - Parameter phone: 更新後的顧客電話號碼
+    /// - 功能：將新的電話號碼更新至 `CustomerDetailsManager`，並重新檢查提交按鈕的啟用狀態。
+    func didUpdateCustomerPhone(_ phone: String) {
+        CustomerDetailsManager.shared.updateStoredCustomerDetails(phoneNumber: phone)
+        updateSubmitButtonState()
+    }
+    
+    /// 當顧客取件方式變更時觸發
+    ///
+    /// - Parameter method: 更新後的取件方式（例如：到店取件或外送服務）
+    /// - 功能：
+    ///   - 更新取件方式至 `CustomerDetailsManager`。
+    ///   - 刷新 `PickupMethodCell` 的顯示，以確保 UI 與資料同步。
+    ///   - 檢查提交按鈕的啟用狀態。
+    func didUpdatePickupMethod(_ method: PickupMethod) {
+        CustomerDetailsManager.shared.updatePickupMethod(method)
+        reloadPickupMethodCell()
+        updateSubmitButtonState()
+    }
+    
+    /// 當顧客選擇的門市名稱變更時觸發
+    ///
+    /// - Parameter storeName: 更新後的門市名稱
+    /// - 功能：更新門市名稱至 `CustomerDetailsManager`，並重新檢查提交按鈕的啟用狀態。
+    func didUpdateCustomerStoreName(_ storeName: String) {
+        CustomerDetailsManager.shared.updateStoredCustomerDetails(storeName: storeName)
+        updateSubmitButtonState()
+    }
+    
+    /// 當顧客外送地址變更時觸發
+    ///
+    /// - Parameter address: 更新後的外送地址
+    /// - 功能：更新外送地址至 `CustomerDetailsManager`，並重新檢查提交按鈕的啟用狀態。
+    func didUpdateCustomerAddress(_ address: String) {
+        CustomerDetailsManager.shared.updateStoredCustomerDetails(address: address)
+        updateSubmitButtonState()
+    }
+    
+    /// 當顧客備註內容變更時觸發
+    ///
+    /// - Parameter notes: 更新後的備註內容
+    /// - 功能：更新備註內容至 `CustomerDetailsManager`。
+    func didUpdateCustomerNotes(_ notes: String) {
+        CustomerDetailsManager.shared.updateStoredCustomerDetails(notes: notes)
     }
     
     /// 用於處理提交訂單的操作
     ///
-    /// 當用戶點擊提交按鈕時調用，這裡會調用 OrderManager 來`提交訂單`並在成功或失敗後給予回應。
-    func submitOrder() {
+    /// 當用戶點擊提交按鈕時調用，這裡會調用 `OrderManager` 來`提交訂單`並在成功或失敗後給予回應。
+    func didTapSubmitOrderButton() {
         AlertService.showAlert(withTitle: "確認提交訂單", message: "您確定要提交訂單嗎？", inViewController: self, showCancelButton: true) { [weak self] in
             guard let self = self else { return }
             
             Task {
                 do {
                     try await OrderManager.shared.submitOrder()
-                    print("訂單已成功提交")
-                    // 提交成功後呈現 OrderConfirmationViewController
+                    print("[OrderCustomerDetailsViewController]: 訂單已成功提交")
                     self.presentOrderConfirmationViewController()
                 } catch {
-                    print("訂單提交失敗：\(error.localizedDescription)")
+                    print("[OrderCustomerDetailsViewController]: 訂單提交失敗：\(error.localizedDescription)")
                     // 顯示錯誤提示(或者改成跳出一個失敗的畫面)
                     AlertService.showAlert(withTitle: "提交失敗", message: "訂單提交過程中出現錯誤，請稍後再試。", inViewController: self, showCancelButton: false, completion: nil)
                 }
@@ -550,34 +1019,33 @@ extension OrderCustomerDetailsViewController: OrderCustomerDetailsHandlerDelegat
     }
     
     // MARK: - Navigation Methods
-
-    /// 呈現 OrderConfirmationViewController 的方法
+    
+    /// 呈現 `OrderConfirmationViewController` ( 訂單確認頁面 ) 的方法
     private func presentOrderConfirmationViewController() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        if let orderConfirmationVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.orderConfirmationViewController) as? OrderConfirmationViewController {
-            orderConfirmationVC.modalPresentationStyle = .fullScreen
-            self.present(orderConfirmationVC, animated: true, completion: nil)
-        } else {
+        guard let orderConfirmationVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.orderConfirmationViewController) as? OrderConfirmationViewController else {
             print("無法找到 ID 為 OrderConfirmationViewController 的視圖控制器")
+            return
         }
+        orderConfirmationVC.modalPresentationStyle = .fullScreen
+        self.present(orderConfirmationVC, animated: true, completion: nil)
     }
     
-    /// 導航至 StoreSelectionViewController 來選擇取件門市
+    /// 導航至 `StoreSelectionViewController` 來選擇取件門市
     ///
-    /// 用於顯示一個 fullScreen 的 StoreSelectionViewController，讓用戶可以瀏覽和選擇可用的取件門市。
-    /// 它同時設置了 StoreSelectionViewController 的委託為當前控制器，以便用戶選擇門市後能夠即時更新顧客資料。
+    /// 用於顯示一個 `fullScreen` 的 `StoreSelectionViewController`，讓用戶可以瀏覽和選擇可用的取件門市。
+    /// 它同時設置了 `StoreSelectionViewController` 的委託為當前控制器，以便用戶選擇門市後能夠即時更新顧客資料。
     func navigateToStoreSelection() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        if let storeSelectionVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.storeSelectionViewController) as? StoreSelectionViewController {
-            
-            storeSelectionVC.delegate = self // 設置代理以便返回時接收選擇結果
-            
-            let navigationController = UINavigationController(rootViewController: storeSelectionVC)
-            navigationController.modalPresentationStyle = .fullScreen
-            present(navigationController, animated: true, completion: nil)
-        } else {
+        guard let storeSelectionVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.storeSelectionViewController) as? StoreSelectionViewController else {
             print("無法找到 ID 為 StoreSelectionViewControllerID 的視圖控制器")
+            return
         }
+        storeSelectionVC.delegate = self // 設置代理以便返回時接收選擇結果
+        
+        let navigationController = UINavigationController(rootViewController: storeSelectionVC)
+        navigationController.modalPresentationStyle = .fullScreen
+        present(navigationController, animated: true, completion: nil)
     }
     
 }
@@ -587,16 +1055,19 @@ extension OrderCustomerDetailsViewController: StoreSelectionResultDelegate {
     
     /// 當用戶選擇完門市後調用
     ///
-    /// 這個方法負責處理用戶選擇的門市結果。它會更新 CustomerDetailsManager 中的 storeName，並刷新取件方式的區域顯示。
+    /// 這個方法負責處理用戶選擇的門市結果。它會更新 `CustomerDetailsManager` 中的 `storeName`，並刷新取件方式的區域顯示。
     /// 最後，根據新的門市選擇來更新提交按鈕的狀態，確保所有必填項目都已完成。
     func storeSelectionDidComplete(with storeName: String) {
+        
         // 更新 CustomerDetailsManager 中的 storeName
         CustomerDetailsManager.shared.updateStoredCustomerDetails(storeName: storeName)
-        print("Store selected: \(storeName)")
+        print("[OrderCustomerDetailsViewController]: Store selected: \(storeName)")
+        
         // 刷新取件方式區域的 Cell
         let pickupSectionIndex = OrderCustomerDetailsHandler.Section.pickupMethod.rawValue
-        orderCustomerDetailsView.collectionView.reloadSections(IndexSet(integer: pickupSectionIndex))
-        print("Pickup method section reloaded after store selection")
+        orderCustomerDetailsView.orderCustomerDetailsCollectionView.reloadSections(IndexSet(integer: pickupSectionIndex))
+        print("[OrderCustomerDetailsViewController]: Pickup method section reloaded after store selection")
+        
         // 更新提交按鈕狀態
         updateSubmitButtonState()
     }
