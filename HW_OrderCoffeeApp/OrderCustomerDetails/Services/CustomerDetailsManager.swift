@@ -354,13 +354,13 @@ class CustomerDetailsManager {
             )
         }
         // Print statements to observe population
-        print("Populating customer details:")
-        print("Full Name: \(self.customerDetails?.fullName ?? "No Full Name Set")")
-        print("Phone Number: \(self.customerDetails?.phoneNumber ?? "No Phone Number Set")")
-        print("Address: \(self.customerDetails?.address ?? "No Address Provided")")
-        print("Pickup Method: \(self.customerDetails?.pickupMethod.rawValue ?? "No Pickup Method Set")")
-        print("Store Name: \(self.customerDetails?.storeName ?? "No Store Name Set")")
-        print("Note: \(self.customerDetails?.notes ?? "No Notes")")
+        print("[CustomerDetailsManager]: Populating customer details:")
+        print("[CustomerDetailsManager]: Full Name: \(self.customerDetails?.fullName ?? "No Full Name Set")")
+        print("[CustomerDetailsManager]: Phone Number: \(self.customerDetails?.phoneNumber ?? "No Phone Number Set")")
+        print("[CustomerDetailsManager]: Address: \(self.customerDetails?.address ?? "No Address Provided")")
+        print("[CustomerDetailsManager]: Pickup Method: \(self.customerDetails?.pickupMethod.rawValue ?? "No Pickup Method Set")")
+        print("[CustomerDetailsManager]: Store Name: \(self.customerDetails?.storeName ?? "No Store Name Set")")
+        print("[CustomerDetailsManager]: Note: \(self.customerDetails?.notes ?? "No Notes")")
     }
     
     /// 更新顧客詳細資料（包括姓名、電話、地址、店家名稱、備註）
@@ -376,35 +376,35 @@ class CustomerDetailsManager {
     /// 這樣的設計是為了確保顧客的配送方式和取件方式不互相衝突。
     func updateStoredCustomerDetails(fullName: String? = nil, phoneNumber: String? = nil, address: String? = nil, storeName: String? = nil, notes: String? = nil) {
         guard var details = customerDetails else {
-            print("CustomerDetails 尚未初始化")
+            print("[CustomerDetailsManager]: 尚未初始化")
             return
         }
 
         if let fullName = fullName {
             details.fullName = fullName
-            print("CustomerDetails 已更新姓名：\(fullName)")
+            print("[CustomerDetailsManager]: 已更新姓名：\(fullName)")
         }
         if let phoneNumber = phoneNumber {
             details.phoneNumber = phoneNumber
-            print("CustomerDetails 已更新電話號碼：\(phoneNumber)")
+            print("[CustomerDetailsManager]: 已更新電話號碼：\(phoneNumber)")
         }
         if let address = address {
             details.address = address
             details.storeName = nil // 當地址有值時，清空店家名稱
-            print("CustomerDetails 已更新地址：\(address)，並清空店家名稱")
+            print("[CustomerDetailsManager]: 已更新地址：\(address)，並清空店家名稱")
         }
         if let storeName = storeName {
             details.storeName = storeName
             details.address = nil // 當店家名稱有值時，清空地址
-            print("CustomerDetails 已更新店家名稱：\(storeName)，並清空地址")
+            print("[CustomerDetailsManager]: 已更新店家名稱：\(storeName)，並清空地址")
         }
         if let notes = notes {
             details.notes = notes
-            print("CustomerDetails 已更新備註內容：\(notes)")
+            print("[CustomerDetailsManager]: 已更新備註內容：\(notes)")
         }
 
         customerDetails = details
-        print("CustomerDetails 已更新: \(customerDetails.debugDescription)")
+        print("[CustomerDetailsManager]: 已更新: \(customerDetails.debugDescription)")
     }
 
     /// 更新取件方式
@@ -412,7 +412,7 @@ class CustomerDetailsManager {
     func updatePickupMethod(_ method: PickupMethod) {
         guard var details = customerDetails else { return }
         details.pickupMethod = method
-        print("CustomerDetails 已更新取件方式：\(method.rawValue)")
+        print("[CustomerDetailsManager]: 已更新取件方式：\(method.rawValue)")
         self.customerDetails = details
     }
 
@@ -458,7 +458,7 @@ class CustomerDetailsManager {
     ///   2. 用戶登出帳號時，以確保新用戶登入時不會殘留之前的顧客資料。
     func resetCustomerDetails() {
         customerDetails = nil
-        print("CustomerDetails 已被重置")
+        print("[CustomerDetailsManager]: 已被重置")
     }
 
 }
