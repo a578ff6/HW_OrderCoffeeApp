@@ -313,7 +313,6 @@ extension OrderItemViewController: OrderItemHandlerDelegate {
             return
         }
         
-        customerDetailsVC.orderItems = orderItemManager.orderItems   // 傳遞訂單資料
         navigationController?.pushViewController(customerDetailsVC, animated: true)
     }
     
