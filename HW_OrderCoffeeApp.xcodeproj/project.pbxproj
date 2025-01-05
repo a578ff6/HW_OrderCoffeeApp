@@ -245,6 +245,18 @@
 		939BA4CF2D228A65004FD33E /* OrderItemActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BA4CE2D228A65004FD33E /* OrderItemActionButton.swift */; };
 		939BA4D32D236C6E004FD33E /* OrderItemHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BA4D22D236C6E004FD33E /* OrderItemHandlerDelegate.swift */; };
 		939BA4D52D23C90A004FD33E /* OrderitemNavigationBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BA4D42D23C90A004FD33E /* OrderitemNavigationBarManager.swift */; };
+		939BA4DA2D25390E004FD33E /* OrderCustomerDetailsLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BA4D92D25390E004FD33E /* OrderCustomerDetailsLabel.swift */; };
+		939BA4DC2D2541DC004FD33E /* OrderCustomerDetailsStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BA4DB2D2541DC004FD33E /* OrderCustomerDetailsStackView.swift */; };
+		939BA4DE2D263256004FD33E /* OrderCustomerDetailsTermsMessageTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BA4DD2D263256004FD33E /* OrderCustomerDetailsTermsMessageTextView.swift */; };
+		939BA4E02D26549B004FD33E /* OrderCustomerDetailsIconImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BA4DF2D26549B004FD33E /* OrderCustomerDetailsIconImageView.swift */; };
+		939BA4E22D26942A004FD33E /* OrderCustomerDetailsTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BA4E12D26942A004FD33E /* OrderCustomerDetailsTextField.swift */; };
+		939BA4E42D277A76004FD33E /* OrderCustomerDetailsSelectStoreButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BA4E32D277A76004FD33E /* OrderCustomerDetailsSelectStoreButton.swift */; };
+		939BA4E62D277F58004FD33E /* OrderCustomerDetailsSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BA4E52D277F58004FD33E /* OrderCustomerDetailsSegmentedControl.swift */; };
+		939BA4E82D27ACA5004FD33E /* OrderCustomerDetailsNoteTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BA4E72D27ACA5004FD33E /* OrderCustomerDetailsNoteTextView.swift */; };
+		939BA4EA2D27F3CF004FD33E /* OrderCustomerDetailsActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BA4E92D27F3CF004FD33E /* OrderCustomerDetailsActionButton.swift */; };
+		939BA4EC2D28128E004FD33E /* OrderCustomerDetailsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BA4EB2D28128E004FD33E /* OrderCustomerDetailsCollectionView.swift */; };
+		939BA4EE2D28A3EF004FD33E /* OrderCustomerDetailsSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BA4ED2D28A3EF004FD33E /* OrderCustomerDetailsSeparatorView.swift */; };
+		939BA4F12D28A959004FD33E /* OrderCustomerDetailsNavigationBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BA4F02D28A959004FD33E /* OrderCustomerDetailsNavigationBarManager.swift */; };
 		939BD9D02B2A1B1700616D1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9CF2B2A1B1700616D1C /* AppDelegate.swift */; };
 		939BD9D22B2A1B1700616D1C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BD9D12B2A1B1700616D1C /* SceneDelegate.swift */; };
 		939BD9D72B2A1B1700616D1C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 939BD9D52B2A1B1700616D1C /* Main.storyboard */; };
@@ -609,6 +621,18 @@
 		939BA4CE2D228A65004FD33E /* OrderItemActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderItemActionButton.swift; sourceTree = "<group>"; };
 		939BA4D22D236C6E004FD33E /* OrderItemHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderItemHandlerDelegate.swift; sourceTree = "<group>"; };
 		939BA4D42D23C90A004FD33E /* OrderitemNavigationBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderitemNavigationBarManager.swift; sourceTree = "<group>"; };
+		939BA4D92D25390E004FD33E /* OrderCustomerDetailsLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCustomerDetailsLabel.swift; sourceTree = "<group>"; };
+		939BA4DB2D2541DC004FD33E /* OrderCustomerDetailsStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCustomerDetailsStackView.swift; sourceTree = "<group>"; };
+		939BA4DD2D263256004FD33E /* OrderCustomerDetailsTermsMessageTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCustomerDetailsTermsMessageTextView.swift; sourceTree = "<group>"; };
+		939BA4DF2D26549B004FD33E /* OrderCustomerDetailsIconImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCustomerDetailsIconImageView.swift; sourceTree = "<group>"; };
+		939BA4E12D26942A004FD33E /* OrderCustomerDetailsTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCustomerDetailsTextField.swift; sourceTree = "<group>"; };
+		939BA4E32D277A76004FD33E /* OrderCustomerDetailsSelectStoreButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCustomerDetailsSelectStoreButton.swift; sourceTree = "<group>"; };
+		939BA4E52D277F58004FD33E /* OrderCustomerDetailsSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCustomerDetailsSegmentedControl.swift; sourceTree = "<group>"; };
+		939BA4E72D27ACA5004FD33E /* OrderCustomerDetailsNoteTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCustomerDetailsNoteTextView.swift; sourceTree = "<group>"; };
+		939BA4E92D27F3CF004FD33E /* OrderCustomerDetailsActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCustomerDetailsActionButton.swift; sourceTree = "<group>"; };
+		939BA4EB2D28128E004FD33E /* OrderCustomerDetailsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCustomerDetailsCollectionView.swift; sourceTree = "<group>"; };
+		939BA4ED2D28A3EF004FD33E /* OrderCustomerDetailsSeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCustomerDetailsSeparatorView.swift; sourceTree = "<group>"; };
+		939BA4F02D28A959004FD33E /* OrderCustomerDetailsNavigationBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCustomerDetailsNavigationBarManager.swift; sourceTree = "<group>"; };
 		939BD9CC2B2A1B1700616D1C /* HW_OrderCoffeeApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HW_OrderCoffeeApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		939BD9CF2B2A1B1700616D1C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		939BD9D12B2A1B1700616D1C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -1235,11 +1259,14 @@
 		9353743C2CB5145D00794A63 /* OrderCustomerDetails */ = {
 			isa = PBXGroup;
 			children = (
-				935374602CC95BA000794A63 /* Delegates */,
-				935374612CC95BAE00794A63 /* Handler */,
+				939BA4D72D2537F1004FD33E /* Components */,
+				939BA4D82D25385D004FD33E /* Cell */,
 				935374622CC95BBB00794A63 /* Layouts */,
 				935374632CC95BC700794A63 /* Views */,
+				935374612CC95BAE00794A63 /* Handler */,
+				935374602CC95BA000794A63 /* Delegates */,
 				935374642CC95BD900794A63 /* View Controllers */,
+				939BA4EF2D28A91D004FD33E /* Managers */,
 				935374652CC95DAC00794A63 /* Models */,
 				935374662CC95DC000794A63 /* Services */,
 			);
@@ -1283,11 +1310,6 @@
 			children = (
 				9353744C2CB7EF3900794A63 /* OrderCustomerDetailsView.swift */,
 				935374542CB93F6D00794A63 /* OrderCustomerDetailsSectionHeaderView.swift */,
-				935374562CB9A6B300794A63 /* OrderTermsMessageCell.swift */,
-				935374502CB80D0000794A63 /* OrderCustomerInfoCell.swift */,
-				935374582CBB038D00794A63 /* OrderPickupMethodCell.swift */,
-				9353745A2CBD43B900794A63 /* OrderCustomerNoteCell.swift */,
-				9353745C2CBF281B00794A63 /* OrderCustomerSubmitCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1303,6 +1325,7 @@
 		935374652CC95DAC00794A63 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				935374432CB67DB100794A63 /* Order.swift */,
 				9353743F2CB666E800794A63 /* CustomerDetails.swift */,
 			);
 			path = Models;
@@ -1311,6 +1334,7 @@
 		935374662CC95DC000794A63 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				93B9DC802C32D7740050BC3F /* OrderManager.swift */,
 				935374472CB6D9F600794A63 /* CustomerDetailsManager.swift */,
 			);
 			path = Services;
@@ -2024,7 +2048,6 @@
 			isa = PBXGroup;
 			children = (
 				93B9DC7E2C32C5BC0050BC3F /* MenuController.swift */,
-				93B9DC802C32D7740050BC3F /* OrderManager.swift */,
 				939BDA642B2ACBA200616D1C /* FirebaseController.swift */,
 			);
 			path = Core;
@@ -2088,6 +2111,44 @@
 			isa = PBXGroup;
 			children = (
 				939BA4D42D23C90A004FD33E /* OrderitemNavigationBarManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		939BA4D72D2537F1004FD33E /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				939BA4EB2D28128E004FD33E /* OrderCustomerDetailsCollectionView.swift */,
+				939BA4D92D25390E004FD33E /* OrderCustomerDetailsLabel.swift */,
+				939BA4DB2D2541DC004FD33E /* OrderCustomerDetailsStackView.swift */,
+				939BA4DD2D263256004FD33E /* OrderCustomerDetailsTermsMessageTextView.swift */,
+				939BA4DF2D26549B004FD33E /* OrderCustomerDetailsIconImageView.swift */,
+				939BA4E12D26942A004FD33E /* OrderCustomerDetailsTextField.swift */,
+				939BA4E32D277A76004FD33E /* OrderCustomerDetailsSelectStoreButton.swift */,
+				939BA4E52D277F58004FD33E /* OrderCustomerDetailsSegmentedControl.swift */,
+				939BA4E72D27ACA5004FD33E /* OrderCustomerDetailsNoteTextView.swift */,
+				939BA4E92D27F3CF004FD33E /* OrderCustomerDetailsActionButton.swift */,
+				939BA4ED2D28A3EF004FD33E /* OrderCustomerDetailsSeparatorView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		939BA4D82D25385D004FD33E /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				935374562CB9A6B300794A63 /* OrderTermsMessageCell.swift */,
+				935374502CB80D0000794A63 /* OrderCustomerInfoCell.swift */,
+				935374582CBB038D00794A63 /* OrderPickupMethodCell.swift */,
+				9353745A2CBD43B900794A63 /* OrderCustomerNoteCell.swift */,
+				9353745C2CBF281B00794A63 /* OrderCustomerSubmitCell.swift */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		939BA4EF2D28A91D004FD33E /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				939BA4F02D28A959004FD33E /* OrderCustomerDetailsNavigationBarManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -2436,7 +2497,6 @@
 			isa = PBXGroup;
 			children = (
 				93B9DC842C3546150050BC3F /* UserDetails.swift */,
-				935374432CB67DB100794A63 /* Order.swift */,
 				939BDA732B2FB3E400616D1C /* MenuModels.swift */,
 			);
 			path = Models;
@@ -2673,9 +2733,11 @@
 				938064432D191BF600537F01 /* DrinkDetailFavoriteStateCoordinator.swift in Sources */,
 				93755BFC2C79D20C002570A5 /* EditProfileViewController.swift in Sources */,
 				939BDA762B2FC08300616D1C /* CategoryCollectionViewCell.swift in Sources */,
+				939BA4DE2D263256004FD33E /* OrderCustomerDetailsTermsMessageTextView.swift in Sources */,
 				93755C442C8466A4002570A5 /* WebsiteImageCell.swift in Sources */,
 				934FB5642CF8ADA600757C7C /* LoginCustomImageView.swift in Sources */,
 				939BDA692B2B82BC00616D1C /* AlertService.swift in Sources */,
+				939BA4EC2D28128E004FD33E /* OrderCustomerDetailsCollectionView.swift in Sources */,
 				938064662D1B6A8700537F01 /* EditOrderItemSizeSelectionCollectionViewCell.swift in Sources */,
 				9380640B2D0CB4D200537F01 /* FavoritesHandlerDelegate.swift in Sources */,
 				939BDA652B2ACBA200616D1C /* FirebaseController.swift in Sources */,
@@ -2688,10 +2750,12 @@
 				9352914A2C8D85790018B060 /* DrinkDetailView.swift in Sources */,
 				934FB55E2CF8AC0500757C7C /* LoginTextButton.swift in Sources */,
 				9380644D2D1A7D7200537F01 /* EditOrderItemSection.swift in Sources */,
+				939BA4EA2D27F3CF004FD33E /* OrderCustomerDetailsActionButton.swift in Sources */,
 				938122332CE4639900ADFB7B /* OrderrHistoryDetailCell.swift in Sources */,
 				935374362CB00E2E00794A63 /* OrderItemHandler.swift in Sources */,
 				9353746E2CCABDCA00794A63 /* StoreSelectionMapHandler.swift in Sources */,
 				938064162D0F63FB00537F01 /* DrinkDetailImageView.swift in Sources */,
+				939BA4E22D26942A004FD33E /* OrderCustomerDetailsTextField.swift in Sources */,
 				93B7B5632CD80CF800E0205A /* OrderConfirmationManager.swift in Sources */,
 				939BA4C92D214C10004FD33E /* OrderItemStackView.swift in Sources */,
 				93F9BB5C2C2E4E6200355A87 /* ColumnItemCell.swift in Sources */,
@@ -2704,6 +2768,7 @@
 				936E09AD2CF080AF0092F246 /* SearchDrinkDataLoader.swift in Sources */,
 				935374552CB93F6D00794A63 /* OrderCustomerDetailsSectionHeaderView.swift in Sources */,
 				938064702D1B9D2E00537F01 /* EditOrderItemOptionsCollectionViewCell.swift in Sources */,
+				939BA4E62D277F58004FD33E /* OrderCustomerDetailsSegmentedControl.swift in Sources */,
 				935291302C875DA30018B060 /* UIView+ScaleAnimation.swift in Sources */,
 				934FB5E42D04B51900757C7C /* PhotoChangeHandlerDelegate.swift in Sources */,
 				93F9BB5E2C2E4EEA00355A87 /* GridItemCell.swift in Sources */,
@@ -2761,6 +2826,7 @@
 				9380643E2D154D1A00537F01 /* DrinkDetailFavoritesHandler.swift in Sources */,
 				938122292CE358EA00ADFB7B /* OrderHistoryDetail.swift in Sources */,
 				9353745B2CBD43B900794A63 /* OrderCustomerNoteCell.swift in Sources */,
+				939BA4E02D26549B004FD33E /* OrderCustomerDetailsIconImageView.swift in Sources */,
 				935374332CAFC29D00794A63 /* OrderItemLayoutProvider.swift in Sources */,
 				93B7B5852CDD3BB700E0205A /* OrderHistoryCell.swift in Sources */,
 				939BDA812B32959700616D1C /* DrinksCategorySectionHeaderView.swift in Sources */,
@@ -2772,10 +2838,12 @@
 				9353745F2CC3D3F800794A63 /* OrderCustomerDetailsHandlerDelegate.swift in Sources */,
 				9381223D2CE58DA600ADFB7B /* OrderHistoryDetailSharingHandler.swift in Sources */,
 				936E09BF2CF5D7990092F246 /* HomePageViewDelegate.swift in Sources */,
+				939BA4F12D28A959004FD33E /* OrderCustomerDetailsNavigationBarManager.swift in Sources */,
 				938063F32D07B60300537F01 /* UserProfileSection.swift in Sources */,
 				934FB5CC2D00739000757C7C /* EditProfileTableHandlerDelegate.swift in Sources */,
 				939BD9D02B2A1B1700616D1C /* AppDelegate.swift in Sources */,
 				934FB5A22CFDD64B00757C7C /* ForgotPasswordScrollView.swift in Sources */,
+				939BA4E82D27ACA5004FD33E /* OrderCustomerDetailsNoteTextView.swift in Sources */,
 				9353745D2CBF281C00794A63 /* OrderCustomerSubmitCell.swift in Sources */,
 				935374152C9C5CD000794A63 /* FavoritesHandler.swift in Sources */,
 				934FB58C2CFA9A3000757C7C /* SignUpScrollView.swift in Sources */,
@@ -2855,6 +2923,7 @@
 				938064292D11387300537F01 /* DrinkDetailModel.swift in Sources */,
 				9380642C2D11491300537F01 /* DrinkDetailManager.swift in Sources */,
 				93755C1D2C8094D0002570A5 /* UserProfileInfoCell.swift in Sources */,
+				939BA4E42D277A76004FD33E /* OrderCustomerDetailsSelectStoreButton.swift in Sources */,
 				9381222F2CE45A7F00ADFB7B /* OrderrHistoryDetailItemCell.swift in Sources */,
 				93F9BB3A2C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift in Sources */,
 				938064312D12319B00537F01 /* DrinkDetailSection.swift in Sources */,
@@ -2904,6 +2973,7 @@
 				93DB1D332C47696000BA2CC1 /* LoginView.swift in Sources */,
 				93B7B5812CDBB6B900E0205A /* OrderHistoryManager.swift in Sources */,
 				9352913C2C8837040018B060 /* DrinksCategoryViewController.swift in Sources */,
+				939BA4DA2D25390E004FD33E /* OrderCustomerDetailsLabel.swift in Sources */,
 				93B7B5512CD5E20500E0205A /* OrderConfirmationView.swift in Sources */,
 				93755C002C79E454002570A5 /* ProfileTextFieldCell.swift in Sources */,
 				9352914C2C8D91480018B060 /* DrinkDetailHandler.swift in Sources */,
@@ -2925,6 +2995,7 @@
 				934FB55A2CF8A92100757C7C /* LoginLabel.swift in Sources */,
 				9389D19D2D2134F900EFAA41 /* OrderItemImageView.swift in Sources */,
 				93B9DC7A2C3181910050BC3F /* UIView+SpringAnimation.swift in Sources */,
+				939BA4DC2D2541DC004FD33E /* OrderCustomerDetailsStackView.swift in Sources */,
 				935374442CB67DB100794A63 /* Order.swift in Sources */,
 				934FB5882CFA962400757C7C /* SignUpAttributedButton.swift in Sources */,
 				938063F72D08676F00537F01 /* UserProfileLogoutCell.swift in Sources */,
@@ -2938,6 +3009,7 @@
 				93755C3E2C838516002570A5 /* WebsiteManager.swift in Sources */,
 				93B7B55D2CD70FA900E0205A /* OrderrConfirmationItemDetailsCell.swift in Sources */,
 				93755BFA2C7700FD002570A5 /* PhotoPickerManager.swift in Sources */,
+				939BA4EE2D28A3EF004FD33E /* OrderCustomerDetailsSeparatorView.swift in Sources */,
 				934FB5D42D0121B800757C7C /* EditProfileLabel.swift in Sources */,
 				93BD48C32C5CE5B500144E7F /* EmailSignInController.swift in Sources */,
 				938064502D1A841A00537F01 /* EditOrderItemCollectionView.swift in Sources */,
