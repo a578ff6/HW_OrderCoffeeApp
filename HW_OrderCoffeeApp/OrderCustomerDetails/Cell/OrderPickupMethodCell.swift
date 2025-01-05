@@ -7,8 +7,8 @@
 
 
 // MARK: - OrderPickupMethodCell 重點筆記
-
 /**
+ 
  ## OrderPickupMethodCell 重點筆記：
 
     * `功能`：
@@ -21,7 +21,7 @@
         - `storeTextField`：顯示已選擇的店家名稱，無法直接編輯。
         - `selectStoreButton`：供使用者選擇店家的按鈕。
         - `promptSelectLabel`：提示使用者選擇店家的標籤。
-        - `addressTextField`：供使用者輸入外送地址的 UITextField。
+        - `deliveryAddressTextField`：供使用者輸入外送地址的 UITextField。
         - `deliveryFeeLabel`：顯示外送服務費用的標籤。
         - `mainStackView`：包含所有 UI 元素的主垂直 StackView。
         - `storeHorizontalStackView`：包含店家選取相關元素的水平 StackView。
@@ -29,7 +29,7 @@
         - `homeDeliveryStackView`：垂直排列與外送服務相關的 UI 元素。
 
     2. `回調 (Callback)`
-            - `onAddressChange`：在使用者更改` addressTextField `的文本時觸發的回調。
+            - `onAddressChange`：在使用者更改` deliveryAddressTextField `的文本時觸發的回調。
             - `onStoreButtonTapped`：在使用者點擊 `selectStoreButton `時觸發，通知外部進行店家選擇。
             - `onStoreChange`：在選擇店家後設置店家名稱時觸發的回調。
  
@@ -61,8 +61,8 @@
 
 
 // MARK: - 最初想法考量
-
 /**
+ 
  1. `使用 Segmented Control 切換「取件方式」`
  
     * `使用 Segmented Control`
@@ -106,7 +106,6 @@
 
 
 // MARK: - 在選擇店家後 Submit 按鈕未啟用
-
 /**
  1. `問題描述`
 
@@ -126,11 +125,11 @@
 
 
 // MARK: - 如何在切換取件方式後有效管理各個欄位的狀態（發生的問題）
-
 /**
+ 
  1. `問題描述`
  
-    - 當使用者在取件方式之間切換（例如從「Home Delivery」切換到「In-Store Pickup」）時，如果未適當清空先前取件方式的欄位內容，可能會導致提交的 `CustomerDetail`s` 中包含不一致的資料，例如同時存在地址和店家名稱。
+    - 當使用者在取件方式之間切換（例如從「Home Delivery」切換到「In-Store Pickup」）時，如果未適當清空先前取件方式的欄位內容，可能會導致提交的 `CustomerDetails` 中包含不一致的資料，例如同時存在地址和店家名稱。
 
  2. `解決方案`
  
@@ -152,8 +151,8 @@
 
 
 // MARK: - 如何在切換取件方式後有效管理各個欄位的狀態（重點筆記：取件方式切換與資料同步更新）
-
 /**
+ 
  ## 重點筆記：簡化的取件方式切換與資料同步邏輯
 
  * `目標`：
@@ -181,7 +180,7 @@
         - 因此，通過 `selectStoreButtonTapped` 已經能夠完成對 `storeTextField` 和資料的更新，`storeTextFieldChanged` 的監聽已經冗餘，不再需要設置監聽器。
  
  * `總結`
-    - `OrderPickupMethodCell` 現在的主要作用是顯示取件方式並提供基本的選擇功能，而資料管理和欄位排他性邏輯則由` `CustomerDetailsManager` 負責。
+    - `OrderPickupMethodCell` 現在的主要作用是顯示取件方式並提供基本的選擇功能，而資料管理和欄位排他性邏輯則由 `CustomerDetailsManager` 負責。
     - 這樣的分工使得 `OrderPickupMethodCell` 的實現更加簡單，提升了代碼的可維護性和整體結構的清晰度。
     - 在切換取件方式後，只隱藏不相應的 UI 元件，但不清空已輸入的資料，確保使用者的資料不會因誤操作而丟失。
     - 提交按鈕的狀態會根據資料的完整性進行更新，確保只有在所有必填欄位填寫完整時，才能進行提交操作。
@@ -189,8 +188,8 @@
 
 
 // MARK: - setupActions 與欄位變更處理
-
 /**
+ 
  ## 筆記：setupActions 與欄位變更處理
 
  `&. setupAction 中的必要設置`：
@@ -199,9 +198,9 @@
         用途：監聽取件方式的變更。
         行為邏輯：當使用者切換取件方式時，觸發 `segmentedControlValueChanged`，用於更新 UI 和同步資料，確保顯示狀態與資料一致。
  
-    `2.addressTextField`：
+    `2.deliveryAddressTextField`：
         用途：監聽外送地址的輸入變更。
-        行為邏輯：當使用者輸入或修改地址時，觸發` addressTextFieldChanged`，即時更新資料並確保資料的一致性（例如，清空店家名稱以確保排他性）。
+        行為邏輯：當使用者輸入或修改地址時，觸發` deliveryAddressTextFieldChanged`，即時更新資料並確保資料的一致性（例如，清空店家名稱以確保排他性）。
 
     `3.selectStoreButton`：
         用途：監聽選擇店家的按鈕點擊事件。
@@ -224,7 +223,7 @@
         - 這些排他性邏輯由 `CustomerDetailsManager` 集中處理，確保資料在變更後保持一致。
  
     * `使用回調進行資料更新`：
-        - `即時更新`：每當` addressTextFieldChanged` 或` selectStoreButtonTapped` 觸發變更時，使用回調（`onAddressChange 和 onStoreChange`）來通知資料的更新。
+        - `即時更新`：每當` deliveryAddressTextFieldChanged` 或` selectStoreButtonTapped` 觸發變更時，使用回調（`onAddressChange 和 onStoreChange`）來通知資料的更新。
         - `同步顧客資料`：確保 `CustomerDetails` 能夠及時反映最新的資料。
  
     * `更新提交按鈕狀態`：
@@ -241,15 +240,15 @@
  */
 
 
-// MARK: - addressTextFieldChanged、selectStoreButtonTapped 調整後的邏輯
-
+// MARK: - deliveryAddressTextFieldChanged、selectStoreButtonTapped 調整後的邏輯
 /**
- ## 筆記：  addressTextFieldChanged、selectStoreButtonTapped 調整後的邏輯
+ 
+ ## 筆記：  deliveryAddressTextFieldChanged、selectStoreButtonTapped 調整後的邏輯
 
- `1. addressTextFieldChanged`
+ `1. deliveryAddressTextFieldChanged`
  
     * 用途：
-        - 當使用者在「外送地址」欄位輸入或修改地址時，會透過` addressTextFieldChanged` 觸發回調 (`onAddressChange`) 來即時更新顧客的 `CustomerDetails` 資料。
+        - 當使用者在「外送地址」欄位輸入或修改地址時，會透過` deliveryAddressTextFieldChanged` 觸發回調 (`onAddressChange`) 來即時更新顧客的 `CustomerDetails` 資料。
  
     * 行為邏輯：
         - 每次地址變更後，使用回調來通知外部邏輯更新資料。
@@ -262,7 +261,7 @@
         - 點擊「選擇店家」按鈕時，會觸發 `selectStoreButtonTapped`，並導向店家選擇界面。
  
     * 行為邏輯：
-        - 當店家選擇完成後，會手動賦值給` storeTextField`，並透過回調 `(onStoreChang`e) 更新 `CustomerDetails` 的店家名稱。
+        - 當店家選擇完成後，會手動賦值給` storeTextField`，並透過回調 `(onStoreChange`) 更新 `CustomerDetails` 的店家名稱。
         - 店家名稱與地址的排他性：不再在 `OrderPickupMethodCell` 中直接清空外送地址，而是透過` CustomerDetailsManager` 來確保資料的唯一性。
 
  `3. 不再需要 storeTextFieldChanged`
@@ -288,8 +287,8 @@
 
 
 // MARK: - configure(with:) 和 segmentedControlValueChanged （重要）
-
 /**
+
  * 這裡是關於 `OrderPickupMethodCell` 中的兩個核心方法：`configure(with:) `和 `segmentedControlValueChanged` 的筆記。
 
  &.`configure(with:) 方法`：
@@ -300,7 +299,7 @@
     * 行為邏輯：
         - 根據 `CustomerDetails` 中的資料設置取件方式（外送服務或到店自取）以及相關欄位的內容。
         - 根據資料狀態顯示正確的欄位（如店家名稱和地址），並刷新欄位的邊框顏色以反映當前狀態。
-        - 重點在於`storeTextField`和`addressTextField`根據資料狀態顯示正確的欄位，而不是無條件清空所有欄位。而是依賴於 `CustomerDetails` 中的資料來確保正確顯示。
+        - 重點在於`storeTextField`和`deliveryAddressTextField`根據資料狀態顯示正確的欄位，而不是無條件清空所有欄位。而是依賴於 `CustomerDetails` 中的資料來確保正確顯示。
  
  &. `segmentedControlValueChanged 方法`：
 
@@ -317,54 +316,74 @@
  */
 
 
+
+// MARK:  - segmented
+
 import UIKit
 
-/// 在 OrderPickupMethodCell 中透過 Segmented Control：用於選擇「到店自取」或「外送服務」。
+/// 訂單取件方式的自訂 Cell，提供選擇「到店自取」或「外送服務」的功能。
+///
+/// ### 功能說明
+/// - 使用者可以透過 Segmented Control 選擇取件方式（到店自取或外送服務）。
+/// - 提供地址輸入欄位與店家選取按鈕，根據取件方式顯示相應的視圖。
+/// - 支援資料初始化與互動回調。
 class OrderPickupMethodCell: UICollectionViewCell {
     
     static let reuseIdentifier = "OrderPickupMethodCell"
-
-    // MARK: - 取件方式的 SegmentedControl
     
-    /// 使用 UISegmentedControl 來讓使用者選擇取件方式
-    private let pickupMethodSegmentedControl = createSegmentedControl(items: ["Home Delivery", "In-Store Pickup"])
+    // MARK: - Segmented Control
     
-    // MARK: - 地址輸入相關元件
-
-    private let addressTextField = createTextField(withPlaceholder: "Enter Delivery Address")
-    private let deliveryFeeLabel = createLabel(withText: "(Delivery service fee is $60)", font: UIFont.systemFont(ofSize: 14), textColor: .lightGray, alignment: .center)
+    /// 用於選擇取件方式的 Segmented Control
+    private let pickupMethodSegmentedControl = OrderCustomerDetailsSegmentedControl(items: ["Home Delivery", "In-Store Pickup"], defaultIndex: 0)
     
-    // MARK: - 店家選取相關元件
     
-    private let storeTextField = createTextField(withPlaceholder: "Select Store", isUserInteraction: false)
-    private let selectStoreButton = createButton(title: "", font: nil, backgroundColor: .deepGreen, titleColor: .white, iconName: "storefront")
-    private let promptSelectLabel = createLabel(withText: "(Tap to select a store)", font: UIFont.systemFont(ofSize: 14), textColor: .lightGray, alignment: .center)
+    // MARK: - Address Section
+    
+    /// 外送地址輸入框
+    private let deliveryAddressTextField = OrderCustomerDetailsTextField(placeholder: "Enter Delivery Address", keyboardType: .default, textContentType: .fullStreetAddress)
+    
+    /// 外送服務費標籤
+    private let deliveryFeeLabel = OrderCustomerDetailsLabel(text: "(Delivery service fee is $60)", font: .systemFont(ofSize: 14, weight: .bold), textColor: .lightGray, textAlignment: .center)
+    
+    // MARK: - Store Selection Section
+    
+    /// 店家名稱輸入框（不可互動）
+    private let storeTextField = OrderCustomerDetailsTextField(placeholder: "Select Store", keyboardType: .default, textContentType: nil, isUserInteraction: false)
+    
+    /// 選擇店家的按鈕
+    private let selectStoreButton = OrderCustomerDetailsSelectStoreButton(iconName: "storefront", cornerStyle: .small)
+    
+    /// 提示文字標籤
+    private let promptSelectLabel = OrderCustomerDetailsLabel(text: "(Tap to select a store)", font: .systemFont(ofSize: 14, weight: .bold), textColor: .lightGray, textAlignment: .center)
     
     // MARK: - StackView
     
     /// 主 StackView，包含所有元素
-    private let mainStackView = createStackView(axis: .vertical, spacing: 30, alignment: .fill, distribution: .fill)
+    private let mainStackView = OrderCustomerDetailsStackView(axis: .vertical, spacing: 30, alignment: .fill, distribution: .fill)
     
     /// 店家選取相關元素的水平 StackView
-    private let storeHorizontalStackView = createStackView(axis: .horizontal, spacing: 12, alignment: .fill, distribution: .fill)
+    private let storeHorizontalStackView = OrderCustomerDetailsStackView(axis: .horizontal, spacing: 12, alignment: .fill, distribution: .fill)
     
     /// 到店自取相關元素的垂直 StackView
-    private let inStoreStackView = createStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
+    private let inStoreStackView = OrderCustomerDetailsStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
     
     /// 外送服務相關元素的垂直 StackView
-    private let homeDeliveryStackView = createStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
+    private let homeDeliveryStackView = OrderCustomerDetailsStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill)
     
     // MARK: - Callbacks
-
+    
     /// 地址變更時的回調
     var onAddressChange: ((String) -> Void)?
+    
     /// 點擊選擇店家按鈕時的回調（進入「店家選擇視圖」）
     var onStoreButtonTapped: (() -> Void)?
+    
     /// 店家選擇完成後更新店家名稱的回調
     var onStoreChange: ((String) -> Void)?
+    
     /// 取件方式變更時的回調
     var onPickupMethodChanged: ((PickupMethod) -> Void)?
-
+    
     // MARK: - Initializer
     
     override init(frame: CGRect) {
@@ -372,28 +391,13 @@ class OrderPickupMethodCell: UICollectionViewCell {
         setupViews()
         setupActions()
     }
-
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Setup Methods
-    
-    private func setupViews() {
-        contentView.addSubview(mainStackView)
-        
-        setupSegmentedControl()
-        setupHomeDeliveryView()
-        setupInStoreView()
-        
-        NSLayoutConstraint.activate([
-            mainStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
-            mainStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
-            mainStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
-            mainStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
-        ])
-    }
     
     /// 設置 Segmented Control
     private func setupSegmentedControl() {
@@ -402,7 +406,7 @@ class OrderPickupMethodCell: UICollectionViewCell {
     
     /// 設置外送服務相關視圖
     private func setupHomeDeliveryView() {
-        homeDeliveryStackView.addArrangedSubview(addressTextField)
+        homeDeliveryStackView.addArrangedSubview(deliveryAddressTextField)
         homeDeliveryStackView.addArrangedSubview(deliveryFeeLabel)
         mainStackView.addArrangedSubview(homeDeliveryStackView)
     }
@@ -416,53 +420,39 @@ class OrderPickupMethodCell: UICollectionViewCell {
         mainStackView.addArrangedSubview(inStoreStackView)
     }
     
+    /// 配置主要視圖與約束
+    private func setupViews() {
+        setupSegmentedControl()
+        setupHomeDeliveryView()
+        setupInStoreView()
+        
+        contentView.addSubview(mainStackView)
+        NSLayoutConstraint.activate([
+            mainStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
+            mainStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
+            mainStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            mainStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
+        ])
+    }
+    
     /// 設置各種 UI 元件的動作
     private func setupActions() {
         pickupMethodSegmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
-        addressTextField.addTarget(self, action: #selector(addressTextFieldChanged), for: .editingChanged)
+        deliveryAddressTextField.addTarget(self, action: #selector(deliveryAddressTextFieldChanged), for: .editingChanged)
         selectStoreButton.addTarget(self, action: #selector(selectStoreButtonTapped), for: .touchUpInside)
     }
     
-    // MARK: - Helper Methods
-
-    /// 設置 TextField 的邊框顏色來提示是否為必填項
-    ///
-    /// - Parameter textField: 需要進行驗證的 UITextField
-    ///
-    /// 此方法根據 TextField 的當前狀態（是否有值）來設置邊框的顏色和寬度。
-    /// 當 TextField 為空時，邊框顯示紅色，提示使用者該欄位為必填項；當 TextField 有填寫時，邊框顏色設為透明以取消提示。
-    private func setTextFieldBorder(_ textField: UITextField) {
-        let isFilled = !(textField.text?.isEmpty ?? true)
-        textField.layer.borderWidth = 1.0
-        textField.layer.borderColor = isFilled ? UIColor.clear.cgColor : UIColor.red.cgColor
-    }
+    // MARK: - User Interaction Handlers
     
-    // MARK: - Update UI Method
-
-    /// 根據選取的取件方式更新 UI
+    /// 使用者切換取件方式的處理
+    ///
+    /// 透過更新顯示的視圖狀態，提供即時的互動體驗。
     @objc private func segmentedControlValueChanged() {
         let selectedMethod: PickupMethod = pickupMethodSegmentedControl.selectedSegmentIndex == 0 ? .homeDelivery : .inStore
         onPickupMethodChanged?(selectedMethod)
         updateUI(for: selectedMethod)
     }
     
-    /// 更新 UI 顯示不同的取件方式相關視圖
-    private func updateUI(for method: PickupMethod) {
-        switch method {
-        case .homeDelivery:
-            inStoreStackView.isHidden = true
-            homeDeliveryStackView.isHidden = false
-//            setTextFieldBorder(addressTextField)
-            
-        case .inStore:
-            inStoreStackView.isHidden = false
-            homeDeliveryStackView.isHidden = true
-//            setTextFieldBorder(storeTextField)
-        }
-    }
-    
-    // MARK: - Action Handlers
-
     /// 點擊選擇店家按鈕的動作處理
     ///
     /// 會進入到「選取店家視圖控制器(`StoreSelectionViewController`)」
@@ -472,102 +462,55 @@ class OrderPickupMethodCell: UICollectionViewCell {
     
     /// 當用戶修改地址輸入框的內容時的處理
     ///
-    /// 會在用戶更改地址輸入框的值時被調用。它將新值傳遞給 `onAddressChange` 回調，並根據輸入框是否為空來更新其邊框顏色，以提醒使用者該欄位是否需要填寫。
-    @objc private func addressTextFieldChanged() {
-        let text = addressTextField.text ?? ""
-        print("Address text changed to: \(text)")
-        onAddressChange?(text)
-        setTextFieldBorder(addressTextField)
+    /// 會在用戶更改地址輸入框的值時被調用。它將新值傳遞給 `onAddressChange` 回調，
+    /// 並根據輸入框是否為空來更新其邊框顏色，以提醒使用者該欄位是否需要填寫。
+    @objc private func deliveryAddressTextFieldChanged() {
+        onAddressChange?(deliveryAddressTextField.text ?? "")
+        deliveryAddressTextField.validateContent()
     }
     
-    // MARK: - Factory Methods
     
-    /// 建立一個 SegmentedControl
-    private static func createSegmentedControl(items: [String]) -> UISegmentedControl {
-        let control = UISegmentedControl(items: items)
-        control.selectedSegmentIndex = 0
-        control.translatesAutoresizingMaskIntoConstraints = false
-        return control
-    }
+    // MARK: - UI Update Methods
     
-    /// 建立一個帶有`圖標`和`文字`的按鈕
-    private static func createButton(title: String?, font: UIFont?, backgroundColor: UIColor, titleColor: UIColor, iconName: String) -> UIButton {
-        let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 5
-        button.clipsToBounds = true
-        
-        // 使用 UIButton.Configuration 來設置按鈕外觀
-        var config = UIButton.Configuration.filled()
-        config.title = title ?? ""
-        config.baseForegroundColor = titleColor
-        config.baseBackgroundColor = backgroundColor
-        config.image = UIImage(systemName: iconName)
-        config.imagePadding = 8
-        config.imagePlacement = .leading
-        
-        // 只有當 title 不為空時才設置字體
-        if let font = font, let title = title, !title.isEmpty {
-            var titleAttr = AttributedString(title)
-            titleAttr.font = font
-            config.attributedTitle = titleAttr
+    /// 更新 UI 顯示不同的取件方式相關視圖
+    ///
+    /// - Parameter method: 當前選取的取件方式。
+    private func updateUI(for method: PickupMethod) {
+        switch method {
+        case .homeDelivery:
+            inStoreStackView.isHidden = true
+            homeDeliveryStackView.isHidden = false
+            
+        case .inStore:
+            inStoreStackView.isHidden = false
+            homeDeliveryStackView.isHidden = true
         }
-        
-        button.configuration = config
-        return button
-    }
-    
-    /// 建立 Label
-    private static func createLabel(withText text: String, font: UIFont, textColor: UIColor, alignment: NSTextAlignment = .left) -> UILabel {
-        let label = UILabel()
-        label.text = text
-        label.font = font
-        label.textColor = textColor
-        label.textAlignment = alignment
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }
-    
-    /// 建立 TextField
-    private static func createTextField(withPlaceholder placeholder: String, isUserInteraction: Bool = true) -> UITextField {
-        let textField = UITextField()
-        textField.borderStyle = .roundedRect
-        textField.placeholder = placeholder
-        textField.isUserInteractionEnabled = isUserInteraction
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        return textField
-    }
-    
-    /// 建立 StackView
-    private static func createStackView(axis: NSLayoutConstraint.Axis, spacing: CGFloat, alignment: UIStackView.Alignment, distribution: UIStackView.Distribution) -> UIStackView {
-        let stackView = UIStackView()
-        stackView.axis = axis
-        stackView.spacing = spacing
-        stackView.alignment = alignment
-        stackView.distribution = distribution
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
     }
     
     // MARK: - Configure Method
     
-    /// 設定初始的取件方式
-    /// - Parameter pickupMethod: 取件方式（外送或到店取件）
+    /// 配置初始的取件方式與相關資料
+    ///
+    /// - Parameter customerDetails: 包含顧客地址與店家名稱的資料模型。
     func configure(with customerDetails: CustomerDetails) {
-        print("[OrderPickupMethodCell] Configuring with Pickup Method: \(customerDetails.pickupMethod.rawValue)")
-
+        
+        // 設置取件方式
         pickupMethodSegmentedControl.selectedSegmentIndex = (customerDetails.pickupMethod == .homeDelivery) ? 0 : 1
+        
+        // 更新 UI
         updateUI(for: customerDetails.pickupMethod)
         
         // 根據顧客資料來初始化地址和店家名稱
-        addressTextField.text = customerDetails.address ?? ""
+        deliveryAddressTextField.text = customerDetails.address ?? ""
         storeTextField.text = customerDetails.storeName ?? ""
         
         // 刷新 TextField 的邊框顏色
-        setTextFieldBorder(addressTextField)
-        setTextFieldBorder(storeTextField)
+        deliveryAddressTextField.validateContent()
+        storeTextField.validateContent()
     }
+    
 }
+
 
 
 /*

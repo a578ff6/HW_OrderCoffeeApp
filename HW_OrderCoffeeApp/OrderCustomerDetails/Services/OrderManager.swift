@@ -6,7 +6,7 @@
 //
 
 // MARK: - 關於同時將訂單存取在「 /orders 集合」中，以及「用戶的子集合」中。
-/*
+/**
  
  ## 思考重點：
     A. 在 /orders 集合中存取訂單：
@@ -44,8 +44,7 @@
 
 
 // MARK: - 關於 重構後的 OrderManager 負責管理和提交訂單，包括`顧客資料`和`訂單項目`的整合。（重要）
-
-/*
+/**
  
  &. 想法：
     - 由於最初在設計流程的時候，並沒有考慮到 OrderCustomerDetailsViewController，只想著「訂單飲品項目」搭配「註冊時的顧客資料」一起呈現在 OrderItemViewController 然後透過 OrderManager 上傳處理，也因此資料結構變得很雜亂。
@@ -80,9 +79,9 @@
         - 關於外送的額外費用部分，可以在 OrderManager 中的 submitOrder() 方法進行處理。在提交之前，檢查顧客的取件方式，如果是外送服務，則在 totalAmount 上增加配送費用 (60元)。
  */
 
-// MARK: - 重點筆記：
 
-/*
+// MARK: - 重點筆記：
+/**
  
  ## OrderManager 重點筆記
  
@@ -134,8 +133,7 @@
  */
 
 // MARK: - 訂單結構與調整說明
-
-/*
+/**
  
  ## Order 結構：
  
@@ -151,8 +149,7 @@
 
 
 // MARK: - 提交到 Firestore 錯誤原因及解決辦法筆記（重要）
-
-/*
+/**
  
  ## 原先的寫法，提交後出現「FirebaseFirestore.FirestoreEncodingError」嘗試存儲的資料格式不符合 Firestore 的要求有關。即當結構中有無法被正確轉換為 Firestore 支援的格式時，就可能出現這個錯誤。
  
@@ -203,8 +200,7 @@
 
 
 // MARK: - 維持手動序列化的原因（重要）
-
-/*
+/**
 
   - 調整 Order 中的 id 從 UUID 改成一個合適的類型，例如 String，確實可以使用 JSONEncoder 的方式來序列化，避免手動構建字典的麻煩。
     這樣做的好處是能夠簡化代碼和減少錯誤發生的機會，因為 JSONEncoder 可以自動完成序列化而不用手動構建數據結構。
@@ -238,13 +234,12 @@
 
 
 // MARK: - createOrderDict 根據訂單明細視圖控制器的具體需求來決定哪些資料要保留（手動序列化）
-
-/*
+/**
  
  ## 由於後續會設置「訂單明細視圖控制器」、「訂單歷史紀錄」等，並且考量到FireStore中的資料方便閱讀，因此做精簡調整。
  
  
- 1. prepTime（在 orderItems 中）
+ `1. prepTime（在 orderItems 中）`
 
     * 描述：
         - 目前有兩個與準備時間相關的欄位，一個是 orderItems 裡的 prepTime，另一個是整體的 totalPrepTime。
@@ -252,7 +247,7 @@
     * 調整：
         - 如果已經保存了 totalPrepTime，可以考慮移除每個訂單項目中的 prepTime，因為可以根據 orderItems 自行計算出來（除非需要展示每一項目的準備時間）。
 
- 2. categoryId 和 subcategoryId
+ `2. categoryId 和 subcategoryId`
  
     * 描述：
         - 這兩個欄位用於標識飲品的類別和子類別。
@@ -260,7 +255,7 @@
     * 調整：
         - 如果在訂單明細中不打算展示飲品的類別資訊，那麼可以移除這些欄位，這樣可以減少存儲的資料量。
  
- 3. totalAmount（在 orderItems 中）
+` 3. totalAmount（在 orderItems 中）`
  
     * 描述：
         - 每個 orderItem 中有 totalAmount，這是計算該飲品的總價。
@@ -268,7 +263,7 @@
     * 調整：
         - 如果能從 price 和 quantity 動態計算出來，那麼可以考慮移除 totalAmount 欄位。
  
- ## 總結：
+ `## 總結：`
  
  1 精簡存儲：
     - 刪除不必要的欄位可以有效地減少 Firestore 中的數據量，提高性能並減少存儲成本。
@@ -283,8 +278,7 @@
 
 
 // MARK: - 分析三種添加訂單到 Firestore 的方法：（重要）
-
-/*
+/**
  
  - 起因於當初在設置的時候採用「方法一」的設置，發現在 Firestore 中，「用戶子集合」中的訂單和「全局 orders 集合」中的訂單的檔名（實際上是文件的 ID）是不同的。
    這是因為在 saveOrderData 方法中，你兩次使用 addDocument(data:) 方法，這會生成不同的文件 ID。
@@ -382,8 +376,7 @@
 
 
 // MARK: - 關於 OrderManager 中的 submitOrder 是否還需要進行顧客資料驗證：
-
-/*
+/**
  
  - 原本「測試」階段的時候我是採用透過 CustomerDetailsManager 的 validateCustomerDetails 「驗證顧客資料是否已填寫必填項目，例如姓名、電話，以及若選擇 “宅配運送” 時需要填寫地址。」
  - 後來我改成用了按鈕啟用/禁用的方式來確保只有當顧客資料完整時，提交按鈕才會啟用。
@@ -396,200 +389,38 @@
  
  */
 
-// MARK: - 提交整個訂單應該由 OrderManager 處理，因為這涉及將顧客資料 (CustomerDetails) 和訂單項目 (OrderItem) 整合到一個訂單 (Order) 結構中，並完成提交過程。
-/*
-import Foundation
-import FirebaseFirestore
-import FirebaseAuth
-import UserNotifications
-
-/// OrderManager 負責管理和提交訂單，包括`顧客資料`和`訂單項目`的整合。
-class OrderManager {
-    
-    static let shared = OrderManager()
-    
-    // MARK: - Submit Order
-    
-    /// 提交訂單
-    func submitOrder() async throws {
-        guard let user = Auth.auth().currentUser else {
-            throw OrderManagerError.orderRequestFailed
-        }
-        
-        /// 獲取顧客資料
-        guard let customerDetails = CustomerDetailsManager.shared.getCustomerDetails() else {
-            throw OrderManagerError.missingCustomerDetails
-        }
-        
-        /// 驗證顧客資料（保留）
-        let validationResult = CustomerDetailsManager.shared.validateCustomerDetails()
-        switch validationResult {
-        case .failure(let error):
-            throw error // 在這裡直接拋出驗證錯誤以阻止訂單提交
-        case .success:
-            break
-        }
-        
-        /// 獲取訂單項目
-        let orderItems = OrderItemManager.shared.orderItems
-        if orderItems.isEmpty {
-            throw OrderManagerError.noOrderItems
-        }
-        
-        /// 計算總金額
-        var totalAmount = orderItems.reduce(0) { $0 + $1.totalAmount }
-        if customerDetails.pickupMethod == .homeDelivery {
-            totalAmount += 60             // 外送服務費用
-        }
-        
-        /// 建立訂單
-        let order = Order(id: UUID(),
-                          customerDetails: customerDetails,
-                          orderItems: orderItems,
-                          timestamp: Date(),
-                          totalAmount: totalAmount)
-        
-        /// 提交訂單至 Firestore
-        do {
-            try await saveOrderData(order: order, for: user.uid)
-            print("訂單提交成功")
-            scheduleNotification(prepTime: calculateTotalPrepTime(orderItems: orderItems) * 60) // 轉換為秒
-        } catch {
-            throw OrderManagerError.firebaseError(error)
-        }
-        
-    }
-    
-    // MARK: - Private Helper Methods
-
-    /// 儲存訂單資料至 Firestore
-    /// - Parameters:
-    ///   - order: 訂單結構
-    ///   - userID: 當前使用者
-    private func saveOrderData(order: Order, for userID: String) async throws {
-        
-        let db = Firestore.firestore()
-        /// 使用 order.id.uuidString 作為文檔 ID（ 將 UUID 轉為 String）
-        let orderID = order.id.uuidString
-        let orderDict = createOrderDict(from: order)
-        
-        /// 在`用戶子集合`中添加訂單，使用相同的文檔 ID
-        try await db.collection("users").document(userID).collection("orders").document(orderID).setData(orderDict)
-        
-        /// 在`全局 orders 集合`中添加訂單，使用相同的文檔 ID
-        try await db.collection("orders").document(orderID).setData(orderDict)
-    }
-    
-    /// 將 Order 結構轉換為字典（考量到後續會設置一個呈現`訂單資料的明細`視圖控制器，來做調整。）
-    /// - Parameter order: 訂單結構
-    /// - Returns: 用於 Firestore 的字典
-    private func createOrderDict(from order: Order) -> [String: Any] {
-        return [
-            "id": order.id.uuidString,  // （ 將 UUID 轉為 String）
-            "customerDetails": [
-                "fullName": order.customerDetails.fullName,
-                "phoneNumber": order.customerDetails.phoneNumber,
-                "pickupMethod": order.customerDetails.pickupMethod.rawValue,
-                "address": order.customerDetails.address ?? "",
-                "storeName": order.customerDetails.storeName ?? "",
-                "notes": order.customerDetails.notes ?? ""
-            ],
-            "orderItems": order.orderItems.map { item in
-                return [
-                    "id": item.id.uuidString,
-                    "drink": [
-                        "name": item.drink.name,
-                        "subName": item.drink.subName,
-//                        "description": item.drink.description,
-                        "imageUrl": item.drink.imageUrl.absoluteString,
-//                        "prepTime": item.drink.prepTime
-                    ],
-                    "size": item.size,
-                    "quantity": item.quantity,
-//                    "prepTime": item.prepTime,        // 已經有 totalPrepTime，移除每個訂單項目中的 prepTime，因為可以根據 orderItems 自行計算出來。
-//                    "totalAmount": item.totalAmount,  // 每個 orderItem 中有 totalAmount，這是計算該飲品的總價。（能從 price 和 quantity 動態計算出來，故移除）
-                    "price": item.price,
-//                    "categoryId": item.categoryId ?? "",
-//                    "subcategoryId": item.subcategoryId ?? ""
-                ]
-            },
-            "timestamp": order.timestamp,
-            "totalAmount": order.totalAmount,
-            "totalPrepTime": order.totalPrepTime
-        ]
-    }
-    
-    /// 計算訂單的總準備時間
-    /// - Parameter orderItems: 訂單中的項目
-    /// - Returns: 總準備時間（分鐘）
-    private func calculateTotalPrepTime(orderItems: [OrderItem]) -> Int {
-        return orderItems.reduce(0) { $0 + ($1.prepTime * $1.quantity) }
-    }
-    
-    // MARK: - Local Notification
-
-    /// 安排本地通知提醒用户訂單已經準備好
-    /// - Parameter prepTime: 訂單準備時間（秒）
-    private func scheduleNotification(prepTime: Int) {
-        let content = UNMutableNotificationContent()
-        content.title = "Order Ready"
-        content.body = "Your order is ready for pickup!"
-        content.sound = UNNotificationSound.default
-        
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(prepTime), repeats: false)
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-        
-        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
-    }
-
-}
-
-// MARK: - Error
-
-/// 處理 Order 訂單錯誤相關訊息
-enum OrderManagerError: Error, LocalizedError {
-    case orderRequestFailed
-    case missingCustomerDetails
-    case noOrderItems
-    case unknownError
-    case firebaseError(Error)
-    
-    static func form(_ error: Error) -> OrderManagerError {
-        return .firebaseError(error)
-    }
-    
-    var errorDescription: String? {
-        switch self {
-        case .orderRequestFailed:
-            return NSLocalizedString("Order request failed.", comment: "Order request failed.")
-        case .missingCustomerDetails:
-            return NSLocalizedString("Customer details are missing.", comment: "Customer details are missing.")
-        case .noOrderItems:
-            return NSLocalizedString("No items in the order.", comment: "No items in the order.")
-        case .unknownError:
-            return NSLocalizedString("An unknown error occurred.", comment: "An unknown error occurred.")
-        case .firebaseError(let error):
-            return error.localizedDescription
-        }
-    }
-}
-*/
 
 // MARK: - 提交整個訂單應該由 OrderManager 處理，因為這涉及將顧客資料 (CustomerDetails) 和訂單項目 (OrderItem) 整合到一個訂單 (Order) 結構中，並完成提交過程。（重構 submit）
 
 import Foundation
-import FirebaseFirestore
-import FirebaseAuth
+import Firebase
 import UserNotifications
 
-/// OrderManager 負責管理和提交訂單，包括`顧客資料`和`訂單項目`的整合。
+/// `OrderManager` 負責管理和提交訂單，包括`顧客資料`和`訂單項目`的整合。
+///
+/// ### 功能
+/// - 驗證顧客詳細資料與訂單項目。
+/// - 計算訂單的總金額與準備時間。
+/// - 創建並提交訂單至 Firestore。
+/// - 安排本地通知提醒訂單準備完成。
 class OrderManager {
     
+    /// 單例模式，用於共享 `OrderManager` 實例
     static let shared = OrderManager()
     
     // MARK: - Submit Order
     
-    /// 提交訂單
+    /// 提交訂單，執行完整的訂單處理流程，包括驗證、創建、存儲及通知安排。
+    ///
+    /// 該方法是異步操作，包含以下步驟：
+    /// 1. 驗證顧客詳細資料。
+    /// 2. 驗證訂單項目是否正確。
+    /// 3. 計算訂單總金額與準備時間。
+    /// 4. 創建訂單物件。
+    /// 5. 將訂單提交至 Firestore。
+    /// 6. 安排本地通知提醒用戶訂單準備完成。
+    ///
+    /// - Throws: 當驗證或提交過程中出現錯誤時，會拋出 `OrderManagerError`。
     func submitOrder() async throws {
         guard let user = Auth.auth().currentUser else {
             throw OrderManagerError.orderRequestFailed
@@ -611,7 +442,12 @@ class OrderManager {
     
     // MARK: - Helper Methods
 
-    /// 獲取顧客資料，並驗證顧客資料
+    /// 驗證並返回顧客詳細資料。
+    ///
+    /// 該方法從 `CustomerDetailsManager` 獲取顧客資料並執行資料驗證。
+    ///
+    /// - Throws: 如果顧客資料缺失或驗證失敗，則拋出 `OrderManagerError`。
+    /// - Returns: 驗證成功的 `CustomerDetails`。
     private func validateCustomerDetails() async throws -> CustomerDetails {
         guard let customerDetails = CustomerDetailsManager.shared.getCustomerDetails() else {
             throw OrderManagerError.missingCustomerDetails
@@ -626,39 +462,73 @@ class OrderManager {
         }
     }
     
-    /// 獲取訂單項目，並驗證訂單項目
+    /// 驗證並返回訂單項目列表。
+    ///
+    /// 該方法從 `OrderItemManager` 獲取當前的訂單項目，並檢查其是否為空。
+    ///
+    /// - Throws: 如果訂單項目為空，則拋出 `OrderManagerError.noOrderItems`。
+    /// - Returns: 驗證成功的訂單項目列表。
     private func validateOrderItems() throws -> [OrderItem] {
         let orderItems = OrderItemManager.shared.orderItems
-        if orderItems.isEmpty {
+        
+        switch orderItems.isEmpty {
+        case true:
             throw OrderManagerError.noOrderItems
+        case false:
+            return orderItems
         }
-        return orderItems
     }
     
-    /// 計算訂單的總金額
+    /// 計算訂單的總金額。
+    ///
+    /// 此方法根據訂單項目列表計算總金額，並根據顧客選擇的取件方式（如「外送服務」或「到店取件」）決定是否增加額外費用。
+    ///
+    /// - Parameters:
+    ///   - orderItems: 訂單項目列表，其中包含每個項目的價格與數量。
+    ///   - pickupMethod: 顧客選擇的取件方式（例如外送或到店取件）。
+    /// - Returns: 計算後的總金額，包含外送服務費用（若適用）。
     private func calculateTotalAmount(orderItems: [OrderItem], pickupMethod: PickupMethod) -> Int {
+        
+        // 計算訂單項目的總金額
         var totalAmount = orderItems.reduce(0) { $0 + $1.totalAmount }
-        if pickupMethod == .homeDelivery {
-            totalAmount += 60 // 外送服務費用
+        
+        // 根據取件方式計算額外費用
+        switch pickupMethod {
+        case .homeDelivery:
+            totalAmount += 60
+        case .inStore:
+            break
         }
         return totalAmount
     }
-
-    /// 創建訂單
+    
+    /// 創建訂單物件。
+    ///
+    /// - Parameters:
+    ///   - customerDetails: 顧客詳細資料。
+    ///   - orderItems: 訂單項目列表。
+    ///   - totalAmount: 訂單總金額。
+    /// - Returns: 創建的 `Order` 實例。
     private func createOrder(customerDetails: CustomerDetails, orderItems: [OrderItem], totalAmount: Int) -> Order {
-        return Order(id: UUID(),
-                     customerDetails: customerDetails,
-                     orderItems: orderItems,
-                     timestamp: Date(),
-                     totalAmount: totalAmount
+        return Order(
+            id: UUID(),
+            customerDetails: customerDetails,
+            orderItems: orderItems,
+            timestamp: Date(),
+            totalAmount: totalAmount
         )
     }
 
-    /// 提交訂單至 Firestore
+    /// 提交訂單至 Firestore。
+    ///
+    /// - Parameters:
+    ///   - order: 要提交的訂單。
+    ///   - userID: 當前使用者的唯一識別碼。
+    /// - Throws: 當提交訂單到 Firestore 失敗時，拋出 `OrderManagerError.firebaseError`。
     private func submitOrderToFirestore(order: Order, userID: String) async throws {
         do {
             try await saveOrderData(order: order, for: userID)
-            print("訂單提交成功")
+            print("[OrderManager]: 訂單提交成功")
         } catch {
             throw OrderManagerError.firebaseError(error)
         }
@@ -666,14 +536,15 @@ class OrderManager {
     
     // MARK: - Private Helper Methods
 
-    /// 儲存訂單資料至 Firestore
+    /// 將訂單資料保存到 Firestore。
+    ///
     /// - Parameters:
-    ///   - order: 訂單結構
-    ///   - userID: 當前使用者
+    ///   - order: 要保存的訂單。
+    ///   - userID: 當前使用者的唯一識別碼。
+    /// - Throws: 如果與 Firestore 的互動失敗，拋出相應的錯誤。
     private func saveOrderData(order: Order, for userID: String) async throws {
         
         let db = Firestore.firestore()
-        /// 使用 order.id.uuidString 作為文檔 ID（ 將 UUID 轉為 String）
         let orderID = order.id.uuidString
         let orderDict = createOrderDict(from: order)
         
@@ -685,6 +556,7 @@ class OrderManager {
     }
     
     /// 將 Order 結構轉換為字典（考量到後續會設置一個呈現`訂單資料的明細`視圖控制器，來做調整。）
+    ///
     /// - Parameter order: 訂單結構
     /// - Returns: 用於 Firestore 的字典
     private func createOrderDict(from order: Order) -> [String: Any] {
@@ -718,6 +590,7 @@ class OrderManager {
     }
     
     /// 計算訂單的總準備時間
+    ///
     /// - Parameter orderItems: 訂單中的項目
     /// - Returns: 總準備時間（分鐘）
     private func calculateTotalPrepTime(orderItems: [OrderItem]) -> Int {
@@ -727,6 +600,7 @@ class OrderManager {
     // MARK: - Local Notification
 
     /// 安排本地通知提醒用户訂單已經準備好
+    ///
     /// - Parameter prepTime: 訂單準備時間（秒）
     private func scheduleOrderReadyNotification(prepTime: Int) {
         let content = UNMutableNotificationContent()
@@ -744,7 +618,14 @@ class OrderManager {
 
 // MARK: - Error
 
-/// 處理 Order 訂單錯誤相關訊息
+/// 處理訂單相關錯誤。
+///
+/// ### 錯誤類型
+/// - `orderRequestFailed`: 訂單請求失敗。
+/// - `missingCustomerDetails`: 顧客詳細資料缺失。
+/// - `noOrderItems`: 訂單項目為空。
+/// - `firebaseError`: Firestore 操作失敗。
+/// - `unknownError`: 未知錯誤。
 enum OrderManagerError: Error, LocalizedError {
     case orderRequestFailed
     case missingCustomerDetails
@@ -771,4 +652,3 @@ enum OrderManagerError: Error, LocalizedError {
         }
     }
 }
-

@@ -50,186 +50,371 @@
 // MARK: - 取件方式 整體流程的整理
 
 /**
+ 
  `1. 初始化顧客資料`：
+ 
     - 在` OrderCustomerDetailsViewController` 加載時，從 `UserDetails` 初始化顧客資料並填充到 `CustomerDetailsManager`。
  
  `2. 顧客資料填寫`：
+ 
     - 顧客可以在 `OrderCustomerInfoCell` 填寫姓名和電話。
     - 在 `OrderPickupMethodCell` 選擇取件方式，並根據選擇顯示對應的店家或地址輸入框。
     - 當取件方式切換時，確保 `CustomerDetailsManager` 的資料得到更新。
  
  `3. 外送費的處理：`
+ 
     - `OrderItemManager` 或 `OrderManager` 負責管理訂單項目，並計算訂單總金額。在計算總金額時，根據` pickupMethod `判斷是否需要添加外送費。
  
  `4. 提交訂單：`
+ 
     - 當顧客完成所有資料填寫後，`OrderCustomerSubmitCell` 會觸發提交訂單的邏輯。此時可以從 `CustomerDetailsManager` 和 `OrderItemManager` 或` OrderManager` 獲取完整的資料，並生成最終的 `Order`，然後將其提交到 Firebase 等後端服務。
  */
 
 
 // MARK: - Note  整體流程的整理
-
 /**
+ 
  `1. 初始化顧客資料：`
+ 
     - 當從 Firebase 獲取 `UserDetails` 後，已經通過 `CustomerDetailsManager.populateCustomerDetails(from:)` 初始化了顧客的詳細資料。
     - 由於 `UserDetails` 沒有 `notes` 屬性，因此初始化時設置 `notes` 為 nil，表示備註欄位最初是空的。
  
  `2. 處理 OrderCustomerNoteCell：`
+ 
     - 當 `OrderCustomerNoteCell` 被加載時，透過` configure` 方法來設定初始的備註值，這樣可以顯示用戶在先前訂單中可能已經填寫的備註。
-    - 當用戶在` noteTextView `中編輯內容時，使用 `onNoteChange `回調將變更及時更新到` CustomerDetailsManager`，確保顧客的詳細資料在資料管理層中保持最新。
+    - 當用戶在` noteTextView `中編輯內容時，使用 `onNoteUpdated `回調將變更及時更新到` CustomerDetailsManager`，確保顧客的詳細資料在資料管理層中保持最新。
  
  `3. 顧客資料的一致性更新：`
+ 
     - 對於取件方式、姓名、電話、地址等其他欄位的變更，都像 `OrderCustomerNoteCell` 中的備註處理一樣，透過相應的回調及時更新到 `CustomerDetailsManager` 中，這樣可以確保資料在使用者交互和資料管理層之間保持一致。
  */
 
 
-// MARK: - OrderCustomerDetailsHandler 筆記
-
+// MARK: - 筆記主題：取件方式變更導致的 UI 同步問題與解決方案（重構）
 /**
- ## OrderCustomerDetailsHandler 筆記：
  
-    * `OrderCustomerDetailsHandler` 是負責管理 `OrderCustomerDetailsViewController` 中的 `UICollectionView `的資料處理與顯示邏輯的類別。
-      它主要管理顧客填寫的訂單資訊，包括：
- 
-        1.顧客基本資料（姓名、電話）
-        2.取件方式（到店自取或外送）
-        3.訂單備註
-        4.提交訂單的按鈕狀態
-
- `&. 主要功能與架構`
-
-    * `資料源管理（UICollectionViewDataSource）`
-        - 實現 UICollectionViewDataSource 來提供不同的 Section 與 Cell 的顯示。
-        - 使用 Section 列舉來定義各個區段，包括顧客資訊、取件方式、備註、訂單條款等，保持代碼的可讀性和易維護性。
-
-    * `Section 與 Cell 配置`
-        - 使用 Section 列舉來管理 UICollectionView 的不同部分：
- 
-            1.orderTerm: 訂單條款，提供訂單相關的注意事項。
-            2.customerInfo: 顧客姓名與電話。
-            3.pickupMethod: 取件方式，包括到店自取與外送選擇。
-            4.notes: 備註欄位，讓顧客填寫特殊需求或說明。
-            5.submitAction: 提交按鈕，用於提交訂單。
- 
-        - 透過 cellForItemAt 方法配置每個區段的 Cell，並將具體的 Cell 配置邏輯封裝為私有方法，如 configureCustomerInfoCell() 等。
- 
-    * `委託模式（Delegate）`
-        - 通過委託模式` OrderCustomerDetailsHandlerDelegate `來通知` OrderCustomerDetailsViewController` 當顧客資料發生變化。
-        - 當用戶編輯顧客姓名、電話、地址或店家選擇時，會調用 `notifyCustomerDetailsChanged()`，通知委託方更新按鈕狀態，確保用戶資料的即時性與準確性。
- 
-    * `Cell 配置與回調處理`
-        - 每個區段的 Cell 都有其配置與回調邏輯：
- 
-            1.顧客基本資料（customerInfo）: 顧客姓名與電話的變更會觸發相應的回調，進而更新顧客資料。
-            2.取件方式（pickupMethod）: 使用者切換取件方式（例如從「到店自取」改為「外送」）或選擇店家時，會調用相應的回調來更新資料。
-            3.備註（notes）: 用戶輸入備註時，透過回調即時更新資料。
-            4.提交訂單（submitAction）: 點擊提交按鈕時，透過委託呼叫 submitOrder() 方法，將訂單提交。
- */
-
-
-// MARK: - 關於 調整 OrderCustomerDetailsHandler 的邏輯，讓它能更好地管理和處理顧客詳細資料。 以及運用 collectAndUpdateCustomerDetails。
-
-/**
- ## OrderCustomerDetailsHandler 調整邏輯的具體步驟
- 
-    - 在 `OrderCustomerDetailsHandler` 中，需要進行一些邏輯上的調整，主要是讓它能夠正確地管理和處理` OrderPickupMethodCell` 的交互，並更新 `CustomerDetailsManager` 中的顧客資料。
-
- 1. `完善 configurePickupMethodCell`
- 
-    - 首先，在 `configurePickupMethodCell` 方法中，需要根據 `CustomerDetails` 初始化` OrderPickupMethodCell`，並設置相關的回調。
- 
- 2. `通知顧客資料變更`
-
-    - 在顧客資料發生變更時，需要通知外部的 `OrderCustomerDetailsViewController`來更新提交按鈕的狀態，這樣可以確保只有當資料完整時才允許提交訂單。
- 
- 3. `設置顧客資料變更回調`
-
-    - 對於 `OrderPickupMethodCell` 中的其他回調，例如地址變更和店家選擇變更，都應該調用` collectAndUpdateCustomerDetails()` 來更新資料並且通知外部的變更。
-
-    - 以下是如何為 `OrderPickupMethodCell `設置這些回調：
-        - `取件方式變更`： 當用戶切換取件方式時，更新顧客資料中的` pickupMethod` 並通知` OrderCustomerDetailsViewController `更新提交按鈕狀態。
-        - `地址變更和店家選擇變更`： 當地址或店家名稱發生變更時，調用` collectAndUpdateCustomerDetails()` 更新資料，並通知外部變更。
- 
- 4. `修改 OrderCustomerDetailsHandler 中的 cellForItemAt`
- 
-    - 在 `collectionView(_:cellForItemAt:)` 方法中，對每個 section 的 cell 進行配置，其中` pickupMethod` 的部分應使用前面調整過的 `configurePickupMethodCell` 方法。
- 
- 5.` 調整後的 OrderCustomerDetailsHandler`
- 
-    - 這些調整能夠幫助` OrderCustomerDetailsHandler` 更加有效地管理表單內部的邏輯，確保顧客資料的變更能夠即時反映到表單的提交按鈕上。
-
-    - `調整後的回調和邏輯的好處`
-        - `更清晰的責任劃分`：`OrderPickupMethodCell` 負責 UI 和與用戶交互的回調，具體的資料更新則由 `CustomerDetailsManager` 處理。
-        - `易於擴展和維護`：如果未來需要更改資料處理邏輯，這樣的設計便於集中在` CustomerDetailsManager` 內進行修改，而不需要深入到 UI 元件內部。
-        - `確保資料一致性`：所有資料變更都統一通過` CustomerDetailsManager` 處理，可以減少資料不一致的問題。
- */
-
-
-// MARK: - 筆記主題：取件方式變更導致的 UI 同步問題與解決方案（重要）
-
-/**
  ## 筆記主題：取件方式變更導致的 UI 同步問題與解決方案
 
- `&. 問題描述`
+ `* What`
  
-    - 在切換取件方式（例如從 "`In-Store Pickup`" 切換到 `"Home Delivery`"）後，如果` storeName` 或 `address` 有值則清空對方，但 UI 中的 `addressTextField` 或` storeTextField` 並未正確同步更新，導致顯示內容與資料管理層不一致。
-    - 例如，當切換到 `"Home Delivery"` 後，`addressTextField` 仍顯示之前輸入的地址。
-    
-    1.在`「Home Delivery」` 的`addressTextField` 輸入地址「新北市三重區」
-    2.接著切換「取件方式」到`「In-Store Pickup」`
-    3.點擊`selectStoreButton`，給`storeTextField `賦值「大安店」，這時候就會清空` address` 的值。
-    4.接著在切換「取件方式」到`「Home Delivery」`，雖然` address` 被清空，但是` addressText` 卻還有「新北市三重區」
+ - 在切換取件方式（例如從 "`In-Store Pickup`" 切換到 `"Home Delivery`"）後，如果` storeName` 或 `address` 有值則清空對方。
+ - 但 UI 中的 `deliveryAddressTextField` 或` storeTextField` 並未正確同步更新，導致顯示內容與資料管理層不一致。
+ - 例如，當切換到 `"Home Delivery"` 後，`deliveryAddressTextField` 仍顯示之前輸入的地址。
  
- &. `問題原因`
- 
-    - 資料更新後，UI 未同步更新，導致畫面顯示和資料不一致。
- 
- &. `解決方案`
- 
-    1. `在取件方式變更後重新配置 Cell`：
-        - 透過呼叫` configure(with:) `方法來重新配置相關的 Cell，確保 UI 和資料保持一致。
+ 1.在`「Home Delivery」` 的`deliveryAddressTextField` 輸入地址「新北市三重區」
+ 2.接著切換「取件方式」到`「In-Store Pickup」`
+ 3.點擊`selectStoreButton`，給`storeTextField `賦值「大安店」，這時候就會清空` address` 的值。
+ 4.接著在切換「取件方式」到`「Home Delivery」`，雖然` address` 被清空，但是` addressText` 卻還有「新北市三重區」
 
-    2. `在 onPickupMethodChanged 回調中進行 UI 更新`：
-        - 在更新資料後，重新呼叫 `configure(with:)`，以便同步更新 UI，確保畫面顯示符合最新的取件方式。
- 
- `&. 詳細說明`
- 
-    1. 為何在` onPickupMethodChanged `呼叫` configure(with:)`
-        -` onPickupMethodChanged `的目的是處理使用者切換取件方式，這會影響 UI 中顯示的欄位。
-        - 例如，切換為 "Home Delivery" 應顯示地址輸入框，而隱藏選擇店家的欄位。呼叫 `configure(with:)` 可以確保 UI 及時根據使用者的選擇進行更新。
-    
-    2. 是否應在 `onStoreChange` 或 `onAddressChange` 中呼叫` configure(with:)`
-        - 可以考慮，但不一定必要。這些變更通常不會影響 UI 中其他欄位的顯示狀況，因此只需更新相應的資料即可，無需重新配置整個 Cell。這樣可以減少不必要的重新渲染，提高性能。
- 
- `&. 小結`
- 
-    - `onPickupMethodChanged` 中呼叫` configure(with:)` 是因為取件方式的變更會直接影響到 UI 的顯示邏輯，需要根據選擇的取件方式來顯示或隱藏相應的欄位。
-    - `onStoreChange` 和 `onAddressChange` 不呼叫` configure(with:)`，因為這些變更僅涉及資料更新，不會改變 UI 的欄位顯示狀況。
- 
- `&. 重點筆記`
+ --------------
 
-    1.在取件方式變更` (onPickupMethodChanged)` 時，呼叫` configure(with:)` 以確保 UI 的顯示符合使用者的選擇。
-    2.在店家或地址變更` (onStoreChange, onAddressChange)` 時，僅更新資料層，不需重新配置 UI，從而提高性能。
-    3.保持 UI 與資料的一致性是確保良好使用者體驗的重要環節，應根據情境決定是否需要更新 UI。
-    4.這樣的設計考慮可以確保程式邏輯簡潔，提高效能，避免不必要的 UI 更新。
+ `* Why`
+ 
+ `1. 資料更新未同步至 UI：`
+ 
+    - 在切換取件方式後，資料層的 `address` 或 `storeName` 已正確更新，但沒有通知相關的 UI（例如 `OrderPickupMethodCell`）重新渲染，導致顯示錯誤。
+
+` 2. 責任未明確分離：`
+ 
+    - 過去在 `onPickupMethodChanged` 中直接處理資料更新和 UI 更新，導致程式邏輯混亂，且責任分離不清晰。
+
+ `3.為什麼需要解決這個問題？`
+
+ - 使用者體驗：資料與 UI 不一致會讓使用者困惑，降低應用的可靠性。
+ - 系統維護性：如果邏輯不清晰，未來可能難以擴展或調整功能。
+
+ --------------
+
+ `* How`
+ 
+ `1. 改進責任分離`
+
+ - 將 `資料更新` 和 `UI 更新` 的責任分離：
+   - Handler：負責資料層變更的處理，並通知外部（如 ViewController）。
+   - ViewController：負責根據資料變更進行 UI 更新。
+
+ ---
+
+ `2. 實作委託方法`
+
+ - 在 `OrderCustomerDetailsHandler` 的 `onPickupMethodChanged` 回調中，改為通知委託（`OrderCustomerDetailsHandlerDelegate`），而不是直接更新 UI。
+
+ ```swift
+ cell.onPickupMethodChanged = { [weak self] newMethod in
+     print("[OrderCustomerDetailsHandler] Pickup method changed to: \(newMethod)")
+     self?.orderCustomerDetailsHandlerDelegate?.didUpdatePickupMethod(newMethod)
+ }
+ ```
+
+ ---
+
+` 3. 精準更新 UI`
+
+ - 在 `ViewController` 中實作 `didUpdatePickupMethod`，確保資料更新後，透過精準刷新相關 UI 元件來同步畫面。
+
+ ```swift
+ func didUpdatePickupMethod(_ method: PickupMethod) {
+     // 更新資料層
+     CustomerDetailsManager.shared.updatePickupMethod(method)
+     
+     // 精準刷新取件方式的相關 UI
+     reloadPickupMethodCell()
+     
+     // 檢查提交按鈕狀態
+     updateSubmitButtonState()
+ }
+ ```
+
+ ---
+
+ `4. 實現 reloadPickupMethodCell 方法`
+
+ - 使用 `cellForItem(at:)` 鎖定需要刷新的 Cell，並呼叫其 `configure(with:)` 方法，確保資料與顯示內容同步。
+
+ ```swift
+ private func reloadPickupMethodCell() {
+     let pickupMethodIndexPath = IndexPath(item: 0, section: OrderCustomerDetailsHandler.Section.pickupMethod.rawValue)
+     guard let pickupCell = orderCustomerDetailsView.orderCustomerDetailsCollectionView.cellForItem(at: pickupMethodIndexPath) as? OrderPickupMethodCell else { return }
+     guard let updatedCustomerDetails = CustomerDetailsManager.shared.getCustomerDetails() else { return }
+     
+     // 重新配置 Cell
+     pickupCell.configure(with: updatedCustomerDetails)
+ }
+ ```
+
+ --------------
+
+ `* 重構後的流程圖`
+
+ `1. 使用者切換取件方式：`
+ 
+    - `OrderCustomerDetailsHandler` 捕捉變更，通知 `didUpdatePickupMethod`。
+ 
+ `2. 資料層更新：`
+ 
+    - `CustomerDetailsManager` 更新 `pickupMethod`。
+ 
+ `3. UI 同步更新：`
+ 
+    - 呼叫 `reloadPickupMethodCell()` 精準刷新畫面。
+ 
+ `4. 提交按鈕狀態檢查：`
+ 
+    - 更新按鈕的啟用狀態，確保資料完整性。
+
+ --------------
+
+ `* 重點筆記`
+ 
+ `1.在取件方式變更 (onPickupMethodChanged)：`
+
+ - 透過 `onPickupMethodChanged` 通知資料變更，並搭配 `reloadPickupMethodCell() `重新配置 UI，確保畫面與使用者的選擇一致。
+ - 原因是取件方式的變更會直接影響 UI 的顯示邏輯（例如顯示或隱藏地址欄位或門市選擇按鈕）。
+ 
+ `2.在店家或地址變更 (onStoreChange, onAddressChange)：`
+
+ - 僅更新資料層，不需重新配置 UI，從而提高性能。
+ - 原因是這些變更僅涉及資料本身（例如 `storeName` 或 `address`），不會改變 UI 的欄位結構或可見性，僅需要在顯示資料時進行更新。
+ 
+ `3.保持 UI 與資料一致性：`
+
+ - 確保畫面顯示內容始終反映最新資料，是良好使用者體驗的關鍵。根據不同情境決定是否需要更新 UI，可以提升應用效能並避免不必要的畫面重繪。
+ 
+ --------------
+
+ `* 小結`
+ 
+ `1.為何需要呼叫 reloadPickupMethodCell()？`
+
+ - onPickupMethodChanged 中需要搭配 reloadPickupMethodCell()，因為取件方式的變更直接影響 UI 的顯示邏輯（例如地址欄位是否可見），需要即時更新畫面來反映新的取件方式。
+ 
+ `2.為何不在 onStoreChange 和 onAddressChange 呼叫 reloadPickupMethodCell()？`
+
+ - 這些變更僅更新資料層，不會改變 UI 的欄位結構或可見性，因此無需重新配置整個 Cell。這樣可以避免不必要的性能開銷。
+ 
  */
 
+
+// MARK: - 筆記：OrderCustomerDetailsHandler
+/**
+ 
+ ## 筆記：OrderCustomerDetailsHandler
+
+ `* What`
+
+ - `OrderCustomerDetailsHandler` 是一個負責管理顧客詳細資料表單邏輯的類，主要功能包括：
+
+ `1. 表單區域管理：`
+ 
+ - 定義表單的各個區域（如訂單條款、顧客資訊、取件方式、備註等）。
+ - 每個區域對應不同的 `UICollectionView` section。
+
+` 2. 數據源與交互邏輯：`
+ 
+ - 作為 `UICollectionView` 的 `dataSource` 和 `delegate`，處理數據展示與用戶交互。
+ - 通過委託模式（`OrderCustomerDetailsHandlerDelegate`）將交互事件（如更新姓名、電話、取件方式）回傳給外部。
+
+ `3. Cell 配置：`
+ 
+ - 根據顧客詳細資料，配置每個 Cell 的顯示內容（如顧客姓名、地址、備註等）。
+ - 動態更新 UI 並觸發相應的回調事件。
+
+ ---
+
+ `* Why`
+
+ `1. 責任分離：`
+ 
+ - 將數據源和交互邏輯從視圖控制器中分離，保持 `OrderCustomerDetailsViewController` 集中處理業務邏輯與導航操作。
+ - 增加代碼清晰度與可維護性。
+
+ `2. 提高可測性：`
+ 
+ - 集中處理數據與 UI 映射，便於單元測試。
+ - 使 `OrderCustomerDetailsHandler` 成為獨立、可測的組件。
+
+ `3. 動態表單支持：`
+ 
+ - 支持動態區域和內容配置（如根據取件方式更新地址或店家區域）。
+ - 減少對整體 `UICollectionView` 刷新的依賴，提高性能。
+
+ `4. 用戶體驗優化：`
+ 
+ - 交互即時更新：用戶變更表單內容時，通過回調即時更新相關數據和 UI。
+ - 具體區域刷新：避免整體刷新，保持界面流暢。
+
+ ---
+
+ `* How`
+
+ `1. 表單區域管理：`
+ 
+    - 定義表單結構：
+ 
+      ```swift
+      enum Section: Int, CaseIterable {
+          case orderTerm
+          case customerInfo
+          case pickupMethod
+          case notes
+          case submitAction
+      }
+      ```
+ 
+    - 實現 `UICollectionViewDataSource` 方法，根據 `Section` 提供區域數量和內容：
+ 
+      ```swift
+      func numberOfSections(in collectionView: UICollectionView) -> Int {
+          return Section.allCases.count
+      }
+      ```
+ 
+------
+ 
+ `2. Cell 配置與回調：`
+ 
+    - 配置 `PickupMethodCell`：
+ 
+      ```swift
+      private func configurePickupMethodCell(for collectionView: UICollectionView, at indexPath: IndexPath) -> UICollectionViewCell {
+          guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderPickupMethodCell.reuseIdentifier, for: indexPath) as? OrderPickupMethodCell else {
+              fatalError("Cannot create OrderPickupMethodCell")
+          }
+          
+          guard let customerDetails = CustomerDetailsManager.shared.getCustomerDetails() else { return cell }
+          cell.configure(with: customerDetails)
+          
+          cell.onPickupMethodChanged = { [weak self] newMethod in
+              self?.orderCustomerDetailsHandlerDelegate?.didUpdatePickupMethod(newMethod)
+          }
+          cell.onAddressChange = { [weak self] address in
+              self?.orderCustomerDetailsHandlerDelegate?.didUpdateCustomerAddress(address)
+          }
+          
+          return cell
+      }
+      ```
+
+    - 處理提交按鈕點：
+ 
+      ```swift
+      private func configureSubmitActionCell(for collectionView: UICollectionView, at indexPath: IndexPath) -> UICollectionViewCell {
+          guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderCustomerSubmitCell.reuseIdentifier, for: indexPath) as? OrderCustomerSubmitCell else {
+              fatalError("Cannot create OrderCustomerSubmitCell")
+          }
+          
+          cell.onSubmitTapped = { [weak self] in
+              self?.orderCustomerDetailsHandlerDelegate?.submitOrder()
+          }
+          
+          return cell
+      }
+      ```
+ 
+ ------
+
+ `3. 數據更新與同步：`
+ 
+    - 透過委託將用戶操作回傳給視圖控制器：
+ 
+      ```swift
+      cell.onNameChange = { [weak self] newName in
+          self?.orderCustomerDetailsHandlerDelegate?.didUpdateCustomerName(newName)
+      }
+      ```
+ ---
+
+ `* 總結`
+
+` 1.目的：`
+ 
+ - `OrderCustomerDetailsHandler` 是顧客詳細資料表單的數據與交互核心，負責配置和管理表單各區域的顯示與回調。
+
+ `2.優點：`
+ 
+ - 責任分離清晰，保持視圖控制器專注於業務邏輯。
+ - 支持動態配置，便於擴展表單結構。
+ 
+ */
+
+
+
+// MARK: - 處理職責
 
 import UIKit
 
-/// OrderCustomerDetailsHandler 是用於處理顧客詳細資料 CollectionView 的資料源和互動邏輯的類別。
+/// `OrderCustomerDetailsHandler` 負責管理顧客詳細資料的 UICollectionView 數據源和交互邏輯。
 ///
-/// 它負責配置顯示訂單相關資訊的各種 Cell，並處理用戶在表單填寫過程中的各種互動。
+/// ### 功能
+/// 1. 表單區域定義：將表單拆分為多個區域（例如：訂單條款、顧客資訊、取件方式等）。
+/// 2. Cell 配置：根據顧客詳細資料 (`CustomerDetailsManager`) 配置每個 Cell 的顯示內容。
+/// 3. 用戶交互回傳：通過委託模式（`OrderCustomerDetailsHandlerDelegate`），將用戶的操作通知給外部（通常是 ViewController）。
+/// 4. 負責區域 Header 的設置：動態配置每個表單區域的標題。
+///
+/// ### 架構
+/// - 責任分離：
+///   - `OrderCustomerDetailsHandler` 負責數據與 UI 的映射，確保表單顯示邏輯內聚且可測試。
+///   - 外部（如 `OrderCustomerDetailsViewController`）專注於業務邏輯與導航操作。
+/// - 靈活擴展：採用 `enum Section` 定義表單區域，新增或調整表單結構時僅需更新 `Section` 定義和對應的配置方法。
+///
+/// ### 使用場景
+/// - 作為 UICollectionView 的 DataSource 和 Delegate 實例，用於顯示顧客詳細資料的表單。
 class OrderCustomerDetailsHandler: NSObject {
     
     // MARK: - Properties
     
-    /// CollectionView，顯示顧客詳細資料
-    private var collectionView: UICollectionView
+    /// 用於通知顧客資料變更或提交訂單事件的委託
+    weak var orderCustomerDetailsHandlerDelegate: OrderCustomerDetailsHandlerDelegate?
     
-    /// 用於通知顧客資料變更或提交訂單的事件
-    weak var delegate: OrderCustomerDetailsHandlerDelegate?
+    // MARK: - Initializer
+    /// 初始化方法，設置委託以處理顧客資料變更或其他事件。
+    /// - Parameter orderCustomerDetailsHandlerDelegate: 用於處理交互事件的委託實例。
+    init(orderCustomerDetailsHandlerDelegate: OrderCustomerDetailsHandlerDelegate) {
+        self.orderCustomerDetailsHandlerDelegate = orderCustomerDetailsHandlerDelegate
+        super.init()
+    }
     
-    // MARK: - Section
+    // MARK: - Section Definition
     
     /// 定義表單中各個區域（訂單條款、顧客姓名和電話、取件方式、備註、提交訂單按鈕）
     enum Section: Int, CaseIterable {
@@ -240,27 +425,6 @@ class OrderCustomerDetailsHandler: NSObject {
         case submitAction
     }
     
-    // MARK: - Initializer
-    
-    init(collectionView: UICollectionView) {
-        self.collectionView = collectionView
-        super.init()
-        self.collectionView.dataSource = self
-    }
-    
-    // MARK: - Customer Details Notification Method
-
-    /// 當顧客資料發生變更時，通知委託
-    private func notifyCustomerDetailsChanged() {
-        delegate?.customerDetailsDidChange()
-    }
-    
-    /// 更新顧客資料並通知委託變更
-    private func collectAndUpdateCustomerDetails(fullName: String? = nil, phoneNumber: String? = nil, address: String? = nil, storeName: String? = nil, notes: String? = nil) {
-        CustomerDetailsManager.shared.updateStoredCustomerDetails(fullName: fullName, phoneNumber: phoneNumber, address: address, storeName: storeName, notes: notes)
-        notifyCustomerDetailsChanged()
-    }
-
 }
 
 // MARK: - UICollectionViewDataSource
@@ -281,6 +445,32 @@ extension OrderCustomerDetailsHandler: UICollectionViewDataSource {
         case .orderTerm, .customerInfo, .pickupMethod, .notes, .submitAction:
             return 1
         }
+    }
+    
+    // MARK: - Header Configuration
+
+    /// 返回區域的 Header 視圖
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        guard kind == UICollectionView.elementKindSectionHeader,
+              let sectionType = OrderCustomerDetailsHandler.Section(rawValue: indexPath.section),
+              let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: OrderCustomerDetailsSectionHeaderView.headerIdentifier, for: indexPath) as? OrderCustomerDetailsSectionHeaderView else {
+            fatalError("Could not create header view")
+        }
+        
+        switch sectionType {
+        case .orderTerm:
+            return UICollectionReusableView()
+        case .customerInfo:
+            headerView.configure(with: "Name & Phone")
+        case .pickupMethod:
+            headerView.configure(with: "Pickup Method")
+        case .notes:
+            headerView.configure(with: "Note")
+        case .submitAction:
+            return UICollectionReusableView()
+        }
+        
+        return headerView
     }
     
     // MARK: - Cell Configuration
@@ -308,136 +498,105 @@ extension OrderCustomerDetailsHandler: UICollectionViewDataSource {
             return configureSubmitActionCell(for: collectionView, at: indexPath)
         }
     }
-    
-    /// 返回區域的 Header 視圖
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        guard kind == UICollectionView.elementKindSectionHeader,
-              let sectionType = OrderCustomerDetailsHandler.Section(rawValue: indexPath.section),
-              let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: OrderCustomerDetailsSectionHeaderView.headerIdentifier, for: indexPath) as? OrderCustomerDetailsSectionHeaderView else {
-            fatalError("Could not create header view")
-        }
-        
-        switch sectionType {
-        case .orderTerm:
-            return UICollectionReusableView()
-        case .customerInfo:
-            headerView.configure(with: "Name & Phone")
-        case .pickupMethod:
-            headerView.configure(with: "Pickup Method")
-        case .notes:
-            headerView.configure(with: "Note")
-        case .submitAction:
-            return UICollectionReusableView()
-        }
-        
-        return headerView
-    }
-    
+
     // MARK: - Private Cell Configuration Methods
 
-    /// 配置 OrderTermsMessageCell
+    /// 配置 `OrderTermsMessageCell`
     private func configureOrderTermsMessageCell(for collectionView: UICollectionView, at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderTermsMessageCell.reuseIdentifier, for: indexPath) as? OrderTermsMessageCell else {
             fatalError("Cannot create OrderTermsMessageCell")
         }
         return cell
     }
-    
-    /// 配置 OrderCustomerInfoCell
+
+    /// 配置 `OrderCustomerInfoCell`
     private func configureCustomerInfoCell(for collectionView: UICollectionView, at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderCustomerInfoCell.reuseIdentifier, for: indexPath) as? OrderCustomerInfoCell else {
             fatalError("Cannot create OrderCustomerInfoCell")
         }
         
-        /// 從 CustomerDetailsManager 獲取顧客資料，然後配置 cell，設置初始值
-        if let customerDetails = CustomerDetailsManager.shared.getCustomerDetails() {
-            print("[OrderCustomerDetailsHandler] Configuring CustomerInfoCell with FullName: \(customerDetails.fullName), PhoneNumber: \(customerDetails.phoneNumber)")
-            cell.configure(with: customerDetails)
+        // 從 CustomerDetailsManager 中獲取顧客資料，並配置cell
+        guard let customerDetails = CustomerDetailsManager.shared.getCustomerDetails() else { return cell }
+        print("[OrderCustomerDetailsHandler] Configuring CustomerInfoCell - Name: \(customerDetails.fullName), Phone: \(customerDetails.phoneNumber)")
+
+        cell.configure(with: customerDetails)
+        
+        // 回傳用戶姓名更新
+        cell.onNameChange = { [weak self] newName in
+            print("[OrderCustomerDetailsHandler] Name changed to: \(newName)")
+            self?.orderCustomerDetailsHandlerDelegate?.didUpdateCustomerName(newName)
         }
         
-        // 更新姓名並通知變更
-        cell.onNameChange = { [weak self] newName in
-            self?.collectAndUpdateCustomerDetails(fullName: newName)
-        }
-    
-        // 更新電話並通知變更
-        cell.onPhoneChange = { [weak self] newPhoneNumber in
-            self?.collectAndUpdateCustomerDetails(phoneNumber: newPhoneNumber)
+        // 回傳用戶電話更新
+        cell.onPhoneChange = { [weak self] newPhone in
+            print("[OrderCustomerDetailsHandler] Phone changed to: \(newPhone)")
+            self?.orderCustomerDetailsHandlerDelegate?.didUpdateCustomerPhone(newPhone)
         }
         
         return cell
     }
     
-    /// 配置 OrderPickupMethodCell
+    /// 配置 `OrderPickupMethodCell`
     private func configurePickupMethodCell(for collectionView: UICollectionView, at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderPickupMethodCell.reuseIdentifier, for: indexPath) as? OrderPickupMethodCell else {
             fatalError("Cannot create OrderPickupMethodCell")
         }
         
-        // 從 CustomerDetailsManager 中獲取顧客資料
-        if let customerDetails = CustomerDetailsManager.shared.getCustomerDetails() {
-            print("[OrderCustomerDetailsHandler] Configuring PickupMethodCell with Pickup Method: \(customerDetails.pickupMethod.rawValue)")
-            // 配置 Cell 的顯示，根據顧客的取件方式、地址和店家名稱
-            cell.configure(with: customerDetails)
-        }
+        // 從 CustomerDetailsManager 中獲取顧客資料，並配置cell，根據顧客的取件方式、地址和店家名稱
+        guard let customerDetails = CustomerDetailsManager.shared.getCustomerDetails() else { return cell }
+        print("[OrderCustomerDetailsHandler] Configuring PickupMethodCell - Method: \(customerDetails.pickupMethod), Address: \(customerDetails.address ?? "N/A"), Store: \(customerDetails.storeName ?? "N/A")")
+
+        cell.configure(with: customerDetails)
         
-        // 設置回調，當取件方式變更時通知外部處理
+        // 更新取件方式並通知變更
         cell.onPickupMethodChanged = { [weak self] newMethod in
-            // 更新取件方式
-            CustomerDetailsManager.shared.updatePickupMethod(newMethod)
-            // 通知外部（OrderCustomerDetailsViewController）更新提交按鈕狀態
-            self?.notifyCustomerDetailsChanged()
-            
-            // 重新配置 Cell，使得 UI 同步更新
-            if let updatedCustomerDetails = CustomerDetailsManager.shared.getCustomerDetails() {
-                print("[OrderCustomerDetailsHandler] PickupMethod changed to: \(updatedCustomerDetails.pickupMethod.rawValue), re-configuring PickupMethodCell")
-                cell.configure(with: updatedCustomerDetails)
-            }
+            print("[OrderCustomerDetailsHandler] Pickup method changed to: \(newMethod)")
+            self?.orderCustomerDetailsHandlerDelegate?.didUpdatePickupMethod(newMethod)
         }
 
         // 更新店家名稱並通知變更
         cell.onStoreChange = { [weak self] storeName in
-            self?.collectAndUpdateCustomerDetails(storeName: storeName)
-            print("[OrderCustomerDetailsHandler] Store name updated to: \(storeName)")
+            print("[OrderCustomerDetailsHandler] Store name changed to: \(storeName)")
+            self?.orderCustomerDetailsHandlerDelegate?.didUpdateCustomerStoreName(storeName)
         }
         
         // 更新外送地址並通知變更
         cell.onAddressChange = { [weak self] address in
-            self?.collectAndUpdateCustomerDetails(address: address)
-            print("[OrderCustomerDetailsHandler] Address updated to: \(address)")
+            print("[OrderCustomerDetailsHandler] Address changed to: \(address)")
+            self?.orderCustomerDetailsHandlerDelegate?.didUpdateCustomerAddress(address)
         }
         
         // 處理店家選擇按鈕點擊
         cell.onStoreButtonTapped = { [weak self] in
             // 顯示店家選擇視圖控制器（StoreSelectionViewController）的邏輯，然後返回時更新店家名稱
-            self?.delegate?.navigateToStoreSelection()
+            self?.orderCustomerDetailsHandlerDelegate?.navigateToStoreSelection()
         }
-        
+    
         return cell
     }
     
-    /// 配置 OrderCustomerNoteCell
+    /// 配置 `OrderCustomerNoteCell`
     private func configureNoteCell(for collectionView: UICollectionView, at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderCustomerNoteCell.reuseIdentifier, for: indexPath) as? OrderCustomerNoteCell else {
             fatalError("Cannot create OrderCustomerNoteCell")
         }
+        
+        // 從 CustomerDetailsManager 中獲取顧客資料
+        guard let customerDetails = CustomerDetailsManager.shared.getCustomerDetails() else { return cell }
+        print("[OrderCustomerDetailsHandler] Configuring NoteCell - Notes: \(customerDetails.notes ?? "No Notes")")
 
-        /// 配置 notes 欄位
-        if let customerDetails = CustomerDetailsManager.shared.getCustomerDetails() {
-            print("[OrderCustomerDetailsHandler] Configuring NoteCell with Notes: \(customerDetails.notes ?? "No Notes")")
-            cell.configure(with: customerDetails.notes)
-        }
-
+        cell.configure(with: customerDetails.notes)
+        
         // 更新備註並通知變更
-        cell.onNoteChange = { [weak self] note in
-            self?.collectAndUpdateCustomerDetails(notes: note)
+        cell.onNoteUpdated = { [weak self] note in
             print("[OrderCustomerDetailsHandler] Notes updated to: \(note)")
+            self?.orderCustomerDetailsHandlerDelegate?.didUpdateCustomerNotes(note)
         }
-
+        
         return cell
     }
-    
-    /// 配置 OrderCustomerSubmitCell
+        
+    /// 配置 `OrderCustomerSubmitCell`
     private func configureSubmitActionCell(for collectionView: UICollectionView, at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OrderCustomerSubmitCell.reuseIdentifier, for: indexPath) as? OrderCustomerSubmitCell else {
             fatalError("Cannot create OrderCustomerSubmitCell")
@@ -448,16 +607,21 @@ extension OrderCustomerDetailsHandler: UICollectionViewDataSource {
         let isFormValid = (validationResult == .success)
         
         // 觀察驗證結果及是否啟用提交按鈕
-        print("[OrderCustomerDetailsHandler] Configuring SubmitButton: isFormValid = \(isFormValid), ValidationResult = \(validationResult)")
+        print("[OrderCustomerDetailsHandler] Configuring SubmitButton - isFormValid: \(isFormValid), ValidationResult: \(validationResult)")
+
         cell.configureSubmitButton(isEnabled: isFormValid)
 
         // 提交按鈕被點擊的處理
         cell.onSubmitTapped = { [weak self] in
-            print("[OrderCustomerDetailsHandler] Submit button tapped.")
-            self?.delegate?.submitOrder()
+            self?.orderCustomerDetailsHandlerDelegate?.didTapSubmitOrderButton()
         }
 
         return cell
     }
+    
+}
+
+// MARK: - UICollectionViewDelegate
+extension OrderCustomerDetailsHandler: UICollectionViewDelegate {
     
 }
