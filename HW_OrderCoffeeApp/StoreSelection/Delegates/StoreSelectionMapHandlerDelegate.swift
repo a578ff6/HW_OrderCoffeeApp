@@ -5,135 +5,168 @@
 //  Created by 曹家瑋 on 2024/10/26.
 //
 
-/*
- ## StoreSelectionMapHandlerDelegate 重點筆記
- 
- 1. 協議用途：
-    - StoreSelectionMapHandlerDelegate 是用來協調 StoreSelectionHandler 和 StoreSelectionViewController 之間的互動。
-    - 此協議提供了必要的接口，讓 StoreSelectionHandler 可以：
-    
-    * 請求店鋪資料與營業時間： 
-        - 協議定義的方法允許 StoreSelectionHandler 從 StoreSelectionViewController 獲取最新的店鋪資料及營業時間，用於在地圖上標註和顯示詳細資訊。
- 
-    * 通知用戶選擇的店鋪：
-        - 通過 didSelectStore(_:) ，StoreSelectionHandler 可以將用戶選擇的店鋪信息通知給 StoreSelectionViewController，從而使用 `FloatingPanel` 更新顯示選定店鋪的詳細信息。
-    
-    * 更新 UI：
-        - 協議的作用不僅限於提供資料，還包括根據用戶的操作更新 UI，從而確保地圖和店鋪信息展示之間的一致性。
 
-    - 這樣設計的目的在於讓 StoreSelectionHandler 專注於地圖上的交互邏輯，而 StoreSelectionViewController 負責管理店鋪的數據和視圖展示，透過委派來保持兩者之間的溝通和狀態同步。
+// MARK: - StoreSelectionMapHandlerDelegate 筆記
+/**
  
- 
- 2. 方法說明
- 
-    * getStores()：
-        - 功能：取得所有店鋪的資料，通常用於在地圖上標註所有店鋪位置。
-        - 回傳：返回一個包含所有 Store 的陣列，讓 StoreSelectionMapHandler 可以透過這些資料進行操作。
- 
-    * getTodayOpeningHours(for storeId: String)：
-        - 功能：根據店鋪的唯一 ID，取得該店鋪的今日營業時間。
-        - 參數：storeId，用於標識要查詢的店鋪。
-        - 回傳：返回該店鋪的今日營業時間，如果該店鋪沒有營業時間的資料，則返回預設的「營業時間未提供」訊息。
- 
-    * fetchDistanceToStore(for storeId: String)：
-        - 功能：取得與特定店鋪的距離（通過 StoreManager 計算）。
-        - 參數：storeId，店鋪的唯一標識符。
-        - 回傳：返回與用戶位置之間的距離，用於在顯示店鋪詳細資訊時提供額外的參考。
- 
-    * didSelectStore(_ store: Store)：
-        - 功能：通知控制器用戶選擇了地圖上的某個店鋪。
-        - 參數：store，被選定的店鋪，包含名稱、地址、電話等資料。
-        - 用途：用戶點擊地圖上的店鋪標記時，會觸發此方法。通常會用於 `FloatingPanel` 中展示選定店鋪的詳細資訊。
+ ## StoreSelectionMapHandlerDelegate 筆記
 
-    * didDeselectStore()：
-        - 功能：通知控制器用戶取消選取地圖上的某個店鋪標記。
-        - 用途：控制器在接收到取消選取的通知後，將 FloatingPanel 收起並重置其內容為初始狀態。
+ ---
 
- 3. 調整重構的部分：
+ `* What`
 
-    * 將原有的 `presentStoreDetailsAlert(for: todayOpeningHours:)` 移除：
-         - 隨著設置了 didSelectStore(_ store:)，控制器現在使用 FloatingPanel 來展示店鋪的詳細信息，而不再使用彈窗顯示。
+ - `StoreSelectionMapHandlerDelegate` 是一個代理協議，用於協調 `StoreSelectionMapHandler` 與 `StoreSelectionViewController` 的互動。其核心功能是：
  
- 
- 4. 資料集中管理與高靈活性：
- 
-    * 資料集中管理
-        - 所有的店鋪資料與營業時間的管理都集中在 StoreSelectionViewController，而 StoreSelectionHandler 只需要透過代理來請求這些資料。
- 
-    * 高靈活性
-        - 使用代理模式讓處理店鋪展示邏輯變得更加靈活。如果要修改資料的取得方式或顯示方式，只需修改代理的方法實現，而不需要修改 StoreSelectionHandler 的內部邏輯。
+ 1. 提供店鋪資料：讓地圖交互邏輯能夠檢索到所有店鋪資料。
+ 2. 處理選取事件：當使用者選取或取消選取地圖上的店鋪標記時，通知控制器進行視圖更新或其他邏輯處理。
 
- 5. 想法：
+ 協議方法包含：
  
-    * 清晰的職責分離：
-        - StoreSelectionMapHandler 負責地圖上的店鋪選擇相關的邏輯，包含地圖上的互動。
-        - StoreSelectionViewController 則專注於管理店鋪資料和顯示選定店鋪的詳細信息，尤其是透過 `FloatingPanel` 來展示店鋪詳細資訊。
+ - `getStores()`：
  
-    * 提高可重用性：
-        - 使用代理來確保地圖交互和資料展示的分離，可以讓各模組保持獨立，並易於維護和擴展。
+    - 功能：取得所有店鋪的資料，通常用於在地圖上標註所有店鋪位置。
+    - 回傳：返回一個包含所有 Store 的陣列，讓 StoreSelectionMapHandler 可以透過這些資料進行操作。
+ 
+ - `didSelectStore(_:)`：
+ 
+    - 功能：通知控制器用戶選擇了地圖上的某個店鋪。
+    - 參數：store，被選定的店鋪，包含名稱、地址、電話等資料。
+    - 用途：用戶點擊地圖上的店鋪標記時，會觸發此方法。通常會用於 `FloatingPanel` 中展示選定店鋪的詳細資訊。
+
+ - `didDeselectStore()`：通知控制器使用者取消選取店鋪標記。
+ 
+    - 功能：通知控制器使用者取消選取店鋪標記。
+    - 用途：控制器在接收到取消選取的通知後，將 FloatingPanel 收起並重置其內容為初始狀態。
+
+ ---
+
+ `* Why`
+
+ 1. 職責分離：
+ 
+    - `StoreSelectionMapHandler` 專注於地圖交互邏輯，例如點擊或取消標記，而不直接處理數據來源。
+    - `StoreSelectionViewController` 負責資料管理與視圖更新，代理協議確保兩者之間的溝通與解耦。
+
+ 2. 提高靈活性與可擴展性：
+ 
+    - 使用代理模式避免地圖邏輯與具體資料耦合，讓資料的來源（如 Firebase、Mock Data）更易替換。
+    - 確保模組間的獨立性，讓地圖交互邏輯能適配不同的控制器或資料結構。
+
+ 3. 簡化維護：
+ 
+    - 地圖交互處理邏輯變更時，只需更新 `StoreSelectionMapHandler`，而控制器與資料邏輯不受影響。
+
+ 4. 一致的用戶體驗：
+ 
+    - 通過代理方法將選取或取消事件即時通知控制器，確保地圖與店鋪資訊顯示同步。
+
+ ---
+
+ `* How`
+
+ `1. 定義協議：`
+ 
+    - 在協議中定義三個核心方法，分別用於獲取店鋪資料、通知選取與取消選取事件。
+
+    ```swift
+    protocol StoreSelectionMapHandlerDelegate: AnyObject {
+        /// 獲取所有店鋪資料
+        func getStores() -> [Store]
+        
+        /// 當使用者選取某個店鋪時觸發
+        func didSelectStore(_ store: Store)
+        
+        /// 當使用者取消選取店鋪時觸發
+        func didDeselectStore()
+    }
+    ```
+
+` 2. 控制器實現協議：`
+ 
+    - `StoreSelectionViewController` 實現協議方法，提供資料並處理選取事件。
+
+    ```swift
+    extension StoreSelectionViewController: StoreSelectionMapHandlerDelegate {
+        func getStores() -> [Store] {
+            return stores
+        }
+        
+        func didSelectStore(_ store: Store) {
+            // 更新 FloatingPanel 或顯示選定店鋪的詳細資訊
+        }
+        
+        func didDeselectStore() {
+            // 重置 FloatingPanel 或恢復至初始狀態
+        }
+    }
+    ```
+
+ `3. 地圖交互邏輯：`
+ 
+    - 在 `StoreSelectionMapHandler` 中，透過代理方法獲取資料與回傳事件，保持地圖交互與數據管理的分離。
+
+    ```swift
+     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+         
+         // 確認 annotation 有效，並從代理中獲取店鋪列表
+         guard let annotation = view.annotation,
+               let stores = storeSelectionMapHandlerDelegate?.getStores(),
+               let store = stores.first(where: { $0.name == annotation.title })
+         else {
+             print("未找到對應的店鋪資料或 annotation 無效")
+             return
+         }
+         
+         // 通知代理已選取的店鋪
+         storeSelectionMapHandlerDelegate?.didSelectStore(store)
+     }
+
+    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
+        storeSelectionMapHandlerDelegate?.didDeselectStore()
+    }
+    ```
+
+` 4. 結合資料與視圖更新：`
+ 
+    - 當用戶選取地圖標記時，控制器使用代理方法回傳的資料更新 `FloatingPanel`，確保用戶界面與交互一致。
+
+ ---
+
+ `* 總結`
+
+ - What：`StoreSelectionMapHandlerDelegate` 用於協調地圖交互邏輯與控制器之間的資料與事件處理。
+ - Why：確保地圖邏輯與資料管理分離，提高靈活性、擴展性與可維護性。
+ - How：通過定義協議、實現方法與代理模式，實現地圖交互與控制器之間的高效溝通與解耦設計。
+ 
  */
 
 
-// MARK: - fetchDistanceToStore 方法重點筆記
-/*
- ## fetchDistanceToStore 方法重點筆記
- 
- 1. 方法功能：
-    - 該方法的作用是從 storeDistances 字典中，查找並返回特定店鋪與使用者之間的距離。
- 
- 2. 參數與返回值：
-
-    * 參數：
-        - storeId: String：店鋪的唯一標識符，用於查找該店鋪的距離。
- 
-    * 返回值：
-        - 返回該店鋪與使用者之間的距離 (CLLocationDistance)。
-        - 如果該店鋪的距離尚未計算，則返回 nil。
- 
-    * 使用方式：
-        - 該方法由 StoreSelectionMapHandlerDelegate 的代理協議提供，因此可以在代理中使用此方法來獲取特定店鋪的距離，例如在用戶選擇店鋪時顯示該店鋪的詳細資訊時使用。
- 
-    * 記錄位置：
-        - 由於距離的計算依賴於使用者的當前位置，因此需要在獲取使用者位置後，更新 storeDistances 字典。
-        - 在 StoreSelectionViewController 中，透過 CLLocationManager 來獲取使用者的位置，並使用 StoreManager.shared.calculateDistances() 方法計算每個店鋪的距離，然後更新 storeDistances。
-
- 
- &. 使用 fetchDistanceToStore 的流程：
- 
- 1. 位置獲取：
-    - StoreSelectionViewController 使用 CLLocationManager 來獲取使用者的當前位置。
-    - 當位置更新後，調用 StoreManager.shared.calculateDistances() 來計算每個店鋪的距離，並將結果保存在 storeDistances 中。
- 
- 2. 距離展示：
-    - 當使用者選擇某個店鋪時，透過 fetchDistanceToStore(for:) 方法查找該店鋪與使用者之間的距離。
-    - 在店鋪詳細信息的彈窗中展示該距離，增強使用者對店鋪位置的感知。
- */
+// MARK: - (v)
 
 import Foundation
-import CoreLocation
 
-/// 用於協調 StoreSelectionMapHandler 與 StoreSelectionViewController 的代理協議
-/// 主要負責和地圖相關的交互行為，通常只用於處理地圖標記點擊和取消選取等地圖上的事件。
+/// 協調 `StoreSelectionMapHandler` 與 `StoreSelectionViewController` 的代理協議。
+///
+/// 此協議負責處理地圖上與門市互動的行為，包含點擊標記與取消選取等事件，
+/// 並將這些操作的結果回傳給控制器，方便進一步處理邏輯。
 protocol StoreSelectionMapHandlerDelegate: AnyObject {
     
-    /// 取得所有的店鋪資料
-    /// - Returns: 一個包含所有店鋪 (`Store`) 的陣列
+    /// 獲取所有店鋪資料。
+    ///
+    /// 此方法用於讓地圖標記點擊事件能檢索到所有門市的相關資料，
+    /// 以便根據標記的資訊對應到特定店鋪。
+    /// - Returns: 一個包含所有店鋪資料的陣列 (`Store`)。
     func getStores() -> [Store]
     
-    /// 取得特定店鋪的今日營業時間
-    /// - Parameter storeId: 店鋪的唯一標識符
-    /// - Returns: 該店鋪今日的營業時間，若無資料則返回預設訊息
-    func getTodayOpeningHours(for storeId: String) -> String
-    
-    /// 取得特定店鋪的距離（通過 StoreManager）
-    /// - Parameter storeId: 店鋪的唯一標識符
-    /// - Returns: 與用戶位置之間的距離
-    func fetchDistanceToStore(for storeId: String) -> CLLocationDistance?
-    
-    /// 當地圖上某個店鋪被選取時調用
+    /// 當使用者在地圖上選取某個店鋪標記時被調用。
+    ///
+    /// 此方法會回傳選取的店鋪資料，便於進一步處理，例如顯示店鋪詳細資訊。
+    /// - Parameter store: 被選取的店鋪資料。
     func didSelectStore(_ store: Store)
     
-    /// 當地圖上某個店鋪被取消選取時調用
+    /// 當使用者取消選取地圖上的店鋪標記時被調用。
+    ///
+    /// 此方法通常用於清除當前顯示的店鋪資訊，回到預設狀態。
     func didDeselectStore()
-
+    
 }

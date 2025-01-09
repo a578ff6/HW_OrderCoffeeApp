@@ -6,13 +6,15 @@
 //
 
 // MARK: - FloatingPanelLayout 重點筆記
-/*
+/**
+ 
  ## FloatingPanelLayout 重點筆記
  
- 1. FloatingPanelLayout：StoreInfoPanelLayout 繼承自 FloatingPanelLayout，這個類別負責自訂浮動面板的顯示位置、初始狀態以及各種狀態下的高度。
- 2. position：設定浮動面板出現的位置，這裡設定為 .bottom，表示面板將從螢幕底部彈出。
- 3. initialState：定義面板的初始狀態，這裡設定為 .tip，表示一開始只會顯示小部分的面板（最低高度）。
- 4. anchors：定義浮動面板的各種狀態及其對應的高度。這些狀態可以讓面板顯示在不同的位置，例如完全展開、半展開或最小顯示（Tip）。
+ 1. `FloatingPanelLayout`：StoreInfoPanelLayout 繼承自 FloatingPanelLayout，這個類別負責自訂浮動面板的顯示位置、初始狀態以及各種狀態下的高度。
+ 
+ - `position`：設定浮動面板出現的位置，這裡設定為 .bottom，表示面板將從螢幕底部彈出。
+ -  `initialState`：定義面板的初始狀態，這裡設定為 .tip，表示一開始只會顯示小部分的面板（最低高度）。
+ - `anchors`：定義浮動面板的各種狀態及其對應的高度。這些狀態可以讓面板顯示在不同的位置，例如完全展開、半展開或最小顯示（Tip）。
  
  &. 註解重點解釋
  
@@ -29,7 +31,7 @@
  
  &. 使用心得
  
-    - 一開始使用 蘋果自己的 sheetPresentationController，但我發現會導致整個 StoreInfoViewController 被收起，於是改用 FloatingPanel。
+    - 一開始使用 蘋果自己的 `sheetPresentationController`，但我發現會導致整個 `StoreInfoViewController` 被收起，於是改用 FloatingPanel。
     - 彼得潘對於 sheetPresentationController 的紀錄 （ https://reurl.cc/5dmOzz ）
     - FloatingPanelLayout 能夠非常靈活地定義浮動面板行為的類別，它允許設計不同的狀態，並為這些狀態設置高度，提供類似 Google Maps 那樣的用戶體驗。
     - 可以根據應用場景，選擇是否啟用 .full 狀態，或者只讓面板有 .half 和 .tip 狀態，以提供合適的交互方式。

@@ -1,13 +1,13 @@
 //
-//  OrderCustomerDetailsActionButton.swift
+//  StoreInfoActionButton.swift
 //  HW_OrderCoffeeApp
 //
-//  Created by 曹家瑋 on 2025/1/3.
+//  Created by 曹家瑋 on 2025/1/8.
 //
 
 import UIKit
 
-/// `OrderCustomerDetailsActionButton` 是一個自訂的按鈕類別，用於展示標題、圖示及自訂樣式的按鈕。
+/// `StoreInfoActionButton` 是一個自訂的按鈕類別，用於展示標題、圖示及自訂樣式的按鈕。
 ///
 /// 此按鈕支援以下功能：
 /// - 使用 `UIButton.Configuration` 配置按鈕樣式。
@@ -16,11 +16,11 @@ import UIKit
 ///
 /// ### 適用情境
 /// - 訂單動作按鈕，例如「提交」等操作。
-class OrderCustomerDetailsActionButton: UIButton {
-    
+class StoreInfoActionButton: UIButton {
+
     // MARK: - Initializer
-    
-    /// 初始化 `OrderCustomerDetailsActionButton`
+
+    /// 初始化 `StoreInfoActionButton`
     /// - Parameters:
     ///   - title: 按鈕的文字內容。
     ///   - font: 按鈕文字的字體樣式。
@@ -78,15 +78,6 @@ class OrderCustomerDetailsActionButton: UIButton {
         config.attributedTitle = titleAttr
         
         self.configuration = config
-    }
-    
-    // MARK: - Public Methods
-
-    /// 更新按鈕的啟用狀態
-    /// - Parameter isEnabled: 是否啟用
-    func updateState(isEnabled: Bool) {
-        self.isEnabled = isEnabled
-        self.alpha = isEnabled ? 1.0 : 0.5
     }
     
 }

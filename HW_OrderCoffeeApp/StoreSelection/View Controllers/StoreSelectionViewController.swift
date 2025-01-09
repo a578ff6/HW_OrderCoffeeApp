@@ -7,9 +7,10 @@
 
 // MARK: - https://reurl.cc/0dNdzM ( MapKit / CoreLocation / CLGeocode)
 
-// MARK: - 設計構想
 
+// MARK: - 設計構想
 /**
+ 
  ## 設計構想：
  
     - 主要是` OrderPickupMethodCell` 目前的 `selectStoreButtonTapped` 是設置「大安店」來模擬店家。
@@ -40,9 +41,10 @@
     - 先從 Apple Maps 開始設計，後續若有需求再考慮整合 Google Maps 或其他框架。
  */
 
-// MARK: - 進一步討論且需要調整
 
+// MARK: - 進一步討論且需要調整
 /**
+ 
  ## 進一步討論
  
  `1. Apple Maps 是否可以實現「卡片式呈現門市資訊」：`
@@ -74,120 +76,9 @@
  */
 
 
-// MARK: -  ## StoreSelectionViewController 重點筆記
-
-/**
- ## StoreSelectionViewController 重點筆記
- 
- `1. 類別說明`
-    - `StoreSelectionViewController` 用來呈現地圖視圖，並顯示所有店鋪的位置，讓使用者可以選擇特定的店鋪。
-    - 此類別包含地圖視圖、店鋪資料，以及與 `StoreSelectionMapHandler` 和 `LocationManagerHandler` 的交互邏輯。
-    - 定位功能已抽離至` LocationManagerHandler` 中，以更好地管理和處理位置授權與更新。
- 
- `2. 使用的屬性`
-    - `storeSelectionMapView`：包含地圖視圖的自訂視圖。
-    - `stores`：存放從 Firebase 獲取的所有店鋪資料。
-    - `todayOpeningHours`：儲存每個店鋪今日的營業時間。
-    - `storeSelectionMapHandler`：用於處理地圖上和店鋪相關的互動操作。
-    - `locationManagerHandler`：用於管理位置更新的 Handler，負責獲取和監控使用者的位置變化，並更新店鋪距離。
-    - `floatingPanelController`：用於展示店鋪詳細資訊的浮動面板，提升店鋪資訊的顯示體驗。
- 
- `3. 主要方法`
-
-    * `setupMapInteractionHandler()`：
-        - 將地圖視圖的代理設置為 `StoreSelectionMapHandler`，並將 `StoreSelectionMapHandler` 的代理設置為 `StoreSelectionViewController`，以便協作處理地圖上的選擇動作及店鋪資訊的顯示。
-
-    * `setupLocationManagerHandler()`：
-        - 設置 `LocationManagerHandler` 的代理，並啟動位置更新。
-        - 透過委派模式，當位置授權和更新變化時，`LocationManagerHandler` 會通知 `StoreSelectionViewController`。
-
-    * `fetchAndDisplayStores()`：
-        - 從 Firebase 獲取所有店鋪資料，並將每個店鋪以標註 (annotation) 的方式顯示在地圖上。
- 
-    * `setupFloatingPanel()`：
-        - 使用 `FloatingPanelHelper` 設置浮動面板來顯示選定店鋪的詳細資訊，取代傳統的彈出視窗方式，提供更豐富的顯示效果。
- 
- `4. StoreSelectionMapHandlerDelegate 作用`
- 
-    * `代理模式的使用`：
-        - `StoreSelectionMapHandlerDelegate` 用於讓 `StoreSelectionMapHandler` 請求資料並顯示店鋪詳細資訊，而這些邏輯由 `StoreSelectionViewController` 實作，從而將視圖控制器和地圖交互邏輯分離。
-        - 當用戶選擇店鋪標註時，通過代理通知控制器，並通過 FloatingPanel 來顯示該店鋪的詳細資訊。
-
-    * `距離計算的整合`：
-        - 新增了`fetchDistanceToStore(for:)`方法，使得在使用者點選店鋪標註時，可以顯示與該店鋪的距離。
-        - 這些距離由 `StoreManager` 計算和管理，通過 `getDistanceToStore(for:)` 取得。
- 
-    * `didSelectStore()` 的設置：
-         - 在用戶選擇某店鋪標註時，設置 `StoreInfoViewController` 為浮動面板的內容控制器，並將 `StoreSelectionResultDelegate` 的代理設置為當前控制器。
-         - 通知主畫面 (`OrderCustomerDetailsViewController`) 所選擇的門市名稱，並在用戶確認後關閉浮動面板。
- 
- `5. 定位與距離計算部分`
- 
-    * `位置獲取與更新`：
- 
-    - `setupLocationManagerHandler()`：
-        - 設置 `LocationManagerHandler` 並啟動位置更新。
-
-    - `didUpdateUserLocation(location:)`：
-        - 當位置更新時，由 `LocationManagerHandler` 通知代理 (`StoreSelectionViewController`) 並進一步調用 `StoreManager.shared.updateUserLocationAndCalculateDistances()` 更新與店鋪的距離。
-
-    -  `didReceiveLocationAuthorizationDenied`：
-        - 當位置權限被拒絕時調用，顯示提示訊息，引導使用者前往設定頁面開啟位置權限。
- 
-    - `fetchDistanceToStore(for:)` 方法：
-        - 使用 `StoreManager` 中的 `getDistanceToStore(for:)` 方法來查找特定店鋪與使用者之間的距離，並在店鋪詳細訊息的彈窗中顯示該距離。增強使用者對店鋪位置的感知。
- 
- `6. 浮動面板的使用`
-
-    * 使用 `FloatingPanel` 來顯示店鋪詳細資訊：
-         - 取代以往的 `UIAlertController`，提供了更豐富和持久的顯示方式。
-         - 浮動面板使得使用者在選擇店鋪後可以持續查看詳細資訊，而不會被臨時彈窗打斷。
-         - 使用 `floatingPanelController?.move(to: .half, animated: true)` 在選中店鋪後自動展開，增強使用者體驗。
- 
- `7. StoreSelectionResultDelegate 的設置`
- 
-    - `StoreSelectionResultDelegate` 用於通知選擇的門市結果，以保持`主畫面`和`店鋪選擇畫面`的同步。
-    - 當用戶在 `StoreInfoViewController` 中確認選擇某門市後，通過 `storeSelectionDidComplete(with:)` 方法來通知主畫面，確保選擇的門市能夠即時反映在訂單中。
- 
- `8. 想法`
- 
-    * `清晰的職責分離`：
-        - `StoreSelectionViewController` 負責資料的獲取和顯示。
-        - `StoreSelectionMapHandler` 負責地圖交互。
-        - `LocationManagerHandler` 負責位置更新和授權處理，減少了重複的邏輯並簡化了視圖控制器的負擔。
-
-    * `提高可重用性`：
-        - 如果需要重新設計地圖交互，修改 `StoreSelectionMapHandler` 不會影響 `StoreSelectionViewController`。
-        - 使用 `LocationManagerHandler` 集中處理位置邏輯，讓其他視圖控制器可以重複使用這部分的功能。
- */
-
-
-// MARK: - 關於 「地區時間」轉換：
-
-/**
- ### 重點筆記
-
- * `關於 "Today's Opening Hours: 營業時間未提供" 的問題：`
- 
-    - 雖然已經在 Cloud Firestore 設定好營業時間了。但因為我是設置「星期一、星期二」，而非「Monday等」。
-    - print("Today's Opening Hours: \(todayHours)") 出現 「Today's Opening Hours: 營業時間未提供」。
- 
- * `問題原因：`
- 
-   - 出現「營業時間未提供」是因為在尋找今天的營業時間時，無法匹配到相應的資料。
-   - 這與 DateFormatter 設定的地區 (Locale) 有關，或是與 dateFormat 格式不正確導致日期轉換錯誤。
- 
- - `解決方式：`
- 
-   - 確保 DateFormatter 使用正確的地區（台灣應設為 "zh_TW"）。
-   - 使用與 Firebase 資料中的日期鍵值相符的格式，例如 Firebase 中使用「星期一、星期二」，那 DateFormatter 應設為「EEEE」並設定為台灣的語系。
- */
-
-
-
 // MARK: -  StoreSelectionMapHandler vs. LocationManagerHandler 的責任劃分
-
 /**
+ 
  ## StoreSelectionMapHandler vs. LocationManagerHandler 的責任劃分
  
  `&. StoreSelectionMapHandler`：
@@ -218,61 +109,11 @@
         - 透過使用代理 (`delegate`) 通知位置更新或權限變更，這樣可以讓 `LocationManagerHandler` 易於與不同的視圖控制器進行整合，提高代碼的可重用性
  */
 
-// MARK: - 定位與店面距離處理步驟總結
 
+// MARK: - 取消使用 UIAlertAction 展示「門市資訊」，重構 StoreSelectionView 呈現 「地圖」、「門市資訊」筆記
 /**
- ## 定位與店面距離處理步驟總結
  
-    - 在 App 中設置「與門市的距離」功能，能夠提升使用者體驗，幫助他們找到最適合的店鋪。
-
- `1. 先處理定位`
- 
-    - 定位是整個流程的第一步，需要獲取使用者的當前位置才能計算與門市的距離。這部分由 `LocationManagerHandler` 來實現，使用 `Core Location` 框架來管理位置更新。
-
-    * `請求定位權限`：
-        - 在 `LocationManagerHandler` 中使用 CLLocationManager 請求和獲取使用者的定位權限。
-        - 在初始化時（init() 方法），設定 CLLocationManager 的代理，並設置精度（desiredAccuracy）。
-        - 使用` startLocationUpdates()` 方法請求權限，並根據授權狀態來決定是否啟動位置更新。
-
-    * `獲取使用者的當前位置`：
-        - 當 CLLocationManager 更新到使用者的位置時，`LocationManagerHandler` 會通過代理（`LocationManagerHandlerDelegate`）通知 `StoreSelectionViewController`，將最新的位置信息傳遞過去。
- 
- `2. 計算與每個門市的距離`
- 
-    - 當定位獲取成功後，可以進行距離計算，這部分由 `StoreManager` 負責處理。
-
-    * `在 StoreManager 中集中處理距離計算`：
-        - 使用 `updateUserLocationAndCalculateDistances(userLocation: stores:)` ，計算使用者當前位置到每個店鋪的距離，並將結果保存起來。
-        - 使用者的當前位置通過 `LocationManagerHandler` 傳遞給 `StoreSelectionViewController`，再傳遞給 `StoreManager` 進行距離計算，這樣能保持位置和店鋪數據的一致性。
- 
- `3. 顯示距離資訊`
-    
-    * `地圖上的互動與詳細資訊顯示`：
-        - 在地圖上顯示店鋪位置，並標註每個店鋪的距離。使用 `StoreSelectionMapHandler` 處理地圖視圖的互動，當使用者選取地圖上的標註時，顯示店鋪的詳細資訊，包括與使用者的距離。
-        - 使用 `StoreSelectionMapHandlerDelegate` 取得店鋪距離，並在顯示店鋪詳細訊息的彈窗中顯示，例如「距離：2.5 公里」。
- 
- `4. 設計思路與建議`
-
-    * `定位與距離計算的順序`：
-        - 先處理定位，再計算距離。定位是距離計算的基礎，只有獲取到使用者位置後，才能計算與店鋪的距離。
- 
-    * `集中管理距離計算的邏輯`：
-        - 距離計算邏輯應放置在` StoreManager `中，這樣能統一處理與店鋪數據相關的操作，保持代碼的可維護性和邏輯的一致性。
- 
-    * `保持視圖控制器的簡潔`：
-        - `StoreSelectionViewController` 應該專注於視圖展示和用戶互動，避免混合太多數據處理的邏輯。
-        - 因此，將距離計算集中在 `StoreManager` 和定位邏輯集中在` LocationManagerHandler `中，是一個較好的設計選擇。
- 
- `5. 總結`
-    - `先處理定位`：使用 `LocationManagerHandler` 獲取使用者的位置，並通過代理通知 `StoreSelectionViewController`。
-    - `再計算距離`：使用 `StoreManager` 計算每個店鋪到使用者之間的距離，並保存結果。
-    - `最佳化使用者體驗`：當定位成功後，根據計算的距離顯示最接近的店鋪，或標示距離遠近，讓使用者可以方便地選擇合適的店鋪。
- */
-
-// MARK: - 取消使用UIAlertAction展示「門市資訊」，重構 StoreSelectionMapView 呈現 「地圖」、「門市資訊」筆記
-
-/**
- ## StoreSelectionViewController 重點筆記
+ ## 取消使用 UIAlertAction 展示「門市資訊」，重構 StoreSelectionView 呈現 「地圖」、「門市資訊」筆記
  
  `1. 代理和處理器整理`
 
@@ -287,6 +128,8 @@
         - 負責管理 `StoreInfoCollectionView` 的顯示內容，包括選定店鋪的資訊顯示與按鈕的回調。
         - 處理 UICollectionViewDataSource，以集中處理店鋪資料的展示邏輯。
  
+ -----
+ 
  `2. 浮動面板 (FloatingPanel) 的使用`
     
     * `浮動面板設置`：
@@ -297,27 +140,37 @@
         - 當用戶選中地圖上的店鋪時，通過浮動面板來顯示店鋪的詳細資訊。
         - 使用` floatingPanelController?.move(to: .half, animated: true)` 來自動彈出浮動面板。
  
+ -----
+
  `3. StoreSelectionMapHandler 設計`
 
     * `單一職責原則`：
         - `StoreSelectionMapHandler` 負責處理地圖上的交互操作，例如用戶點擊某個店鋪的大頭針。
-        - 在 `mapView(_:didSelect:)` 方法中，通過 delegate 通知控制器已選擇的店鋪，並將控制更新和顯示交給 `StoreSelectionViewController`。
+        - 在 `mapView(_:didSelect:)` 方法中，通過 `storeSelectionMapHandlerDelegate` 通知控制器已選擇的店鋪，並將控制更新和顯示交給 `StoreSelectionViewController`。
  
+ -----
+
  `4. StoreSelectionViewController 的職責`
 
     * `浮動面板控制`：
         - 當地圖上店鋪被選中時，`didSelectStore(_ store: Store)` 方法會設置浮動面板中的 `StoreInfoViewController` 顯示店鋪的詳細資訊。
         - 當店鋪被取消選中時，使用 `floatingPanelController?.move(to: .tip, animated: true)` 將浮動面板收起，並重置 `StoreInfoViewController` 的內容。
     
+ -----
+
  `5. 浮動面板使用的優勢`
     - 與原本使用的` UIAlertController` 相比，`FloatingPanel `提供更好的視覺效果，支持更多操作，不會被用戶誤解為臨時警告，而是更加一致且合適的用戶界面元素。
     - 浮動面板中的內容可以包含更多的詳細資訊，並且能持續顯示，讓用戶在地圖上進行其他操作時，也能持續查看選中店鋪的詳細資料。
  
+ -----
+
  `6. StoreSelectionMapHandlerDelegate 更新`
     
-    * `方法didSelectStore(_ store: Store)`：
+    * `didSelectStore(_ store: Store)`：
         - 當用戶在地圖上點擊店鋪大頭針時，通知控制器更新選中的店鋪資訊，避免使用 UIAlertController 彈出提示。
  
+ -----
+
  `7. StoreSelectionMapHandler 設計`
  
     * `單一職責原則：`
@@ -327,8 +180,8 @@
 
 
 // MARK: - FloatingPanelController 彈起與收起的重點筆記
-
 /**
+ 
  ## FloatingPanelController 彈起與收起的重點筆記
  
  `&. Floating Panel 的狀態控制類型：`
@@ -342,6 +195,8 @@
     - 可以使用 `FloatingPanelController` 的` move(to:animated:)` 方法來控制面板的狀態變化。
     - 例如，從 .tip 狀態移動到 .half 或 .full，用來根據用戶交互自動調整面板高度。
  
+ -----
+
  `&. 大頭針的選取與取消選取事件`
 
  `1. 地圖上大頭針的選取 (didSelectStore(_:))：`
@@ -352,6 +207,8 @@
     - 當用戶在地圖上取消選中大頭針（例如點擊地圖空白區域）時，`didDeselectStore()` 方法被調用。
     - `StoreSelectionViewController` 將呼叫` floatingPanelController?.move(to: .tip, animated: true)`，將面板自動收回到 .tip 狀態，顯示最小化的提示訊息。
 
+ -----
+
  `&. 主要方法和委派模式`
  
  1. `StoreSelectionMapHandlerDelegate`：
@@ -359,6 +216,8 @@
     - `didSelectStore(_:)`：當大頭針被選取時調用，用來展開面板並顯示詳細信息。
     - `didDeselectStore()`：當大頭針被取消選取時調用，用來收起面板至 .tip 狀態。
  
+ -----
+
  `&. 彈起與收起面板的交互流程`
  
  1. `初始化與顯示面板`：
@@ -374,6 +233,8 @@
     - 透過 `mapView(_:didDeselect:)` 方法，通知 `StoreSelectionViewController`，進而調用 `didDeselectStore()`。
     - 在 `didDeselectStore()` 方法中，將浮動面板狀態設置為 .tip，將面板收回到最小狀態。
  
+ -----
+
  `&. 重點結論`
  
  1.`自動調整面板狀態以適應用戶交互`：
@@ -387,10 +248,12 @@
     - 當用戶取消選擇時，浮動面板會自動收回至 .tip，避免佔用過多的螢幕空間，提升整體App的可用性。
  */
 
-// MARK: - StoreSelectionViewController 與 StoreInfoViewController 之間的關係及 FloatingPanel 使用重點解析 (重要)
 
+// MARK: - StoreSelectionViewController 與 StoreInfoViewController 之間的關係及 FloatingPanel 使用重點解析 (重要)
 /**
+ 
  ## StoreSelectionViewController 與 StoreInfoViewController 之間的關係及 FloatingPanel 使用重點解析
+ 
  
  `&. StoreSelectionViewController 與 StoreInfoViewController 的重點關係筆記`
 
@@ -398,6 +261,8 @@
  
     - `FloatingPanel` 是一個可拖動的浮動面板，用於顯示輔助資訊而不佔用主界面過多的空間。
     - 在這個案例中，`StoreSelectionViewController` 是一個包含地圖視圖的主要控制器，而 `FloatingPanel` 中嵌入的是 `StoreInfoViewController`。
+
+ -----
 
  2. `各控制器的責任分離`
  
@@ -412,6 +277,8 @@
       - 當用戶在地圖上點擊某個店鋪標記後，`StoreInfoViewController` 會被配置以顯示該店鋪的具體資訊，如門市名稱、地址、營業時間等。
       - 這個控制器還包含操作按鈕，如撥打電話和選擇該門市作為取件門市。
 
+ -----
+
  3. `用戶操作流程`
  
     - 用戶進入 `StoreSelectionViewController`，在地圖上查看所有店鋪的位置。
@@ -422,6 +289,8 @@
  
     * 用戶點擊 `StoreInfoViewController` 中的「選擇門市」按鈕後，通知` StoreSelectionViewController`，並將該選擇回傳給上層控制器（例如 OrderCustomerDetailsViewController）。
 
+ -----
+
  4. `關鍵的委託機制`
     
     * `StoreSelectionResultDelegate`：
@@ -431,6 +300,8 @@
     - `StoreSelectionMapHandlerDelegate`：
       - 用來管理 `StoreSelectionViewController` 和 `StoreSelectionMapHandler` 的交互，以獲取所有店鋪資訊並處理地圖標記點的選擇和取消選擇。
 
+ -----
+
  5. `StoreInfoViewController` 如何影響 `StoreSelectionViewController`：
  
     - `StoreInfoViewController` 並不直接與上層控制器（如 `OrderCustomerDetailsViewController`）溝通。
@@ -438,16 +309,22 @@
     - 在` setupSelectStoreAction `中，當用戶點擊「選擇門市」按鈕時，`StoreInfoViewController` 通知其父控制器` StoreSelectionViewController`，告知用戶已選擇該店鋪。
     - `StoreSelectionViewController `接收到這個通知後，會透過 `StoreSelectionResultDelegate`，將選擇結果傳回給 `OrderCustomerDetailsViewController`，以便更新 `OrderPickupMethodCell` 中的 `storeTextField`。
 
+ ----------------
+
  `&. 重點理解`
 
  1. `FloatingPanel 作為橋梁`：
  
     - `FloatingPanel` 是介於主要地圖視圖（`StoreSelectionViewController`）和詳細資訊視圖（`StoreInfoViewController`）之間的橋梁，讓用戶能夠不離開地圖界面就能查看詳細資訊並進行選擇。
 
+ -----
+
  2. `分層的責任`
  
     - 將詳細店鋪資訊顯示邏輯集中在 `StoreInfoViewController`中，使得 `StoreSelectionViewController` 更簡潔，僅需負責地圖及店鋪選擇邏輯。
     - `StoreSelectionViewController` 負責與上層控制器的溝通（如將選擇結果傳遞給 `OrderCustomerDetailsViewController`），而不是由嵌入的子控制器直接與上層控制器溝通，這樣可以減少子控制器的耦合度。
+
+ -----
 
  3. `訊息傳遞的順序`
  
@@ -459,8 +336,8 @@
 
 
 // MARK: - StoreSelectionResultDelegate 重點筆記
-
 /**
+ 
  ## StoreSelectionResultDelegate 在 StoreSelectionViewController 中的設置重點筆記
  
  `1. StoreSelectionResultDelegate 的用途`
@@ -468,27 +345,36 @@
     - `StoreSelectionResultDelegate` 的主要目的是將門市選擇的結果傳遞給其他相關的視圖控制器，以確保使用者在選擇門市後，這一選擇能夠即時反映在`主訂單頁面`或其他需要顯示門市資訊的地方。
     - 它使用委派模式來保持 `StoreSelectionViewController` 和 `OrderCustomerDetailsViewController` 等其他控制器之間的同步。
  
- `2. didSelectStore()` 方法中的代理設置 (`storeInfoVC.delegate = self`)`
+ -----
  
-    - 當用戶在地圖上選擇一個門市時，浮動面板 (`floatingPanel`) 會顯示該門市的詳細資訊。這裡設置 `storeInfoVC.delegate = self` 的目的是讓 `StoreInfoViewController` 能夠將選擇結果通知給 `StoreSelectionViewController`。
+ `2. didSelectStore()` 方法中的代理設置 (`storeInfoVC.storeSelectionResultDelegate = self`)`
+ 
+    - 當用戶在地圖上選擇一個門市時，浮動面板 (`floatingPanel`) 會顯示該門市的詳細資訊。這裡設置 `storeInfoVC.storeSelectionResultDelegate = self` 的目的是讓 `StoreInfoViewController` 能夠將選擇結果通知給 `StoreSelectionViewController`。
+ 
     - 具體來說，當使用者在 `StoreInfoViewController` 中按下 "選擇門市" 的按鈕時，可以通過此代理將選擇的門市名稱傳回給 `StoreSelectionViewController`，進一步通知主畫面或其他有關的控制器。
   
+ -----
+
  `3. func storeSelectionDidComplete(with storeName: String)`
  
     - 當使用者在 `StoreInfoViewController` 中確認選擇某門市後，會調用 `storeSelectionDidComplete(with:)` 方法來通知委託者（通常是主畫面，如 `OrderCustomerDetailsViewController`）。
     - 這樣可以確保主畫面即時獲得使用者選擇的門市資訊，例如將選定的門市名稱顯示在訂單取件方式的表單中，從而提供更好的使用者體驗和資料一致性。
 
+ -----
+
  `4. 操作流程概述`
  
     * 在 `StoreSelectionViewController` 中，當使用者點選地圖上的某店鋪標註時：
         - 設置浮動面板的內容控制器 (`StoreInfoViewController`)。
-        - 設置 `storeInfoVC.delegate = self`，以便在使用者最終確認門市後，透過 `StoreSelectionResultDelegate` 回傳結果。
+        - 設置 `storeInfoVC.storeSelectionResultDelegate = self`，以便在使用者最終確認門市後，透過 `StoreSelectionResultDelegate` 回傳結果。
         - 浮動面板會展示店鋪詳細資訊，使用者可以選擇該店鋪作為取件門市。
     
     * 在 `StoreInfoViewController` 中，當使用者選擇了某店鋪並確認後：
         - 調用 `delegate?.storeSelectionDidComplete(with: storeName)`，通知 `StoreSelectionViewController` 使用者的選擇。
         - `StoreSelectionViewController` 接收到選擇結果後，進一步將選定的門市名稱傳遞給主畫面的控制器，並關閉門市選擇視圖。
   
+ -----
+
  `5. 設計考量`
  
     * `代理模式的優勢`
@@ -503,81 +389,411 @@
  */
 
 
-// MARK: - FloatingPanel
+// MARK: - 定位與店面距離處理
+/**
+ 
+ ## 定位與店面距離處理
+
+ `* What`
+
+ - 定位與店面距離處理部分的核心功能：
+
+ 1. 用戶定位管理：
+ 
+    - 使用 `LocationManagerHandler` 獲取用戶當前位置，包括檢查授權狀態、請求位置更新，以及處理定位失敗情況。
+
+ 2. 距離計算：
+ 
+    - 計算用戶位置與每個店面的距離。
+    - 提供距離的格式化結果（例如公里數）供 UI 使用。
+
+ 3. 整合與交互：
+ 
+    - 將定位邏輯與店面資料（`Store` 模型）整合，生成與視圖顯示相關的 `StoreInfoViewModel`，以便在浮動面板中顯示距離資訊。
+
+ ---
+
+ `* Why`
+
+ 1. 提升用戶體驗：
+ 
+    - 顯示用戶與店面的距離有助於幫助用戶快速篩選和選擇適合的店面，例如最近的店面。
+
+ 2. 分離職責：
+ 
+    - `LocationManagerHandler` 專注於處理定位邏輯。
+    - 距離計算被封裝在 `Store` 模型的擴展方法中，保持邏輯的高內聚性。
+    - 視圖層只需關注距離的顯示格式，而非計算細節。
+
+ 3. 靈活與可重用性：
+ 
+    - 定位邏輯與距離計算可重用於其他場景（如外送範圍計算或地圖篩選功能）。
+    - 與 `ViewModel` 的結合使顯示邏輯與數據邏輯解耦，方便擴展或修改。
+
+ 4. 高可測試性：
+ 
+    - `LocationManagerHandler` 和距離計算方法可以單獨測試，而無需依賴視圖邏輯。
+
+ ---
+
+ `* How`
+
+ `1. 定位管理 - LocationManagerHandler：`
+
+    - 功能：
+ 
+      - 使用 `CLLocationManager` 管理用戶授權和位置更新。
+      - 提供當前用戶位置的快取，供距離計算或其他模組訪問。
+
+    - 實作細節：
+ 
+      ```swift
+      class LocationManagerHandler: NSObject, CLLocationManagerDelegate {
+          private let locationManager = CLLocationManager()
+          private(set) var currentUserLocation: CLLocation?
+
+          func startLocationUpdates() {
+              switch locationManager.authorizationStatus {
+              case .authorizedWhenInUse, .authorizedAlways:
+                  locationManager.requestLocation()
+              case .notDetermined:
+                  locationManager.requestWhenInUseAuthorization()
+              case .restricted, .denied:
+                  locationManagerHandlerDelegate?.didReceiveLocationAuthorizationDenied()
+              default:
+                  break
+              }
+          }
+
+          func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+              guard let location = locations.last else { return }
+              currentUserLocation = location
+          }
+
+          func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+              locationManagerHandlerDelegate?.didFailToUpdateLocation(with: error)
+          }
+      }
+      ```
+
+ ---
+
+ `2. 距離計算 - Store 模型擴展方法：`
+
+    - 功能：
+ 
+      - 在 `Store` 模型中封裝距離計算邏輯，使用 `CLLocation` 的 `distance(from:)` 方法計算兩點之間的直線距離。
+      - 提供清晰的計算 API，方便其他模組使用。
+
+    - 實作細節：
+ 
+      ```swift
+      extension Store {
+          func distance(from userLocation: CLLocation) -> CLLocationDistance {
+              let storeLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+              return userLocation.distance(from: storeLocation)
+          }
+      }
+      ```
+
+ ---
+
+ `3. 視圖整合 - StoreInfoViewModel：`
+
+    - 功能：
+ 
+      - 在 `ViewModel` 中整合距離計算與顯示邏輯，將距離轉換為可讀的格式（如公里）。
+      - 將定位與店面資料的結合從視圖層抽離，提升視圖邏輯的簡潔性。
+
+    - 實作細節：
+ 
+      ```swift
+      struct StoreInfoViewModel {
+          private let store: Store
+          private let userLocation: CLLocation?
+
+          var formattedDistance: String {
+              guard let location = userLocation else { return "Not available" }
+              let distance = store.distance(from: location)
+              return String(format: "%.2f km", distance / 1000)
+          }
+      }
+      ```
+
+ ---
+
+ `4. 與 StoreSelectionViewController 集成：`
+
+    - 功能：
+ 
+      - 在 `StoreSelectionViewController` 中調用定位與距離邏輯，將結果顯示在浮動面板中。
+
+    - 集成方式：
+ 
+      ```swift
+      func didSelectStore(_ store: Store) {
+          guard let storeInfoVC = floatingPanelController?.contentViewController as? StoreInfoViewController else { return }
+          
+          let userLocation = locationManagerHandler.currentUserLocation
+          let viewModel = StoreInfoViewModel(store: store, userLocation: userLocation)
+          
+          storeInfoVC.setState(.details(viewModel: viewModel))
+          floatingPanelController?.move(to: .half, animated: true)
+      }
+      ```
+
+ ---
+
+ `* 優化效益`
+
+ 1. 高內聚性與低耦合性：
+ 
+    - 定位、距離計算、與顯示邏輯各司其職，提升模組間的獨立性。
+
+ 2. 靈活性與擴展性：
+ 
+    - 未來可輕鬆擴展定位或距離功能（如支援篩選最近的店面）。
+
+ 3. 測試友好性：
+ 
+    - 可針對距離計算、定位授權進行單元測試，確保邏輯正確性。
+ */
+
+
+// MARK: - StoreSelectionViewController 筆記
+/**
+ 
+ ## StoreSelectionViewController 筆記
+
+ ---
+
+ * What
+ 
+ - `StoreSelectionViewController` 是一個管理地圖和店鋪互動的視圖控制器，其核心功能包括：
+
+ 1. 店鋪資料管理與顯示：
+ 
+    - 從 Firebase 中獲取店鋪資料，並顯示於地圖上，讓用戶可視化門市位置。
+ 
+ 2. 浮動面板功能：
+ 
+    - 使用浮動面板展示選定店鋪的詳細資訊，例如距離、營業時間等。
+ 
+ 3. 位置管理：
+ 
+    - 管理用戶授權位置權限及更新用戶位置，供距離計算使用。
+ 
+ 4. 地圖互動：
+ 
+    - 處理地圖上的點選行為，讓用戶可選擇特定門市並查看其資訊。
+
+ ---
+
+ * Why
+
+ 1. 提升用戶體驗：
+ 
+    - 提供地圖視圖及互動式浮動面板，讓用戶快速找到附近店鋪並查看相關資訊。
+ 
+ 2. 模組化設計：
+ 
+    - 職責分離（SRP），例如位置管理由 `LocationManagerHandler` 處理，地圖交互由 `StoreSelectionMapHandler` 處理。
+ 
+ 3. 可維護性與擴展性：
+ 
+    - 使用清晰的委派模式（`Delegate`）和視圖模型（`ViewModel`）進行數據傳遞與展示，易於調整與新增功能。
+ 
+ 4. 適配多場景需求：
+ 
+    - 支援多種操作（選擇門市、查看資訊、取消選擇），同時保持邏輯清晰、易於測試。
+
+ ---
+
+ * How
+
+ 1. 店鋪資料顯示：
+ 
+    - 使用 `StoreManager` 從 Firebase 獲取店鋪資料，並解析為 `Store` 模型。
+    - 將資料轉換為地圖標註（`MKPointAnnotation`），並添加至地圖視圖。
+
+ 2. 浮動面板管理：
+ 
+    - 初始化浮動面板（`FloatingPanelController`），用於顯示店鋪資訊。
+    - 點選地圖標註後，更新浮動面板內容並展開。
+
+ 3. 位置管理：
+ 
+    - 使用 `LocationManagerHandler` 管理用戶位置：
+      - 授權檢查：通知用戶開啟權限。
+      - 位置更新：快取當前位置，供距離計算使用。
+
+ 4. 地圖交互：
+ 
+    - 使用 `StoreSelectionMapHandler` 處理點選交互，選中或取消選中門市時，分別更新浮動面板內容。
+
+ 5. 結構設計：
+ 
+    - 將邏輯模組化：
+      - 店鋪資料管理：`StoreManager` 負責數據交互。
+      - 地圖互動處理：`StoreSelectionMapHandler` 處理地圖相關操作。
+      - 位置管理：`LocationManagerHandler` 提供用戶位置相關數據。
+    - 將視圖更新與數據處理分離，例如使用 `StoreInfoViewModel` 處理距離計算和格式化。
+
+ ---
+
+ `* 結構重點`
+
+ 1. 位置授權與錯誤處理：
+ 
+    - 當用戶拒絕授權，顯示彈窗通知。
+    - 當位置更新失敗，提示檢查網路或定位設定。
+
+ 2. 地圖點選與浮動面板：
+ 
+    - 點選地圖標註時，更新浮動面板內容：
+      - `使用者當前位置 → 計算距離 → 格式化顯示。`
+ 
+    - 取消選擇時，重置浮動面板至初始狀態。
+
+ 3. 地圖數據添加：
+ 
+    - 使用 Firebase 獲取店鋪資料並解析。
+    - 將資料轉換為地圖標註，並逐一添加至地圖。
+
+ ---
+
+ `* 優化與設計益處`
+
+ 1. 高內聚性：
+ 
+    - 每個模組（如 `StoreManager`、`LocationManagerHandler`）專注於單一職責，降低代碼耦合性。
+
+ 2. 易測試性：
+ 
+    - 使用 `Delegate` 傳遞事件，例如位置更新、地圖點選等，便於模擬測試各種場景。
+
+ 3. 可擴展性：
+ 
+    - 支援未來新增功能，例如過濾店鋪類型、基於用戶位置排序等。
+
+ 4. 用戶體驗友好：
+ 
+    - 浮動面板提供詳細的店鋪資訊，直觀且交互性強。
+ */
+
+
+// MARK: - (v)
 
 import UIKit
-import MapKit
 import FloatingPanel
 
-/// StoreSelectionViewController 用來呈現地圖視圖，並顯示所有店鋪的位置，讓使用者可以選擇特定的店鋪。
+/// `StoreSelectionViewController`
+///
+/// ### 主要功能：
+/// - 提供地圖視圖，展示所有店鋪位置，支持用戶點選查看詳細資訊。
+/// - 整合地圖互動、位置更新及浮動面板顯示功能。
+///
+/// ### 功能詳細說明：
+/// 1. 店鋪資料管理與顯示
+///     - 從 Firebase 拉取店鋪資料，並在地圖上顯示為標註點（`MKPointAnnotation`）。
+/// 2. 浮動面板功能
+///     - 使用浮動面板展示店鋪的詳細資訊，包括距離、營業時間等，與 `StoreInfoViewController` 交互。
+/// 3. 位置管理
+///     - 使用 `LocationManagerHandler` 管理用戶位置授權與更新，提供距離計算的基礎數據。
+/// 4. 地圖互動
+///     - 使用 `StoreSelectionMapHandler` 處理地圖點選行為，與 `StoreSelectionMapHandlerDelegate` 進行通信。
+///
+/// ### 與其他模組的交互：
+/// - `StoreManager`
+///     - 從 Firebase 獲取店鋪資料，並解析為 `Store` 模型。
+/// - `FloatingPanelController`
+///     - 用於展示店鋪的詳細資訊，支持半屏及全屏狀態切換。
+/// - `LocationManagerHandler`
+///     - 提供用戶當前位置，支持距離計算及授權狀態管理。
+/// - `StoreSelectionMapHandler`
+///     - 處理地圖點選交互，將用戶操作回傳至控制器。
 class StoreSelectionViewController: UIViewController {
     
     // MARK: - Properties
     
     /// 顯示店家選擇地圖的主要視圖
-    private let storeSelectionMapView = StoreSelectionMapView()
+    private let storeSelectionView = StoreSelectionView()
+    
     /// 所有店鋪資料的陣列
     private var stores: [Store] = []
-    /// 保存每個店鋪的今日營業時間
-    private var todayOpeningHours: [String: String] = [:]
+    
     /// 處理地圖上相關互動的 handler
     private let storeSelectionMapHandler = StoreSelectionMapHandler()
+    
     /// 處理定位距離的 handler
     private let locationManagerHandler = LocationManagerHandler()
-    /// 用於管理門市訊息展示
+    
+    /// 用於管理門市訊息展示的浮動面板
     private var floatingPanelController: FloatingPanelController?
+    
+    /// 用於管理導航欄的管理器
+    private var storeSelectionNavigationBarManager: StoreSelectionNavigationBarManager?
     
     // MARK: - Delegate
     
-    /// StoreSelectionResultDelegate 用於通知主畫面（OrderCustomerDetailsViewController）選擇店鋪的結果
-    weak var delegate: StoreSelectionResultDelegate?
+    /// 用於通知主畫面（`OrderCustomerDetailsViewController`）選擇店鋪的結果
+    weak var storeSelectionResultDelegate: StoreSelectionResultDelegate?
     
     // MARK: - Lifecycle Methods
     
+    /// 加載視圖
     override func loadView() {
-        view = storeSelectionMapView
+        view = storeSelectionView
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupNavigationBarManager()
         setupMapInteractionHandler()
         setupLocationManagerHandler()
         fetchAndDisplayStores()
         setupFloatingPanel()
-        setupNavigationBar()
     }
     
     // MARK: - Setup Map Interaction
-
-    /// 設置 setupMapInteractionHandler 的代理
+    
+    /// 配置地圖互動處理器
+    ///
+    /// - 設置地圖視圖的 `delegate` 為 `StoreSelectionMapHandler`。
+    /// - 設置 `StoreSelectionMapHandlerDelegate` 為當前 `ViewController`。
     private func setupMapInteractionHandler() {
-        storeSelectionMapView.mapView.delegate = storeSelectionMapHandler
-        storeSelectionMapHandler.delegate = self
+        storeSelectionView.storeSelectionMapView.delegate = storeSelectionMapHandler
+        storeSelectionMapHandler.storeSelectionMapHandlerDelegate = self
     }
     
     // MARK: - Setup Location Manager
     
-    /// 設置 LocationManagerHandler 的代理
+    /// 配置位置管理器處理器
+    ///
+    /// 設置位置管理器的代理為當前 ViewController，並啟動位置更新。
     private func setupLocationManagerHandler() {
-        locationManagerHandler.delegate = self
+        locationManagerHandler.locationManagerHandlerDelegate = self
         locationManagerHandler.startLocationUpdates()
     }
     
     // MARK: - Setup Floating Panel
-
-    /// 設置浮動面板
+    
+    /// 初始化浮動面板
+    ///
+    /// 使用 `FloatingPanelHelper` 配置浮動面板，用於展示店鋪的詳細資訊。
     private func setupFloatingPanel() {
         floatingPanelController = FloatingPanelHelper.setupFloatingPanel(for: self)
     }
     
-    // MARK: - Setup Navigation Bar
-
-    /// 設置導航欄
-    private func setupNavigationBar() {
-        self.title = "All Stores"
-        let closeButton = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeButtonTapped))
-        self.navigationItem.leftBarButtonItem = closeButton
-        view.backgroundColor = .white
+    // MARK: - Setup Navigation Bar Manager
+    
+    /// 配置導航欄
+    ///
+    /// 使用 `StoreSelectionNavigationBarManager` 設置標題和關閉按鈕。
+    private func setupNavigationBarManager() {
+        storeSelectionNavigationBarManager = StoreSelectionNavigationBarManager(navigationItem: navigationItem)
+        storeSelectionNavigationBarManager?.configureTitle("All Stores")
+        storeSelectionNavigationBarManager?.configureCloseButton(target: self, action: #selector(closeButtonTapped))
     }
     
     // MARK: - Navigation Actions
@@ -588,14 +804,15 @@ class StoreSelectionViewController: UIViewController {
     }
     
     // MARK: - Fetch Stores & Add Stores to Map
-
-    /// 從 Firestore 中拉取店鋪資料並顯示在地圖上
+    
+    /// 從 Firestore 獲取店鋪資料並顯示在地圖上
+    ///
+    /// 通過 `StoreManager` 拉取店鋪數據，並將店鋪標記添加到地圖上。
     private func fetchAndDisplayStores() {
         Task {
             do {
                 stores = try await StoreManager.shared.fetchStores()
-                todayOpeningHours = StoreManager.shared.getTodayOpeningHours(for: stores)
-                addStoresToMap(stores)
+                storeSelectionMapHandler.addAnnotations(for: stores, to: storeSelectionView.storeSelectionMapView)
             } catch {
                 print("Failed to fetch stores: \(error.localizedDescription)")
                 AlertService.showAlert(withTitle: "錯誤", message: "無法載入店鋪資訊，請稍後再試。", inViewController: self, showCancelButton: false, completion: nil)
@@ -603,59 +820,42 @@ class StoreSelectionViewController: UIViewController {
         }
     }
     
-    /// 在地圖上顯示所有門市
-    /// - Parameter stores: 店鋪的陣列
-    private func addStoresToMap(_ stores: [Store]) {
-        for store in stores {
-            let annotation = MKPointAnnotation()
-            annotation.title = store.name
-            annotation.coordinate = CLLocationCoordinate2D(latitude: store.location.latitude, longitude: store.location.longitude)
-            storeSelectionMapView.mapView.addAnnotation(annotation)
-        }
-    }
-    
 }
 
 // MARK: - StoreSelectionMapHandlerDelegate
 extension StoreSelectionViewController: StoreSelectionMapHandlerDelegate {
-
-    /// 取得所有店鋪資料
+    
+    /// 獲取所有店鋪資料
+    ///
+    /// - Returns: 所有店鋪的陣列
     func getStores() -> [Store] {
         return stores
     }
     
-    /// 取得特定店鋪的今日營業時間
-    func getTodayOpeningHours(for storeId: String) -> String {
-        return todayOpeningHours[storeId] ?? "營業時間未提供"
-    }
-    
-    /// 取得特定店鋪的距離
-    func fetchDistanceToStore(for storeId: String) -> CLLocationDistance? {
-        return StoreManager.shared.getDistanceToStore(for: storeId)
-    }
-    
     /// 當地圖上某個店鋪被選取時調用
+    ///
+    /// ### 功能說明：
+    /// - 通過 `LocationManagerHandler.currentUserLocation` 獲取用戶最新位置。
+    /// - 建立 `StoreInfoViewModel`，包括用戶與店鋪的距離資訊。
+    /// - 當使用者在地圖上選擇一個門市時，展示該門市的詳細資訊。
+    /// - 設置 `StoreInfoViewController` 為浮動面板的內容控制器，並將 `StoreSelectionResultDelegate` 設置為當前的 `StoreSelectionViewController`。
     ///
     /// - Parameters:
     ///   - store: 被選取的店鋪資料
-    ///
-    /// ### 功能說明：
-    /// - 當使用者在地圖上選擇一個門市時，展示該門市的詳細資訊。
-    /// - 設置 `StoreInfoViewController` 為浮動面板的內容控制器，並將 `StoreSelectionResultDelegate` 設置為當前的 `StoreSelectionViewController`。
     func didSelectStore(_ store: Store) {
-        let distance = StoreManager.shared.getDistanceToStore(for: store.id)
-        let todayHours = todayOpeningHours[store.id] ?? "營業時間未提供"
-
-        if let storeInfoVC = floatingPanelController?.contentViewController as? StoreInfoViewController {
-            
-            // 設置 StoreSelectionResultDelegate 以便選擇店鋪後通知主畫面（OrderCustomerDetailsViewController）
-            storeInfoVC.delegate = self
-    
-            // 使用 StoreInfoViewController 配置所選門市的詳細資訊
-            storeInfoVC.configure(with: store, distance: distance, todayHours: todayHours)
-        }
+        guard let storeInfoVC = floatingPanelController?.contentViewController as? StoreInfoViewController else { return }
         
-        // 自動彈出浮動面板
+        // 從 LocationManagerHandler 獲取用戶當前位置
+        let userLocation = locationManagerHandler.currentUserLocation
+        
+        // 建立 ViewModel
+        let viewModel = StoreInfoViewModel(store: store, userLocation: userLocation)
+        
+        // 傳遞 ViewModel 到浮動面板
+        storeInfoVC.storeSelectionResultDelegate = self
+        storeInfoVC.setState(.details(viewModel: viewModel))
+        
+        // 展開浮動面板
         floatingPanelController?.move(to: .half, animated: true)
     }
     
@@ -665,12 +865,12 @@ extension StoreSelectionViewController: StoreSelectionMapHandlerDelegate {
     /// - 當用戶取消選擇門市標註時，重置浮動面板內容至初始狀態。
     /// - 收起浮動面板並顯示預設的提示資訊。
     func didDeselectStore() {
+        
+        guard let storeInfoVC = floatingPanelController?.contentViewController as? StoreInfoViewController else { return }
+        storeInfoVC.setState(.initial(message: "請點選門市地圖取得詳細資訊"))
+    
         // 收起浮動面板到 .tip 狀態
         floatingPanelController?.move(to: .tip, animated: true)
-        
-        if let storeInfoVC = floatingPanelController?.contentViewController as? StoreInfoViewController {
-            storeInfoVC.configureInitialState(with: "請點選門市地圖取得詳細資訊")
-        }
     }
     
 }
@@ -678,15 +878,34 @@ extension StoreSelectionViewController: StoreSelectionMapHandlerDelegate {
 // MARK: - LocationManagerHandlerDelegate
 extension StoreSelectionViewController: LocationManagerHandlerDelegate {
     
-    /// 當位置更新時調用
-    func didUpdateUserLocation(location: CLLocation) {
-        StoreManager.shared.updateUserLocationAndCalculateDistances(userLocation: location, stores: stores)
+    /// 當位置權限被拒絕時調用
+    ///
+    /// ### 功能說明：
+    /// 彈出警告提示用戶啟用位置權限。
+    func didReceiveLocationAuthorizationDenied() {
+        AlertService.showAlert(
+            withTitle: "位置權限已關閉",
+            message: "請前往設定開啟位置權限，以使用附近店鋪的相關功能。",
+            inViewController: self,
+            showCancelButton: true,
+            completion: nil
+        )
     }
     
-    /// 當位置權限被拒絕時調用
-    func didReceiveLocationAuthorizationDenied() {
-        AlertService.showAlert(withTitle: "位置權限已關閉", message: "請前往設定開啟位置權限，以使用附近店鋪的相關功能。", inViewController: self, showCancelButton: true, completion: nil)
+    /// 當位置更新失敗時調用
+    ///
+    /// ### 功能說明：
+    /// - 提示用戶檢查網路或定位設定。
+    func didFailToUpdateLocation(with error: Error) {
+        AlertService.showAlert(
+            withTitle: "位置獲取失敗",
+            message: "無法獲取您的位置，請檢查網路或定位設定。\n錯誤：\(error.localizedDescription)",
+            inViewController: self,
+            showCancelButton: false,
+            completion: nil
+        )
     }
+    
 }
 
 // MARK: - StoreSelectionResultDelegate Implementation
@@ -698,10 +917,11 @@ extension StoreSelectionViewController: StoreSelectionResultDelegate {
     ///
     /// ### 功能說明：
     /// - 當使用者在 `StoreInfoViewController` 中選擇並確認某個門市後，此方法將被調用。
-    /// - 通過委託 (`delegate?.storeSelectionDidComplete(with: storeName)`)，將選擇的店鋪名稱傳遞給設置該委託的其他控制器（如 `OrderCustomerDetailsViewController`），以確保選擇的結果能夠即時反映到主畫面中。
+    /// - 通過委託，將選擇的店鋪名稱傳遞給設置該委託的其他控制器（ `OrderCustomerDetailsViewController`），以確保選擇的結果能夠即時反映到主畫面中。
     func storeSelectionDidComplete(with storeName: String) {
+        
         // 通知主畫面的 OrderCustomerDetailsViewController，將選擇的店鋪名稱回傳
-        delegate?.storeSelectionDidComplete(with: storeName)
+        storeSelectionResultDelegate?.storeSelectionDidComplete(with: storeName)
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -710,125 +930,3 @@ extension StoreSelectionViewController: StoreSelectionResultDelegate {
 // MARK: - Floating Panel Delegate Methods
 extension StoreSelectionViewController: FloatingPanelControllerDelegate {
 }
-
-
-
-// MARK: - 初期測試用
-
-/*
- import UIKit
- import MapKit
-
- class StoreSelectionViewController: UIViewController {
-
-     // MARK: - Properties
-
-     private let storeSelectionView = StoreSelectionView()
-     private var stores: [Store] = []
-
-     // MARK: - Lifecycle Methods
-
-     override func loadView() {
-         view = storeSelectionView
-     }
-     
-     override func viewDidLoad() {
-         super.viewDidLoad()
-         setupNavigationTitle()
-         setupMap()
-         fetchAndDisplayStores()
-     }
-
-     // MARK: - Setup Methods
-
-     /// 設置導航欄的標題
-     private func setupNavigationTitle() {
-         title = "Select Store"
-         navigationController?.navigationBar.prefersLargeTitles = true
-         navigationItem.largeTitleDisplayMode = .always
-     }
-     
-     // MARK: - Map Setup
-     
-     private func setupMap() {
-         storeSelectionView.mapView.delegate = self
-     }
-     
-     // MARK: - Fetch Stores and Display
-     
-     private func fetchAndDisplayStores() {
-         
-         // 在這裡從 Firebase 或其他數據源中獲取門市位置的數據
-         // 並將其標示在地圖上，例如使用 MKPointAnnotation
-         
-         // 模擬店鋪資料
-         stores = [
-             Store(id: "1", name: "Starbucks Da'an", latitude: 25.0330, longitude: 121.5654, address: "106台北市大安區復興南路一段323號", phoneNumber: "02 2325 9473", openingHours: [
-                 "Monday": "07:30–19:00",
-                 "Tuesday": "07:30–19:00",
-                 "Wednesday": "07:30–19:00",
-                 "Thursday": "07:30–19:00",
-                 "Friday": "07:30–19:00",
-                 "Saturday": "08:30–17:30",
-                 "Sunday": "08:30–17:30"
-             ]),
-             Store(id: "2", name: "Starbucks Xinyi", latitude: 25.0321, longitude: 121.5678, address: "110台北市信義區信義路五段106號", phoneNumber: "02 2723 5947", openingHours: [
-                 "Monday": "07:30–19:00",
-                 "Tuesday": "07:30–19:00",
-                 "Wednesday": "07:30–19:00",
-                 "Thursday": "07:30–19:00",
-                 "Friday": "07:30–19:00",
-                 "Saturday": "08:30–17:30",
-                 "Sunday": "08:30–17:30"
-             ])
-         ]
-         
-         // 將店鋪標示在地圖上
-         for store in stores {
-             let annotation = MKPointAnnotation()
-             annotation.title = store.name
-             annotation.coordinate = CLLocationCoordinate2D(latitude: store.latitude, longitude: store.longitude)
-             storeSelectionView.mapView.addAnnotation(annotation)
-         }
-         
-     }
- }
-
- // MARK: - MKMapViewDelegate
- extension StoreSelectionViewController: MKMapViewDelegate {
-     
-     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-         guard let annotation = view.annotation else { return }
-
-         
-         // 根據標記的 title 找到對應的 store
-         guard let store = stores.first(where: { $0.name == annotation.title}) else {
-             print("未找到對應的店鋪資料")
-             return
-         }
-         
-         // 打印店家詳細資料
-         print("Selected store: \(store.name)")
-         print("Address: \(store.address)")
-         print("Phone: \(store.phoneNumber)")
-         print("Today's Opening Hours: \(store.todayOpeningHours())")
-         
-         // 顯示簡單的 UIAlertController 來展示選擇的店鋪信息
-         let alertController = UIAlertController(title: store.name, message: "地址: \(store.address)\n電話: \(store.phoneNumber)\n今日營業時間: \(store.todayOpeningHours())", preferredStyle: .actionSheet)
-
-         // 添加一個動作來展示電話號碼（實際開發中可以替換為更完整的卡片式視圖）
-         alertController.addAction(UIAlertAction(title: "撥打電話", style: .default, handler: { _ in
-             if let phoneURL = URL(string: "tel://\(store.phoneNumber)") {
-                 if UIApplication.shared.canOpenURL(phoneURL) {
-                     UIApplication.shared.open(phoneURL, options: [:], completionHandler: nil)
-                 }
-             }
-         }))
-
-         alertController.addAction(UIAlertAction(title: "取消", style: .cancel, handler: nil))
-         present(alertController, animated: true, completion: nil)
-     }
- }
- */
-
-
