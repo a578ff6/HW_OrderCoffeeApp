@@ -20,7 +20,7 @@ class OrderCustomerDetailsActionButton: UIButton {
     
     // MARK: - Initializer
     
-    /// 初始化 `OrderItemActionButton`
+    /// 初始化 `OrderCustomerDetailsActionButton`
     /// - Parameters:
     ///   - title: 按鈕的文字內容。
     ///   - font: 按鈕文字的字體樣式。

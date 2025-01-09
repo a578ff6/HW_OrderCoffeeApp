@@ -1041,7 +1041,7 @@ extension OrderCustomerDetailsViewController: OrderCustomerDetailsHandlerDelegat
             print("無法找到 ID 為 StoreSelectionViewControllerID 的視圖控制器")
             return
         }
-        storeSelectionVC.delegate = self // 設置代理以便返回時接收選擇結果
+        storeSelectionVC.storeSelectionResultDelegate = self // 設置代理以便返回時接收選擇結果
         
         let navigationController = UINavigationController(rootViewController: storeSelectionVC)
         navigationController.modalPresentationStyle = .fullScreen
