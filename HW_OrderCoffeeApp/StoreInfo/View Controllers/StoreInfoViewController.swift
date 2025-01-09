@@ -5,58 +5,178 @@
 //  Created by 曹家瑋 on 2024/10/29.
 //
 
-// MARK: - StoreInfoViewController 重點筆記
+// MARK: - StoreInfoViewController 筆記
 /**
- ## StoreInfoViewController 重點筆記
-
- 1. `控制器分離與視圖組合`
-    - `StoreInfoViewController`中使用了`StoreInfoView` 作為控制器的根視圖，使視圖層邏輯更加清晰，便於重用和維護。
-
- 2. `根視圖使用 loadView 設置`
-    - 通過 loadView() 方法來指定控制器的根視圖為 StoreInfoView，這樣視圖的佈局可以完全由 StoreInfoView 自行管理，而 StoreInfoViewController 只需專注於控制器的邏輯部分。
-
- 3. `雙視圖切換的邏輯`
-    - StoreInfoView 包含 DefaultInfoView 和 SelectStoreInfoView 兩個子視圖，分別用來顯示「初始提示資訊」和「選擇的門市資訊」。
-    - 通過隱藏與顯示這兩個子視圖來實現界面的狀態切換，使邏輯簡單明確。
-
- 4. `視圖的設置與資料配置分離`
-    - setupViews() 方法負責定義視圖的佈局，而 configure(with:) 方法負責將資料填充到 UI 元素中，確保佈局與數據配置的分離。
-
- 5. `按鈕行為建議`
-    - 「撥打電話」按鈕的回調行為使用 Action Sheet，提供更好的用戶體驗，讓用戶在執行撥打電話前能夠確認。
-    - 「選擇門市」按鈕可根據具體邏輯，使用 Alert 或 Action Sheet 來提示用戶後續動作的確認，具體取決於交互需求。
  
- 6. `使用 Delegate 與 StoreSelectionResultDelegate 的設置`
-     - `delegate` 屬性設置為 `StoreSelectionResultDelegate`，用於在用戶選擇完門市後通知主畫面更新顯示，實現了「店鋪選擇畫面」與主畫面之間的鬆耦合。
+ ## StoreInfoViewController 筆記
  
- 7. `設計考量`
+ `* What`
+ 
+ - `StoreInfoViewController` 是一個負責顯示門市資訊的視圖控制器，支援兩種主要狀態：
+ 
+ 1. 初始狀態 (`initial`)：顯示提示訊息（如：「請選擇門市」）。
+ 2. 詳細狀態 (`details`)：顯示已選擇門市的詳細資訊（如：門市名稱、地址、營業時間）。
+
+ - 核心功能：
+ 
+ 1.根據狀態切換 UI 顯示。
+ 2.提供行為回調（如撥打電話、選擇門市）的處理邏輯。
+
+ -----------
+
+ `* Why`
+ 
+ 1. 用戶需求：
+ 
+    - 提供用戶友好的界面，當未選擇門市時顯示提示，選擇後提供詳細資訊。
+    - 支援用戶快速撥打電話或選擇門市作為取件點。
     
-    * `資料一致性`：
+ 2. 模組化設計：
+ 
+    - 使用 `StoreInfoView` 作為視圖容器，分離視圖顯示與邏輯處理，提升代碼的可讀性與可維護性。
+    - 讓狀態管理集中在控制器，確保邏輯清晰。
+
+ 3. 符合 MVC 設計原則：
+ 
+    - 視圖 (`StoreInfoView`) 和邏輯 (`StoreInfoViewController`) 明確分工，降低耦合度。
+    - 便於未來擴展或修改（如新增狀態或功能）。
+
+ * How
+
+ 1. 狀態管理
+ 
+ - 透過 `StoreInfoState` 列舉來管理狀態：
+   - `.initial(message: String)`：用於顯示初始提示訊息。
+   - `.details(viewModel: StoreInfoViewModel)`：用於顯示門市的詳細資訊。
+
+ 2. 視圖更新
+ 
+ - 使用 `storeInfoView.updateView(for:)` 根據狀態切換 UI：
+   - 初始狀態顯示 `StoreDefaultInfoView`。
+   - 詳細狀態顯示 `SelectStoreInfoView`，並配置相關行為回調。
+
+ 3. 行為回調
+ 
+ - 透過 `storeInfoView.configureActions` 設置撥打電話和選擇門市的行為。
+ - 在控制器內集中處理回調邏輯（`handleCallPhone`、`handleSelectStore`），保持視圖單純。
+
+ -----------
+
+ `* Code Implementation Summary`
+ 
+ ```swift
+ // 狀態管理
+ func setState(_ state: StoreInfoState) {
+     storeInfoView.updateView(for: state)
+     updateActions(for: state)
+ }
+
+ // 設置行為回調
+ private func updateActions(for state: StoreInfoState) {
+     if case .details(let viewModel) = state {
+         storeInfoView.configureActions(
+             callPhoneAction: { [weak self] in
+                 self?.handleCallPhone(for: viewModel)
+             },
+             selectStoreAction: { [weak self] in
+                 self?.handleSelectStore(for: viewModel)
+             }
+         )
+     }
+ }
+
+ // 行為處理
+ private func handleCallPhone(for viewModel: StoreInfoViewModel) {
+     // 顯示撥打電話的警告並執行撥號操作
+ }
+ private func handleSelectStore(for viewModel: StoreInfoViewModel) {
+     // 顯示選擇門市的確認彈窗並通知主畫面
+ }
+ ```
+
+ -----------
+
+ `* 優化的設計與益處`
+
+ `1. 集中狀態與行為管理：`
+ 
+    - `setState` 明確分工：`updateView` 負責視圖切換，`updateActions` 設置回調。
+    - 增強邏輯的可讀性，便於擴展新功能（如新增按鈕或狀態）。
+
+ `2. 視圖與控制器分工明確：`
+ 
+    - `StoreInfoView` 僅負責 UI 組織與基本行為設定。
+    - 行為邏輯集中於控制器內，符合 MVC 設計原則。
+
+ `3. 低耦合、高可測試性：`
+ 
+    - 行為回調使用閉包處理，便於測試與替換。
+    - 未來若需新增狀態或擴展功能，能快速進行修改。
+ 
+ `4.StoreSelectionResultDelegate 的設置：`
+ 
+    - 設置 `StoreSelectionResultDelegate`，用於在用戶選擇完門市後通知主畫面更新顯示，實現了「店鋪選擇畫面」與主畫面之間的鬆耦合。
+ 
+ `5. 設計考量`
+    
+    - `資料一致性`：
         - 使用代理模式 (`StoreSelectionResultDelegate`) 來通知主畫面選擇結果，確保`選擇的門市`能即時`同步至訂單顯示`。
     
-    * `用戶確認`：
+    - `用戶確認`：
         - 在選擇店鋪前加入確認提示 (`Alert`)，減少誤操作的可能性，提升用戶體驗。
  */
 
 
-import UIKit
-import CoreLocation
+// MARK: - (v)
 
-/// 用於顯示「提示選擇門市資訊」與「門市詳細資訊」的視圖控制器
+import UIKit
+
+/// `StoreInfoViewController`
 ///
-/// - `StoreInfoViewController`的作用是用來顯示當前選擇的店家詳細資訊，或者當沒有選擇店家時，顯示預設的提示資訊。
+/// 此控制器負責顯示「預設提示資訊」或「門市詳細資訊」的 UI。
+///
+/// - 功能說明：
+///   - 根據不同的狀態顯示對應的視圖。
+///   - 提供撥打電話和選擇門市的行為回調。
+///
+/// - 支援的狀態：
+///   1. 初始狀態：顯示預設提示訊息（例如：「請選擇門市」）。
+///   2. 詳細狀態：顯示選定門市的詳細資訊（例如：地址、電話、營業時間）。
+///
+/// - 核心組件：
+///   - `StoreInfoView`：內含 `StoreDefaultInfoView` 和 `SelectStoreInfoView`。
+///
+/// - 設計目標：
+///   - 使用單一職責原則（SRP）：
+///    - 控制器負責業務邏輯和狀態管理。
+///    - `StoreInfoView` 專注於視圖顯示和行為配置。
+///
+/// - 使用場景：
+///   - 作為浮動面板（Floating Panel）的內容，配合地圖功能顯示選定門市的資訊。
 class StoreInfoViewController: UIViewController {
+    
+    
+    // MARK: - Nested Types
+    
+    /// 表示 `StoreInfoViewController` 的狀態
+    ///
+    /// - `initial`：初始狀態，僅顯示提示訊息。
+    /// - `details`：詳細資訊狀態，顯示門市詳細資料。
+    enum StoreInfoState {
+        case initial(message: String)
+        case details(viewModel: StoreInfoViewModel)
+    }
     
     // MARK: - Properties
     
-    /// StoreInfoView 是自定義的 UIView，包含「預設提示資訊視圖」與「選擇的門市資訊視圖」
+    /// 主要顯示的視圖，包含「預設提示資訊視圖」與「選擇的門市資訊視圖」
     private let storeInfoView = StoreInfoView()
     
     // MARK: - Delegate
     
     /// 用於通知主畫面選擇的門市結果，保持主畫面與門市選擇間的同步
-    weak var delegate: StoreSelectionResultDelegate?
-
+    weak var storeSelectionResultDelegate: StoreSelectionResultDelegate?
+    
     // MARK: - Lifecycle Methods
     
     override func loadView() {
@@ -65,65 +185,68 @@ class StoreInfoViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
     }
     
-    // MARK: - Configure
+    // MARK: - Public Methods
     
-    /// 設定 StoreInfoViewController 的初始狀態（顯示提示訊息）
-    /// - Parameter message: 提示訊息文字
-    func configureInitialState(with message: String) {
-        storeInfoView.defaultInfoView.configure(with: message)
-        storeInfoView.defaultInfoView.isHidden = false
-        storeInfoView.selectStoreInfoView.isHidden = true
+    /// 根據狀態更新 StoreInfoViewController 的 UI
+    ///
+    /// - Parameter state: 浮動面板的狀態
+    func setState(_ state: StoreInfoState) {
+        storeInfoView.updateView(for: state)
+        updateActions(for: state)
     }
     
-    /// 設定 StoreInfoViewController 來顯示門市詳細資訊
-    /// - Parameters:
-    ///   - store: 門市資料
-    ///   - distance: 與用戶之間的距離
-    ///   - todayHours: 今日營業時間
-    func configure(with store: Store, distance: CLLocationDistance?, todayHours: String?) {
-        let formattedPhoneNumber = StoreManager.shared.formatPhoneNumber(store.phoneNumber)
-        storeInfoView.selectStoreInfoView.configure(with: store, formattedPhoneNumber: formattedPhoneNumber, distance: distance, todayHours: todayHours)
-        storeInfoView.defaultInfoView.isHidden = true
-        storeInfoView.selectStoreInfoView.isHidden = false
-        
-        // 設置按鈕回調行為
-        setupCallPhoneAction(for: store)
-        setupSelectStoreAction(for: store)
-    }
+    // MARK: - Private Methods
     
-    // MARK: - Setup Button Actions
-    
-    /// 設置撥打電話按鈕的回調行為
-    /// - Parameter store: 店鋪資料
-    private func setupCallPhoneAction(for store: Store) {
-        storeInfoView.selectStoreInfoView.onCallPhoneTapped = {
-            AlertService.showActionSheet(withTitle: "撥打電話", message: "確定要撥打電話給「\(store.name)」嗎？", inViewController: self, confirmButtonTitle: "撥打", showCancelButton: true) {
-                guard let phoneURL = URL(string: "tel://\(store.phoneNumber)") else {
-                    print("Invalid phone number")
-                    return
+    /// 更新按鈕的行為回調
+    ///
+    /// 根據當前狀態設置 `SelectStoreInfoView` 的按鈕行為。
+    ///
+    /// - Parameter state: 當前的狀態
+    private func updateActions(for state: StoreInfoState) {
+        if case .details(let viewModel) = state {
+            storeInfoView.configureActions(
+                callPhoneAction: { [weak self] in
+                    self?.handleCallPhone(for: viewModel)
+                },
+                selectStoreAction: { [weak self] in
+                    self?.handleSelectStore(for: viewModel)
                 }
-                
-                if UIApplication.shared.canOpenURL(phoneURL) {
-                    UIApplication.shared.open(phoneURL, options: [:], completionHandler: nil)
-                } else {
-                    print("Can't make phone call")
-                }
-            }
+            )
         }
     }
     
-    /// 設置選擇門市按鈕的回調行為
-    /// - Parameter store: 店鋪資料
-    private func setupSelectStoreAction(for store: Store) {
-        storeInfoView.selectStoreInfoView.onSelectStoreTapped = {
-            AlertService.showAlert(withTitle: "選擇門市", message: "你確定要選擇「\(store.name)」作為取件門市嗎？", inViewController: self, showCancelButton: true) {
-                // 通知主畫面已選擇的門市名稱
-                self.delegate?.storeSelectionDidComplete(with: store.name)
-                self.dismiss(animated: true, completion: nil)
-            }
+    // MARK: - Action Handlers
+
+    /// 處理撥打電話的邏輯
+    ///
+    /// - Parameter viewModel: 門市相關的 ViewModel
+    private func handleCallPhone(for viewModel: StoreInfoViewModel) {
+        AlertService.showActionSheet(
+            withTitle: "撥打電話",
+            message: "確定要撥打電話給「\(viewModel.name)」嗎？",
+            inViewController: self,
+            confirmButtonTitle: "撥打",
+            showCancelButton: true
+        ) {
+            guard let phoneURL = URL(string: "tel://\(viewModel.formattedPhoneNumber)") else { return }
+            UIApplication.shared.open(phoneURL, options: [:])
+        }
+    }
+    
+    /// 處理選擇門市的邏輯
+    ///
+    /// - Parameter viewModel: 門市相關的 ViewModel
+    private func handleSelectStore(for viewModel: StoreInfoViewModel) {
+        AlertService.showAlert(
+            withTitle: "選擇門市",
+            message: "你確定要選擇「\(viewModel.name)」作為取件門市嗎？",
+            inViewController: self,
+            showCancelButton: true
+        ) {
+            self.storeSelectionResultDelegate?.storeSelectionDidComplete(with: viewModel.name)
+            self.dismiss(animated: true, completion: nil)
         }
     }
     
