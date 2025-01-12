@@ -83,7 +83,19 @@
 
 import UIKit
 
-/// OrderConfirmationViewController 佈局使用，設置 Section Header
+/// `OrderConfirmationSectionHeaderView` 是用於 `OrderConfirmationViewController` 的區段標題視圖。
+///
+/// - 功能：
+///   - 用於展示區塊標題，並支援展開/收起的視覺提示（箭頭）。
+///   - 增強分隔區塊的視覺效果，便於用戶理解頁面結構。
+///
+/// - 特點：
+///   1. 支援自定義標題文字和箭頭符號的顯示狀態（展開或收起）。
+///   2. 分隔線增強視覺層次感，清晰劃分區塊內容。
+///   3. 使用堆疊視圖（StackView）統一管理標題和箭頭符號，簡化佈局。
+///
+/// - 使用場景：
+///   - 用於訂單確認頁面的不同區塊，例如飲品項目、訂單明細、顧客資訊等，提供區塊標題並指示展開狀態。
 class OrderConfirmationSectionHeaderView: UICollectionReusableView {
     
     static let headerIdentifier = "OrderConfirmationSectionHeaderView"
@@ -91,17 +103,20 @@ class OrderConfirmationSectionHeaderView: UICollectionReusableView {
     // MARK: - UI Elements
     
     /// 標題標籤，顯示每個區塊的名稱
-    private let titleLabel = OrderConfirmationSectionHeaderView.createLabel(font: .systemFont(ofSize: 22, weight: .semibold), textColor: .black)
+    private let titleLabel = OrderConfirmationLabel(font: .systemFont(ofSize: 22, weight: .heavy), textColor: .black)
+    
     /// 箭頭符號，指示區塊的展開或收起狀態
-    private let arrowImageView = OrderConfirmationSectionHeaderView.createArrowImageView()
+    private let arrowImageView = OrderConfirmationIconImageView(image: UIImage(systemName: "chevron.right"), tintColor: .gray, size: 20, symbolWeight: .medium)
+    
     /// 分隔線視圖，用於增強視覺上的分隔效果
-    private let separatorView = OrderConfirmationSectionHeaderView.createSeparatorView(height: 2)
+    private let separatorView = OrderrConfirmationBottomLineView(backgroundColor: .deepGreen.withAlphaComponent(0.5), height: 2.0)
     
     /// 標題和箭頭的堆疊視圖，用於排列標題文字和箭頭符號
-    private let titleAndArrowStackView = OrderConfirmationSectionHeaderView.createStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill)
+    private let titleAndArrowStackView = OrderConfirmationStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill)
     
     // MARK: - Initializer
     
+    /// 初始化視圖，配置子視圖的佈局
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -114,6 +129,9 @@ class OrderConfirmationSectionHeaderView: UICollectionReusableView {
     
     // MARK: - Setup Methods
     
+    /// 配置視圖的子視圖佈局
+    ///
+    /// - 包括標題與箭頭堆疊視圖，以及分隔線的佈局。
     private func setupView() {
         titleAndArrowStackView.addArrangedSubview(titleLabel)
         titleAndArrowStackView.addArrangedSubview(arrowImageView)
@@ -122,10 +140,12 @@ class OrderConfirmationSectionHeaderView: UICollectionReusableView {
         addSubview(separatorView)
         
         NSLayoutConstraint.activate([
+            // 標題與箭頭的堆疊視圖約束
             titleAndArrowStackView.topAnchor.constraint(equalTo: topAnchor, constant: 20),
             titleAndArrowStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             titleAndArrowStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             
+            // 分隔線約束
             separatorView.topAnchor.constraint(equalTo: titleAndArrowStackView.bottomAnchor, constant: 10),
             separatorView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             separatorView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
@@ -133,57 +153,14 @@ class OrderConfirmationSectionHeaderView: UICollectionReusableView {
         ])
     }
     
-    // MARK: - Factory Methods
-    
-    /// 建立標題標籤
-    private static func createLabel(font: UIFont, textColor: UIColor) -> UILabel {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = font
-        label.textColor = textColor
-        return label
-    }
-    
-    /// 建立箭頭符號視圖
-    /// - Returns: 配置好的箭頭符號視圖，預設為向右箭頭
-    private static func createArrowImageView() -> UIImageView {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .gray
-        imageView.image = UIImage(systemName: "chevron.right")  // 預設顯示向右箭頭
-        imageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        return imageView
-    }
-    
-    /// 建立分隔線視圖
-    private static func createSeparatorView(height: CGFloat) -> UIView {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .deepGreen.withAlphaComponent(0.5)
-        view.heightAnchor.constraint(equalToConstant: height).isActive = true
-        return view
-    }
-    
-    /// 建立 UIStackView
-    private static func createStackView(axis: NSLayoutConstraint.Axis, spacing: CGFloat, alignment: UIStackView.Alignment, distribution: UIStackView.Distribution) -> UIStackView {
-        let stackView = UIStackView()
-        stackView.axis = axis
-        stackView.spacing = spacing
-        stackView.alignment = alignment
-        stackView.distribution = distribution
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }
-    
     // MARK: - Configuration Method
     
-    /// 設置標題文字並更新箭頭方向
+    /// 配置區塊標題及箭頭狀態
+    ///
     /// - Parameters:
-    ///   - title: 標題文字
-    ///   - isExpanded: 是否展開狀態，展開時顯示向下箭頭
-    ///   - showArrow: 是否顯示箭頭，對於無法展開的區塊則隱藏
+    ///   - title: 區塊的標題文字
+    ///   - isExpanded: 是否展開狀態（`true` 顯示向下箭頭，`false` 顯示向右箭頭）
+    ///   - showArrow: 是否顯示箭頭，對於無法展開的區塊則隱藏（隱藏時只顯示標題）
     func configure(with title: String, isExpanded: Bool, showArrow: Bool) {
         titleLabel.text = title
         arrowImageView.isHidden = !showArrow
@@ -193,10 +170,13 @@ class OrderConfirmationSectionHeaderView: UICollectionReusableView {
     // MARK: - Lifecycle Methods
     
     /// 重置視圖的狀態以便重複使用
+    ///
+    /// - 清空標題文字及箭頭符號，並移除所有手勢識別器，確保狀態不被污染。
     override func prepareForReuse() {
         super.prepareForReuse()
         titleLabel.text = nil
         arrowImageView.image = UIImage(systemName: "chevron.right")
-        gestureRecognizers?.forEach { removeGestureRecognizer($0) }  // 清除手勢識別器，避免重複附加
+        gestureRecognizers?.forEach { removeGestureRecognizer($0) }
     }
+    
 }
