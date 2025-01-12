@@ -4,69 +4,112 @@
 //
 //  Created by 曹家瑋 on 2024/11/4.
 //
+
 // MARK: - OrderConfirmationHandlerDelegate 設計筆記
 /**
+ 
  ## MARK: - OrderConfirmationHandlerDelegate 設計筆記
 
- `* 設計目的`
+ `* What`
  
-    - `OrderConfirmationHandlerDelegate` 是一個協定（protocol），設計的目的是允許 `OrderConfirmationHandler` 與外部類別進行通信，特別是用於從外部獲取所需的訂單確認資料 (OrderConfirmation)、處理視圖中的關閉操作，以及管理區塊（Section）的展開或收起狀態。
-    - 使 `OrderConfirmationHandler` 能夠依賴代理來取得資料和處理關閉操作和區塊狀態切換，這樣 `OrderConfirmationHandler` 自身不需要知道資料的具體來源和具體的關閉行為，從而達到`降低耦合度`的目的。
+ - `OrderConfirmationHandlerDelegate` 是一個協議，負責協助 `OrderConfirmationHandler` 與外部類別進行通信。
 
- `* 為什麼需要使用代理模式`
-
- `1. 降低耦合性：`
-    - `OrderConfirmationHandler` 需要訂單資料來顯示，但它不應該直接處理訂單資料的獲取邏輯。
-    - 通過使用 `Delegate`，`OrderConfirmationHandler` 只需要知道如何從它的代理中獲取資料，而不需要關心資料的具體實現，這樣可以將責任分離，降低類之間的耦合性。
-    - 同樣地，`OrderConfirmationHandler` 也不直接處理視圖關閉操作，這一操作委託由外部控制器來實現，使得 `OrderConfirmationHandler` 專注於顯示邏輯。
-
- `2. 易於擴展與維護：`
-    - 使用代理模式可以使得 `OrderConfirmationHandler` 更加靈活。如果未來需要改變 `OrderConfirmation` 資料的提供方式或關閉操作的具體邏輯，只需修改代理的實現類別，而不需要改變 `OrderConfirmationHandler` 的代碼。
-
-` 3. 便於單元測試：`
-    - 由於 `OrderConfirmationHandler` 不直接依賴具體的數據源，而是通過代理來獲取資料和處理操作，這樣在進行單元測試時，可以方便地使用 Mock 代理來提供測試資料或監控按鈕操作，使測試更加方便和可控。
-
- `### 流程總結`
-
- `1. 獲取資料的流程：`
-    - `OrderConfirmationHandler` 需要展示訂單資料時，會通過 `OrderConfirmationHandlerDelegate` 協定向代理請求資料。
-    - 會是 `OrderConfirmationViewController`，它持有當前的 `OrderConfirmation` 模型並實現了 `getOrder()` 方法來提供這些資料。
-
- `2. 接口定義：`
-    - `getOrder()`：返回當前的 `OrderConfirmation` 模型。當沒有可用訂單時，返回 `nil`。
-    - `didTapCloseButton()`：當用戶在訂單確認頁面中按下關閉按鈕時，代理將處理相應的關閉操作（例如返回主菜單頁面，清除相關資料）。
-    - `didToggleSection(_:)`：當用戶切換某個區塊（Section）的展開或收起狀態時，代理將處理相應的視圖更新操作，例如重新載入該區塊。
-
- `3. Delegate 具體的實現：`
-    - 代理由持有訂單資料的控制器實現。
-    - `OrderConfirmationViewController` 實現了 `OrderConfirmationHandlerDelegate`，並在` getOrder() `方法中返回當前的 OrderConfirmation 實例。
-    - 同時在 `didTapCloseButton()` 方法中處理返回和清除的行為，在 `didToggleSection(_:) `方法中負責處理區塊的展開與收起顯示更新。
+ - 它的主要用途包括：
  
- `### 使用案例`
+   1. 從外部獲取訂單確認資料（`OrderConfirmation`）。
+   2. 處理用戶在視圖中的「關閉操作」。
+ 
+ - 通過該協議，`OrderConfirmationHandler` 可以專注於顯示邏輯，將數據獲取與關閉操作的具體實現委託給外部類別。
 
- `* 訂單確認頁面 (`OrderConfirmationViewController`)：`
-        - `OrderConfirmationViewController` 是訂單確認頁面，在這個頁面中，它通過 `OrderConfirmationHandler` 來管理 `UICollectionView` 的顯示和交互。
-        - `OrderConfirmationHandler` 需要從外部獲取當前的訂單資料來更新顯示，因此它依賴於 `OrderConfirmationHandlerDelegate` 來取得這些資料。
-        - 當用戶點擊關閉按鈕時，`OrderConfirmationHandler` 通過 `didTapCloseButton()` 通知代理執行相應的關閉邏輯。
-        - 當用戶點擊某個可展開的區塊時，`OrderConfirmationHandler` 通過` didToggleSection(_:) `通知代理處理區塊的展開與收起狀態，代理負責進行相關視圖的更新。
+ -----------
 
-` * 降低類別之間的直接依賴：`
-        - 通過 `OrderConfirmationHandlerDelegate`，`OrderConfirmationHandler` 不需要知道具體的 `OrderConfirmationViewController` 或其他持有資料的類別，而是通過代理模式來請求資料，從而使程式結構更具擴展性和維護性。
+ `* Why`
+ 
+ 1. 降低耦合性：
+ 
+    - `OrderConfirmationHandler` 不應直接處理數據的獲取邏輯或關閉操作的實現，以保持模組的單一責任。
+    - 使用代理模式讓 `OrderConfirmationHandler` 依賴於抽象的接口，而不是具體的實現，從而降低類與類之間的耦合度。
+
+ 2. 易於擴展與維護：
+ 
+    - 當需要更改數據提供方式或關閉操作的行為時，只需修改代理的實現類別，而不需要改變 `OrderConfirmationHandler` 的代碼邏輯。
+    - 符合開放封閉原則（Open-Closed Principle），提高代碼的靈活性。
+
+ 3. 便於單元測試：
+ 
+    - 通過代理模式，可以使用 Mock 代理來模擬資料提供與關閉操作的行為。
+    - 測試 `OrderConfirmationHandler` 的顯示邏輯時，可輕鬆隔離外部依賴，提高測試覆蓋率與穩定性。
+
+ -----------
+
+ `* Who`
+ 
+ - `OrderConfirmationHandlerDelegate` 的具體實現通常由持有訂單資料與控制視圖邏輯的類別負責，例如 `OrderConfirmationViewController`。
+ 
+ - `OrderConfirmationViewController` 作為代理，實現以下兩個方法：
+ 
+   1. `getOrder()`：提供目前的 `OrderConfirmation` 模型資料。
+   2. `didTapCloseButton()`：處理用戶點擊關閉按鈕後的邏輯（如重置資料、導航至主畫面等）。
+
+ -----------
+
+` * 使用案例`
+
+ - 訂單確認頁面 (`OrderConfirmationViewController`)
+ 
+    - `OrderConfirmationViewController` 是訂單確認頁面的主控制器，負責管理顯示邏輯與數據來源。
+    - 當 `OrderConfirmationHandler` 需要顯示訂單資料時，通過代理方法 `getOrder()` 獲取當前的 `OrderConfirmation`。
+    - 當用戶點擊「關閉」按鈕時，`OrderConfirmationHandler` 通知 `OrderConfirmationViewController`，執行返回主畫面或清理資料的行為。
+
+ -----------
+
+ `* 總結`
+ 
+ - 角色分工：
+ 
+   - `OrderConfirmationHandler`：專注於訂單數據的顯示邏輯。
+   - `OrderConfirmationHandlerDelegate`：負責提供訂單資料與處理用戶交互邏輯。
+
+ - 優點：
+ 
+   - 責任清晰，降低類別間耦合。
+   - 符合單一職責原則（SRP）。
+   - 增強代碼靈活性與可測試性。
+
  */
+
+
+// MARK: - (v)
 
 import UIKit
 
-/// `OrderConfirmationHandlerDelegate` 用於協助 `OrderConfirmationHandler` 與外部類別溝通，特別是從外部獲取訂單資料及處理關閉操作。
-/// - 設計用途：通過代理模式 (`Delegate Pattern`)，`OrderConfirmationHandler` 可以從外部類別（如 `OrderConfirmationViewController`）獲取最新的訂單資料，並在用戶進行關閉操作時通知外部類別，以便更新視圖和狀態。
+/// `OrderConfirmationHandlerDelegate`
+///
+/// 此協議用於協助 `OrderConfirmationHandler` 與外部類別（如 `OrderConfirmationViewController`）進行溝通。
+/// 通過代理模式，`OrderConfirmationHandler` 可以專注於處理訂單數據的顯示邏輯，
+/// 而由外部類別負責提供必要的訂單數據並處理相關的用戶交互。
+///
+/// - 設計用途:
+///   1. 確保 `OrderConfirmationHandler` 能夠從外部安全地獲取所需的訂單數據。
+///   2. 當用戶觸發「關閉」操作時，通知外部類別執行相應邏輯（如視圖重置或狀態更新）。
 protocol OrderConfirmationHandlerDelegate: AnyObject {
     
-    /// 從外部獲取當前的 `OrderConfirmation` 物件
-    /// - 返回值：`OrderConfirmation?`，當前的訂單確認模型，如果沒有訂單則返回 `nil`
+    /// 從外部獲取當前的 `OrderConfirmation` 模型
+    ///
+    /// - 返回值: `OrderConfirmation?`
+    ///   - 若訂單數據可用，返回當前的 `OrderConfirmation` 模型。
+    ///   - 若訂單數據不可用，返回 `nil`。
+    ///
+    /// - 設計目的:
+    ///   確保 `OrderConfirmationHandler` 可以專注於顯示邏輯，
+    ///   而實際的訂單數據由外部類別負責提供。
     func getOrder() -> OrderConfirmation?
     
-    ///  當按下`關閉`按鈕時的操作
+    /// 當用戶點擊「關閉」按鈕時的操作
+    ///
+    /// - 說明:
+    ///   通知外部類別執行關閉視圖的相關操作。
+    ///   外部類別可以根據具體需求，執行重置訂單資料、導航堆疊重置等邏輯。
     func didTapCloseButton()
     
-    /// 當切換某個 Section 展開/收起狀態時的操作
-    func didToggleSection(_ section: Int)
 }
