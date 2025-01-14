@@ -27,6 +27,7 @@ class OrderConfirmationLabel: UILabel {
     ///   - scaleFactor: 縮放因子，用於文字縮小時的最小比例，預設為 1.0。
     ///   - adjustsFontSize: 是否啟用自動縮放以適應視圖大小，預設為 `true`。
     ///   - textAlignment: 文字對齊方式，預設為 `.left`。
+    ///   - width: 設定標籤的固定寬度，預設為 `nil`（無固定寬度）
     init(
         text: String? = nil,
         font: UIFont = UIFont.systemFont(ofSize: 14),
@@ -34,10 +35,11 @@ class OrderConfirmationLabel: UILabel {
         numberOfLines: Int = 1,
         scaleFactor: CGFloat = 1.0,
         adjustsFontSize: Bool = true,
-        textAlignment: NSTextAlignment = .left
+        textAlignment: NSTextAlignment = .left,
+        width: CGFloat? = nil
     ) {
         super.init(frame: .zero)
-        setupLabel(text: text, font: font, textColor: textColor, numberOfLines: numberOfLines, scaleFactor: scaleFactor, adjustsFontSize: adjustsFontSize, textAlignment: textAlignment)
+        setupLabel(text: text, font: font, textColor: textColor, numberOfLines: numberOfLines, scaleFactor: scaleFactor, adjustsFontSize: adjustsFontSize, textAlignment: textAlignment, width: width)
     }
     
     required init?(coder: NSCoder) {
@@ -63,7 +65,8 @@ class OrderConfirmationLabel: UILabel {
         numberOfLines: Int,
         scaleFactor: CGFloat,
         adjustsFontSize: Bool,
-        textAlignment: NSTextAlignment
+        textAlignment: NSTextAlignment,
+        width: CGFloat?
     ) {
         self.translatesAutoresizingMaskIntoConstraints = false
         self.text = text
@@ -73,6 +76,10 @@ class OrderConfirmationLabel: UILabel {
         self.adjustsFontSizeToFitWidth = adjustsFontSize
         self.minimumScaleFactor = scaleFactor
         self.textAlignment = textAlignment
+        
+        // 設置固定寬度（如果提供）
+        guard let width = width else { return }
+        self.widthAnchor.constraint(equalToConstant: width).isActive = true
     }
     
 }

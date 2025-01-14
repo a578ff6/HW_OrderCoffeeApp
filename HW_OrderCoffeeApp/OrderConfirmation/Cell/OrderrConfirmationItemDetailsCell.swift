@@ -82,7 +82,7 @@ class OrderrConfirmationItemDetailsCell: UICollectionViewCell {
     // MARK: - UI Elements
     
     /// 飲品圖片，用於展示飲品的外觀
-    private let drinkImageView = OrderrConfirmationImageView(borderWidth: 2, borderColor: .deepBrown, cornerRadius: 15)
+    private let drinkImageView = OrderrConfirmationImageView(borderWidth: 2, borderColor: .deepBrown, cornerRadius: 15, size: 80)
     
     /// 飲品項目標題
     private let titleLabel = OrderConfirmationLabel(font: .systemFont(ofSize: 17), textColor: .black, numberOfLines: 1, scaleFactor: 0.7)
@@ -91,7 +91,7 @@ class OrderrConfirmationItemDetailsCell: UICollectionViewCell {
     private let subtitleNameLabel = OrderConfirmationLabel(font: .systemFont(ofSize: 13), textColor: .gray, numberOfLines: 2, scaleFactor: 0.5)
     
     /// 飲品項目尺寸
-    private let sizeLabel = OrderConfirmationLabel(font: .systemFont(ofSize: 14), textColor: .deepGreen, scaleFactor: 0.5)
+    private let sizeLabel = OrderConfirmationLabel(font: .systemFont(ofSize: 14), textColor: .deepGreen, scaleFactor: 0.5, width: 80)
     
     /// 飲品項目數量
     private let quantityLabel = OrderConfirmationLabel(font: .systemFont(ofSize: 14))
@@ -119,17 +119,6 @@ class OrderrConfirmationItemDetailsCell: UICollectionViewCell {
 
     /// 包含數量圖示與數量標籤的水平堆疊視圖
     private let quantityLabelAndImageStackView = OrderItemStackView(axis: .horizontal, spacing: 4, alignment: .fill, distribution: .fill)
-
-    
-    // MARK: - Layout Constants
-
-    /// 尺寸常數
-    private enum Layout {
-        /// 飲品圖片的尺寸
-        static let drinkImageSize: CGFloat = 80
-        /// 尺寸標籤的固定寬度
-        static let sizeLabelWidth: CGFloat = 80
-    }
     
     // MARK: - Initializer
 
@@ -137,7 +126,6 @@ class OrderrConfirmationItemDetailsCell: UICollectionViewCell {
         super.init(frame: frame)
         setupViews()
         setupConstraints()
-        setupSizes()
         setupContentPriorities()
     }
     
@@ -200,15 +188,6 @@ class OrderrConfirmationItemDetailsCell: UICollectionViewCell {
             bottomLineView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.9),
             bottomLineView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             bottomLineView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-        ])
-    }
-    
-    /// 配置固定寬高相關的約束
-    private func setupSizes() {
-        NSLayoutConstraint.activate([
-            drinkImageView.widthAnchor.constraint(equalToConstant: Layout.drinkImageSize),
-            drinkImageView.heightAnchor.constraint(equalTo: drinkImageView.widthAnchor),
-            sizeLabel.widthAnchor.constraint(equalToConstant: Layout.sizeLabelWidth),
         ])
     }
     

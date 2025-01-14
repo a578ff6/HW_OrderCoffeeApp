@@ -21,18 +21,21 @@ class OrderrConfirmationImageView: UIImageView {
     ///   - borderWidth: 邊框寬度，預設為 `2.0`
     ///   - borderColor: 邊框顏色，預設為深棕色
     ///   - cornerRadius: 圓角半徑，預設為 `15.0`
+    ///   - size: 視圖的寬高
     init(
         contentMode: UIView.ContentMode = .scaleAspectFit,
         borderWidth: CGFloat = 2.0,
         borderColor: UIColor = .deepBrown,
-        cornerRadius: CGFloat = 15.0
+        cornerRadius: CGFloat = 15.0,
+        size: CGFloat
     ) {
         super.init(frame: .zero)
         setupImageView(
             contentMode: contentMode,
             borderWidth: borderWidth,
             borderColor: borderColor,
-            cornerRadius: cornerRadius
+            cornerRadius: cornerRadius,
+            size: size
         )
     }
     
@@ -48,7 +51,8 @@ class OrderrConfirmationImageView: UIImageView {
         contentMode: UIView.ContentMode,
         borderWidth: CGFloat,
         borderColor: UIColor,
-        cornerRadius: CGFloat
+        cornerRadius: CGFloat,
+        size: CGFloat
     ) {
         self.translatesAutoresizingMaskIntoConstraints = false
         self.contentMode = contentMode
@@ -57,6 +61,10 @@ class OrderrConfirmationImageView: UIImageView {
         self.layer.cornerRadius = cornerRadius
         self.layer.masksToBounds = true
         self.clipsToBounds = true
+        
+        // 設置寬高約束
+        self.widthAnchor.constraint(equalToConstant: size).isActive = true
+        self.heightAnchor.constraint(equalTo: self.widthAnchor).isActive = true
     }
     
 }
