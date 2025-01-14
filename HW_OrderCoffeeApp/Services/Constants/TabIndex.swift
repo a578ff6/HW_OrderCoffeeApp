@@ -106,7 +106,7 @@
 import Foundation
 
 /// `TabIndex` 用於定義主選單中每個 Tab 的索引位置，以便在各個視圖控制器中可以一致地使用
-enum TabIndex: Int {
+enum TabIndex: Int, CaseIterable {
     case menu = 0         // 主選單（飲品分類）
     case search           // 搜尋頁面
     case order            // 訂單頁面

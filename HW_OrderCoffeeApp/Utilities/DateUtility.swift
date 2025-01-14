@@ -43,13 +43,17 @@
  
     - 預設為今天的日期，回傳對應的星期名稱（如 "星期一"、"星期二"）。
     - 支援傳入自定日期進行查詢。
+ 
+ 2.格式化日期：
+ 
+    - 提供日期轉換為自訂格式的功能，預設格式為 yyyy/MM/dd HH:mm。
 
  - `設計特點：`
  
  - 使用靜態方法，避免實例化，簡化操作。
  - 支援繁體中文（`zh_TW`）的星期格式。
 
- ---
+ ----------
 
  `* Why`
  
@@ -69,15 +73,17 @@
  
     - 通過傳入不同的日期進行測試，驗證功能正確性，避免時間依賴性帶來的測試困難。
 
- ---
+ ----------
 
  `* How`
 
  1. 設計邏輯：
  
- - 使用 `DateFormatter` 來進行日期格式化。
+ - 使用 `DateFormatter` 處理日期格式化和星期名稱生成。
  - 設定地區為繁體中文（`zh_TW`），確保回傳格式正確。
  - 預設日期為當天，允許傳入其他日期進行查詢。
+
+ ----
 
  2. 方法詳細：
  
@@ -92,8 +98,21 @@
      formatter.dateFormat = "EEEE"                   // 格式為星期幾
      return formatter.string(from: date)
  }
+ 
+ /// 格式化日期為指定格式
+ /// - Parameters:
+ ///   - date: 要格式化的日期
+ ///   - format: 日期格式，預設為 "yyyy/MM/dd HH:mm"
+ /// - Returns: 格式化後的日期字串
+ static func formatDate(_ date: Date, format: String = "yyyy/MM/dd HH:mm") -> String {
+     let dateFormatter = DateFormatter()
+     dateFormatter.dateFormat = format
+     return dateFormatter.string(from: date)
+ }
  ```
 
+ ----
+ 
  3. 使用範例：
  
  ```swift
@@ -105,9 +124,17 @@
  let specificDate = Date(timeIntervalSince1970: 1630483200) // 2021-09-01
  let weekdayForSpecificDate = DateUtility.getWeekday(for: specificDate)
  print(weekdayForSpecificDate)  // Output: "星期三"
+ 
+ // 格式化今天的日期
+ let formattedToday = DateUtility.formatDate(Date())
+ print(formattedToday)  // Output: "2025/01/08 12:34"（示例格式）
+
+ // 格式化指定日期
+ let formattedSpecificDate = DateUtility.formatDate(specificDate, format: "MM/dd/yyyy")
+ print(formattedSpecificDate)  // Output: "09/01/2021"
  ```
 
- ---
+ ----------
 
  `* 優化效益`
 
@@ -133,4 +160,16 @@ struct DateUtility {
         formatter.dateFormat = "EEEE"                   // 格式為星期幾
         return formatter.string(from: date)
     }
+    
+    /// 格式化日期為指定格式
+    /// - Parameters:
+    ///   - date: 要格式化的日期
+    ///   - format: 日期格式，預設為 "yyyy/MM/dd HH:mm"
+    /// - Returns: 格式化後的日期字串
+    static func formatDate(_ date: Date, formate: String = "yyyy/MM/dd HH:mm") -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = formate
+        return dateFormatter.string(from: date)
+    }
+    
 }
