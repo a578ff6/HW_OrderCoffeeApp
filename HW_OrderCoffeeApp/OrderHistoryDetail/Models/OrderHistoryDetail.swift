@@ -7,6 +7,7 @@
 
 // MARK: - OrderHistoryDetail 與 OrderHistory 的結構不同之處 重點筆記
 /**
+ 
  ## OrderHistoryDetail 與 OrderHistory 的結構不同之處 重點筆記
 
 ` * 資料的詳細程度：`
@@ -14,26 +15,36 @@
  - `OrderHistoryDetail` 提供了更詳細的訂單資訊，包括 `orderItems`（訂單中的每個飲品項目）和飲品的所有細節。
  - `OrderHistory` 則僅包含基本的訂單概覽（如 id、customerDetails、timestamp、totalAmount），沒有細項飲品列表。
  
+ ---
+ 
  `* 訂單項目：`
 
  - `OrderHistoryDetail` 包含一個 `orderItems` 屬性，是 `OrderHistoryItemDetail` 的陣列，專門用於顯示訂單中的各個飲品的詳細資訊。
  - `OrderHistory` 並未包含 `orderItems`，因此僅顯示訂單的基本資料。
  
+ ---
+
  `* 顧客資料結構：`
 
  - `OrderHistoryDetail` 使用 `OrderHistoryDetailCustomerInfo`，其內容包含了配送地址和店家名稱等額外資訊。
  - `OrderHistory` 中的顧客資料為簡化版，並不包含飲品和訂單項目的詳盡內容。
  
+ ---
+
  `* 應用場景不同：`
 
  - `OrderHistory` 主要用於列表頁面，提供基本訂單信息以便於快速顯示給用戶。
  - `OrderHistoryDetail` 用於點擊單個訂單後的詳細頁面，提供更深入的資訊以滿足用戶的查詢需求。
  
+ ---
+
  `* 使用情境`
 
  - `OrderHistoryDetail` 結構用於詳細描述每一筆訂單，尤其是在使用者點擊歷史訂單項目，進入訂單詳細頁面時，顯示該筆訂單的完整資訊。
  - `OrderHistory` 主要用於訂單列表顯示頁面，包含每筆訂單的基本概覽，如訂單編號、顧客資料、訂單日期等。
  
+ ---
+
  `* 設計優勢與考量`
 
  - `資料結構的分層設計`：將詳細信息和概覽信息分開，使得列表頁和詳細頁的顯示效率更高。列表頁面只需展示概覽信息，降低了數據處理的負擔，而詳細頁面則提供全方位的訂單資料。
@@ -44,6 +55,7 @@
 
 // MARK: -  OrderHistoryDetail 重點筆記
 /**
+ 
  ## OrderHistoryDetail 重點筆記
  
  `* OrderHistoryDetail 概述`
@@ -51,6 +63,8 @@
  - `功能描述`：`OrderHistoryDetail` 資料結構主要用於描述歷史訂單的詳細內容，包含訂單 ID、顧客資料、訂單中的飲品項目、建立時間、總準備時間及總金額等。
  - `資料驅動`：使用 `Codable` 協定來實現 JSON 編碼和解碼，便於與 Firebase Firestore 或其他 API 通訊時的數據序列化和反序列化。
  
+ ---
+
  `* 結構與屬性詳解`
 
  `1. OrderHistoryDetail`
@@ -83,11 +97,15 @@
  - homeDelivery：外送服務。
  - inStore：到店取件。
  
+ ---
+
  `* 使用情境`
  
  - `OrderHistoryDetail` 結構用於詳細描述每一筆訂單，尤其是在使用者點擊歷史訂單項目，進入訂單詳細頁面時，顯示該筆訂單的完整資訊。
  - `OrderHistoryDetailManager` 負責從 Firebase Firestore 獲取詳細的訂單資料，並透過 OrderHistoryDetail 模型解析，確保資料的正確性和結構的一致性。
  
+ ---
+
  `* 優勢與設計考量`
 
  - `資料結構清晰`：通過將訂單的詳細資料分成 `OrderHistoryDetail`、`OrderHistoryDetailCustomerInfo` 和 `OrderHistoryItemDetail`，每個結構負責特定的資料部分，使程式碼結構清晰，便於維護和擴展。
