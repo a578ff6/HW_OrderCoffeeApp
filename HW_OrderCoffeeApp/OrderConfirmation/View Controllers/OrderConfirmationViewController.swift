@@ -31,10 +31,11 @@
         - 用戶點擊「關閉」後，清空訂單資料及使用者填寫的資料，然後返回到其他的視圖（例如首頁），以準備新的訂單流程。
  */
 
-// MARK: - 訂單提交流程設計
 
+// MARK: - 訂單提交流程設計
 /**
- # 訂單提交流程設計
+ 
+ ## 訂單提交流程設計
 
  `What`
  
@@ -43,12 +44,16 @@
     - `OrderCustomerDetailsViewController` 用於填寫訂單的顧客資料及相關資訊。
     - 當用戶點擊提交訂單按鈕後，若提交成功，會轉跳到 `OrderConfirmationViewController` 顯示確認訊息。
 
+ ---------
+
  `Why`
  
     * 此流程的設計目的在於提供用戶清晰的訂單提交反饋，讓用戶可以確認自己的訂單已成功完成：
 
     - 在 `OrderConfirmationViewController` 顯示訂單確認圖示及詳情，可以給予用戶視覺上的確認，增強使用體驗。
     - 在用戶手動點擊「關閉」按鈕後返回，這樣用戶可以決定何時結束確認流程，增加使用的自主性。
+
+ ---------
 
  `How`
  
@@ -60,19 +65,24 @@
     這樣的流程可以確保用戶在提交訂單後有清楚的確認和結束操作，提升整體訂單體驗。
  */
 
-// MARK: - 訂單確認視圖設計構想
 
+// MARK: - 訂單確認視圖設計構想
 /**
+ 
  ## 訂單確認視圖設計構想
  
  `* What: 顯示訂單確認頁面（OrderConfirmationViewController）`
 
     - 在顯示訂單確認的頁面中，應顯示顧客姓名、電話、取件方式（包含外送地址或取件店家）、訂單項目列表、總金額、準備時間、訂單成立時間，以及備註。
 
+ ---------
+
  `* Why: 提供完整清晰的訂單確認資訊，增強用戶體驗`
 
     - 顧客在提交訂單後，能夠查看詳細的訂單資訊，確認所有內容無誤，以避免因填寫錯誤而產生的問題。這不僅能增加顧客的信心，還能提供更好的使用體驗。
  
+ ---------
+
  `* How: 設計與調整想法`
 
     1. `顯示顧客資訊`：
@@ -128,6 +138,7 @@
 
 // MARK: - 設計筆記：OrderConfirmationViewController 的管理與資料來源
 /**
+ 
 ## 設計筆記：OrderConfirmationViewController 的管理與資料來源
  
     - 一開始嘗試使用 `OrderCustomerDetailsViewController` 傳遞 `Order` 到 `OrderConfirmationViewController`，由於結構很複雜，且不符合處理流程，因為點擊`submit`並確認的時候，基本上就是將訂單上傳到 Firebase中了。
@@ -147,6 +158,8 @@
     - 由於 `OrderConfirmationViewController` 只需展示簡化的訂單資料，因此建立了專屬的 `OrderConfirmation` 模型。
     - 這個專屬模型只包含展示所需的字段，減少過多的資料解析，符合單一職責原則。
 
+ ---------
+
 `### 改進後的設計優勢`
 
 `1. 職責單一，減少耦合：`
@@ -161,6 +174,8 @@
     - `OrderConfirmationViewController` 可以獨立從 Firebase 獲取所需資料，而不需要與其他控制器的邏輯耦合，這使得控制器更容易進行單獨測試和維護。
     - 減少因修改控制器間的資料傳遞而引起的潛在問題，提高程式碼的穩定性。
 
+ ---------
+
 `### 流程簡述`
 
 `1. 提交訂單：`
@@ -170,10 +185,14 @@
     - 提交成功後，畫面轉場到 `OrderConfirmationViewController`，此時不再需要傳遞 `Order` 對象。
     - `OrderConfirmationViewController` 在 `viewDidLoad` 中使用 `OrderConfirmationManager` 獲取最近提交的訂單並顯示。
 
+ ---------
+
 `### 為何使用專屬的 OrderConfirmation 模型`
 
 - `OrderConfirmationViewController` 只需要展示訂單的一部分簡化資訊，因此設計了一個專屬的 `OrderConfirmation` 模型。
 - 該模型只包含顯示所需的必要字段（例如訂單 ID、顧客資訊、飲品資訊等），使得資料獲取和解析更簡單，減少不必要的數據負擔。
+
+ ---------
 
 `### 總結`
 
@@ -183,13 +202,15 @@
 
 // MARK: - OrderConfirmationViewController 設計的資料獲取方式解釋
 /**
- ** OrderConfirmationViewController 設計的資料獲取方式解釋
+ 
+ ## OrderConfirmationViewController 設計的資料獲取方式解釋
 
-    - 在 `OrderConfirmationViewController` 中，`var orderConfirmation: OrderConfirmation?` 並不是由前一個頁面 (`OrderCustomerDetailsViewController`) 傳遞的，而是透過 `OrderConfirmationManager` 從 `Firebase` 中重新獲取最近提交的訂單資料。
+ - 在 `OrderConfirmationViewController` 中，`var orderConfirmation: OrderConfirmation?` 並不是由前一個頁面 (`OrderCustomerDetailsViewController`) 傳遞的，而是透過 `OrderConfirmationManager` 從 `Firebase` 中重新獲取最近提交的訂單資料。
 
  `* 為何採用這樣的設計？`
 
 ` 1. 資料一致性`
+ 
     - 一旦訂單成功提交，通過從 Firebase 獲取訂單資料來顯示，可以保證資料的最新狀態，而不僅依賴本地變數傳遞訂單資料。
     - 這樣，即使訂單提交後有所更新（如同步錯誤或其他原因），我們也能確保顯示的資料與 Firebase 完全同步。
 
@@ -201,11 +222,15 @@
     - 透過讓 `OrderConfirmationViewController` 自行從 Firebase 獲取訂單，它不再依賴於特定的前置頁面。
     - 因此，不論是從哪個頁面進入 `OrderConfirmationViewController`（例如應用中任何地方提供的“查看最近訂單”功能），它都能獨立地抓取到需要的訂單資料。
  
- `## 設計總結`
+ ---------
+ 
+ `* 設計總結`
     - 當訂單在 `OrderCustomerDetailsViewController` 中成功提交後，訂單資料會被上傳到 `Firebase`。
     - 在 `OrderConfirmationViewController` 中，透過 `OrderConfirmationManager` 來從 Firebase 獲取最近提交的訂單資料，而不是依賴於前一個頁面直接傳遞 Order 對象。
  
- `## 這樣做的好處`
+ ---------
+
+ `* 這樣做的好處`
  
     `1. 資料的即時性和一致性`
         - 確保顯示的訂單資料來自後端，是最新的資料狀態。
@@ -218,201 +243,170 @@
  */
 
 
-// MARK: - 多層視圖控制器返回過程的動畫處理優化（重要）
-/**
- ## 多層視圖控制器返回過程的動畫處理優化
- 
- `* 問題描述`
-    - 在點擊關閉按鈕後，應該要從 `OrderConfirmationViewController` 離開並返回到 `MenuViewController`，但由於這兩者位於不同的 `Tab`，因此需要處理 `TabBarController` 的切換以及多層視圖控制器的過渡。
-    - 一開始嘗試直接禁用動畫（`animated: false`）進行切換，以為可以更快速地進入目標視圖，但實際上這樣的過渡在視覺上顯得非常突兀。因此，為了解決這個問題，逐步調整了過渡方式，讓返回的過程更加流暢和自然。
-    - 在實作返回主菜單（MenuViewController）的過程中，遇到了一些視覺上的問題。這些問題主要包括：
-
-`1.過渡視圖層級複雜：`
-    - 由於 `OrderConfirmationViewController` 是由 `OrderCustomerDetailsViewController` 全螢幕呈現 (`modalPresentationStyle.fullScreen`)，返回到 MenuViewController 的過程涉及多層視圖控制器的解散，並且還需要正確切換 UITabBarController 的選中索引。這使得返回過程較為複雜，容易出現視覺上的跳動或不順暢。
- 
-`2.視覺上不流暢的跳動感：`
-    - 在執行返回動畫時，有些視圖控制器會交疊出現，特別是 `TabBar` 和 `MenuViewController`，會感覺到一些“彈跳”效果，這會影響用戶的視覺體驗。
- 
- 
- `* 解決方案的關鍵改變`
-    - 成功地實作這個過程，是因為採取了一些關鍵的改變，這些改變讓過渡動畫變得更平順，具體有以下幾個：
- 
-`1.先切換 Tab，再解散視圖控制器：`
-    - 在解散 (`dismiss`) 當前的 `OrderConfirmationViewController` 之前，先將 `UITabBarController` 的選中索引設定為 `Menu` 的部分（`TabIndex.menu.rawValue`）。
-    - 這樣一來，當 `OrderConfirmationViewController` 被解散後，畫面會直接顯示 `MenuViewController`，不會再出現多餘的跳轉，減少了過渡過程中的重複感和跳動感，讓用戶的視覺體驗更流暢。
-
-`2.關閉視圖控制器時無動畫 (animated: false)：`
-    - 在解散 `presentingViewController` 時，選擇將動畫設置為` false（dismiss(animated: false)）`，這樣可以避免多個動畫在相同過程中交疊，導致的不同步或不協調，進而減少畫面上的“跳動”或“閃爍”。
-    - 沒有淡出的動畫，使整個過程變得更加同步和平滑，視覺上不會因為動畫時間不一致而影響過渡效果。
-
-`3.在 resetNavigationStacksWithAnimation() 中針對 NavigationController 層級做動畫處理：`
-    - 將動畫處理集中在 `menuNavigationController.view` 上，利用 `UIView.transition` 進行淡入動畫，而不是對整個 `keyWindow` 進行處理。這樣可以更精準地控制動畫範圍，避免影響到其他 UI 元件，如 `TabBarController` 的閃爍。
-    - 當對 `menuNavigationController.view` 進行淡入動畫時，只有 `MenuViewController` 及其導航層級會受到影響，`TabBarController` 不會因為動畫而閃爍，整體轉場更加集中和自然。
- 
- 
- `* 成功的原因總結`
- 
- `1.動畫分離處理：`
-    - 將 `UITabBarController` 的 `selectedIndex` 切換和 `dismiss` 視圖控制器的操作分開進行，避免了兩個動畫交疊進行，這樣能夠減少由於動畫時間不匹配而導致的不協調。
- 
- `2,淡出動畫與淡入動畫的合理分配：`
-    - 在解散時選擇沒有動畫`（dismiss(animated: false)）`，避免了多重動畫之間的干擾，隨後針對具體的 `menuNavigationController.view` 進行淡入動畫，使得動畫更集中在具體目標，減少了對 `TabBarController` 的影響。
- 
-` 3.適當的動畫位置和順序：`
-    - 先切換 `Tab`，再執行解散視圖控制器和導航堆疊重置，這樣可以更好地控制過渡過程，使每個動畫階段更流暢地銜接。
- */
-
-
-// MARK: - 重點筆記：導航堆疊重置與動畫過渡調整
-/**
- 
- ## 重點筆記：導航堆疊重置與動畫過渡調整
-
- `1. 功能概述`
- 
- - `resetNavigationStacksWithAnimation()` 方法負責重置應用中各個主要頁面的導航堆疊，使其返回到根視圖控制器。
- - 這樣的重置操作能保證應用在某些流程（如訂單確認後）結束時，導航狀態保持一致，提升用戶的整體體驗。
-
- `2. 具體調整與細節`
- 
- - `Menu 頁面 (主選單)：`
-    - 使用 `UIView.transition` 與 `transitionCrossDissolve` 動畫效果返回到根視圖控制器。
-    - 動畫的設計使過渡更加平順，提升用戶對主要頁面的視覺體驗。
-    
- - `Search、Order、UserProfile 頁面：`
-      - 使用 `popToRootViewController(animated: false)` 返回根視圖控制器，不使用動畫。
-      - 頁面主要關注操作效率，因此不需要額外的動畫過渡。
-
- `3. 使用這樣設計的好處`
- 
- - 一致性：每次結束操作後，所有主要頁面都回到根視圖控制器，保證導航狀態一致，避免用戶再次訪問時看到未預期的內容。
- - 簡化導航狀態管理：回到根視圖能減少導航堆疊的深度，降低因不一致狀態引發的錯誤。
- - 平衡體驗與效率：對主頁面（Menu）使用動畫過渡，增強體驗，而對於其他次要頁面（Search、Order、UserProfile），使用簡潔直接的返回，保證操作的流暢性和效率。
-
- `4. 遇到的問題與解決方案`
- 
- - `問題`： 在訂單確認流程結束後，返回到主菜單時，某些頁面未回到根視圖控制器，導致用戶再次訪問時出現不一致的導航狀態。
- - `解決方案`： 使用 `TabIndex` 確保正確定位各個頁面的 `NavigationController`，並通過 `popToRootViewController` 方法，將導航堆疊重置到根視圖控制器，並且根據不同頁面的性質，選擇是否使用過渡動畫。
- 
- */
-
-
 // MARK: - 訂單完成後的資料清除與頁面返回操作 - 重點筆記（重要）
-
 /**
+ 
  ## 訂單完成後的資料清除與頁面返回操作 - 重點筆記
 
  `1. 問題背景`
  
     - `訂單完成後的處理`：當用戶完成訂單並確認後，應對訂單資料進行清理，確保下一次訂單開始於一個乾淨的狀態。並返回主菜單頁面。
-    -` 視覺體驗需求`：返回頁面的過程應當流暢，避免多重動畫干擾帶來的跳動或不自然感。
+    - `視覺體驗需求`：返回頁面的過程應當流暢，避免多重動畫干擾帶來的跳動或不自然感。
  
+ ------
+
  `2. 訂單完成後的資料清除`
- 
+  
  `* 清空 OrderItem：`
+ 
     - 使用` OrderItemManager.shared.clearOrder()` 清空所有訂單項目。
     - 這樣設計的原因在於每個訂單都是獨立的，完成後應清空舊訂單項目，為下一次訂單做好準備。
  
  `* 重置 CustomerDetails：`
+ 
     - 使用 `CustomerDetailsManager.shared.resetCustomerDetails() `方法重置顧客詳細資料。
     - 清除的資料包含顧客的姓名、電話、地址等，以防止這些資料影響下一次訂單。
     - 這樣可以確保顧客每次下訂單時都從新開始，尤其是當顧客的資料在本次訂單中有修改時。
  
+ ------
+ 
  `3. 頁面返回操作的步驟`
  
- `* 先切換 Tab，再解散視圖控制器：`
-    - 在執行 dismiss（關閉視圖控制器）之前，先將 `UITabBarController` 的 `selectedIndex` 設置為` TabIndex.menu.rawValue`，即 MenuViewController 對應的索引。
-    - 這樣可以保證當前視圖控制器解散後，主頁面會正確顯示為菜單頁，而不是原來的訂單頁。
+ `* 先清理資料，再返回主菜單：`
  
- `* 解散呈現的視圖控制器：`
-    - 使用 dismiss(animated: false) 關閉當前的 `OrderConfirmationViewController`，此時沒有動畫，避免多重動畫之間的干擾。
+    - 執行 `resetCustomerDetails()` 和 `clearOrder()`，確保返回主畫面前的資料清理完畢。
+    
+ `* 透過 presentingViewController 返回主畫面：`
  
- `* 重置導航堆疊並加入淡入動畫：`
-    - 對於導航堆疊的重置操作，應使用 UIView.transition 對具體的 `menuNavigationController.view` 進行淡入動畫，確保回到根視圖控制器（即 MenuViewController）。
-    - 這樣可以避免影響 UITabBarController 的其他部分，讓過渡效果集中在需要的部分，過程更加平滑自然。
+    - 使用 `self.presentingViewController` 獲取當前頁面的呈現者，確認其類型為 `UITabBarController`。
+    - 確保返回主畫面操作的上下文清晰，不受其他全局狀態干擾。
+    
+ `* 解散視圖控制器：`
  
+    - 使用 `dismiss(animated: false)` 關閉當前頁面，避免動畫干擾。
+    
+ `* 重置導航堆疊並切換 Tab：`
+ 
+    - 使用 `OrderConfirmationNavigationHandler.resetNavigationStacks` 方法，重置導航堆疊並切換到 `.menu`。
+    - 透過淡入動畫改善返回過程的流暢度。
+ 
+ ------
+
  `4. 實作細節說明`
+  
+ `* 透過 presentingViewController 尋找 TabBarController：`
  
- `* 先切換 Tab，避免動畫交叉影響：`
-    - 在關閉 `OrderConfirmationViewController` 之前，先將 `tabBarController.selectedIndex` 設置為` TabIndex.menu.rawValue`（主菜單）。
-    - 這樣做的目的是減少在解散動畫與 Tab 切換動畫之間的干擾，防止多重動畫疊加導致不流暢。
+    - `guard let presentingViewController = self.presentingViewController as? UITabBarController` 確保安全類型轉換。
+    - 此方法避免多餘的全局查找，提升導航邏輯的封裝性與精確性。
+  
+ `* 資料清理與返回同步執行：`
  
- `* 清空資料：`
-    - 在按下關閉按鈕的操作中，除了 dismiss，還需要執行 `CustomerDetailsManager.shared.resetCustomerDetails()` 和 `OrderItemManager.shared.clearOrder()`。
-    - 這些操作保證當前訂單完成後，所有臨時資料被清空，以免影響下一次訂單。
+    - 使用完成閉包，確保 `resetNavigationStacks` 在資料清理後執行。
+     
+ `* 淡入動畫的應用：`
  
- `* 加入淡入動畫的導航堆疊重置：`
-    - 在 `resetNavigationStacksWithAnimation() `方法中，使用 UIView.transition 對 `menuNavigationController.view` 進行淡入動畫。
-    - 確保畫面過渡更加自然，減少用戶看到多層視圖重疊或跳轉的感覺。
-    - 同樣地，對於其他的 NavigationController（如 Search、Order、UserProfile）也應確保其返回根視圖控制器，避免殘留的視圖影響後續操作。
+    - 在 `resetNavigationStacks` 方法中，使用 `UIView.transition`，將過渡效果集中在主頁面，提升視覺一致性。
+
+ ------
+
+ `5. 設計的好處`
+  
+ - 資料清理的完整性： 確保每次訂單獨立運行，完成訂單後的狀態乾淨，避免干擾後續訂單。
+     
+ - 視覺體驗的優化： 分步執行資料清理、視圖解散與導航重置，並通過淡入動畫，減少用戶視覺干擾。
+     
+ - 可維護性提升： 將導航與資料清理邏輯分開，並利用 `presentingViewController` 簡化邏輯，避免過度依賴全局狀態。
  
- `5. 這樣設計的好處`
-    - `資料清理`：保證每次訂單都是獨立的，完成訂單後所有相關資料會被清除，為下一次訂單做好準備。
-    - `視覺體驗優化`：透過分步執行 selectedIndex 設置和 dismiss，並對導航堆疊進行適當的動畫處理，減少了多重動畫交叉干擾，使畫面更加流暢、自然。
-    - `一致性與同步`：清空資料與視圖返回操作是同步進行的，確保用戶在確認訂單後立即回到主頁，且資料狀態已被重置，減少錯誤操作的風險。
- 
+ ------
+
  `6. 總結`
-    - 這樣的設計實現了「資料清除」與「頁面返回」之間的協同工作，在訂單完成後不僅清空了所有與該訂單相關的臨時資料，還能讓頁面過渡順暢，帶來更好的用戶體驗。
-    - 這樣的整體流程設計確保了用戶的下一次訂單從一個乾淨的狀態開始，且頁面交互更加順暢和一致。
+
+ - 這樣的設計實現了「資料清除」與「頁面返回」之間的協同工作，在訂單完成後不僅清空了所有與該訂單相關的臨時資料，還能讓頁面過渡順暢，帶來更好的用戶體驗。
+ - 這樣的整體流程設計確保了用戶的下一次訂單從一個乾淨的狀態開始，且頁面交互更加順暢和一致。
  */
 
 
 // MARK: - 重點筆記：資料驅動的 UI 配置與手勢處理獨立化
 /**
+ 
  ## 重點筆記：資料驅動的 UI 配置與手勢處理獨立化
 
  `* 問題描述`
+ 
     - `遠端資料獲取延遲`：從 Firebase 獲取訂單資料會存在一定的延遲，這可能導致 UI 在資料還未加載完成時顯示不完整或錯誤。
     - `UI 資料依賴性高`：`OrderConfirmation` 頁面中顯示的內容高度依賴於資料的完整性，因此需要在資料完全獲取後再進行配置，確保顯示的準確性。
     - `手勢處理重複問題`：在多次創建 Header View 的情況下，手勢處理程式碼可能導致重複附加手勢辨識器的問題，使得手勢管理變得複雜且難以維護。（重要）
     - `提升用戶體驗`：用戶更能接受的是一個稍晚一點但完整的界面，而不是一個閃爍或者顯示錯誤提示的界面。
 
+ -------
+
  `* 改進方案`
  
- `* 採用資料驅動的 UI 配置，延遲初始化 OrderConfirmationHandler：`
+ `1. 採用資料驅動的 UI 配置，延遲初始化 OrderConfirmationHandler：`
+ 
     - `延遲初始化 OrderConfirmationHandler`：將 `OrderConfirmationHandler` 的初始化移到資料加載完成之後進行，而不是在 `viewDidLoad()` 中。
     - 這樣可以保證在有完整訂單資料後再初始化和設置 UI，避免 UI 顯示不完整或出錯。
  
- `* 手勢處理邏輯獨立化，改善責任分離和可維護性：`
+ `2. 手勢處理邏輯獨立化，改善責任分離和可維護性：`
+ 
     - `獨立出手勢處理邏輯`：將與 Section Header 的點擊展開/收起相關的手勢處理從 `OrderConfirmationHandler` 中分離出來，放入新的類別 `OrderConfirmationHeaderGestureHandler` 中。
     - `責任分離`:這樣做可以讓 `OrderConfirmationHandler` 專注於數據顯示和 UI 配置，而 `OrderConfirmationHeaderGestureHandler` 專注於手勢的添加與管理，降低耦合度並提高程式碼的可讀性和可維護性。
  
+ -------
+
  `* 具體實現步驟`
  
  `1.將 OrderConfirmationHandler 延遲初始化：`
+ 
     - 在` viewDidLoad() `中不初始化 `OrderConfirmationHandler`。
     - 改為在 `fetchLatestOrderData() `的資料獲取成功後，才調用 `setupOrderConfirmationHandler() 進行`初始化。
  
  `2.設置 OrderConfirmationHandler 的數據源和委託：`
+ 
     - 在` setupOrderConfirmationHandler() `方法中，初始化 `OrderConfirmationHandler` 並設置為 `collectionView` 的數據源和委託。
     - 只有在資料獲取完成後，才進行 UI 的配置。
  
  `3.手勢處理邏輯的獨立：`（重要）
+ 
     - 新增 `OrderConfirmationHeaderGestureHandler` 類別，用於集中管理與 Header View 相關的手勢處理邏輯。
     - 在 `OrderConfirmationHandler` 中使用 `OrderConfirmationHeaderGestureHandler` 來為 Header View 添加手勢。
     - 在初始化 `OrderConfirmationHandler` 時，延遲初始化 `OrderConfirmationHeaderGestureHandler`，並確保其擁有正確的 `delegate`。
  
+ -------
+
  `* 改進後的邏輯流程`
  
  `1.獲取資料：`
+ 
     - 在 viewDidLoad() 中調用 `fetchLatestOrderData() `獲取最新的訂單資料。
     - 當資料獲取成功後，將資料存儲在 `orderConfirmation` 中。
  
  `2.延遲配置 UI：`
+ 
     - 當資料成功獲取後，通過` setupOrderConfirmationHandler() `方法來初始化 `OrderConfirmationHandler`，並將其設置為 `collectionView` 的數據源和委託。
     - 確保 `collectionView` 只有在資料完全準備好後才進行顯示，從而避免不完整或錯誤的 UI。
  
 ` 3. 手勢處理分離：`
+ 
     - 當配置 Header View 時，使用 `OrderConfirmationHeaderGestureHandler` 為需要展開/收起的 Header View 添加手勢。
     - 確保手勢只在需要時添加，並避免重複附加手勢辨識器。
  
+ -------
+ 
  `* 改進後的好處`
  
- `1.避免顯示不完整的 UI`：在資料完全準備好後再進行 UI 初始化，這樣可以避免顯示不完整或出錯的情況。
- `2.用戶體驗提升`：用戶不會看到未加載完全的 UI，整體的界面顯得更加穩定和可靠。
+ `1.避免顯示不完整的 UI`：
+ 
+ - 在資料完全準備好後再進行 UI 初始化，這樣可以避免顯示不完整或出錯的情況。
+ 
+ `2.用戶體驗提升`：
+ 
+ - 用戶不會看到未加載完全的 UI，整體的界面顯得更加穩定和可靠。
+ 
  `3.更清晰的程式碼邏輯`：
-    - 數據獲取和 UI 初始化分開進行，讓程式碼更加易於理解和維護。
-    - 手勢處理邏輯獨立後，`OrderConfirmationHandler` 的責任更加專一，使程式碼的可讀性和可維護性顯著提升。
+ 
+ - 數據獲取和 UI 初始化分開進行，讓程式碼更加易於理解和維護。
+ - 手勢處理邏輯獨立後，`OrderConfirmationHandler` 的責任更加專一，使程式碼的可讀性和可維護性顯著提升。
  */
 
 
@@ -421,50 +415,148 @@
  ## 重點筆記：didToggleSection 的設計
  
 ` * 目的與設計`
+ 
     - `目的`：`didToggleSection(_:) `方法的目的是當使用者點擊某個 Section Header，切換該區域的展開或收起狀態時，更新顯示內容，使得使用者可以即時看到變更效果。
     - `功能`：這個方法會使用 `reloadSections(_:) `來重新加載指定的區域，從而更新顯示狀態（例如展開/收起的 `ItemDetails` 部分）。
  
  `* 工作流程`
+ 
     - `Section Header 點擊`：當使用者點擊區域標題 (HeaderView) 時，會透過 `OrderConfirmationHandler` 中的 `handleHeaderTap(_:) `方法來通知控制器 (`OrderConfirmationViewController`) 切換展開狀態。
     - `通知更新`：`OrderConfirmationHandler` 通過代理 (`OrderConfirmationHandlerDelegate`) 通知控制器進行狀態切換，控制器再使用` didToggleSection(_:) `方法來完成 UI 更新。
  
  `* 優點`
+ 
     - `保持控制器與 Handler 之間的低耦合`：通過代理方法將 Section 展開或收起的更新操作交由 ViewController 處理，可以保持控制器與 Handler 之間的低耦合。
     - `便於擴展與維護`：如果未來需要改變 Section 的展開狀態顯示邏輯，這些邏輯只需在控制器內進行更新，而無需修改 Handler，有助於代碼的擴展和維護性。
  
  `* 適用情境`
+ 
     - 訂單確認頁面 (`OrderConfirmationViewController`) 中使用這個方法來切換顯示狀態，讓用戶可以更好地掌握訂單的詳細資訊或隱藏部分細節。
     - 將展開狀態的邏輯與顯示更新分離，讓 Handler 更專注於處理數據的管理和手勢交互，ViewController 則處理具體的顯示更新，使各自的責任更為明確。
  */
 
-// MARK: - 資料驅動的 UI 配置
-import UIKit
-import Firebase
 
-/// 訂單確認頁面控制器，負責顯示訂單確認後的詳情，例如顧客資訊、訂單項目和總金額。
+// MARK: - OrderConfirmationViewController 筆記
+/**
+ 
+ ## OrderConfirmationViewController 筆記
+
+ `* What`
+ 
+ - `OrderConfirmationViewController` 是一個負責展示用戶提交訂單後的確認詳情的頁面。主要功能包括：
+ 
+ 1. 顯示訂單資訊：展示顧客資料、訂單項目、總金額等詳細資訊。
+ 2. 與 Firebase 交互：從 Firebase 獲取最新的訂單數據以更新畫面。
+ 3. 導航控制：使用 `OrderConfirmationNavigationHandler` 管理返回主頁及重置導航堆疊。
+
+ --------
+
+ `* Why`
+ 
+ 1. 資料透明化：用戶可以清楚看到提交訂單的詳細資訊，增強操作透明度。
+ 2. 一致性：確保訂單數據與伺服器端保持一致，防止因數據不同步引發問題。
+ 3. 使用體驗優化：支援便捷的返回主頁功能，讓用戶在結束訂單操作後能迅速回到應用的主要功能頁面。
+ 4. 維護性：將訂單數據處理、UI 更新、導航控制職責分開，提高代碼的可讀性和可維護性。
+
+ --------
+
+ `* How`
+
+ 1. 顯示訂單資訊
+ 
+    - 使用 `OrderConfirmationView` 負責構建和顯示訂單詳情 UI。
+    - 定義 `OrderConfirmationHandler`，作為 `UICollectionView` 的數據源和委託，管理訂單項目展示邏輯。
+
+ 2. 與 Firebase 交互
+ 
+    - 使用 `OrderConfirmationManager` 獲取最新的訂單數據，並在數據成功加載後更新 UI。
+    - 透過異步操作 (`Task`) 確保用戶在數據加載過程中獲得良好的體驗，例如顯示加載指示器。
+    - 若數據加載失敗，打印錯誤以便開發階段調試。
+
+ 3. 導航控制
+ 
+    - 使用 `OrderConfirmationNavigationHandler` 負責處理返回主頁的邏輯，包括：
+      1. 解散當前視圖 (`dismiss`)。
+      2. 重置所有 Tab 的導航堆疊 (`resetNavigationStacks`)。
+      3. 切換到主菜單頁面 (`targetTab: .menu`)。
+    - 在點擊 "關閉" 按鈕時，先提示用戶確認操作，避免誤操作導致數據丟失。
+
+ 4. 清理操作
+ 
+    - 使用 `CustomerDetailsManager` 和 `OrderItemManager` 重置用戶資料及清空訂單項目，確保返回主頁後的應用狀態乾淨且一致。
+
+ --------
+
+ `* 使用場景`
+
+ - 訂單提交完成：用戶提交訂單後進入此頁面檢視訂單詳情。
+ - 主動返回主頁：用戶完成確認後點擊關閉按鈕返回主菜單。
+
+*/
+
+
+// MARK: - 資料驅動的 UI 配置
+
+import UIKit
+
+/// 訂單確認頁面控制器
+///
+/// 此控制器負責管理訂單確認頁面的數據加載、顯示和用戶交互，
+/// 通過協作多個模組，實現訂單確認的整體功能。
+///
+/// ### 功能說明
+/// 1. 顯示訂單詳細資訊：
+///    - 包括顧客資料、訂單項目及總金額等資訊。
+/// 2. 與 Firebase 交互：
+///    - 使用 `OrderConfirmationManager` 獲取最新訂單資料。
+/// 3. 導航控制：
+///    - 使用 `OrderConfirmationNavigationHandler` 處理視圖的關閉和返回主菜單的操作。
+/// 4. 區域管理：
+///    - 配合 `OrderConfirmationHandler` 和其相關模組處理區域的展開/收起邏輯。
+///
+/// ### 使用場景
+/// - 當用戶提交訂單後，此頁面用於確認訂單的詳細資訊，並提供返回主畫面的選項。
 class OrderConfirmationViewController: UIViewController {
     
     // MARK: - Properties
     
     /// 用於存放提交後的訂單資料
+    ///
+    /// - 說明：該屬性存儲從 Firebase 獲取的訂單詳細資訊，用於顯示在 UI 上。
     var orderConfirmation: OrderConfirmation?
     
-    /// 自訂的 OrderConfirmationView，用於顯示訂單確認頁面的畫面
+    /// 訂單確認頁面的主視圖
+    ///
+    /// - 說明：包含所有 UI 元素的自訂義容器視圖。包含訂單確認頁面詳細資訊的展示。
     private let orderConfirmationView = OrderConfirmationView()
     
-    /// 處理訂單確認頁面中顯示資訊的 Handler，負責處理 UICollectionView 的數據和委託
-    /// - 需要在訂單資料成功加載後初始化
+    /// 管理數據源和區域展開/收起邏輯的處理器
+    ///
+    /// - 說明：負責管理 `UICollectionView` 的數據源和委託，處理訂單詳細資料展示。
+    /// - 注意：需要在成功加載訂單資料後進行初始化。
     private var orderConfirmationHandler: OrderConfirmationHandler?
-
-    /// 負責與 Firebase 互動以獲取訂單資料的管理器
+    
+    /// 管理與 Firebase 的交互
+    ///
+    /// - 說明：負責從 Firebase 獲取最新的訂單資料。
     private let orderConfirmationManager = OrderConfirmationManager()
+    
+    /// 處理導航操作的管理器
+    ///
+    /// - 說明：負責管理返回主畫面及重置導航堆疊的操作。
+    private let orderConfirmationNavigationHandler = OrderConfirmationNavigationHandler()
+    
     
     // MARK: - Lifecycle Methods
     
+    /// 加載訂單確認頁面的主要視圖
     override func loadView() {
         self.view = orderConfirmationView
     }
     
+    /// 視圖加載完成後調用
+    ///
+    /// - 說明：初始化頁面邏輯，開始獲取最新訂單資料。
     override func viewDidLoad() {
         super.viewDidLoad()
         fetchLatestOrderData()
@@ -472,57 +564,68 @@ class OrderConfirmationViewController: UIViewController {
     
     // MARK: - Setup Methods
     
-    /// 初始化並設置 `OrderConfirmationHandler`，並將其設置為 collectionView 的數據源和委託
-    /// - 說明：此方法需要在成功獲取訂單資料後調用，以確保在資料完整的前提下進行 UI 配置
-    /// - 設置步驟：
-    ///   1. 初始化 `OrderConfirmationHandler`，並將 `delegate` 設置為當前的 ViewController
-    ///   2. 將 `OrderConfirmationHandler` 設置為 `collectionView` 的數據源和委託
+    /// 初始化並設置訂單處理器
+    ///
+    /// - 說明：
+    ///   - 創建 `OrderConfirmationHandler` 並設置為 `UICollectionView` 的數據源和委託。
+    ///   - 同時負責訂單詳細資訊的展示和區域展開/收起邏輯。
+    /// - 使用場景：
+    ///   - 在成功獲取訂單資料後調用，確保 UI 與數據一致。
     private func setupOrderConfirmationHandler() {
-        guard let orderConfirmation = orderConfirmation else { return }
         
-        // 初始化 Handler，並將自己設置為 `delegate`
-        let handler = OrderConfirmationHandler(delegate: self)
+        let handler = OrderConfirmationHandler(
+            orderConfirmationHandlerDelegate: self,
+            orderConfirmationSectionDelegate: self
+        )
+        
         self.orderConfirmationHandler = handler
         
         // 設置 collectionView 的數據源和委託
-        orderConfirmationView.collectionView.dataSource = handler
-        orderConfirmationView.collectionView.delegate = handler
+        orderConfirmationView.orderConfirmationCollectionView.dataSource = handler
+        orderConfirmationView.orderConfirmationCollectionView.delegate = handler
         
         // 重新加載數據
-        orderConfirmationView.collectionView.reloadData()
+        orderConfirmationView.orderConfirmationCollectionView.reloadData()
     }
     
     // MARK: - Data Fetching Methods
     
-    /// 獲取最新的訂單資料並更新畫面，使用非同步方式從 Firebase 獲取資料。
+    /// 獲取最新的訂單資料
+    ///
+    /// - 說明：
+    ///   - 調用 `OrderConfirmationManager` 從 Firebase 獲取資料。
+    ///   - 成功後初始化數據處理器並刷新 UI；失敗則提示錯誤。
     private func fetchLatestOrderData() {
         HUDManager.shared.showLoadingInView(self.view, text: "Loading Data...")
         Task {
             do {
-                guard let userID = Auth.auth().currentUser?.uid else {
-                    throw OrderConfirmationManager.OrderConfirmationError.missingField("User ID")
-                }
-                let latestOrder = try await orderConfirmationManager.fetchLatestOrder(for: userID)
+                let latestOrder = try await orderConfirmationManager.fetchLatestOrder()
                 handleFetchedOrder(latestOrder)
             } catch {
-                handleFetchOrderError(error)
+                AlertService.showAlert(withTitle: "錯誤", message: "獲取訂單失敗: \(error.localizedDescription)", inViewController: self)
             }
             HUDManager.shared.dismiss()
         }
     }
     
     // MARK: - Helper Methods
-
-    /// 處理成功獲取的訂單資料，並設置 UI
+    
+    /// 處理成功獲取的訂單資料
+    ///
     /// - Parameter order: 最新的訂單資料
+    /// - 說明：
+    ///   - 更新 `orderConfirmation` 屬性，並初始化數據處理器。
+    ///   - 調用相關方法更新 UI。
     private func handleFetchedOrder(_ order: OrderConfirmation) {
         self.orderConfirmation = order
         printFetchedOrderDetails(order)
-        setupOrderConfirmationHandler()             // 在成功獲取訂單後初始化 Handler 並設置 UI
+        setupOrderConfirmationHandler()
     }
     
-    /// print 獲取到的訂單詳細資料以進行觀察
+    /// 打印獲取到的訂單詳細資料
+    ///
     /// - Parameter order: 需要打印的訂單資料
+    /// - 說明：用於開發階段觀察訂單數據是否正確。
     private func printFetchedOrderDetails(_ order: OrderConfirmation) {
         print("成功獲取訂單: \(order)")
         print("訂單時間：\(order.timestamp)")
@@ -532,289 +635,72 @@ class OrderConfirmationViewController: UIViewController {
         print("訂單項目數量：\(order.orderItems.count)")
     }
     
-    /// 處理獲取訂單資料時出現的錯誤
-    /// - Parameter error: 出現的錯誤
-    private func handleFetchOrderError(_ error: Error) {
-        print("獲取訂單失敗: \(error.localizedDescription)")
-    }
-    
 }
+
 
 // MARK: - OrderConfirmationHandlerDelegate
 extension OrderConfirmationViewController: OrderConfirmationHandlerDelegate {
     
-    // MARK: - Section Handling
-
-    /// 切換指定區域的展開/收起狀態
-    /// - Parameter section: 被點擊的區域索引
-    /// - 說明：收到 `OrderConfirmationHandler` 的通知後，重新載入對應的區域顯示，以反映使用者的展開或收起操作
-    func didToggleSection(_ section: Int) {
-        // 更新指定區域的顯示，切換展開/收起狀態
-        print("Did toggle section: \(section)")
-        orderConfirmationView.collectionView.reloadSections(IndexSet(integer: section))
-    }
-    
     // MARK: - Order Data Methods
-
-    /// 返回目前的訂單資料
-    /// - 用於提供給 `OrderConfirmationHandler` 來顯示訂單詳細內容
+    
+    /// 獲取目前的訂單資料
+    ///
+    /// - Returns: 當前的訂單資料
+    /// - 說明：提供給 `OrderConfirmationHandler` 用於顯示訂單內容。
     func getOrder() -> OrderConfirmation? {
         return orderConfirmation
     }
     
     // MARK: - Close Button Handling
-
-    /// 當按下 "關閉" 按鈕時的操作，返回主菜單頁面。
-    func didTapCloseButton() {
-        AlertService.showAlert(withTitle: "確認返回", message: "您即將返回主菜單，這將會清空目前的訂單資料和顧客資料，是否繼續？", inViewController: self, showCancelButton: true) {[weak self] in
-            self?.proceedWithClosing()
-        }
-    }
     
-    /// 執行返回主菜單頁面的操作
-    private func proceedWithClosing() {
-        // 切換至主菜單頁面的 Tab
-        switchToMenuTab()
-        // 清空顧客資料和訂單項目
-        clearOrderData()
-        // 淡出解散當前的 OrderConfirmationViewController。
-        dismissViewController()
-    }
-    
-    /// 切換至主菜單頁面的 Tab
-    private func switchToMenuTab() {
-        guard let tabBarController = getTabBarController() else { return }
-        // 設置 TabBarController 選擇的索引為 Menu 頁面 (使用 TabIndex)
-        tabBarController.selectedIndex = TabIndex.menu.rawValue
-    }
-    
-    /// 清空顧客資料和訂單項目
-    private func clearOrderData() {
-        CustomerDetailsManager.shared.resetCustomerDetails()    // 重置顧客資料
-        OrderItemManager.shared.clearOrder()                    // 清空訂單項目
-    }
-    
-    /// 淡出解散當前的視圖控制器（OrderConfirmationViewController）
-    private func dismissViewController() {
-        if let presentingViewController = self.presentingViewController {
-            presentingViewController.dismiss(animated: false) { [weak self] in
-                self?.resetNavigationStacksWithAnimation()
-            }
-        }
-    }
-    
-    // MARK: - Navigation Handling
-
-    /// 重置導航堆疊並加入淡入動畫，使過渡更加平順。
-    private func resetNavigationStacksWithAnimation() {
-        guard let tabBarController = getTabBarController() else { return }
-        
-        let tabIndicesWithAnimation: [TabIndex] = [.menu]
-        let tabIndicesWithoutAnimation: [TabIndex] = [.search, .order, .profile]
-        
-        // 回到根視圖控制器，使用動畫效果（例如 Menu）
-        for tabIndex in tabIndicesWithAnimation {
-            if let navigationController = tabBarController.viewControllers?[tabIndex.rawValue] as? UINavigationController {
-                UIView.transition(with: navigationController.view, duration: 0.5, options: .transitionCrossDissolve, animations: {
-                    navigationController.popToRootViewController(animated: false)
-                })
-            }
-        }
-        
-        // 回到根視圖控制器，不使用動畫效果（例如 Search、Order、UserProfile）
-        for tabIndex in tabIndicesWithoutAnimation {
-            if let navigationController = tabBarController.viewControllers?[tabIndex.rawValue] as? UINavigationController {
-                navigationController.popToRootViewController(animated: false)
-            }
-        }
-    }
-    
-    /// 獲取當前的 UITabBarController
-    private func getTabBarController() -> UITabBarController? {
-        guard let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
-              let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }),
-              let tabBarController = keyWindow.rootViewController as? UITabBarController else {
-            return nil
-        }
-        return tabBarController
-    }
-    
-}
-
-
-
-// MARK: - 還沒實踐「資料驅動的 UI 配置」
-/*
-import UIKit
-import Firebase
-
-/// 訂單確認頁面控制器，負責顯示訂單確認後的詳情，例如顧客資訊、訂單項目和總金額。
-class OrderConfirmationViewController: UIViewController {
-
-    // MARK: - Properties
-
-    /// 用於存放提交後的訂單資料
-    var orderConfirmation: OrderConfirmation?
-     
-    /// 自訂的 OrderConfirmationView，用於顯示訂單確認頁面的畫面
-    private let orderConfirmationView = OrderConfirmationView()
-    
-    /// 處理訂單確認頁面中顯示資訊的 Handler，負責處理 UICollectionView 的數據和委託
-    private let orderConfirmationHandler = OrderConfirmationHandler()
-    
-    /// 負責與 Firebase 互動以獲取訂單資料的管理器
-    private let orderConfirmationManager = OrderConfirmationManager()
- 
-    // MARK: - Lifecycle Methods
-
-    override func loadView() {
-        self.view = orderConfirmationView
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupDelegates()
-        setupCollectionView()
-        fetchLatestOrderData()
-    }
-    
-    // MARK: - Setup Methods
-
-    /// 設置 Handler 及委託的相關操作
-    private func setupDelegates() {
-        orderConfirmationHandler.delegate = self
-    }
-    
-    /// 設置 `UICollectionView` 的數據源和委託，以便顯示訂單確認內容。
-    private func setupCollectionView() {
-        orderConfirmationView.collectionView.dataSource = orderConfirmationHandler
-        orderConfirmationView.collectionView.delegate = orderConfirmationHandler
-    }
-    
-    // MARK: - Data Fetching Methods
-    
-    /// 獲取最新的訂單資料並更新畫面，使用非同步方式從 Firebase 獲取資料。
+    /// 當用戶點擊 "關閉" 按鈕時的操作
     ///
-    /// - 獲取當前用戶的 ID。
-    /// - 處理獲取到的訂單資料。
-    private func fetchLatestOrderData() {
-        Task {
-            do {
-                guard let userID = Auth.auth().currentUser?.uid else {
-                    throw OrderConfirmationManager.OrderConfirmationError.missingField("User ID")
-                }
-                let latestOrder = try await orderConfirmationManager.fetchLatestOrder(for: userID)
-                handleFetchedOrder(latestOrder)
-            } catch {
-                handleFetchOrderError(error)
-            }
-        }
-    }
-    
-    // MARK: - Helper Methods
-
-    /// 處理成功獲取的訂單資料
-    /// - Parameter order: 最新的訂單資料
-    private func handleFetchedOrder(_ order: OrderConfirmation) {
-        self.orderConfirmation = order
-        printFetchedOrderDetails(order)
-        self.orderConfirmationView.collectionView.reloadData()
-    }
-
-    /// print 獲取到的訂單詳細資料以進行觀察
-    /// - Parameter order: 需要打印的訂單資料
-    private func printFetchedOrderDetails(_ order: OrderConfirmation) {
-        print("成功獲取訂單: \(order)")
-        print("訂單時間：\(order.timestamp)")
-        print("訂單顧客姓名：\(order.customerDetails.fullName)")
-        print("訂單總金額：\(order.totalAmount)")
-        print("訂單準備時間：\(order.totalPrepTime)")
-        print("訂單項目數量：\(order.orderItems.count)")
-    }
-    
-    /// 處理獲取訂單資料時出現的錯誤
-    /// - Parameter error: 出現的錯誤
-    private func handleFetchOrderError(_ error: Error) {
-        print("獲取訂單失敗: \(error.localizedDescription)")
-    }
-    
-}
-
-// MARK: - OrderConfirmationHandlerDelegate
-extension OrderConfirmationViewController: OrderConfirmationHandlerDelegate {
-    
-    /// 返回目前的訂單資料
-    /// - 用於提供給 `OrderConfirmationHandler` 來顯示訂單詳細內容
-    func getOrder() -> OrderConfirmation? {
-        return orderConfirmation
-    }
-    
-    /// 當按下 "關閉" 按鈕時的操作，返回主菜單頁面。
+    /// - 說明：
+    ///   - 顯示確認提示，提示用戶是否返回主菜單。
+    ///   - 確認後清空訂單資料並返回主畫面。
     func didTapCloseButton() {
-        AlertService.showAlert(withTitle: "確認返回", message: "您即將返回主菜單，這將會清空目前的訂單資料和顧客資料，是否繼續？", inViewController: self, showCancelButton: true) {[weak self] in
+        AlertService.showAlert(
+            withTitle: "確認返回",
+            message: "您即將返回主菜單，這將會清空目前的訂單資料和顧客資料，是否繼續？",
+            inViewController: self,
+            showCancelButton: true
+        ) {[weak self] in
             self?.proceedWithClosing()
         }
     }
     
-    /// 執行返回主菜單頁面的操作
+    /// 執行返回主菜單的操作
+    ///
+    /// - 說明：
+    ///   - 清空訂單資料並重置導航堆疊。
+    ///   - 返回主菜單。
     private func proceedWithClosing() {
-        // 切換至主菜單頁面的 Tab
-        switchToMenuTab()
-        // 清空顧客資料和訂單項目
-        clearOrderData()
-        // 淡出解散當前的 OrderConfirmationViewController。
-        dismissViewController()
-    }
-    
-    /// 切換至主菜單頁面的 Tab
-    private func switchToMenuTab() {
-        guard let tabBarController = getTabBarController() else { return }
-        // 設置 TabBarController 選擇的索引為 Menu 頁面 (Menu 是索引0)
-        tabBarController.selectedIndex = 0
-    }
-    
-    /// 清空顧客資料和訂單項目
-    private func clearOrderData() {
+        
+        // 使用 presentingViewController 獲取 TabBarController
+        guard let presentingViewController = self.presentingViewController as? UITabBarController else { return }
+        
         CustomerDetailsManager.shared.resetCustomerDetails()    // 重置顧客資料
         OrderItemManager.shared.clearOrder()                    // 清空訂單項目
-    }
-    
-    /// 淡出解散當前的視圖控制器（OrderConfirmationViewController）
-    private func dismissViewController() {
-        if let presentingViewController = self.presentingViewController {
-            presentingViewController.dismiss(animated: false) { [weak self] in
-                self?.resetNavigationStacksWithAnimation()
-            }
-        }
-    }
-    
-    /// 重置導航堆疊並加入淡入動畫，使過渡更加平順。
-    private func resetNavigationStacksWithAnimation() {
-        guard let tabBarController = getTabBarController() else { return }
         
-        // 確保選中的 NavigationController 回到根視圖控制器。
-        if let menuNavigationController = tabBarController.viewControllers?[0] as? UINavigationController {
-            // 使用淡入動畫返回根視圖控制器
-            UIView.transition(with: menuNavigationController.view, duration: 0.5, options: .transitionCrossDissolve, animations: {
-                menuNavigationController.popToRootViewController(animated: false)
-            })
+        orderConfirmationNavigationHandler.dismiss(viewController: self) { [weak self] in
+            self?.orderConfirmationNavigationHandler.resetNavigationStacks(with: presentingViewController, targetTab: .menu)
         }
-        
-        // 確保 Order 的 NavigationController 也回到根視圖控制器，但不加動畫。
-        if let orderNavigationController = tabBarController.viewControllers?[1] as? UINavigationController {
-            orderNavigationController.popToRootViewController(animated: false)
-        }
-    }
-    
-    /// 獲取當前的 UITabBarController
-    private func getTabBarController() -> UITabBarController? {
-        guard let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
-              let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }),
-              let tabBarController = keyWindow.rootViewController as? UITabBarController else {
-            return nil
-        }
-        return tabBarController
     }
     
 }
-*/
+
+// MARK: - OrderConfirmationSectionDelegate
+extension OrderConfirmationViewController: OrderConfirmationSectionDelegate {
+    
+    /// 切換指定區域的展開/收起狀態
+    ///
+    /// - Parameter section: 被點擊的區域索引
+    /// - 說明：
+    ///   - 接收來自 `OrderConfirmationHandler` 的通知。
+    ///   - 更新對應區域的 UI。
+    func didToggleSection(_ section: Int) {
+        print("Section toggled: \(section)")
+        orderConfirmationView.orderConfirmationCollectionView.reloadSections(IndexSet(integer: section))
+    }
+    
+}

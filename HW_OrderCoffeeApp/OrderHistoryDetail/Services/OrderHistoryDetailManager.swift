@@ -5,52 +5,9 @@
 //  Created by 曹家瑋 on 2024/11/12.
 //
 
-// MARK: -  OrderHistoryDetailManager 重點筆記
-/**
- ## OrderHistoryDetailManager 重點筆記
- 
- `* OrderHistoryDetailManager 概述`
-
- - `功能描述`：
-    - `OrderHistoryDetailManager` 是負責從 `Firebase` 的 Firestore 獲取並管理指定訂單詳細資料的管理器類別。
-    - 透過此管理器可以根據使用者的 ID 和訂單 ID 獲取詳細的訂單資訊，適合在訂單詳細頁面中使用。
- 
- - `資料驅動方式`：
-    - 利用 Firebase 提供的` getDocument(as:) `方法來獲取並解析訂單資料，省去手動解析 JSON 格式的繁瑣步驟，確保資料獲取的準確性與便利性。
-
- `* 功能與方法詳解`
-
- `1. Properties：`
-
- * `db`：Firestore 的連結，負責與後端資料庫溝通，用於進行資料的讀寫操作。
- 
- `2. Methods：`
-
- * `fetchOrderDetail(for userId: String, orderId: String) async throws -> OrderHistoryDetail`
- 
-    - `功能描述`：
-        - 根據傳入的使用者 ID (userId) 及訂單 ID (orderId)，從 Firestore 獲取並返回對應的 OrderHistoryDetail。
- 
-    - `參數`：
-        - userId：當前使用者的唯一標識符，用於在 Firebase 中定位使用者訂單資料。
-        - orderId：特定訂單的唯一標識符。
-        - 返回：回傳指定訂單 ID 的 OrderHistoryDetail 資料結構，包含訂單的所有詳細資訊。
- 
- `3. 使用情境`
-
- - 該管理器在 `OrderHistoryDetailViewController` 中被調用，以便根據傳遞過來的 `orderId` 獲取完整的訂單詳細資料。
- - 使用 `Firebase` 的異步 getDocument(as:) 方法能夠直接將資料映射為 `OrderHistoryDetail` 的模型，這樣使得資料的獲取和解碼變得簡潔明了。
- 
- `4. 優勢與考量`
-
- - `資料完整性`：由於詳細資料涉及訂單的項目、顧客信息等，將這部分的資料獲取從 `OrderHistoryViewController` 中分離，有助於保持訂單概覽和詳細資料之間的區分，使代碼更易維護。
- - `異步處理`：使用 `async/await` 確保獲取資料的過程是異步的，避免在主線程中進行阻塞操作，從而提升用戶體驗。
- - `用戶驗證`：在獲取訂單資料之前，應先檢查當前是否有登入的使用者（即 `currentUser` 是否有效），確保只有在用戶有效時才能進行數據請求，這是應用安全性的一部分。
- */
-
-
 // MARK: - 使用 Firebase 提供的 getDocument(as:) 方法的重點筆記（額外補充想法）
 /**
+ 
  ## 使用 Firebase 提供的 getDocument(as:) 方法的重點筆記
  
  `1. Firebase 簡化資料解析`
@@ -72,6 +29,7 @@
 
 // MARK: - 使用單例 (Singleton) vs. 獨立實例的選擇（額外補充想法）
 /**
+ 
  ## 使用單例 (Singleton) vs. 獨立實例的選擇
 
  * 當需要創建一個管理器類別 (例如 `OrderHistoryDetailManager`) 時，可能會面臨選擇：是否應使用單例模式 (`shared`) 還是每次創建一個獨立的實例 (`private let detailManager = OrderHistoryDetailManager()`)。以下是這兩種方式的對比和選擇指南。
@@ -130,30 +88,152 @@
  */
 
 
+// MARK: - OrderHistoryDetailManager 筆記
+/**
+ 
+ ## OrderHistoryDetailManager 筆記
+
+ `* What`
+ 
+ - `OrderHistoryDetailManager` 是一個負責從 Firebase Firestore 獲取歷史訂單詳細資料的管理類別。
+
+ - 主要職責:
+ 
+   - 根據當前用戶的 `userId` 和指定的 `orderId`，從 Firestore 中檢索訂單詳細資料。
+   - 將 Firestore 返回的原始數據轉換為 `OrderHistoryDetail` 模型。
+   - 提供異步數據獲取方法，支援在 UI 或邏輯層中使用。
+
+ ----------
+
+ `* Why`
+ 
+ 1. 模組化設計:
+ 
+    - 將數據檢索邏輯集中在一個專門的類中，避免在控制器或其他模組中重複實現數據獲取邏輯。
+    - 增強代碼的可讀性、可測試性和易於維護性。
+
+ 2. 單一職責原則 (SRP):
+ 
+    - 使該類僅專注於 Firestore 數據的檢索與轉換，不涉及其他業務邏輯或 UI 更新，確保類的職責單一且清晰。
+
+ 3. 提高可重用性:
+ 
+    - 其他模組也可以直接使用該類來獲取訂單數據，無需了解 Firestore 的具體實現細節。
+
+ 4. 減少錯誤風險:
+ 
+    - 集中處理用戶驗證（`Auth`）和數據解析的邏輯，減少因數據不一致或驗證錯誤導致的問題。
+
+ ----------
+
+ `* How`
+ 
+ 1. 初始化 Firestore 實例:
+ 
+    - 使用 `Firestore.firestore()` 建立與 Firebase 的數據庫連接，確保數據檢索的基本設置。
+
+ 2. 提供異步數據檢索方法:
+ 
+    - 使用 `async/await` 結合 Firestore 的 `getDocument(as:)` 方法，實現高效且簡潔的數據檢索與轉換。
+
+ 3. 方法實現細節:
+ 
+    - 檢查當前用戶是否登錄:
+      - 使用 `Auth.auth().currentUser?.uid` 確保用戶已登錄並獲取 `userId`。
+      - 如果用戶未登錄，拋出自定義錯誤 `AuthError`。
+ 
+    - 定位指定文檔:
+      - 根據 `userId` 和 `orderId` 構造 Firestore 的文檔路徑。
+ 
+    - 解析數據:
+      - 使用 Firestore 的 `getDocument(as:)` 方法自動將數據轉換為 `OrderHistoryDetail` 模型。
+ 
+    - 錯誤處理:
+      - 捕獲 Firestore 的數據檢索錯誤，並提供詳細的錯誤描述以便於調試。
+
+ 4. 錯誤處理與拋出:
+ 
+    - 當用戶未登錄時：
+      - 拋出 `NSError`，描述用戶認證失敗。
+ 
+    - 當數據檢索或解析失敗時：
+      - 拋出 `NSError`，描述數據檢索或解析的具體錯誤原因。
+ 
+ */
+
+
+
+
+// MARK: - (v)
+
 import UIKit
 import Firebase
 
-/// `OrderHistoryDetailManager` 負責從 Firestore 中獲取並管理訂單的詳細資料。
-/// - 功能：提供異步的方法來根據 `userId` 和 `orderId` 獲取特定訂單的完整詳細資訊。
+/// `OrderHistoryDetailManager`
+///
+/// 此類負責從 Firestore 中獲取並管理歷史訂單的詳細資料。
+///
+/// - 設計目標:
+///   - 單一職責原則 (SRP)：專注於訂單數據的獲取與解析，不涉及 UI 或其他邏輯。
+///   - 模組化設計：通過 Firebase 提供異步方法以簡化數據交互，保持代碼清晰且易於擴展。
+///
+/// - 功能:
+///   1. 提供基於 `userId` 和 `orderId` 的訂單詳細資料獲取功能，藉此取特定訂單的完整詳細資訊。
+///   2. 使用 Firebase 的 `getDocument(as:)` 方法自動將 Firestore 數據解析為指定模型類型 (`OrderHistoryDetail`)。
+///   3. 確保只有當前已登錄的用戶才能獲取其對應的訂單詳細資料。
 class OrderHistoryDetailManager {
     
-    /// 初始化 Firestore 資料庫連結
+    // MARK: - Properties
+    
+    /// Firestore 資料庫實例，用於與 Firebase 進行數據交互
     private let db = Firestore.firestore()
     
+    // MARK: - Public Methods
+    
     /// 獲取訂單的詳細資料
+    ///
+    /// 此方法會檢查當前用戶是否已登錄，並嘗試從 Firestore 中獲取指定 `orderId` 的訂單資料。
+    ///
     /// - Parameters:
-    ///   - userId: 使用者的唯一標識符，用於定位使用者資料庫中訂單的父層
-    ///   - orderId: 訂單的唯一標識符，用於獲取特定訂單的詳細資訊
-    /// - Returns: 回傳指定 `orderId` 的 `OrderHistoryDetail` 資料結構
-    /// - 說明：使用 Firebase 的 `getDocument(as:)` 方法來進行資料解析，從而簡化從 Firebase 獲取並解析成特定資料模型的過程。
-    func fetchOrderDetail(for userId: String, orderId: String) async throws -> OrderHistoryDetail {
-        let documentRef = db.collection("users").document(userId).collection("orders").document(orderId)
-
+    ///   - orderId: 訂單的唯一標識符，用於定位 Firestore 中的訂單文檔。
+    ///
+    /// - Returns: 返回對應 `orderId` 的 `OrderHistoryDetail` 資料結構。
+    ///
+    /// - Throws:
+    ///   - 如果當前用戶未登錄，拋出 `AuthError`。
+    ///   - 如果訂單資料獲取失敗或解析失敗，拋出 `OrderDetailError`。
+    ///
+    /// - 使用場景:
+    ///   1. 用於歷史訂單詳情頁的數據初始化。
+    ///   2. 提供數據給其他模塊進行處理或展示。
+    ///
+    /// - 實現細節:
+    ///   - 使用 `Auth.auth().currentUser` 確保當前用戶已登錄並提取其 `uid`。
+    ///   - 通過 Firestore 的 `getDocument(as:)` 方法自動將文檔轉換為 `OrderHistoryDetail` 模型。
+    ///   - 捕獲錯誤並提供詳細的錯誤描述以便調試。
+    func fetchOrderDetail(for orderId: String) async throws -> OrderHistoryDetail {
+        
+        // 確保當前用戶已登錄並提取用戶 ID
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw NSError(
+                domain: "AuthError",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "User is not logged in."]
+            )
+        }
+        
+        // 定位指定用戶的訂單文檔
+        let documentRef = db.collection("users").document(userID).collection("orders").document(orderId)
+        
         do {
             let orderDetail = try await documentRef.getDocument(as: OrderHistoryDetail.self)
             return orderDetail
         } catch {
-            throw NSError(domain: "OrderDetailError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch or decode order detail for order ID \(orderId): \(error.localizedDescription)"])
+            throw NSError(
+                domain: "OrderDetailError",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Failed to fetch or decode order detail: \(error.localizedDescription)"]
+            )
         }
     }
     

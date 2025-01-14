@@ -49,12 +49,14 @@
 
 import UIKit
 
+/// `OrderConfirmationView` 用於顯示`訂單確認成功`相關的畫面，包括各種訂單資訊和操作按鈕。
 class OrderConfirmationView: UIView {
 
     // MARK: - UI Elements
-    
-    let collectionView = OrderConfirmationView.createCollectionView()
-    
+        
+    /// 訂單確認t成功專用的 CollectionView，顯示畫面內容的主要元件。
+    private(set) var orderConfirmationCollectionView = OrderConfirmationCollectionView()
+
     // MARK: - Initializer
     
     override init(frame: CGRect) {
@@ -70,39 +72,27 @@ class OrderConfirmationView: UIView {
     
     // MARK: - Setup Methods
 
-    /// 註冊  Cells
+    /// 註冊所需的 Cells 和 Header，確保 CollectionView 可以正確顯示內容。
     private func registerCells() {
-        collectionView.register(OrderConfirmationCheckmarkCell.self, forCellWithReuseIdentifier: OrderConfirmationCheckmarkCell.reuseIdentifier)
-        collectionView.register(OrderConfirmationMessageCell.self, forCellWithReuseIdentifier: OrderConfirmationMessageCell.reuseIdentifier)
-        collectionView.register(OrderrConfirmationItemDetailsCell.self, forCellWithReuseIdentifier: OrderrConfirmationItemDetailsCell.reuseIdentifier)
-        collectionView.register(OrderConfirmationCustomerInfoCell.self, forCellWithReuseIdentifier: OrderConfirmationCustomerInfoCell.reuseIdentifier)
-        collectionView.register(OrderrConfirmationDetailsCell.self, forCellWithReuseIdentifier: OrderrConfirmationDetailsCell.reuseIdentifier)
-        collectionView.register(OrderrConfirmationCloseButtonCell.self, forCellWithReuseIdentifier: OrderrConfirmationCloseButtonCell.reuseIdentifier)
-        collectionView.register(OrderConfirmationSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: OrderConfirmationSectionHeaderView.headerIdentifier)
+        orderConfirmationCollectionView.register(OrderConfirmationCheckmarkCell.self, forCellWithReuseIdentifier: OrderConfirmationCheckmarkCell.reuseIdentifier)
+        orderConfirmationCollectionView.register(OrderConfirmationMessageCell.self, forCellWithReuseIdentifier: OrderConfirmationMessageCell.reuseIdentifier)
+        orderConfirmationCollectionView.register(OrderrConfirmationItemDetailsCell.self, forCellWithReuseIdentifier: OrderrConfirmationItemDetailsCell.reuseIdentifier)
+        orderConfirmationCollectionView.register(OrderConfirmationCustomerInfoCell.self, forCellWithReuseIdentifier: OrderConfirmationCustomerInfoCell.reuseIdentifier)
+        orderConfirmationCollectionView.register(OrderrConfirmationDetailsCell.self, forCellWithReuseIdentifier: OrderrConfirmationDetailsCell.reuseIdentifier)
+        orderConfirmationCollectionView.register(OrderrConfirmationCloseButtonCell.self, forCellWithReuseIdentifier: OrderrConfirmationCloseButtonCell.reuseIdentifier)
+        orderConfirmationCollectionView.register(OrderConfirmationSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: OrderConfirmationSectionHeaderView.headerIdentifier)
     }
     
     /// 設置 CollectionView 的 AutoLayout
     private func setupLayout() {
-        addSubview(collectionView)
+        addSubview(orderConfirmationCollectionView)
         
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: topAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            orderConfirmationCollectionView.topAnchor.constraint(equalTo: topAnchor),
+            orderConfirmationCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            orderConfirmationCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            orderConfirmationCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
-    }
-    
-    // MARK: - Factory Method
-    
-    /// 創建並配置 CollectionView
-    private static func createCollectionView() -> UICollectionView {
-        let layout = OrderConfirmationLayoutProvider.createLayout() // 還沒設置OrderConfirmationLayoutProvider
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.alwaysBounceVertical = true
-        collectionView.showsHorizontalScrollIndicator = false
-        return collectionView
     }
     
 }
