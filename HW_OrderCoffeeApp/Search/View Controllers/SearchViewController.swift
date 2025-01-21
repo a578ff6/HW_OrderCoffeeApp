@@ -9,12 +9,15 @@
 
 // MARK: - 初步構想_搜尋視圖控制器設計與導航流程的概念筆記
 /**
+ 
  ## 初步構想_搜尋視圖控制器設計與導航流程的概念筆記
  
  `1. 搜尋視圖控制器導航流程`
  
  - 在搜尋結果中，點擊項目進入 `DrinkDetailViewController` 的設計。這樣用戶可以快速找到所需飲品並查看詳細資訊，符合一般搜尋流程的用戶體驗需求。
  - 導航適合度：這樣的設計符合主導航結構 (`MainTabBarController`)，能夠保持整體流程的簡單與清晰。
+ 
+ -------
  
 ` 2. 使用 UISearchController 搭配 UITableView 的搜尋功能`
  
@@ -24,6 +27,8 @@
     - `UISearchController` 提供搜尋框的顯示與隱藏動畫，以及輸入文字後的即時過濾，能提升搜尋效率。
     - 搭配 `UITableView` 來展示搜尋結果是很適合的選擇，因為 UITableView 支援可重用的單元格顯示多筆資料，且操作簡單效能高。
  
+ -------
+
 ` 3. 是否建議設置搜尋視圖控制器的 Model`
  
  - 建議設置「搜尋視圖控制器的 Model」，這可以讓搜尋邏輯更清晰且便於維護。
@@ -32,6 +37,8 @@
     - `資料分離`：透過設置 `SearchModel`，可以將資料處理和搜尋邏輯從視圖控制器中抽離，符合單一職責原則（SRP）。
     - `資料管理`：將搜尋過程中的資料管理集中在 Model，能更方便進行單元測試與驗證。
     - `擴展性`：未來如果增加例如「熱門搜尋」或「搜尋建議」等功能，Model 的設計會讓擴展更加方便。
+
+ -------
 
  `4.初步程式碼的建議`
  
@@ -43,6 +50,8 @@
  - `SearchHandler`：作為 UITableView 的數據源和委託，負責處理搜尋過程中的資料管理和用戶操作。
  - `SearchManager`：負責從 Firestore 加載資料，以及處理與後端的交互。
  - `SearchResultsDelegate`：用於搜尋完成後，將選定的飲品資訊傳遞到其他視圖控制器，例如 DrinkDetailViewController。
+
+ -------
 
  `5.小結`
  
@@ -62,6 +71,8 @@
  - `SearchViewController` 是搜尋頁面的核心，負責顯示搜尋結果，並管理與使用者的交互。
  - 在設計過程中，將搜尋的顯示、控制器的設置、導航欄設置，以及數據加載等職責分開來處理，以減少耦合度並提升代碼的可讀性和可維護性。
 
+ -------
+
  `2.屬性與責任分配`
 
  - `searchView`：自定義的主視圖，包含了展示搜尋結果的 UITableView。在 loadView 階段設定，確保在視圖加載前即設置好正確的視圖。
@@ -71,11 +82,15 @@
  - `searchNavigationBarManager`：負責設置導航欄標題和相關的按鈕，將與導航欄相關的邏輯集中管理，以保持 SearchViewController 的簡潔。
  - `searchResults`：儲存目前的搜尋結果，並透過 `didSet` 更新 UITableView 的顯示和搜尋視圖的狀態 (`updateViewStateBasedOnSearchResults`)。
 
+ -------
+
  `3.分離關心點的實踐`
 
  - UI 部分 (`SearchView`) 與資料部分（如 `SearchManager` 和 `SearchHandler`）分離，避免一個類過多的職責，使代碼更容易管理。
  - `SearchControllerManager`：專門處理與 UISearchController 相關的邏輯，例如搜尋欄文字更新和取消搜尋的回應。這樣可以避免 SearchViewController 因為搜尋交互邏輯而過於臃腫。
  - `SearchNavigationBarManager`：專門處理與導航欄相關的配置，例如標題設置和按鈕配置，避免將導航欄邏輯直接寫入 SearchViewController，以保持代碼模組化。
+
+ -------
 
  `4.使用委託的設計`
 
@@ -84,6 +99,8 @@
     - `SearchControllerInteractionDelegate`：負責 UISearchController 的交互行為，例如當使用者輸入搜尋字串或取消搜尋時的回應。
     - 通過這些委託， SearchViewController 可以有效地將資料層和交互層分開，減少代碼的耦合性，提升可維護性。
  
+ -------
+
  `5.狀態管理與更新`
  
  `* updateViewStateBasedOnSearchResults()：`
@@ -97,6 +114,8 @@
     - 使用此方法來刷新 UITableView，只在需要時才進行刷新，以提升性能。
     - 將 reloadData() 從 didSet 中移出，使資料變更與視圖更新的責任更清晰。
  
+ -------
+
  `6.搜尋控制器的設置`
  
  `* setupSearchController() 和 setupNavigationBar()：`
@@ -105,6 +124,8 @@
     - `SearchControllerManager` 的設計讓搜尋行為的管理與頁面控制器分開，使得代碼更具模組化和可重用性。
     - 在 `setupNavigationBar() `中，利用 `SearchNavigationBarManager` 來設置導航欄的標題和大標題顯示模式，讓與導航欄相關的邏輯更具模組化和可重用性。
  
+ -------
+
 ` 7. 確保搜尋狀態的管理 (ensureCurrentSearchState())`
  
  - 確保當前的搜尋狀態一致。
@@ -112,6 +133,8 @@
  - 若搜尋框有文字，執行相應的資料過濾操作。
  - 使得原本在 `handleDataLoadSuccess() `方法中的狀態檢查和處理邏輯更加模組化。
  
+ -------
+
  `8. 搜尋流程與使用者控制權`
 
  - 原本設置為「飲品快取資料無效」時，進入到「搜尋視圖控制器」會立刻進行自動載入「飲品快取資料到本地」，讓使用者可以方便搜尋。
@@ -123,7 +146,9 @@
  - 當網路狀態不可用時，會顯示「無網路的 Alert」，提醒使用者需要穩定的網路連線。
  - 只有在進行搜尋操作時才會檢查「飲品快取資料有效與否」，以減少不必要的資料加載。
  
- `8. 搜尋文字和搜尋狀態的處理`
+ -------
+
+ `9. 搜尋文字和搜尋狀態的處理`
  
  `* didUpdateSearchText 和 didCancelSearch和 didSelectSearchResult 的處理`
 
@@ -131,7 +156,9 @@
  - `didCancelSearch()`：當取消搜尋時，調用此方法以立即清空搜尋結果，並且更新提示文字。
  - `didSelectSearchResult(_:)`：當使用者選擇某個搜尋結果時，會導航至 `DrinkDetailViewController` 顯示飲品的詳細資訊。
 
- `9.總結`
+ -------
+
+ `10.總結`
  
  - 職責分離 是本設計的核心，將視圖、資料處理和交互管理劃分開來，利用各種管理器（如 `SearchHandler` 和 `SearchControllerManager`）來降低耦合，讓每個部分只專注於自身的職責。
  - 使用 委託模式 來處理搜尋過程中的數據變化和用戶交互，這樣可以確保 `SearchViewController` 專注於頁面邏輯，並將其他操作交由專門的模組處理。
@@ -148,34 +175,46 @@
  `* 在設計搜尋頁面的提示訊息顯示時，有兩種主要的考量方式：`
 
 ` 1. 初始進入搜尋頁面時顯示提示訊息：`
+ 
     - 當使用者剛進入搜尋頁面時，顯示「Please enter search keywords」這樣的提示訊息，可以引導使用者進行下一步操作。
 
  `2. 根據與 UISearchController 的互動來顯示提示訊息：`
+ 
     - 當使用者與搜尋框有互動（如點擊、輸入或取消）時，根據不同狀態顯示不同的提示。例如：
         - 使用者點擊搜尋框但未輸入文字時，顯示「Please enter search keywords」。
         - 當使用者開始輸入但無符合結果時，顯示「No Results」。
         - 當使用者按下取消按鈕 (`cancel`) 結束搜尋時，回到初始狀態，再次顯示「Please enter search keywords」。
         - 當「飲品快取資料無效時」顯示 Alert 提示「資料無效」，並將searchResults設置為[]，使視圖畫面呈現「NO Result」，確保畫面沒有殘留的資料。
 
+ -------
+
  `* 設計方式`
 
- - 基於以上考量，較直觀的做法是根據`使用者是否進行搜尋操作`來顯示對應的提示訊息，具體邏輯如下：
+    - 基於以上考量，較直觀的做法是根據`使用者是否進行搜尋操作`來顯示對應的提示訊息，具體邏輯如下：
 
- `1. 初始進入頁面`：顯示「Please enter search keywords」引導使用者。
+ `1. 初始進入頁面`：
  
- `2. 使用者點擊搜尋框`：保持顯示「Please enter search keywords」，直到使用者開始輸入文字。
+    - 顯示「Please enter search keywords」引導使用者。
+ 
+ `2. 使用者點擊搜尋框`：
+ 
+    - 保持顯示「Please enter search keywords」，直到使用者開始輸入文字。
  
  `3. 使用者開始輸入`：
+ 
     - 如果搜尋結果為空，顯示「No Results」。
     - 如果有符合結果，顯示搜尋結果。
  
- `4. 使用者按下取消`：清空搜尋結果，再次顯示「Please enter search keywords」。
+ `4. 使用者按下取消`：
+    
+    - 清空搜尋結果，再次顯示「Please enter search keywords」。
 
- 
+ -------
+
  `* 這樣設計的好處在於：`
  
- - 每個狀態的提示訊息都是基於使用者操作，符合一般使用者的直覺，能更好地引導使用者完成搜尋。
- - 初始狀態與取消搜尋的狀態保持一致，顯示「Please enter search keywords」，使介面顯得簡潔且容易理解。
+    - 每個狀態的提示訊息都是基於使用者操作，符合一般使用者的直覺，能更好地引導使用者完成搜尋。
+    - 初始狀態與取消搜尋的狀態保持一致，顯示「Please enter search keywords」，使介面顯得簡潔且容易理解。
  */
 
 
@@ -190,34 +229,46 @@
  - 當用戶從搜尋視圖導航至其他頁面（飲品詳細頁面）並返回時，需要決定搜尋視圖應保持原有的狀態還是重置為初始狀態。
  - 這包括搜尋框中的文字、搜尋結果列表的顯示狀態，以及 UI 的其他相關元素。
 
+ -------
+
  `2. Why: 保持狀態與重置狀態的考量`
  
  `* 保持狀態的理由`
+ 
     - `提升用戶體驗`：保持搜尋視圖的狀態能提升用戶體驗，因為用戶可能希望繼續查看之前的搜尋結果，或者選擇其他結果。
     - `減少操作重複性`：如果用戶多次來回切換，保持狀態可以避免用戶重新輸入搜尋文字並再次查找。
     - `一致性`：保持狀態與許多應用程序的行為一致，例如使用搜尋功能後返回列表，大多數應用都會保持搜尋框的內容和結果。
  
  `* 重置狀態的理由`
+ 
     - `清爽的界面`：在某些應用場景下，用戶可能希望在返回搜尋頁面時看到一個乾淨的界面，避免被之前的搜尋干擾。
     - `頁面刷新考慮`：有時候，搜尋結果可能因數據變更而過時，重置狀態可以確保用戶看到最新的內容。
     - `特定場景需求`：在特定場景下，重置狀態可能符合業務邏輯需求，例如用戶每次返回應看到最新的推薦內容。
  
+ -------
+
  `3. How: 如何實現搜尋視圖的返回狀態管理`
  
  `* 保持狀態的方式`
+ 
     - 狀態保存：在用戶離開搜尋視圖時，將搜尋框的文字和結果保存在一個變數或模型中。當用戶返回時，根據保存的狀態重新配置視圖（例如恢復搜尋文字和結果列表）。
     - 頁面暫留：如果視圖控制器並未被釋放（例如使用 navigationController 推入下一個控制器），則其狀態會自然保留，用戶返回時可直接看到先前的狀態。
  
  `* 重置狀態的方式`
+ 
     - 清空狀態：在 viewWillAppear 或 viewDidAppear 中，重置搜尋框的文字、清空結果列表，將界面恢復到初始狀態。
     - 條件重置：可以根據具體情境來決定是否重置，例如檢查用戶返回的時間間隔，如果間隔過長則進行重置。
  
+ -------
+
  `4. 想法`
  
  - 保持狀態：
+ 
     - 大多數情況下，建議保持搜尋視圖的狀態，這樣可以提高用戶體驗，讓用戶方便地返回並繼續操作，尤其是當搜尋結果涉及多個步驟或者用戶可能需要查看多個結果時。
  
  - 重置狀態：
+ 
     - 在一些特定情境下（例如應用性能受影響，或用戶習慣需要更清爽的界面），可以考慮重置狀態。可以根據用戶反饋或業務需求來決定具體的策略。
  */
 
@@ -230,13 +281,16 @@
  `* 「飲品資料」的背景：`
  
  `1.飲品資料的預加載：`
+ 
     - 在 App 啟動時，AppDelegate 中會進行「預加載飲品資料」的操作，但這個過程可能會失敗，或由於快取資料是有時效性的，也可能在使用者操作時快取已經過期。
 
  `2.避免自動加載資料：`
+ 
     - 在使用者進入搜尋視圖控制器時，不希望直接自動加載飲品資料，因為使用者可能只是誤觸「搜尋視圖控制器」，並不打算進行搜尋操作。
     - 因此，只有當使用者真正開始搜尋時，才檢查飲品資料的有效性。
 
  `3.當資料無效時的處理`：
+ 
     - 如果飲品快取資料無效，會顯示一個提示 Alert (`showDataUnavailableAlert`) 讓使用者選擇是否加載資料。
     - 當使用者點擊「加載」時，會檢查網路狀態並從 Firebase 請求重新加載飲品資料。
  
@@ -253,6 +307,7 @@
  `2.外部實例化 (SearchViewController 中的屬性)：`
  
  - 當 `searchNetworkMonitor` 作為外部的屬性並在 `reloadDrinkData() `中多次使用時，會遇到如下問題：
+ 
     - 如果在上次監控結束後（例如調用`了 stopMonitoring()`），沒有重新初始化或重啟監控器，onStatusChange 的回調會無效。
     - 因為同一個實例在之前的操作中已經停止監控，導致再次調用` startMonitoring() `時監控器無法正常運作，因此看不到網路狀態變化的完整打印。
  
@@ -261,6 +316,8 @@
  `* What:`
 
  - `SearchNetworkMonitor` 是一個用於監控網路狀態的類別，可以實例化為`本地變數`或作為`控制器的屬性`來使用。
+ 
+ ------
  
  `* Why:`
 
@@ -274,6 +331,8 @@
  - 適合在多個地方需要共享同一個網路監控器的情境。
  - 但是需要特別注意監控器的生命周期管理，尤其是在停止監控後，如何再次正確啟動監控，避免因為之前監控被取消而導致無法正常使用的情況。
  
+ ------
+
  `* How:`
 
  `1.內部實例化的方式：`
@@ -284,6 +343,8 @@
 
  - 在 `SearchViewController` 中作為屬性使用時，需特別注意每次調用之前要確保監控器是處於啟動狀態，並且避免重複啟動已停止的監控器。
  
+ ------
+
  `* 小結：`
 
  - 在這種情況下，由於每次重新加載資料都需要確保網路狀態的準確性且不受先前監控器的影響，內部實例化（本地變數）會更合適，這樣可以保證每次重新加載資料時，都有一個新鮮的監控器來檢查網路狀態，確保用戶的操作體驗順暢。
@@ -293,6 +354,7 @@
 
 // MARK: - 調整 `searchView.tableView.reloadData()` 的位置筆記
 /**
+ 
  ## 調整 `searchView.tableView.reloadData()` 的位置筆記
 
  - 我原先在 `SearchViewController` 中，`searchResults` 的 `didSet` 包含 `searchView.tableView.reloadData()` 用於自動更新表格視圖，這樣的設計確保了當 `searchResults` 變更時，UI 與資料能保持一致性。
@@ -305,14 +367,20 @@
  - 將 `searchView.tableView.reloadData()` 從 `didSet` 中移出，並將其放入更新視圖狀態的方法 `updateViewStateBasedOnSearchResults()`，這樣可以更明確地知道何時需要刷新表格資料。
  - 例如，當 `searchResults` 的變更僅僅是清空結果時，可以根據實際需要決定是否刷新表格，從而減少不必要的刷新操作，提升性能。
 
+ ------
+
  `* 新設 reloadTableViewIfNeeded() 方法`
 
  - 用於判斷是否有必要刷新表格資料。這樣的設計可以進一步減少冗餘的刷新操作，特別是在清空結果或資料未變更的情況下，這對於提升應用效能有顯著幫助。
+
+ ------
 
  `* 保持在 didSet 設計的好處`
 
  - 如果維持在 `didSet` 的設計相對直觀，當 `searchResults` 發生變化時，`didSet` 會立即更新 UI，這確保了資料的變更能即時反映到使用者界面中。
  - 特別是當進行資料加載操作（例如 `reloadDrinkData`）時，即使表格視圖可能會多次刷新，但這樣的做法可以確保任何新的資料都能被即時呈現，從而提高使用者體驗的即時性與一致性。
+
+ ------
 
 `* 調整總結`
 
@@ -411,9 +479,11 @@
  `1. 初始化與設置`
 
  `* loadView()`
+ 
     - 設定 `searchView` 為主要視圖，以展示搜尋頁面。
 
  `* viewDidLoad()`
+ 
     - 執行初始設置，呼叫以下方法：
       - `setupHandler()`: 初始化 `SearchHandler` 並設置表格數據源和委託。
       - `setupSearchController()`: 初始化 `SearchControllerManager` 並設置 `UISearchController` 的行為。
@@ -425,19 +495,23 @@
  `2. 搜尋結果的處理與顯示`
 
  `* setupHandler()`
+ 
     - 初始化 `SearchHandler`，並將 `searchView.tableView` 的 `dataSource` 和 `delegate` 指定給 `SearchHandler`，以處理搜尋結果的顯示和使用者互動。
 
  `* searchResults 的 didSet`
+ 
     - 當 `searchResults` 被設置或更新時，會觸發 `updateViewStateBasedOnSearchResults()` 方法：
       - 判斷 `searchResults` 是否為空，更新 `searchView` 的顯示狀態。
       - 確保資料同步，呼叫 `reloadTableViewIfNeeded()` 重新載入表格資料。
 
  `* updateViewStateBasedOnSearchResults()`
+ 
     - 根據 `searchResults` 的狀態進行更新：
       - 如果搜尋結果為空，顯示「無搜尋結果」的提示。
       - 否則，顯示搜尋結果列表。
 
  `* reloadTableViewIfNeeded()`
+ 
     - 重新載入 `UITableView` 以顯示更新後的搜尋結果。
 
  ------------------------------------------------------------------
@@ -445,9 +519,11 @@
  `3. 搜尋控制器與互動`
 
  `* setupSearchController()`
+ 
     - 初始化 `SearchControllerManager` 並設置 `UISearchController` 的管理行為。
 
  `* SearchControllerInteractionDelegate`
+ 
     - `didUpdateSearchText(_:)`:
       - 當使用者在搜尋框中輸入文字時，如果文字不為空，調用 `filterSearchData(with:)` 以篩選符合的飲品資料。
       - 若文字為空，清空 `searchResults` 並恢復初始狀態。
@@ -459,17 +535,20 @@
  `4. 資料載入與網路狀態監控`
 
  `* reloadDrinkData()`
+ 
     - 當需要載入飲品資料時，會先顯示 `HUDManager` 的加載指示器。
     - 使用 `SearchNetworkMonitor` 監控網路狀態：
       - 若網路狀態為 `.satisfied`，調用 `startLoadingDrinkData()` 進行資料加載。
       - 若網路狀態為 `.unsatisfied`，調用 `handleNetworkUnavailable()` 顯示無網路連接的提示。
 
  `* startLoadingDrinkData()`
+ 
     - 呼叫 `SearchDrinkDataLoader` 以加載飲品資料。
     - 成功載入後，調用 `handleDataLoadSuccess()` 停止網路監控並隱藏 HUD。
     - 若載入失敗，則呼叫 `handleDataLoadFailure()` 顯示錯誤訊息並停止監控。
 
  `* handleNetworkUnavailable()`
+ 
     - 當網路不可用時，顯示提示並停止網路監控，提醒使用者檢查網路連接。
 
  ------------------------------------------------------------------
@@ -477,14 +556,17 @@
  `5. 使用者操作的搜尋過程`
 
  `* filterSearchData(with:)`
+ 
     - 當使用者輸入搜尋關鍵字後，調用此方法以篩選符合條件的飲品資料。
     - `SearchManager` 會根據關鍵字進行搜尋並將結果賦值給 `searchResults`。
 
  `* handleSearchResults(results:keyword:)`
+ 
     - 將搜尋結果保存至 `searchResults` 並更新視圖狀態。
     - 若沒有符合的結果，打印提示訊息。
 
  `* handleSearchError(error:)`
+ 
     - 處理搜尋過程中的錯誤，顯示「資料無效」的警示，並將 `searchResults` 設置為空以更新視圖。
 
  ------------------------------------------------------------------
@@ -492,6 +574,7 @@
  `6. 使用者選擇搜尋結果`
 
  `* SearchResultsDelegate`
+ 
     - `getSearchResults()`: 返回目前的搜尋結果供 `SearchHandler` 使用。
     - `didSelectSearchResult(_:)`:
       - 當使用者選擇某個搜尋結果時，導航至 `DrinkDetailViewController`，並將選擇的飲品詳細資訊傳遞過去。
@@ -501,12 +584,14 @@
  `7.總結`
  
  - `流程概覽`
+ 
    1. 使用者進入搜尋頁面，初始化各管理器並設置界面。
    2. 使用者輸入關鍵字，觸發搜尋功能，顯示搜尋結果。
    3. 根據網路狀態，進行資料的重新載入與提示。
    4. 使用者選擇搜尋結果，導航至詳細資訊頁面。
 
  - `重點設計`
+ 
    - 職責分離：每個功能模組（如搜尋、導航欄、網路監控）都有獨立管理器，降低耦合度。
    - 使用者控制權：資料重新加載由使用者決定，避免自動操作帶來的困擾。
    - 網路狀態監控：確保資料加載在網路狀態允許的情況下進行，提升使用者體驗。
@@ -524,10 +609,12 @@
  `1. 遇到的問題與改進原因 (What & Why)`
 
  - `原本的問題`：
+ 
    - 原先設計中，當「飲品資料無效」時，使用 `SearchRetryManager` 進行資料加載的重試，這包括了「網路正常但資料無效」的情境。
    - 這導致了過度使用網路監控，即使網路狀態是正常的，仍會啟動監控並進行不必要的重試操作，從而增加程序複雜度，影響使用者體驗。
 
  - `問題的原因`：
+ 
    - `SearchRetryManager` 的主要職責是處理「網路不可用或不穩定」的情境，並在網路恢復後進行重試。
    - 但是我錯誤地認為可以使用 `SearchRetryManager` 處理「網路正常但資料無效」的情境，結果導致邏輯混亂和流程不順暢。
 
@@ -562,11 +649,13 @@
  `3. 具體實現與最佳實踐 (Implementation Details)`
 
  - `showDataUnavailableAlert`：
+ 
    - 當資料無效時，呼叫此方法提示使用者。
    - 提供兩個選擇：「載入資料」或「取消」。
    - 若選擇載入資料，則執行 `reloadDrinkData()` 方法，進行資料加載。
 
  - `reloadDrinkData`：
+ 
    - 呼叫 `SearchNetworkMonitor` 檢查網路狀態。
    - 網路正常：開始資料加載。
    - 無網路：顯示無網路的警示，讓使用者知道需要先連接網路。
@@ -596,10 +685,12 @@
  `5. 總結 (Summary)`
 
  - `移除 SearchRetryManager 的原因：`
+ 
    - `SearchRetryManager` 的設計初衷是為了解決網路不穩定的情況，但不適用於「網路正常但資料無效」的場景。
    - 因此，將其移除能簡化邏輯，使程式碼更加清晰，避免使用者對自動重試的混淆。
 
  - `新流程的改進點`：
+ 
    - 資料加載由使用者決定，強調使用者主導的交互方式，避免自動行為帶來的困擾。
    - 在網路正常的情況下，直接重新加載資料，不再進行不必要的網路狀態監控，提高效能和使用者體驗。
  */
@@ -612,25 +703,38 @@
  ## SearchManager 和 SearchControllerManager 的分離設計
 
  `1. 單一職責原則`
+ 
     - `SearchManager` 的職責是負責飲品資料的搜尋和過濾，它專注於處理與數據有關的操作，包括利用本地快取來加快搜尋速度，並降低 Firebase 請求次數。
     - `SearchControllerManager` 則專注於處理 `UISearchController` 的設置和與使用者的交互。它負責管理搜尋框、設置代理，以及處理搜尋文字的更新和取消操作。
     - 保持單一職責能夠確保每個類只專注於一個特定的任務，使得代碼更具可讀性和可維護性。
 
+ ------
+ 
  `2. 模組化設計與低耦合性`
+ 
     - 保持 `SearchManager` 和 `SearchControllerManager` 分離，使它們可以被單獨修改而不影響到其他模組，這提升了代碼的靈活性。
     - 例如，如果想要更換搜尋的數據源，可以直接在 `SearchManager` 中進行修改，而不必考慮 `UISearchController` 的設置。
     - 這樣的設計確保每個模組之間的依賴最小化，使系統更易於維護和擴展。
 
+ ------
+
  `3. 提高可重用性`
+ 
     - `SearchManager` 作為一個獨立的數據處理模組，可以在其他需要飲品資料搜尋的地方被重用，而不需要帶有與 `UISearchController` 相關的邏輯。
     - 同樣地，`SearchControllerManager` 可以在任何需要使用 `UISearchController` 的情況下被重用，而不依賴於特定的搜尋邏輯或數據來源。
 
+ ------
+
  `4. 增量開發與測試`
+ 
     - 將 `SearchManager` 和 `SearchControllerManager` 分離，有助於逐步開發和測試應用程式。
     - 例如，可以在 `SearchManager` 中開發新的搜尋邏輯並進行單元測試，而不用考慮 `UISearchController` 的設置和交互行為。
     - 測試 `SearchControllerManager` 的互動行為時，可以模擬 `SearchControllerInteractionDelegate`，不需要同時考慮搜尋邏輯的正確性。
 
+ ------
+
  `5. UI 與數據處理邏輯分離`
+ 
     - `SearchControllerManager` 是針對 UI 的交互處理，包含了搜尋框的配置、事件監聽及 UI 更新的邏輯，而 `SearchManager` 則是處理具體的數據操作。
     - 將 UI 相關邏輯與數據處理邏輯分離，符合 MVC 設計模式，使得 `SearchViewController` 可以更輕鬆地管理這些不同職責的模組，提高代碼的整潔度和結構的清晰性。
  */
@@ -661,6 +765,7 @@ class SearchViewController: UIViewController {
     private var searchNavigationBarManager: SearchNavigationBarManager?
     
     /// 搜尋結果資料
+    ///
     /// - 當搜尋結果資料變更時，自動更新表格視圖以顯示最新的搜尋結果
     private var searchResults: [SearchResult] = [] {
         didSet {
@@ -676,6 +781,7 @@ class SearchViewController: UIViewController {
     }
     
     /// 視圖加載完成後，設置處理器和搜尋控制器
+    ///
     /// - 初始化 `SearchHandler`、`SearchControllerManager` 以及 `SearchNavigationBarManager`，以便管理搜尋行為、顯示結果和設置導航欄
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -691,8 +797,8 @@ class SearchViewController: UIViewController {
     private func setupHandler() {
         searchHandler = SearchHandler(delegate: self)
         guard let  searchHandler = searchHandler else { return }
-        searchView.tableView.dataSource = searchHandler
-        searchView.tableView.delegate = searchHandler
+        searchView.searchTableView.dataSource = searchHandler
+        searchView.searchTableView.delegate = searchHandler
     }
     
     /// 初始化 `SearchControllerManager` 並將搜尋控制器附加到視圖控制器上
@@ -702,6 +808,7 @@ class SearchViewController: UIViewController {
     }
     
     /// 設置導航欄
+    ///
     /// - 使用 `SearchNavigationBarManager` 來設置導航欄標題及大標題顯示模式
     private func setupNavigationBar() {
         searchNavigationBarManager = SearchNavigationBarManager(navigationItem: navigationItem, navigationController: navigationController)
@@ -711,6 +818,7 @@ class SearchViewController: UIViewController {
     // MARK: - Search
     
     /// 根據關鍵字過濾本地飲品資料
+    ///
     /// - Parameter keyword: 搜尋的關鍵字
     /// - 使用 `SearchManager` 中的`快取資料`來進行本地過濾，以提升搜尋的速度
     private func filterSearchData(with keyword: String) {
@@ -726,20 +834,22 @@ class SearchViewController: UIViewController {
     }
     
     /// 處理搜尋結果
+    ///
     /// - Parameters:
     ///   - results: 搜尋結果
     ///   - keyword: 使用者搜尋的關鍵字（觀察用）
     private func handleSearchResults(results: [SearchResult], keyword: String) {
         searchResults = results
         if results.isEmpty {
-            print("沒有找到符合 '\(keyword)' 的結果")
+            print("[SearchViewController]：沒有找到符合 '\(keyword)' 的結果")
         }
     }
     
     /// 處理搜尋過程中的錯誤
+    ///
     /// - Parameter error: 錯誤訊息
     private func handleSearchError(error: Error) {
-        print("搜尋資料時出錯：\(error.localizedDescription)")
+        print("[SearchViewController]：搜尋資料時出錯：\(error.localizedDescription)")
         // 有在資料加載失敗時，才顯示 Alert 提示「資料無效」，並將searchResults設置為[]，使視圖畫面呈現「NO Result」，確保畫面沒有殘留的資料。
         showDataUnavailableAlert()
         searchResults = []
@@ -748,6 +858,7 @@ class SearchViewController: UIViewController {
     // MARK: - View State Updates
     
     /// 根據搜尋結果資料更新搜尋視圖的狀態
+    ///
     /// - 當沒有搜尋結果時，顯示「無搜尋結果」的提示
     /// - 當有搜尋結果時，顯示搜尋結果列表
     private func updateViewStateBasedOnSearchResults() {
@@ -760,15 +871,17 @@ class SearchViewController: UIViewController {
     }
     
     /// 更新搜尋視圖的狀態
+    ///
     /// - 根據不同的狀態 (`initial`、`noResults`、`results` 等) 進行視圖的適當顯示
     private func updateView(for state: SearchViewState) {
         searchView.updateView(for: state)
     }
     
     /// 檢查是否需要重新載入表格資料
+    ///
     /// - 每當搜尋結果更新時，重新載入表格以確保最新結果顯示
     private func reloadTableViewIfNeeded() {
-        searchView.tableView.reloadData()
+        searchView.searchTableView.reloadData()
     }
     
     // MARK: - Alert Handling
@@ -801,6 +914,7 @@ class SearchViewController: UIViewController {
     // MARK: - Network Monitoring
 
     /// 加載飲品資料，並處理網路狀態監控和 HUD 顯示
+    ///
     /// - 使用網路狀態監控器來確保在網路可用時才進行資料加載，避免無效的請求
     private func reloadDrinkData() {
         let searchNetworkMonitor = SearchNetworkMonitor()
@@ -825,13 +939,14 @@ class SearchViewController: UIViewController {
     // MARK: - Data Loading
 
     /// 開始加載飲品資料
+    ///
     /// - 這裡負責資料加載邏輯，並處理成功或失敗的結果
     private func startLoadingDrinkData(with searchNetworkMonitor: SearchNetworkMonitor) {
         Task {
             do {
-                print("[網路狀態: 正常] 開始加載飲品資料...")
+                print("[SearchViewController]：[網路狀態: 正常] 開始加載飲品資料...")
                 try await SearchDrinkDataLoader.shared.loadOrRefreshDrinksData()
-                print("[網路狀態: 正常] 成功加載飲品資料，並存入本地快取")
+                print("[SearchViewController]：[網路狀態: 正常] 成功加載飲品資料，並存入本地快取")
                 self.handleDataLoadSuccess(searchNetworkMonitor: searchNetworkMonitor)
             } catch {
                 self.handleDataLoadFailure(error: error, searchNetworkMonitor: searchNetworkMonitor)
@@ -840,6 +955,7 @@ class SearchViewController: UIViewController {
     }
     
     /// 處理資料加載成功的邏輯
+    ///
     /// - 當資料成功加載後，停止網路監控並隱藏載入指示器
     /// - 確保當前搜尋框中的文字狀態，如果有搜尋文字則執行相應的資料過濾操作
     private func handleDataLoadSuccess(searchNetworkMonitor: SearchNetworkMonitor) {
@@ -849,6 +965,7 @@ class SearchViewController: UIViewController {
     }
     
     /// 確保當前搜尋狀態並進行必要的視圖更新
+    ///
     /// - 如果搜尋框中有文字，則根據當前輸入的關鍵字進行資料過濾
     /// - 若搜尋框為空，則不執行任何操作
     private func ensureCurrentSearchState() {
@@ -859,18 +976,20 @@ class SearchViewController: UIViewController {
     }
 
     /// 處理資料加載失敗的邏輯
+    ///
     /// - 當資料加載失敗時，顯示錯誤訊息並停止網路監控
     private func handleDataLoadFailure(error: Error, searchNetworkMonitor: SearchNetworkMonitor) {
-        print("[網路正常] 資料加載失敗，錯誤原因：\(error.localizedDescription)")
+        print("[SearchViewController]：[網路正常] 資料加載失敗，錯誤原因：\(error.localizedDescription)")
         HUDManager.shared.dismiss()
         showLoadFailureAlert(message: "資料加載失敗，請稍後再試。")
         searchNetworkMonitor.stopMonitoring()
     }
     
     /// 處理網路不可用的情況
+    ///
     /// - 當網路連接不可用時，顯示警示並停止網路監控
     private func handleNetworkUnavailable(searchNetworkMonitor: SearchNetworkMonitor) {
-        print("[網路狀態: 不可用] 網路連接不可用，請檢查網路")
+        print("[SearchViewController]：[網路狀態: 不可用] 網路連接不可用，請檢查網路")
         HUDManager.shared.dismiss()
         showLoadFailureAlert(message: "網路不可用，請檢查網路連接後再試。")
         searchNetworkMonitor.stopMonitoring()
@@ -882,20 +1001,23 @@ class SearchViewController: UIViewController {
 extension SearchViewController: SearchResultsDelegate {
     
     /// 返回目前的搜尋結果
+    ///
     /// - `SearchHandler` 使用此方法來獲取顯示資料
     func getSearchResults() -> [SearchResult] {
         return searchResults
     }
     
     /// 當使用者選擇某個搜尋結果時觸發
+    ///
     /// - Parameter result: 被選中的 `SearchResult`
     /// - 說明：導航至 `DrinkDetailViewController`，顯示飲品的詳細資訊
     func didSelectSearchResult(_ result: SearchResult) {
-        print("Selected: \(result.name)")
+        print("[SearchViewController]：Selected: \(result.name)")
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         guard let drinkDetailVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.drinkDetailViewController) as? DrinkDetailViewController else {
             return
         }
+        
         // 將選中的 `SearchResult` 資料傳遞給 `DrinkDetailViewController`
         drinkDetailVC.categoryId = result.categoryId
         drinkDetailVC.subcategoryId = result.subcategoryId
@@ -909,24 +1031,25 @@ extension SearchViewController: SearchResultsDelegate {
 extension SearchViewController: SearchControllerInteractionDelegate {
     
     /// 當使用者在搜尋框中更新文字時觸發
+    ///
     /// - Parameter searchText: 使用者輸入的搜尋文字
     /// - 根據輸入的文字進行即時搜尋，若為空則恢復初始狀態
     func didUpdateSearchText(_ searchText: String) {
         if searchText.isEmpty {
-            print("搜尋文字被清空，恢復初始狀態")
+            print("[SearchViewController]：搜尋文字被清空，恢復初始狀態")
             searchResults = []
             updateView(for: .initial)
             return
         }
         // 當資料已加載且搜尋文字不為空時，進行搜尋操作
-        print("正在過濾搜尋資料，關鍵字為：'\(searchText)'")
+        print("[SearchViewController]：正在過濾搜尋資料，關鍵字為：'\(searchText)'")
         filterSearchData(with: searchText)
     }
     
     /// 當使用者取消搜尋時觸發，清空搜尋結果並恢復初始狀態
     func didCancelSearch() {
         searchResults = []
-        print("使用者取消了搜尋，恢復初始狀態")
+        print("[SearchViewController]：使用者取消了搜尋，恢復初始狀態")
         updateView(for: .initial)
     }
     
