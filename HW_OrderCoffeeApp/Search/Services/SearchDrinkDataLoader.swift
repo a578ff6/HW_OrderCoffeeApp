@@ -94,10 +94,12 @@
  */
 
 
+
 import UIKit
 import Firebase
 
 /// `SearchDrinkDataLoader` 負責從 Firebase 加載飲品資料並存入快取，以確保資料在應用啟動時以及資料無效時進行更新，提升使用者搜尋體驗。
+///
 /// 其目的是提升搜尋和加載飲品資料的效能，減少頻繁的遠端請求。
 class SearchDrinkDataLoader {
     
@@ -120,6 +122,7 @@ class SearchDrinkDataLoader {
     // MARK: - Public Methods
     
     /// 加載或更新飲品資料並存入快取
+    ///
     /// - 使用情境：
     ///   1. 在應用啟動時進行調用，確保快取中存在最新的飲品資料，避免搜尋時資料缺失。
     ///   2. 當搜尋過程中發現「飲品資料無效」時，會提示使用者是否需要重新加載資料。
@@ -134,6 +137,7 @@ class SearchDrinkDataLoader {
     // MARK: - Private Methods
 
     /// 從 Firebase 加載所有飲品資料
+    ///
     /// - Returns: 所有飲品的 `SearchResult` 陣列
     private func loadAllDrinksFromFirebase() async throws -> [SearchResult] {
         var allDrinks: [SearchResult] = []
@@ -151,6 +155,7 @@ class SearchDrinkDataLoader {
     }
     
     /// 加載所有子類別下的飲品並返回 `SearchResult` 陣列
+    /// 
     /// - Parameters:
     ///   - subcategoriesSnapshot: 子類別 (Subcategories) 的 `QuerySnapshot`
     ///   - categoryId: 類別的 ID

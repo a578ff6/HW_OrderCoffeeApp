@@ -14,11 +14,15 @@
  
  - 在網路狀態監控中，通常最關心的就是「是否有網路連線」，因此常見的網路監控場景主要關注 `.satisfied`（表示網路正常）與 `.unsatisfied`（表示無網路）的狀態。
 
+ -----
+ 
  `* NWPath.Status 的三種狀態`
 
  1. `.satisfied` - 表示網路可用且連線良好。
  2. `.unsatisfied` - 表示網路不可用。
  3. `.requiresConnection`- 表示網路目前不可用，但可能需要某些額外的操作來建立連線，例如使用者需要手動連接 Wi-Fi 或接受某些驗證頁面。
+
+ -----
 
  `* 常見監控場景`
 
@@ -30,8 +34,11 @@
   `2. .requiresConnection 的應用場景`
  
  - `.requiresConnection` 通常會出現在需要使用者進一步操作才能建立網路連線的情況。
+  
     - 使用者連接到某些公共 Wi-Fi 時，可能需要進行認證或登錄頁面操作，這種情況下，網路狀態會是 `.requiresConnection`。
     - 如果應用需要在這種情況下發起連線，應提示使用者手動完成連接操作。
+
+ -----
 
  `* 在 SearchNetworkMonitor 中的應用`
  
@@ -141,7 +148,6 @@
 
 
 // MARK: - 筆記：SearchNetworkMonitor 的用途與操作
-
 /**
  
  ## 筆記：SearchNetworkMonitor 的用途與操作
@@ -153,11 +159,15 @@
  - `SearchNetworkMonitor` 是一個用於監控網路狀態變化的類別。
  - 它可以持續檢測當前設備的網路連線情況，並透過回呼方法 (`onStatusChange`) 通知外部當網路狀態發生變化。
 
+ -------
+ 
  `* Why:`
  
  - 在開發需要與網路互動的應用時，了解當前的網路狀態非常重要，特別是在進行`資料加載`的操作時。
  - 使用 SearchNetworkMonitor 可以有效應對網路狀況變化，例如當網路中斷時避免發起不必要的請求，在網路恢復後再進行資料加載操作，確保資料的正確性與使用者體驗。
  - 對於本地快取資料的應用場景，如果本地快取資料失效（`例如超過了時效性或首次啟動未成功加載`），則需要重新從網路抓取資料，而這時網路狀態就變得非常關鍵。
+
+ -------
 
  `* How:`
  
@@ -195,7 +205,6 @@
 
 
 // MARK: - 重點筆記：關於資料加載與網路狀態監控的職責分離（未來可以考慮）
-
 /**
  
  ## 重點筆記：關於資料加載與網路狀態監控的職責分離（未來可以考慮）
@@ -204,6 +213,8 @@
  
  - 當網路狀態不穩定（例如斷網並立即恢復）時，容易多次觸發資料加載操作，導致重複請求，增加不必要的網路流量，且影響用戶體驗。
  
+ -------
+
  `2.解決方案：使用 isLoadingData 標誌`
 
  - 在資料加載過程中引入 isLoadingData 標誌：
@@ -211,16 +222,22 @@
  - 當資料加載完成或失敗後，將 isLoadingData 設回 false。
  - 在每次開始資料加載前檢查 isLoadingData，如果為 true 則不再執行新的加載操作。
  
+ -------
+
  `3.職責分離的原則`
 
  - `SearchNetworkMonitor`：僅負責 網路狀態監控 和通知外部系統網路狀態的變化，保持單一職責原則（Single Responsibility Principle），使其簡單且專注。
  - `SearchViewController`：負責處理搜尋邏輯，包括 決定何時進行資料加載。因此， isLoadingData 的檢查和資料加載的控制應該在 SearchViewController 中進行。
  
+ -------
+
  `4.設計優勢`
 
  - `避免重複加載`：利用 isLoadingData 防止在不穩定網路下多次重複加載資料，特別是在網路狀態頻繁變化時。
  - `職責分離`： SearchNetworkMonitor 專注於網路狀態監控，而 SearchViewController 負責資料加載決策，這樣每個類都只專注於自己的職責，代碼更清晰，容易維護和擴展。
  
+ -------
+
  `5.具體實現建議`
 
  - 在 SearchViewController 中增加 isLoadingData 屬性來管理資料加載狀態。
@@ -249,6 +266,7 @@ class SearchNetworkMonitor {
     // MARK: - Public Methods
 
     /// 開始監控網路狀態
+    ///
     /// - 說明：啟動網路狀態監控，並在網路狀態變化時通知外部。
     func startMonitoring() {
         monitor.start(queue: queue)
@@ -261,6 +279,7 @@ class SearchNetworkMonitor {
     }
     
     /// 停止監控網路狀態
+    ///
     /// - 說明：取消網路狀態監控。
     func stopMonitoring() {
         monitor.cancel()
@@ -268,6 +287,3 @@ class SearchNetworkMonitor {
     }
     
 }
-
-
-

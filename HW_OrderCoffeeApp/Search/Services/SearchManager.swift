@@ -620,31 +620,42 @@
  關於「顯示訊息通知用戶」的部分，以下有兩種建議：
 
  `1. 顯示 Alert 提示用戶`
+ 
     - 使用 `UIAlertController` 顯示一個提示，當資料不可用時告知用戶「目前資料無法使用」。
     - 可以設置一個「重新嘗試」的按鈕，讓用戶手動觸發資料重新加載。
  
  `* 優點：`
+ 
     - 使用 Alert 可以讓用戶在第一時間注意到資料不可用的狀況。
     - 不會佔用畫面其他區域，有比較集中的注意力。
 
+ ------
+
  `2. 顯示 UI 元件讓用戶點擊`
+ 
     - 直接在搜尋界面上顯示一個按鈕（例如「重新加載」按鈕）或者一段描述訊息，當資料不可用時提示用戶。
     - 這樣的設計可以讓用戶有更直接的操作體驗，並且可以控制何時重新嘗試加載。
 
  `* 優點：`
+ 
     - 使用 UI 元件（例如按鈕）可保持用戶交互的流暢性。
     - 更具彈性，用戶可以自主決定何時進行重試。
 
  `* 建議`
+ 
     - 第二種方式，即在 UI 上顯示按鈕的方式。
     - 這樣的設計會讓使用者有更多的控制權，而且可以更好地融入整體的 UI 交互流。
     - 例如在資料不可用的狀態下，顯示一個「重新加載資料」的按鈕，按鈕上可以設置重試次數限制，這樣可以防止用戶無意中進行過多次重試，導致不必要的資源浪費。
     - 可以在 `SearchView` 中加入一個 `retryButton`，當快取不可用時，顯示此按鈕。
     - 並且透過類似 `updateView(for:)` 的方法去更新當前的狀態，例如在 `noResults` 狀態下顯示該按鈕。
  
- `* 額外想法：`
- 1. 當「快取資料無效」時，輸入搜尋文字時會出現「訊息告知需要點擊ＵＩ元件去重試加載快取資料」相關訊息。
- 2.當「快取資料無效時」，出現「UI」元件在畫面上讓使用者點擊，重載的過程中會有HUD出現。
+ ------
+
+ `3. 額外想法：`
+ 
+    1. 當「快取資料無效」時，輸入搜尋文字時會出現「訊息告知需要點擊ＵＩ元件去重試加載快取資料」相關訊息。
+    2.當「快取資料無效時」，出現「UI」元件在畫面上讓使用者點擊，重載的過程中會有HUD出現。
+ 
  */
 
 
@@ -654,6 +665,7 @@ import UIKit
 import Firebase
 
 /// `SearchManager` 負責提供飲品搜尋功能，根據本地快取的飲品資料進行關鍵字搜尋。
+///
 /// 通過使用快取來提升搜尋速度並減少對 Firebase 的請求次數。
 class SearchManager {
     
@@ -665,6 +677,7 @@ class SearchManager {
     // MARK: - Public Methods
     
     /// 根據搜尋字串從本地快取加載符合的飲品資料並轉換成 `SearchResult` 陣列
+    ///
     /// - Parameter keyword: 搜尋關鍵字
     /// - Returns: 符合條件的 `[SearchResult]` 陣列
     /// - 使用本地快取進行搜尋，以提高速度並減少對 Firebase 的請求次數。
@@ -672,18 +685,19 @@ class SearchManager {
     func searchDrinks(with keyword: String) async throws -> [SearchResult] {
         
         guard let cachedDrinks = searchCacheManager.getCachedDrinks() else {
-            print("資料尚未準備好，請稍候")
+            print("[SearchManager]：資料尚未準備好，請稍候")
             throw NSError(domain: "com.example.app", code: 404, userInfo: [NSLocalizedDescriptionKey: "資料尚未準備好，請稍候"])
         }
         
         // 使用本地快取進行搜尋操作
-        print("使用本地快取資料進行搜尋")
+        print("[SearchManager]：使用本地快取資料進行搜尋")
         return filterDrinks(cachedDrinks, with: keyword)
     }
 
     // MARK: - Private Methods
 
     /// 對飲品資料進行過濾
+    ///
     /// - Parameters:
     ///   - drinks: 所有飲品資料
     ///   - keyword: 搜尋關鍵字
