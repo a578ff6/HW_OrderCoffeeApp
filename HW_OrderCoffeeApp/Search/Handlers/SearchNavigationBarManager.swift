@@ -21,6 +21,7 @@ class SearchNavigationBarManager {
     // MARK: - Initialization
 
     /// 初始化方法
+    ///
     /// - Parameters:
     ///   - navigationItem: 傳入的 `UINavigationItem`，用於設置導航欄
     ///   - navigationController: 傳入的 `UINavigationController`，用於設置大標題顯示模式
@@ -32,6 +33,7 @@ class SearchNavigationBarManager {
     // MARK: - Setup NavigationBar
 
     /// 設置導航欄標題和大標題顯示模式
+    /// 
     /// - Parameters:
     ///   - title: 要顯示的導航標題
     ///   - prefersLargeTitles: 是否顯示大標題
