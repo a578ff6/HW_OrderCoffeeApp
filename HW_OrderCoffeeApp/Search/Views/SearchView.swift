@@ -5,73 +5,13 @@
 //  Created by 曹家瑋 on 2024/11/15.
 //
 
-// MARK: -  重點筆記：SearchView
-
-/**
- ## 重點筆記：SearchView
- 
- `1. 功能概述`
- 
-` * SearchView 是一個自定義的 UIView，主要用於定義搜尋頁面的佈局，包括：`
-    - 搜尋結果列表的 UITableView。
-    -  根據搜尋狀態 (SearchViewState) 更新視圖的背景，為使用者提供即時的狀態提示，例如「請輸入搜尋關鍵字」或「沒有符合的結果」。
-
- `2. UI 元素`
-
- `* tableView：`
-    - 用於顯示搜尋結果的表格視圖。
-    - 根據不同的搜尋狀態（初始、無結果、有結果）來設置相應的背景視圖。
- 
- `3. createTableView`
- 
- - 背景顏色：設定為白色，保持界面整潔。
- - 允許垂直捲動 (alwaysBounceVertical = true)：確保即使搜尋結果少，也能有良好的滾動體驗。
- - 隱藏垂直捲動條 (showsVerticalScrollIndicator = false)：增強界面的簡潔性。
- - 行高自動調整 (rowHeight = UITableView.automaticDimension)：適應不同長度的內容。
- 
- `4. 註冊客製化 Cell (registerCells())`
- 
- - 設置 registerCells() 方法來註冊 SearchCell：
- - 使用 forCellReuseIdentifier: SearchCell.reuseIdentifier 註冊，這樣可以確保 tableView 能夠正確地重用這些 cell，並且提供更好的記憶體管理。
- 
- `5. 自定義 Cell 的註冊與使用`
- 
- `* 註冊 Cell：`
-    - 使用 register(_:forCellReuseIdentifier:) 來註冊自定義的 `SearchCell`，可以確保在 tableView 的 dequeueReusableCell(withIdentifier:) 時能正確地返回相應的 cell 類型。
- 
- `6. Auto Layout 設置`
-    - 使用 setupUI() 方法來設定 UITableView 的佈局：
-    - 通過添加約束，確保 tableView 始終填滿整個視圖，但也要考慮安全區域，避免與其他 UI 元素重疊。
- 
-` 7. SearchViewState 狀態管理`
-
-  `* SearchViewState 枚舉：`
-    - initial：初始狀態，顯示「Please enter search keywords」的提示。`（一開始進入到搜尋視圖、將文字欄清空、點擊cancel）`
-    - noResults：沒有搜尋結果時，顯示「No Results」的提示。
-    - results：有搜尋結果時，顯示搜尋結果列表。
-
-  `* updateView(for:) `
-    - 根據 SearchViewState 更新 tableView 的背景視圖，確保在不同的搜尋階段提供適當的使用者介面提示。
-    -  由 SearchStatusLabel  來處理，這樣可以提高代碼的可讀性和可維護性，同時也使得狀態提示更加集中與一致。
- 
- `8.重點整理`
-    - SearchView 中的主要組件是 tableView，這個表格視圖用來顯示搜尋到的飲品結果。
-    - 使用 registerCells() 方法來註冊自定義的 SearchCell，這樣可以確保 tableView 正確使用你設計的客製化 cell，避免錯誤。
-    - 使用 setupUI() 設置 Auto Layout 約束，確保 tableView 正確顯示且滿足不同螢幕大小的需求。
-    - 使用 SearchViewState 管理搜尋狀態，讓 SearchView 能夠根據不同的搜尋狀態提供不同的 UI 提示和顯示效果，提升使用者體驗。
-    -  狀態顯示現在由 SearchStatusLabel 處理，讓不同的搜尋狀態下，顯示的提示更加清晰、簡潔。
-
- `9.未來想法：`（已完成）
- - 可以使用 UISearchController，考慮將 UISearchController 的相關邏輯整合到 SearchViewController 中，進一步完善搜尋功能。
- - 目前的設計已經解決了搜尋結果顯示的基本需求。如果有更多樣式或行為上的變化需求，可以在 SearchView 中進行擴展，例如添加`空狀態`的視圖，當`搜尋無結果時顯示特定`的消息等。
- */
-
 
 // MARK: - 使用 `UISearchController` 與 `UISearchBar` 的差異及選擇
 /**
  
  ## 筆記主題：使用 `UISearchController` 與 `UISearchBar` 的差異及選擇
 
+ 
  `* What：`
  
  1.`UISearchBar`：
@@ -83,6 +23,8 @@
     - 是一個更高級的搜尋管理組件，它內建了一個 `UISearchBar`，並且能與 `UITableView` 或 `UICollectionView` 無縫集成。
     - `UISearchController` 會自動管理搜尋欄的行為（如顯示、隱藏），以及控制搜尋結果的顯示。
 
+ ---------
+ 
  *` Why：`
  
  `1. 一致的用戶體驗`
@@ -94,6 +36,8 @@
  
     - `UISearchController` 允許在搜尋時實時顯示過濾的搜尋結果，這對於需要根據輸入的文字進行即時過濾的應用場景非常合適。
     - 它還提供了一些額外的選項，例如是否在搜尋過程中遮蓋背景、是否保持原來的列表顯示等。
+
+ ---------
 
  `* How：`
  
@@ -115,43 +59,225 @@
 
  `3.實作重點`
  
- - 使用 `UISearchController` 可避免在 `SearchView` 中重複設置 `UISearchBar`，使程式碼結構更加簡潔。
- - 在 `SearchViewController` 中添加 `UISearchController`，可使搜尋欄與 `UITableView` 的整合更自然，搜尋過程也更加順暢和一致。
+    - 使用 `UISearchController` 可避免在 `SearchView` 中重複設置 `UISearchBar`，使程式碼結構更加簡潔。
+    - 在 `SearchViewController` 中添加 `UISearchController`，可使搜尋欄與 `UITableView` 的整合更自然，搜尋過程也更加順暢和一致。
  
- - 例如：
-   ```swift
-   searchController = UISearchController(searchResultsController: nil)
-   searchController.searchResultsUpdater = self
-   searchController.obscuresBackgroundDuringPresentation = false
-   searchController.searchBar.placeholder = "請輸入飲品名稱"
-   navigationItem.searchController = searchController
-   navigationItem.hidesSearchBarWhenScrolling = false
-   ```
+    - 例如：
+ 
+       ```swift
+       searchController = UISearchController(searchResultsController: nil)
+       searchController.searchResultsUpdater = self
+       searchController.obscuresBackgroundDuringPresentation = false
+       searchController.searchBar.placeholder = "請輸入飲品名稱"
+       navigationItem.searchController = searchController
+       navigationItem.hidesSearchBarWhenScrolling = false
+       ```
 
- `4.結論`
+ ---------
+
+ `* 結論`
  
- - 若使用 `UISearchController`，就不需要再在 `SearchView` 中加入 `UISearchBar`。
- - `UISearchController` 更適合用於包含大量動態過濾需求的場景，它自帶的功能可使搜尋過程更加優化，對於導航條的顯示位置也更為合適。
+    - 若使用 `UISearchController`，就不需要再在 `SearchView` 中加入 `UISearchBar`。
+    - `UISearchController` 更適合用於包含大量動態過濾需求的場景，它自帶的功能可使搜尋過程更加優化，對於導航條的顯示位置也更為合適。
  */
+
+
+// MARK: - SearchView 筆記
+/**
+ 
+ ## SearchView 筆記
+
+
+ `* What `
+
+ - `SearchView` 是一個自定義的 `UIView`，專門用於定義搜尋頁面的佈局與顯示狀態。
+
+ - 主要功能
+ 
+ 1. 搜尋結果顯示：
+ 
+    - 包含核心 UI 元素 `SearchTableView`，用於展示搜尋結果。
+ 
+ 2. 狀態管理：
+ 
+    - 根據 `SearchViewState` 切換顯示內容，包括初始提示、無結果提示或搜尋結果列表。
+ 
+ 3. 擴展性：
+ 
+    - 支援通過 `updateView(for:)` 方法動態更新背景提示，適應多種搜尋情境。
+
+ ----------
+
+ `* Why`
+
+ 1. 解決的問題
+ 
+ - 清晰的狀態管理：
+ 
+   - 搜尋頁面通常需要顯示不同的狀態（例如初始、無結果、有結果），`SearchView` 提供了集中管理這些狀態的能力。
+ 
+ - 提高可讀性與維護性：
+ 
+   - 將狀態邏輯與顯示邏輯分離，避免在控制器中處理過多的 UI 邏輯。
+
+ 2. 設計原則
+ 
+ - 單一責任原則：
+ 
+   - `SearchView` 專注於處理搜尋頁面的佈局和狀態顯示，減少控制器的負擔。
+ 
+ 3. 為什麼使用 `SearchViewState`？
+ 
+ - 確保狀態管理語義清晰，避免使用不安全的文字或布林值來表示狀態。
+ - 提高程式碼的類型安全性和可擴展性。
+
+ ----------
+
+ `* How`
+
+ 1. 定義搜尋狀態
+ 
+ - 使用 `SearchViewState` 枚舉表示搜尋頁面的三種狀態：`initial`、`noResults` 和 `results`。
+
+ ```swift
+ enum SearchViewState {
+     case initial   // 初始狀態
+     case noResults // 無結果狀態
+     case results   // 有結果狀態
+ }
+ ```
+ 
+---
+ 
+ 2. 配置 UI
+ 
+ - 在 `SearchView` 中添加 `searchTableView`，透過 Auto Layout 將其填滿父視圖。
+
+ ```swift
+ private func setupLayout() {
+     addSubview(searchTableView)
+     NSLayoutConstraint.activate([
+         searchTableView.topAnchor.constraint(equalTo: topAnchor),
+         searchTableView.leadingAnchor.constraint(equalTo: leadingAnchor),
+         searchTableView.trailingAnchor.constraint(equalTo: trailingAnchor),
+         searchTableView.bottomAnchor.constraint(equalTo: bottomAnchor)
+     ])
+ }
+ ```
+
+ ---
+
+ 3. 動態更新狀態
+ 
+ - 根據 `SearchViewState` 切換背景視圖，提供對應的狀態提示。
+
+ ```swift
+ func updateView(for state: SearchViewState) {
+     switch state {
+     case .initial:
+         searchTableView.backgroundView = SearchStatusView(message: "Please enter search keywords")
+     case .noResults:
+         searchTableView.backgroundView = SearchStatusView(message: "No Results")
+     case .results:
+         searchTableView.backgroundView = nil
+     }
+ }
+ ```
+
+ ---
+
+ 4. 在控制器中使用 `SearchView`
+ 
+ - 根據搜尋結果動態更新狀態。
+
+ ```swift
+ class SearchViewController: UIViewController {
+     private let searchView = SearchView()
+
+     override func loadView() {
+         view = searchView
+     }
+
+     private func updateSearchState() {
+         if searchResults.isEmpty {
+             searchView.updateView(for: .noResults)
+         } else {
+             searchView.updateView(for: .results)
+         }
+     }
+ }
+ ```
+
+ ----------
+
+`* 結論`
+
+ - What
+ 
+    - `SearchView` 是搜尋頁面的核心視圖，負責搜尋結果的顯示與狀態管理。
+
+ - Why
+ 
+    - 符合單一責任原則，將狀態管理與佈局邏輯集中在視圖層，減少控制器負擔。
+    - 使用 `SearchViewState` 提供語義清晰的狀態切換，提升可維護性與擴展性。
+
+ - How
+ 
+    1. 使用 `SearchViewState` 定義搜尋的三種狀態。
+    2. 配置 `SearchTableView` 作為搜尋結果列表。
+    3. 通過 `updateView(for:)` 方法動態切換視圖內容。
+    4. 在控制器中根據搜尋進展調用 `updateView(for:)`，更新頁面顯示。
+ 
+ ----------
+
+ `* 未來想法：（已完成）`
+
+    - 可以使用 UISearchController，考慮將 UISearchController 的相關邏輯整合到 SearchViewController 中，進一步完善搜尋功能。
+    - 目前的設計已經解決了搜尋結果顯示的基本需求。如果有更多樣式或行為上的變化需求，可以在 SearchView 中進行擴展，例如添加`空狀態`的視圖，當`搜尋無結果時顯示特定`的消息等。
+ */
+
+
+
+
+
+// MARK: - (v)
 
 import UIKit
 
-/// `SearchView` 是一個自定義 UIView，用於定義搜尋頁面的佈局和顯示狀態。
-/// - 包含搜尋結果列表的 UI 元素。
-/// - 根據 `SearchViewState` 顯示不同的視圖狀態，例如`初始狀態`、`無結果狀態`和`有結果狀態`。
+/// `SearchView`
+///
+/// 一個自定義的 `UIView`，用於定義搜尋頁面的佈局與顯示狀態。
+///
+/// - 功能：
+///   1. 包含搜尋結果列表的核心 UI 元素 `SearchTableView`。
+///   2. 根據 `SearchViewState` 切換視圖的背景提示內容。
+///   3. 提供簡單的狀態管理方法 `updateView(for:)`，根據搜尋狀態更新視覺提示。
+///
+/// - 使用場景：
+///   作為搜尋頁面的主要視圖容器，負責呈現搜尋結果列表，並提供相應的狀態提示，例如`初始提示`、`無結果提示`或`結果清單`。
+///
+/// - 關鍵特性：
+///   1. 採用 Auto Layout 為內部的 `searchTableView` 設置約束。
+///   2. 支援根據不同狀態 (`SearchViewState`) 自動切換背景提示。
+///   3. 可輕鬆擴展以適應新的搜尋狀態或自定義顯示內容。
 class SearchView: UIView {
     
     // MARK: - UI Elements
     
-    /// 搜尋結果列表，用於顯示搜尋到的飲品結果
-    let tableView = SearchView.createTableView()
+    /// 搜尋結果列表
+    ///
+    /// - 用於顯示搜尋結果的主要表格視圖
+    private(set) var searchTableView = SearchTableView()
     
     // MARK: - Initializer
     
+    /// 初始化 `SearchView`
+    ///
+    /// - 使用指定的框架大小初始化視圖，並執行 UI 配置與 Cell 註冊。
     override init(frame: CGRect) {
         super.init(frame: frame)
         registerCells()
-        setupUI()
+        setupLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -161,60 +287,46 @@ class SearchView: UIView {
     
     // MARK: - Setup Methods
     
-    /// 設置 UI 元素，包括 `tableView`，並設置其約束
-    private func setupUI() {
-        addSubview(tableView)
+    /// 配置 UI 元素
+    /// - 添加 `searchTableView` 並透過 Auto Layout 設置約束，使其填滿父視圖。
+    private func setupLayout() {
+        addSubview(searchTableView)
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            searchTableView.topAnchor.constraint(equalTo: topAnchor),
+            searchTableView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            searchTableView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            searchTableView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
     
     /// 註冊表格視圖使用的 Cell 類型
+    ///
+    /// - 預設為 `SearchCell`，可根據需要擴展支援其他 Cell 類型。
     private func registerCells() {
-        tableView.register(SearchCell.self, forCellReuseIdentifier: SearchCell.reuseIdentifier)
-    }
-    
-    // MARK: - Factory Methods
-    
-    /// 建立並配置表格視圖
-    private static func createTableView() -> UITableView {
-        let tableView = UITableView()
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.backgroundColor = .white
-        tableView.alwaysBounceVertical = true                       // 總是允許垂直捲動
-        tableView.showsVerticalScrollIndicator = false              // 隱藏垂直捲動條
-        tableView.rowHeight = UITableView.automaticDimension        // 行高自動調整
-        tableView.estimatedRowHeight = 120                          // 行高的預估值，幫助優化佈局
-        return tableView
+        searchTableView.register(SearchCell.self, forCellReuseIdentifier: SearchCell.reuseIdentifier)
     }
     
     // MARK: - No Result State Management
-        
-    /// 根據搜尋的狀態更新表格視圖的背景視圖
-    /// - Parameter state: `SearchViewState` 用於決定顯示的內容，例如初始提示、無結果提示或結果列表。
-    /// - 根據提供的 `state` 參數，更新 `tableView` 的背景視圖，確保符合當前的搜尋狀態。
+    
+    
+    /// 更新視圖的顯示狀態
+    ///
+    /// 根據提供的搜尋狀態 (`SearchViewState`)，更新 `searchTableView` 的背景視圖。
+    ///
+    /// - Parameter state: 當前的搜尋狀態，包含以下類型：
+    ///   - `.initial`：顯示初始提示，指引使用者輸入關鍵字。
+    ///   - `.noResults`：顯示無結果提示，告知使用者搜尋結果為空。
+    ///   - `.results`：清空背景提示，顯示搜尋結果列表。
     func updateView(for state: SearchViewState) {
         switch state {
         case .initial:
-            tableView.backgroundView = SearchStatusLabel(text: "Please enter search keywords")
+            searchTableView.backgroundView = SearchStatusView(message: "Please enter search keywords")
         case .noResults:
-            tableView.backgroundView = SearchStatusLabel(text: "No Results")
+            searchTableView.backgroundView = SearchStatusView(message: "No Results")
         case .results:
-            tableView.backgroundView = nil
+            searchTableView.backgroundView = nil
         }
     }
-}
-
-// MARK: - SearchViewState
-
-/// `SearchViewState` 用於表示搜尋視圖的狀態
-/// - 在 `SearchView` 中，根據不同的搜尋狀態顯示相應的內容。
-enum SearchViewState {
-    case initial        // 初始狀態，顯示 "Please enter search keywords"
-    case noResults      // 沒有搜尋結果，顯示 "No Results"
-    case results        // 有搜尋結果，顯示搜尋結果列表
+    
 }
