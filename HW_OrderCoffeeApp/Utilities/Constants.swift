@@ -39,6 +39,7 @@ struct Constants {
         // MARK: - 菜單主頁、飲品資訊相關_(Menu)
         
         static let menuViewController = "MenuViewController"
+        static let drinksCategoryViewController = "DrinksCategoryViewController"
         static let drinkDetailViewController = "DrinkDetailViewController"
         
         // MARK: - 編輯個人資料、我的最愛、歷史訂單、歷史訂單項目詳細資訊_(UserProfile)
@@ -61,7 +62,7 @@ struct Constants {
     ///
     /// 表示在 Storyboard 中設定的 Segue 的 Identifier，用來進行導航操作。
     struct Segue {
-        static let categoryToDrinksSegue = "CategoryToDrinksSegue"
+//        static let categoryToDrinksSegue = "CategoryToDrinksSegue"
         static let drinksToDetailSegue = "DrinksToDetailSegue"
     }
     
