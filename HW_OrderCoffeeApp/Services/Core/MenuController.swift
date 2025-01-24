@@ -260,6 +260,7 @@ class MenuController {
         return drink
     }
     
+    /*
     /// 從 Firestore 加載飲品時，透過` subcategoryId` 將`Subcategory`名稱加載出來。藉此在 FavoritesViewController 中使用該名稱來作為 section header。
     ///
     /// - Parameters:
@@ -276,6 +277,7 @@ class MenuController {
         }
         return subcategory
     }
+     */
     
     // MARK: - Private Methods
 
@@ -351,180 +353,3 @@ enum MenuControllerError: Error, LocalizedError {
         }
     }
 }
-
-
-
-
-// MARK: - MenuController（ completion handler 原版筆記）
-/*
- ### MenuController（原版）
-
-    * loadCategories：
-        - 功能：
-            - 從 Firebase Firestore 中的 "Categories" 集合加載所有飲品類別的資料。
-        - 流程：
-            1. Firebase 的 getDocuments 從 "Categories" 集合抓取所有文件。
-            2. 透過 compactMap 解析每個文件的資料，轉換為 `Category` 結構。
-            3. 如果資料加載失敗或沒有找到資料，則會回傳錯誤。
-
-    * loadDrinksForCategory：
-        - 功能：
-            - 根據傳入的類別 ID (categoryId)，從 Firebase 中抓取該類別下的所有子類別及其對應的飲品資料。
-        - 流程：
-            1. 先從指定的 "Categories" 集合中的子集合 "Subcategories" 讀取子類別資料。
-            2. 對於每個子類別，再讀取該子類別的 "Drinks" 子集合，獲取對應的飲品列表。
-            3. 使用 `DispatchGroup` 確保每個子類別的飲品資料都加載完成後，才調用最終的完成閉包，回傳所有 `SubcategoryDrinks` 結構。
-   
-    * DispatchGroup：
-        - 用於管理並行的資料請求。
-        - 當需要從多個子類別中同時請求資料時，`DispatchGroup` 確保所有請求都完成後，才會回傳結果。這樣避免了未完成的請求導致資料不完整。
-
-    * 錯誤處理 (MenuControllerError)：
-        - 為了統一處理 Firebase 請求過程中的錯誤，定義了 MenuControllerError，並包括：
-        - categoriesNotFound： 找不到類別資料。
-        - menuItemsNotFound： 找不到飲品資料。
-        - firebaseError： 將 Firebase 的錯誤轉換成通用的菜單控制器錯誤。
-        - 提供了對應的 errorDescription，方便顯示錯誤訊息。
-
-    * 總結：
-        - loadCategories 是用來加載飲品的頂層類別資料，如「咖啡」、「茶飲」等。
-        - loadDrinksForCategory 是針對每個類別，進一步深入加載該類別下的子類別和飲品資料。該方法會同時處理多個子類別的飲品請求，使用 DispatchGroup 確保所有資料在同一時間完成。
- */
-
-
-// MARK: - 添加錯誤版本（原版）
-/*
-import UIKit
-import FirebaseFirestore
-
-/// 用於處理所有菜單的單例模式
-class MenuController {
-    
-    static let shared = MenuController()
-    
-    /// 從 Firestore 的 "Categories" 集合中獲取所有類別資料。
-    /// - Parameter completion: 當數據加載完成時執行的閉包，返回結果，包含類別陣列或錯誤。
-    func loadCategories(completion: @escaping (Result<[Category], MenuControllerError>) -> Void) {
-        let db = Firestore.firestore()
-        db.collection("Categories").getDocuments { snapshot, error in
-            if let error = error {
-                completion(.failure(.from(error)))
-                return
-            }
-            
-            guard let documents = snapshot?.documents else {
-                completion(.failure(.categoriesNotFound))
-                return
-            }
-            
-            let categories = documents.compactMap { document -> Category? in
-                return try? document.data(as: Category.self)
-            }
-            
-            if categories.isEmpty {
-                completion(.failure(.categoriesNotFound))
-            } else {
-                completion(.success(categories))
-            }
-        }
-    }
-    
-    
-    /// 首先從指定類別的 "Subcategories" 子集合中讀取所有子類別，
-    /// 然後對於每個子類別，從其 "Drinks" 子集合中獲取相關飲品數據。
-    /// - Parameters:
-    ///   - categoryId: 要查詢的類別 ID。
-    ///   - completion: 當數據加載完成時執行的閉包，返回一個結果，包含 SubcategoryDrinks 陣列或錯誤。
-    func loadDrinksForCategory(categoryId: String, completion: @escaping (Result<[SubcategoryDrinks], MenuControllerError>) -> Void) {
-        loadSubcategories(for: categoryId) { result in
-            switch result {
-            case .success(let subcategories):
-                self.loadDrinks(for: subcategories, categoryId: categoryId, completion: completion)
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    private func loadSubcategories(for categoryId: String, completion: @escaping (Result<[Subcategory], MenuControllerError>) -> Void) {
-        let db = Firestore.firestore()
-        db.collection("Categories").document(categoryId).collection("Subcategories").getDocuments { snapshot, error in
-            if let error = error {
-                completion(.failure(.from(error)))
-                return
-            }
-            
-            guard let documents = snapshot?.documents else {
-                completion(.failure(.menuItemsNotFound))
-                return
-            }
-            
-            let subcategories = documents.compactMap { try? $0.data(as: Subcategory.self) }
-            completion(.success(subcategories))
-        }
-    }
-    
-    private func loadDrinks(for subcategories: [Subcategory], categoryId: String, completion: @escaping (Result<[SubcategoryDrinks], MenuControllerError>) -> Void) {
-        let db = Firestore.firestore()
-        var subcategoryDrinksList: [SubcategoryDrinks] = []
-        let group = DispatchGroup()
-        
-        for subcategory in subcategories {
-            group.enter()
-            db.collection("Categories").document(categoryId).collection("Subcategories").document(subcategory.id ?? "").collection("Drinks").getDocuments { snapshot, error in
-                if let error = error {
-                    group.leave()
-                    completion(.failure(.from(error)))
-                    return
-                }
-                
-                guard let drinkDocuments = snapshot?.documents else {
-                    group.leave()
-                    completion(.failure(.menuItemsNotFound))
-                    return
-                }
-                
-                let drinks = drinkDocuments.compactMap { try? $0.data(as: Drink.self) }
-                subcategoryDrinksList.append(SubcategoryDrinks(subcategory: subcategory, drinks: drinks))
-                group.leave()
-            }
-        }
-        
-        group.notify(queue: .main) {
-            if subcategoryDrinksList.isEmpty {
-                completion(.failure(.menuItemsNotFound))
-            } else {
-                completion(.success(subcategoryDrinksList))
-            }
-        }
-    }
-}
-
-
- // MARK: - Error
-
-enum MenuControllerError: Error, LocalizedError {
-    case categoriesNotFound
-    case menuItemsNotFound
-    case unknownError
-    case firebaseError(Error)
-    
-    // 將 Firebase 錯誤轉為 MenuControllerError，使得錯誤處理相對一致
-    static func from(_ error: Error) -> MenuControllerError {
-        return .firebaseError(error)
-    }
-    
-    var errorDescription: String? {
-        switch self {
-        case .categoriesNotFound:
-            return NSLocalizedString("Categories not found", comment: "Categories Not Found")
-        case .menuItemsNotFound:
-            return NSLocalizedString("Menu items not found", comment: "Menu items not found")
-        case .unknownError:
-            return NSLocalizedString("An unknown error occurred.", comment: "Unknown Error")
-        case .firebaseError(let error):
-            return error.localizedDescription
-        }
-    }
-}
-*/

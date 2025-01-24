@@ -27,7 +27,7 @@
         <!--Drinks Category View Controller-->
         <scene sceneID="rGH-mh-UDd">
             <objects>
-                <viewController id="S3X-vS-p3e" customClass="DrinksCategoryViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="DrinksCategoryViewController" id="S3X-vS-p3e" customClass="DrinksCategoryViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Az1-Xs-SSu">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -41,33 +41,30 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7P1-Bx-tYg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="8617.5572519083962" y="-457.04225352112678"/>
+            <point key="canvasLocation" x="7692" y="-493"/>
         </scene>
-        <!--Starbucks-->
+        <!--Menu View Controller-->
         <scene sceneID="DGh-Rz-dQZ">
             <objects>
-                <viewController storyboardIdentifier="MenuViewController" id="dnD-jn-0Fm" customClass="MenuViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="d" id="dnD-jn-0Fm" customClass="MenuViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Kit-Iq-zPL">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="d42-jm-U1B"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Starbucks" largeTitleDisplayMode="always" id="OiZ-uR-j88"/>
-                    <connections>
-                        <segue destination="S3X-vS-p3e" kind="show" identifier="CategoryToDrinksSegue" id="ndT-xj-Eei"/>
-                    </connections>
+                    <navigationItem key="navigationItem" id="OiZ-uR-j88"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="S4x-Cu-5ez" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7692.3664122137397" y="-457.04225352112678"/>
+            <point key="canvasLocation" x="6767" y="-493"/>
         </scene>
         <!--Drink Detail View Controller-->
         <scene sceneID="dIz-sx-3Ft">
             <objects>
                 <viewController storyboardIdentifier="DrinkDetailViewController" id="WAN-d2-zFh" customClass="DrinkDetailViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="gHB-3w-9MX">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="uiN-dI-sEq"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -76,7 +73,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JKh-GK-Iqw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="9547.3282442748095" y="-457.04225352112678"/>
+            <point key="canvasLocation" x="8622" y="-493"/>
         </scene>
         <!--Edit Order Item View Controller-->
         <scene sceneID="3f8-zT-2Ov">
@@ -364,9 +361,8 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ktM-u5-N4T" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Menu" image="list.dash" catalog="system" id="CWl-ac-Wfd"/>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" id="uxY-Kg-s3i"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="K3L-Rt-Eqe">
-                        <rect key="frame" x="0.0" y="59" width="393" height="96"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="K3L-Rt-Eqe">
+                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -376,7 +372,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6Bg-8E-5WR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6852.6717557251905" y="-457.04225352112678"/>
+            <point key="canvasLocation" x="5927" y="-493"/>
         </scene>
         <!--Search-->
         <scene sceneID="Xmm-N2-cmF">
