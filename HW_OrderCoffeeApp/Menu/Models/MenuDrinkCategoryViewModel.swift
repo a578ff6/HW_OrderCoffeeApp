@@ -172,7 +172,7 @@
  
    1. 提供菜單頁面所需的輕量化數據結構。
    2. 包含分類的基本字段：`id`、`title`、`imageUrl`、`subtitle`。
-   3. 將資料層模型轉換為適合展示層使用的結構。
+   3.  通過初始化方法，將資料層模型 `Category` 轉換為展示層使用的結構。
 
  ----------
 
@@ -185,7 +185,7 @@
 
  2. 提升可讀性與清晰度：
  
-    - 展示層只處理必要的字段，讓邏輯更加簡潔清晰，降低誤用或修改原始資料結構的風險。
+    - `MenuDrinkCategoryViewModel`展示層只處理必要的字段，讓邏輯更加簡潔清晰，降低誤用或修改原始資料結構的風險。
 
  3. 專注於展示邏輯：
  
@@ -193,7 +193,7 @@
 
  4. 易於擴展：
  
-    - 當需要為不同頁面定制展示模型時，通過 `MenuDrinkCategoryViewModel` 可快速調整顯示內容，而不影響資料層。
+    - 當需要為不同頁面定制展示模型時，可通過調整 `MenuDrinkCategoryViewModel` 和 `init` 方法快速應對，而不影響資料層。
 
  ----------
 
@@ -205,12 +205,19 @@
     - 定義屬性如 `id`、`title`、`imageUrl` 和 `subtitle`，滿足菜單頁面的展示需求。
 
     ```swift
-    struct MenuDrinkCategoryViewModel {
-        let id: String
-        let title: String
-        let imageUrl: URL
-        let subtitle: String
-    }
+     struct MenuDrinkCategoryViewModel {
+         let id: String
+         let title: String
+         let imageUrl: URL
+         let subtitle: String
+
+         init(category: Category) {
+             self.id = category.id ?? "" // 若 ID 為 nil，設置為空字串
+             self.title = category.title
+             self.imageUrl = category.imageUrl
+             self.subtitle = category.subtitle
+         }
+     }
     ```
 
  ----
@@ -218,19 +225,13 @@
  2. 在 `MenuDrinkCategoryManager` 中負責轉換：
  
     - 在 `MenuDrinkCategoryManager` 中，將資料層的 `Category` 轉換為 `MenuDrinkCategoryViewModel`。
-
+    - 使用` init(category:)`，減少重複代碼並提高可讀性。
+ 
     ```swift
-    func fetchMenuDrinkCategories() async throws -> [MenuDrinkCategoryViewModel] {
-        let categories = try await menuController.loadCategories()
-        return categories.map {
-            MenuDrinkCategoryViewModel(
-                id: $0.id ?? "",
-                title: $0.title,
-                imageUrl: $0.imageUrl,
-                subtitle: $0.subtitle
-            )
-        }
-    }
+     func fetchMenuDrinkCategories() async throws -> [MenuDrinkCategoryViewModel] {
+         let categories = try await menuController.loadCategories()
+         return categories.map { MenuDrinkCategoryViewModel(category: $0) }
+     }
     ```
 
  ----
@@ -270,29 +271,44 @@
 
 import Foundation
 
-/// 用於表示菜單頁面中飲品分類的展示模型。
+/// 表示菜單頁面中飲品分類的展示模型（ViewModel）。
 ///
-/// 此模型專為 UI 設計，簡化了原始資料結構，
-/// 只包含菜單頁面所需的核心字段，避免直接操作完整資料層模型。
+/// 此模型主要用於將資料層的結構轉換為視圖層可以直接使用的數據，
+/// 包括分類的標題、圖片、描述等基本信息。
 ///
-/// - 功能:
-///   1. 將原始 `Category` 資料轉換為僅包含顯示需求的輕量模型。
-///   2. 提高代碼可讀性與可維護性，降低控制器與資料層的耦合度。
-///   3. 支援菜單頁面顯示每個分類的標題、圖片與描述等基本信息。
-///   4. 提供 UI 層所需的輕量化數據結構，用於顯示分類標題、圖片與子標題。
+/// - 設計目的:
+///   1. 將資料模型（`Category`）輕量化，僅保留與 UI 相關的必要資訊。
+///   2. 提高代碼可讀性，實現單一職責原則（SRP），降低控制器與資料層的耦合度。
+///   3. 提供 UI 層需要的核心數據結構，用於顯示分類標題、圖片與簡短描述。
 ///
 /// - 使用場景:
-///   適用於 `MenuViewController` 的 `UICollectionView`，
-///   作為 `MenuDrinkCategoryManager` 處理後提供給視圖的展示數據。
+///   1. 為 `MenuViewController` 提供菜單分類的展示數據，
+///      用於配置 `UICollectionView` 的分類項目顯示。
+///   2. 與 `MenuDrinkCategoryManager` 配合使用，
+///      從資料層轉換為視圖層可直接使用的輕量化模型。
 ///
-/// - 屬性:
-///   - id: 飲品分類的唯一識別符。
-///   - title: 飲品分類的名稱。
-///   - imageUrl: 飲品分類對應的圖片 URL。
-///   - subtitle: 飲品分類的簡短描述。
+/// - 屬性說明:
+///   - `id`: 飲品分類的唯一識別符，便於進行導航或數據操作。
+///   - `title`: 飲品分類的名稱，顯示於 UI 中的主標題位置。
+///   - `imageUrl`: 飲品分類對應的圖片 URL，供視圖層加載並顯示圖片。
+///   - `subtitle`: 飲品分類的簡短描述，顯示於副標題位置。
 struct MenuDrinkCategoryViewModel {
     let id: String
     let title: String
     let imageUrl: URL
     let subtitle: String
+    
+    /// 初始化方法
+    ///
+    /// 將資料層模型 `Category` 轉換為展示模型，提取分類的核心數據。
+    ///
+    /// - 參數:
+    ///   - category: 資料層的 `Category` 模型，包含分類的原始數據。
+    init(category: Category) {
+        self.id = category.id ?? ""
+        self.title = category.title
+        self.imageUrl = category.imageUrl
+        self.subtitle = category.subtitle
+    }
+    
 }

@@ -24,10 +24,10 @@
             </objects>
             <point key="canvasLocation" x="1680" y="-457"/>
         </scene>
-        <!--Drinks Category View Controller-->
+        <!--Drink Sub Category View Controller-->
         <scene sceneID="rGH-mh-UDd">
             <objects>
-                <viewController storyboardIdentifier="DrinksCategoryViewController" id="S3X-vS-p3e" customClass="DrinksCategoryViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="DrinkSubCategoryViewController" id="S3X-vS-p3e" customClass="DrinkSubCategoryViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Az1-Xs-SSu">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -35,9 +35,6 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <navigationItem key="navigationItem" id="5Yo-KZ-o6j"/>
-                    <connections>
-                        <segue destination="WAN-d2-zFh" kind="show" identifier="DrinksToDetailSegue" id="8jq-fX-ise"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7P1-Bx-tYg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -46,7 +43,7 @@
         <!--Menu View Controller-->
         <scene sceneID="DGh-Rz-dQZ">
             <objects>
-                <viewController storyboardIdentifier="d" id="dnD-jn-0Fm" customClass="MenuViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MenuViewController" id="dnD-jn-0Fm" customClass="MenuViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Kit-Iq-zPL">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -64,7 +61,7 @@
             <objects>
                 <viewController storyboardIdentifier="DrinkDetailViewController" id="WAN-d2-zFh" customClass="DrinkDetailViewController" customModule="HW_OrderCoffeeApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="gHB-3w-9MX">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="uiN-dI-sEq"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>

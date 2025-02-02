@@ -199,7 +199,7 @@
  3. 導航邏輯：
  
     - 點擊網站橫幅時，通過 `openWebsite(url:)` 方法使用 `UIApplication.shared.open` 打開外部網站。
-    - 點擊飲品分類時，通過 `navigateToCategory(category:)` 方法實例化並導航至 `DrinksCategoryViewController`，傳遞分類的 `id` 和 `title`。
+    - 點擊飲品分類時，通過 `navigateToSubCategory(subCategory:)` 方法實例化並導航至 `DrinkSubCategoryViewController`，傳遞分類的 `id` 和 `title`。
 
  4. 錯誤處理：
  
@@ -384,19 +384,25 @@ extension MenuViewController: MenuHandlerDelegate {
         }
     }
     
-    /// 導航至飲品分類頁面。
+    /// 導航至飲品子分類頁面。
     ///
-    /// - Parameter category: 飲品分類的展示模型。
-    func navigateToCategory(category: MenuDrinkCategoryViewModel) {
+    /// - 說明:
+    ///   - 該方法負責處理用戶點擊飲品分類項目後的導航操作。
+    ///   - 使用 `MenuDrinkCategoryViewModel` 傳遞主分類的核心展示數據（如 `id` 和 `title`），以便子分類頁能正確顯示對應內容。
+    ///   - 此設計將數據層與視圖層邏輯分離，提升模組化程度和可維護性。
+    ///
+    /// - Parameter selectedCategory: 包含飲品主分類資訊的展示模型，用於導航到子分類頁面。
+    func navigateToSubCategory(selectedCategory: MenuDrinkCategoryViewModel) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        guard let drinksCategoryVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.drinksCategoryViewController) as? DrinksCategoryViewController else {
-            print("[MenuViewController]: Failed to instantiate DrinksCategoryViewController with identifier: \(Constants.Storyboard.drinksCategoryViewController)")
+        guard let subCategoryVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.drinkSubCategoryViewController) as? DrinkSubCategoryViewController else {
+            print("[MenuViewController]: Failed to instantiate DrinkSubCategoryViewController with identifier: \(Constants.Storyboard.drinkSubCategoryViewController)")
             return
         }
         
-        drinksCategoryVC.categoryId = category.id
-        drinksCategoryVC.categoryTitle = category.title
-        self.navigationController?.pushViewController(drinksCategoryVC, animated: true)
+        // 將展示模型中的必要數據傳遞給子分類頁面
+        subCategoryVC.parentCategoryId = selectedCategory.id
+        subCategoryVC.parentCategoryTitle = selectedCategory.title
+        self.navigationController?.pushViewController(subCategoryVC, animated: true)
     }
     
 }

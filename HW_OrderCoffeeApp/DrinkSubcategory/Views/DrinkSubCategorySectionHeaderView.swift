@@ -1,26 +1,24 @@
 //
-//  SectionHeaderView.swift
+//  DrinkSubCategorySectionHeaderView.swift
 //  HW_OrderCoffeeApp
 //
 //  Created by 曹家瑋 on 2023/12/20.
 //
 
 
+
+// MARK: - (v)
+
 import UIKit
 
-/// 用於 DrinksCategoryViewController 展示，為每個 section 配置並返回一個 header view。每個 header view 顯示對應子類別的標題。
-class DrinksCategorySectionHeaderView: UICollectionReusableView {
+/// 用於 DrinkSubCategoryViewController 展示，為每個 section 配置並返回一個 header view。每個 header view 顯示對應子類別的標題。
+class DrinkSubCategorySectionHeaderView: UICollectionReusableView {
     
-    static let headerIdentifier = "DrinksCategorySectionHeaderView"
+    static let headerIdentifier = "DrinkSubCategorySectionHeaderView"
     
     // MARK: - UI Elements
 
-    let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 25, weight: .bold)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private let titleLabel = DrinkSubcategoyLabel(font: .systemFont(ofSize: 25, weight: .bold), textColor: .black)
     
     // MARK: - Initialization
 
@@ -49,7 +47,9 @@ class DrinksCategorySectionHeaderView: UICollectionReusableView {
     
     // MARK: - Configuration
     
-    /// 設置 sectionHeader 的標題文字
+    /// 設置 section header 的標題文字。
+    ///
+    /// - Parameter title: 要顯示的標題文字。
     func configure(with title: String) {
         titleLabel.text = title
     }
