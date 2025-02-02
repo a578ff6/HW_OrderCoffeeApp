@@ -305,10 +305,10 @@ extension DrinkSubCategoryHandler: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath)
         
         if let columnCell = cell as? DrinkSubcategoryColumnItemCell {
-            print("[Cell Configuration]: Configuring Column Cell at \(indexPath)")
+            print("[DrinkSubCategoryHandler]: Configuring Column Cell at \(indexPath)")
             columnCell.configure(with: drinkViewModel)
         } else if let gridCell = cell as? DrinkSubcategoryGridItemCell {
-            print("[Cell Configuration]: Configuring Grid Cell at \(indexPath)")
+            print("[DrinkSubCategoryHandler]: Configuring Grid Cell at \(indexPath)")
             gridCell.configure(with: drinkViewModel)
         }
         return cell

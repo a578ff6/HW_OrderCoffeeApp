@@ -14,7 +14,7 @@
  
     * 主要調整點：
         - 使用 async/await 替代傳統的 callback 處理方式。
-        - 引入 loadDrinkById 方法，讓使用者可以根據 categoryId、subcategoryId 和 drinkId 精確加載單一飲品的詳細資料。（ 不再依賴於使用 DrinksCategoryViewController 的 loadDrinksForCategory ）
+        - 引入 loadDrinkById 方法，讓使用者可以根據 categoryId、subcategoryId 和 drinkId 精確加載單一飲品的詳細資料。（ 不再依賴於使用 DrinkSubCategoryViewController 的 fetchAndDisplaySubcategoryDrinks ）
  
  &. 主要方法：
 
@@ -25,7 +25,7 @@
             - 使用 async/await 來簡化異步操作，避免了 callback 的層層嵌套。
             - 若無法加載到任何類別資料，則會拋出 categoriesNotFound 錯誤。
 
-    2. loadDrinksForCategory：
+    2. loadSubcategoriesWithDrinks：
         * 功能：
             - 根據傳入的 categoryId，從 Firestore 中加載該類別下所有子類別及其對應的飲品資料。
         * 特點：
@@ -75,7 +75,7 @@
  &. 主要流程：
  
     1. loadCategories： 從 Firestore 加載所有類別資料，並在資料加載失敗時拋出錯誤。
-    2. loadDrinksForCategory： 根據指定的 categoryId 加載該類別下的所有子類別及飲品，並將結果組合為 SubcategoryDrinks 陣列。
+    2. loadSubcategoriesWithDrinks： 根據指定的 categoryId 加載該類別下的所有子類別及飲品，並將結果組合為 SubcategoryDrinks 陣列。
     3. loadDrinkById： 根據傳入的 categoryId、subcategoryId 和 drinkId 精準加載單一飲品的詳細資料，用於詳細頁面。
 
  -------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -88,13 +88,13 @@
         * 操作：
             - 使用 MenuController 的 loadCategories 方法從 Firestore 的 Categories 集合中獲取所有類別資料。
             - 當資料加載完成後，類別資料會顯示在 UICollectionView 中。
-            - 當使用者選擇某個類別時，觸發 segue，並將該類別的 categoryId 和 categoryTitle 傳遞給 DrinksCategoryViewController 進行後續處理。
+            - 當使用者選擇某個類別時，觸發 segue，並將該類別的 categoryId 和 categoryTitle 傳遞給 DrinkSubCategoryViewController 進行後續處理。
  
-    2. DrinksCategoryViewController：
+    2. DrinkSubCategoryViewController：
         * 功能：
             - 用來顯示特定類別下的飲品子類別（如「DailySpecialsCoffeeSeries」、「HotEspresso」、「IcedEspresso」等）。
         * 操作：
-            - 使用 MenuController 的 loadDrinksForCategory 方法，根據選擇的 categoryId，從 Firestore 的 Subcategories 子集合中讀取所有子類別及其對應的飲品資料。
+            - 使用 MenuController 的 loadSubcategoriesWithDrinks 方法，根據選擇的 categoryId，從 Firestore 的 Subcategories 子集合中讀取所有子類別及其對應的飲品資料。
             - 加載過程中，先加載子類別，並對每個子類別進一步讀取該子類別的 Drinks 子集合中的飲品資料。（這樣做是為了能顯示 Drinks 中每個飲品的圖片、名稱等資訊）。
             - 當所有資料加載完成後，將資料顯示在 UICollectionView 中，並根據不同的佈局（網格或列表）來呈現飲品資訊。
             - 使用者選擇某個飲品時，會將對應的 drinkId、categoryId、subcategoryId 傳遞給 DrinkDetailViewController，讓使用者查看飲品的詳細資料。
@@ -103,11 +103,11 @@
         * 功能：
             - 用來顯示單一飲品的詳細資料，包括飲品名稱、描述、不同尺寸的價格、咖啡因含量、卡路里等資訊。
         * 操作：
-            - 根據 DrinksCategoryViewController 傳遞的 drinkId、categoryId 和 subcategoryId，使用 MenuController 的 loadDrinkById 方法，從 Firestore 中精確加載該飲品的詳細資料。
+            - 根據 DrinkSubCategoryViewController 傳遞的 drinkId、categoryId 和 subcategoryId，使用 MenuController 的 loadDrinkById 方法，從 Firestore 中精確加載該飲品的詳細資料。
             - 飲品資料加載完成後，透過 UICollectionView 顯示飲品的詳細資訊，並允許使用者選擇不同的尺寸。
             - 使用者可以將選擇的飲品加入購物車，並根據需求進行編輯或新增操作。
         * 補充：
-            - 原先資料來自於 DrinksCategoryViewController 傳遞的 Drink 結構，透過 UICollectionView 顯示飲品的詳細資訊，並允許使用者選擇不同的尺寸，最終可以將飲品加入購物車。（導致我在設計「添加我的最愛」時，設計不太良好）
+            - 原先資料來自於 DrinkSubCategoryViewController 傳遞的 Drink 結構，透過 UICollectionView 顯示飲品的詳細資訊，並允許使用者選擇不同的尺寸，最終可以將飲品加入購物車。（導致我在設計「添加我的最愛」時，設計不太良好）
  
     4. FavoritesViewController：
         * 功能：
@@ -130,8 +130,8 @@
         * loadCategories 方法：
             - 從 Categories 集合中讀取所有類別資料，並在主畫面 MenuViewController 中展示。
  
-        * loadDrinksForCategory 方法：
-            - 根據指定的 categoryId，先讀取該類別的 Subcategories，再讀取每個子類別對應的 Drinks 資料，並在 DrinksCategoryViewController 中展示。
+        * loadSubcategoriesWithDrinks 方法：
+            - 根據指定的 categoryId，先讀取該類別的 Subcategories，再讀取每個子類別對應的 Drinks 資料，並在 DrinkSubCategoryViewController 中展示。
  
         * loadDrinkById 方法：
             - 根據傳入的 categoryId、subcategoryId 和 drinkId，從 Firestore 中精確加載單一飲品的詳細資料，並在 DrinkDetailViewController 中顯示。
@@ -236,9 +236,9 @@ class MenuController {
     /// - Parameter categoryId: 類別的 ID（例如 "CoffeeBeverages"）
     /// - Returns: 一個包含各子類別及其飲品資料的陣列 [SubcategoryDrinks]
     /// - Throws: 如果未能成功加載資料或資料為空，會拋出錯誤
-    func loadDrinksForCategory(categoryId: String) async throws -> [SubcategoryDrinks] {
-        let subcategories = try await loadSubcategories(for: categoryId)                                // 先異步加載所有子類別
-        return try await loadDrinks(for: subcategories, categoryId: categoryId)                         // 再根據子類別加載對應的飲品資料
+    func loadSubcategoriesWithDrinks(forCategoryId categoryId: String) async throws -> [SubcategoryDrinks] {
+        let subcategories = try await loadSubcategories(for: categoryId)                          // 先異步加載所有子類別
+        return try await loadDrinks(for: subcategories, categoryId: categoryId)                   // 再根據子類別加載對應的飲品資料
     }
     
     /// 從 Firestore 加載特定的飲品資料
