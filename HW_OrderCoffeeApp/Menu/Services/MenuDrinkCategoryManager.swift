@@ -132,14 +132,7 @@ class MenuDrinkCategoryManager {
     ///   2. 符合依賴倒置原則 (DIP)：高層模組依賴於此管理類別，而非具體的資料層。
     func fetchMenuDrinkCategories() async throws -> [MenuDrinkCategoryViewModel] {
         let categories = try await menuController.loadCategories()
-        return categories.map {
-            MenuDrinkCategoryViewModel(
-                id: $0.id ?? "",
-                title: $0.title,
-                imageUrl: $0.imageUrl,
-                subtitle: $0.subtitle
-            )
-        }
+        return categories.map { MenuDrinkCategoryViewModel(category: $0) }
     }
     
 }

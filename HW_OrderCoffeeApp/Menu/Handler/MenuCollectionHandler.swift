@@ -250,7 +250,7 @@ extension MenuCollectionHandler: UICollectionViewDelegate {
             guard let cell = collectionView.cellForItem(at: indexPath) as? MenuDrinkCategoryCell else { return }
             cell.addScaleAnimation(duration: 0.15, scale: 0.85) {
                 let selectedCategory = self.drinkCategories[indexPath.item]
-                self.menuHandlerDelegate?.navigateToCategory(category: selectedCategory)
+                self.menuHandlerDelegate?.navigateToSubCategory(selectedCategory: selectedCategory)
             }
         }
     }

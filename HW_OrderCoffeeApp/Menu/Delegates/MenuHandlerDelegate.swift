@@ -45,14 +45,14 @@
  1. 定義協議方法
  
     - `openWebsite(url: URL)`：當用戶點擊網站橫幅時調用，負責處理網站導航邏輯。
-    - `navigateToCategory(category: MenuDrinkCategoryViewModel)`：當用戶點擊飲品分類時調用，負責導航到具體分類頁面。
+    - `navigateToSubCategory(selectedCategory: MenuDrinkCategoryViewModel)`：當用戶點擊飲品分類時調用，負責導航到具體子分類頁面。
 
     範例：
  
     ```swift
     protocol MenuHandlerDelegate: AnyObject {
         func openWebsite(url: URL)
-        func navigateToCategory(category: MenuDrinkCategoryViewModel)
+        func navigateToSubCategory(selectedCategory: MenuDrinkCategoryViewModel)
     }
     ```
 
@@ -76,19 +76,17 @@
               }
           }
           
-          func navigateToCategory(category: MenuDrinkCategoryViewModel) {
-              let storyboard = UIStoryboard(name: "Main", bundle: nil)
-              guard let drinksCategoryVC = storyboard.instantiateViewController(
-                  withIdentifier: Constants.Storyboard.drinksCategoryViewController
-              ) as? DrinksCategoryViewController else {
-                  print("Failed to instantiate DrinksCategoryViewController")
-                  return
-              }
-              
-              drinksCategoryVC.categoryId = category.id
-              drinksCategoryVC.categoryTitle = category.title
-              self.navigationController?.pushViewController(drinksCategoryVC, animated: true)
-          }
+         func navigateToSubCategory(selectedCategory: MenuDrinkCategoryViewModel) {
+             let storyboard = UIStoryboard(name: "Main", bundle: nil)
+             guard let subCategoryVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.drinkSubCategoryViewController) as? DrinkSubCategoryViewController else {
+                 print("[MenuViewController]: Failed to instantiate DrinkSubCategoryViewController with identifier: \(Constants.Storyboard.drinkSubCategoryViewController)")
+                 return
+             }
+             
+             subCategoryVC.categoryId = subCategory.id
+             subCategoryVC.categoryTitle = subCategory.title
+             self.navigationController?.pushViewController(subCategoryVC, animated: true)
+         }
       }
       ```
 
@@ -110,7 +108,7 @@
                   menuHandlerDelegate?.openWebsite(url: url)
               case .drinkCategories:
                   let selectedCategory = drinkCategories[indexPath.item]
-                  menuHandlerDelegate?.navigateToCategory(category: selectedCategory)
+                  menuHandlerDelegate?.navigateToSubCategory(selectedCategory: selectedCategory)
               }
           }
       }
@@ -167,11 +165,13 @@ protocol MenuHandlerDelegate: AnyObject {
     /// - Parameter url: 要打開的網站 URL。
     func openWebsite(url: URL)
     
-    /// 導航到指定的飲品分類頁面。
+    /// 導航到指定的飲品子分類頁面。
     ///
-    /// 此方法負責處理點擊飲品分類時的操作，通常用於展示分類下的具體飲品列表。
+    /// - 說明:
+    ///   - 此方法負責處理用戶點擊飲品分類項目後的導航操作。負責導航至子分類頁面。
+    ///   - 使用 `MenuDrinkCategoryViewModel` 傳遞導航所需的展示數據，避免暴露資料層邏輯。
     ///
-    /// - Parameter category: 包含飲品分類資訊的展示模型。
-    func navigateToCategory(category: MenuDrinkCategoryViewModel)
+    /// - Parameter selectedCategory: 包含飲品主分類資訊的展示模型，用於導航到子分類頁面。
+    func navigateToSubCategory(selectedCategory: MenuDrinkCategoryViewModel)
     
 }
