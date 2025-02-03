@@ -135,9 +135,9 @@
  `* 職責`
  
  - `資料加載`：
-   - `類別 (loadCategories())`：加載所有類別，支援飲品分類展示及後續資料加載。
-   - `子類別 (loadSubcategories(for:))`：根據類別 ID 加載其下的子類別，用於進一步篩選。
-   - `飲品資料 (loadDrinks(for:, subcategoryId:))`：加載指定子類別下的飲品資料，並轉換為 `SearchResult`。
+   - `類別 (fetchSearchCategories())`：加載所有類別，支援飲品分類展示及後續資料加載。
+   - `子類別 (fetchSearchSubcategories(for:))`：根據類別 ID 加載其下的子類別，用於進一步篩選。
+   - `飲品資料 (fetchSearchDrinks(for:, subcategoryId:))`：加載指定子類別下的飲品資料，並轉換為 `SearchResult`。
 
  `* 與其他模組的互動`
     - 為 `SearchDrinkDataLoader` 提供資料加載的支持。
@@ -310,7 +310,7 @@
 // MARK: - 本地端、後端查詢的程式碼：
 /*
  `## 方案一`
- private func loadDrinks(for categoryId: String, subcategoryId: String, from db: Firestore, keyword: String) async throws -> [SearchResult] {
+ private func fetchSearchDrinks(for categoryId: String, subcategoryId: String, from db: Firestore, keyword: String) async throws -> [SearchResult] {
      let drinksSnapshot = try await db.collection("Categories")
          .document(categoryId)
          .collection("Subcategories")
@@ -349,7 +349,7 @@
  ///   - db: Firestore 資料庫實例
  ///   - keyword: 搜尋關鍵字
  /// - Returns: 符合條件的飲品資料的 `[SearchResult]` 陣列
- private func loadDrinks(for categoryId: String, subcategoryId: String, from db: Firestore, keyword: String) async throws -> [SearchResult] {
+ private func fetchSearchDrinks(for categoryId: String, subcategoryId: String, from db: Firestore, keyword: String) async throws -> [SearchResult] {
      
      /// 用來儲存最終結果
      var allDrinks: [SearchResult] = []
@@ -728,8 +728,8 @@ class SearchManager {
 
  * 包含的輔助方法：
  
-    - `loadCategories`：從 Firestore 加載所有的類別。
-    - `loadSubcategories`：從 Firestore 加載指定類別下的所有子類別。
+    - `fetchSearchCategories`：從 Firestore 加載所有的類別。
+    - `fetchSearchSubcategories`：從 Firestore 加載指定類別下的所有子類別。
     - `loadDrinks`：從 Firestore 加載子類別下所有的飲品，並轉換為 SearchResult。
     - `loadDrinksForSubcategories`：遍歷每個子類別，並加載子類別下的所有飲品資料。
  
@@ -742,7 +742,7 @@ class SearchManager {
     - 將 `loadAllDrinksIfNeeded` 的加載邏輯拆分為多個輔助方法，可以減少嵌套，讓主流程更加清晰。每個輔助方法各司其職，集中處理某個具體的加載任務。
  
  * `重用性`：
-    - 拆分成輔助方法後，這些方法可以在其他場景中被重用。例如，如果只想獲取特定類別下的所有子類別，可以直接調用 `loadSubcategories` 方法。
+    - 拆分成輔助方法後，這些方法可以在其他場景中被重用。例如，如果只想獲取特定類別下的所有子類別，可以直接調用 `fetchSearchSubcategories` 方法。
  
  * `減少耦合`：
     - 輔助方法的拆分也減少了 `loadAllDrinksIfNeeded` 和具體 Firestore 查詢邏輯之間的耦合，使得代碼更加模組化，更容易維護和測試。
@@ -758,7 +758,7 @@ class SearchManager {
     - `加載資料並更新快取`：若快取無效，則調用 `loadAndCacheAllDrinks` 方法從 Firebase 加載資料，並更新快取和最後加載時間。
  
 `* 輔助方法：`
-    - `loadCategories`、`loadSubcategories`、`loadDrinks` 都是與 `Firestore` 進行查詢交互的具體實現。
+    - `fetchSearchCategories`、`fetchSearchSubcategories`、`loadDrinks` 都是與 `Firestore` 進行查詢交互的具體實現。
     - `loadDrinksForSubcategories` 則負責遍歷所有子類別，並加載每個子類別的飲品資料。
  
  * `錯誤處理`：
@@ -856,10 +856,10 @@ class SearchManager {
         var allDrinks: [SearchResult] = []
 
         // 加載所有 Categories 並遍歷每個 Category
-        let categoriesSnapshot = try await loadCategories(from: db)
+        let categoriesSnapshot = try await fetchSearchCategories(from: db)
         for categoryDocument in categoriesSnapshot.documents {
             let categoryId = categoryDocument.documentID
-            let subcategoriesSnapshot = try await loadSubcategories(for: categoryId, from: db)
+            let subcategoriesSnapshot = try await fetchSearchSubcategories(for: categoryId, from: db)
             let drinksForSubcategories = try await loadDrinksForSubcategories(subcategoriesSnapshot, categoryId: categoryId, from: db)
             allDrinks.append(contentsOf: drinksForSubcategories)
         }
@@ -885,7 +885,7 @@ class SearchManager {
     /// 加載所有類別（Categories）
     /// - Parameter db: Firestore 資料庫實例
     /// - Returns: 類別 (Categories) 的 `QuerySnapshot`
-    private func loadCategories(from db: Firestore) async throws -> QuerySnapshot {
+    private func fetchSearchCategories(from db: Firestore) async throws -> QuerySnapshot {
         return try await db.collection("Categories").getDocuments()
     }
     
@@ -894,7 +894,7 @@ class SearchManager {
     ///   - categoryId: 類別的 ID
     ///   - db: Firestore 資料庫實例
     /// - Returns: 子類別 (Subcategories) 的 `QuerySnapshot`
-    private func loadSubcategories(for categoryId: String, from db: Firestore) async throws -> QuerySnapshot {
+    private func fetchSearchSubcategories(for categoryId: String, from db: Firestore) async throws -> QuerySnapshot {
          return try await db.collection("Categories")
              .document(categoryId)
              .collection("Subcategories")
@@ -911,7 +911,7 @@ class SearchManager {
         var allDrinks: [SearchResult] = []
         for subcategoryDocument in subcategoriesSnapshot.documents {
             let subcategoryId = subcategoryDocument.documentID
-            let drinks = try await loadDrinks(for: categoryId, subcategoryId: subcategoryId, from: db)
+            let drinks = try await fetchSearchDrinks(for: categoryId, subcategoryId: subcategoryId, from: db)
             allDrinks.append(contentsOf: drinks)
         }
         return allDrinks
@@ -923,7 +923,7 @@ class SearchManager {
     ///   - subcategoryId: 子類別的 ID
     ///   - db: Firestore 資料庫實例
     /// - Returns: 飲品資料的 `[SearchResult]` 陣列
-    private func loadDrinks(for categoryId: String, subcategoryId: String, from db: Firestore) async throws -> [SearchResult] {
+    private func fetchSearchDrinks(for categoryId: String, subcategoryId: String, from db: Firestore) async throws -> [SearchResult] {
         let drinksSnapshot = try await db.collection("Categories")
             .document(categoryId)
             .collection("Subcategories")

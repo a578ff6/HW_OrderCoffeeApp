@@ -21,9 +21,9 @@
  `* 屬性與責任分配`
  
  - `db`：Firebase Firestore 的資料庫實例，提供存取 Firebase 的能力。
- - `loadCategories()`：加載所有類別 (Categories)，供`飲品分類的展示`或`資料的初始化使用`。
- - `loadSubcategories(for categoryId:)`：根據指定類別 ID 加載該類別下的子類別，用於精細化篩選與展示。
- - `loadDrinks(for categoryId:, subcategoryId:)`：加載指定類別及子類別下的所有飲品資料，並轉換為 SearchResult 物件用於搜尋和展示飲品詳細資訊。
+ - `fetchSearchCategories()`：加載所有類別 (Categories)，供`飲品分類的展示`或`資料的初始化使用`。
+ - `fetchSearchSubcategories(for categoryId:)`：根據指定類別 ID 加載該類別下的子類別，用於精細化篩選與展示。
+ - `fetchSearchDrinks(for categoryId:, subcategoryId:)`：加載指定類別及子類別下的所有飲品資料，並轉換為 SearchResult 物件用於搜尋和展示飲品詳細資訊。
  
  --------
 
@@ -68,7 +68,7 @@ class SearchDrinkDataService {
     ///
     /// - Returns: 包含類別 (Categories) 資料的 `QuerySnapshot`
     /// - Throws: 當加載資料時遇到錯誤會拋出錯誤
-    func loadCategories() async throws -> QuerySnapshot {
+    func fetchSearchCategories() async throws -> QuerySnapshot {
         return try await db.collection("Categories").getDocuments()
     }
 
@@ -77,7 +77,7 @@ class SearchDrinkDataService {
     /// - Parameter categoryId: 類別的 ID
     /// - Returns: 包含子類別 (Subcategories) 資料的 `QuerySnapshot`
     /// - Throws: 當加載資料時遇到錯誤會拋出錯誤
-    func loadSubcategories(for categoryId: String) async throws -> QuerySnapshot {
+    func fetchSearchSubcategories(for categoryId: String) async throws -> QuerySnapshot {
         return try await db.collection("Categories")
             .document(categoryId)
             .collection("Subcategories")
@@ -91,7 +91,7 @@ class SearchDrinkDataService {
     ///   - subcategoryId: 子類別的 ID
     /// - Returns: 飲品資料的 `[SearchResult]` 陣列
     /// - Throws: 當加載資料或轉換資料時遇到錯誤會拋出錯誤
-    func loadDrinks(for categoryId: String, subcategoryId: String) async throws -> [SearchResult] {
+    func fetchSearchDrinks(for categoryId: String, subcategoryId: String) async throws -> [SearchResult] {
         let drinksSnapshot = try await db.collection("Categories")
             .document(categoryId)
             .collection("Subcategories")
