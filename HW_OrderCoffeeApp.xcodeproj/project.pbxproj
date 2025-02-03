@@ -1494,6 +1494,15 @@
 			path = StoreSelection;
 			sourceTree = "<group>";
 		};
+		935B167E2D50CB2B007BB90B /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				936E099C2CED04010092F246 /* SearchNavigationBarManager.swift */,
+				936E099A2CE9FD000092F246 /* SearchControllerManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
 		936CFFB32C6BA81F004B8724 /* FirebaseTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -1540,8 +1549,6 @@
 		936E09A32CEE0BB20092F246 /* Handlers */ = {
 			isa = PBXGroup;
 			children = (
-				936E099C2CED04010092F246 /* SearchNavigationBarManager.swift */,
-				936E099A2CE9FD000092F246 /* SearchControllerManager.swift */,
 				938122502CE7760800ADFB7B /* SearchHandler.swift */,
 			);
 			path = Handlers;
@@ -2338,6 +2345,7 @@
 				936E09A62CEE0C0C0092F246 /* Models */,
 				936E09A72CEE0C1F0092F246 /* Services */,
 				936E09BA2CF4ABAF0092F246 /* Network */,
+				935B167E2D50CB2B007BB90B /* Managers */,
 			);
 			path = Search;
 			sourceTree = "<group>";

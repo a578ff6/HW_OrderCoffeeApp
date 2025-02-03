@@ -73,9 +73,10 @@ import UIKit
 ///   2. 支援動態配置飲品資訊，並在重用時自動清除先前的數據。
 /// - 組件：
 ///   - `drinkImageView`: 飲品圖片視圖。
-///   - `nameLabel`: 飲品名稱標籤。
-///   - `subNameLabel`: 飲品副標題標籤。
-///   - `nameAndsubNameStackView`: 用於垂直堆疊名稱和副標題的 `UIStackView`。
+///   - `titleLabel`: 飲品名稱標籤。
+///   - `subtitleLabel`: 飲品副標題標籤。
+///   - `titleAndSubtitleStackView`: 用於垂直堆疊名稱和副標題的 `UIStackView`。
+///   - `mainStackView`用於排列圖片與文字區域的水平堆疊視圖。
 class FavoriteDrinkCell: UICollectionViewCell {
     
     static let reuseIdentifier = "FavoriteDrinkCell"
@@ -86,13 +87,20 @@ class FavoriteDrinkCell: UICollectionViewCell {
     private let drinkImageView = FavoritesImageView(contentMode: .scaleAspectFill, cornerRadius: 15)
     
     /// 飲品名稱標籤，顯示飲品的主標題
-    private let nameLabel = FavoritesLabel(font: .systemFont(ofSize: 16, weight: .bold), textColor: .deepBrown, adjustsFontSizeToFitWidth: true, numberOfLines: 1, minimumScaleFactor: 0.7)
+    private let titleLabel = FavoritesLabel(font: .systemFont(ofSize: 16, weight: .bold), textColor: .deepBrown, adjustsFontSizeToFitWidth: true, numberOfLines: 1, minimumScaleFactor: 0.5)
     
     /// 飲品副標題標籤，顯示飲品的副標題
-    private let subNameLabel = FavoritesLabel(font: .systemFont(ofSize: 14), textColor: .gray, adjustsFontSizeToFitWidth: true, numberOfLines: 0, minimumScaleFactor: 0.7)
+    private let subtitleLabel = FavoritesLabel(font: .systemFont(ofSize: 14), textColor: .gray, adjustsFontSizeToFitWidth: true, numberOfLines: 0, minimumScaleFactor: 0.5)
     
+    
+    // MARK: - Stack View
+
     /// 名稱與副名稱的垂直堆疊視圖，統一管理標籤的布局
-    private let nameAndsubNameStackView = FavoritesStackView(axis: .vertical, spacing: 4, alignment: .leading, distribution: .fill)
+    private let titleAndSubtitleStackView = FavoritesStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill)
+    
+    /// 用於排列圖片與文字區域的水平堆疊視圖。
+    private let mainStackView = FavoritesStackView(axis: .horizontal, spacing: 20, alignment: .center, distribution: .fill)
+
     
     // MARK: - Initializers
 
@@ -116,30 +124,39 @@ class FavoriteDrinkCell: UICollectionViewCell {
         self.layer.masksToBounds = true
         self.contentView.backgroundColor = .lightWhiteGray
     }
-
-    /// 配置 Cell 的視圖佈局，包括圖片和名稱的排列
+    
+    /// 配置單元格的視圖層級與佈局。
+    ///
+    /// 此方法將子視圖添加到堆疊視圖中，並設置相應約束。
     private func setupViews() {
-
-        // 將標籤加入堆疊視圖
-        nameAndsubNameStackView.addArrangedSubview(nameLabel)
-        nameAndsubNameStackView.addArrangedSubview(subNameLabel)
-        
-        // 加入主要視圖
-        contentView.addSubview(drinkImageView)
-        contentView.addSubview(nameAndsubNameStackView)
-        
+        setupTitleAndSubtitleStackView()
+        setupMainStackView()
+        setupConstraints()
+    }
+    
+    /// 配置標籤的垂直堆疊視圖，排列飲品名稱與副名稱。
+    private func setupTitleAndSubtitleStackView() {
+        titleAndSubtitleStackView.addArrangedSubview(titleLabel)
+        titleAndSubtitleStackView.addArrangedSubview(subtitleLabel)
+    }
+    
+    /// 配置主要的水平堆疊視圖，包含圖片和文字堆疊。
+    private func setupMainStackView() {
+        mainStackView.addArrangedSubview(drinkImageView)
+        mainStackView.addArrangedSubview(titleAndSubtitleStackView)
+        contentView.addSubview(mainStackView)
+    }
+    
+    /// 設置堆疊視圖和圖片的約束，確保佈局正確。
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
-            // 圖片視圖的約束
-            drinkImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            drinkImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            mainStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            mainStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            mainStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            mainStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+            
             drinkImageView.widthAnchor.constraint(lessThanOrEqualToConstant: 70),
-            drinkImageView.heightAnchor.constraint(equalTo: drinkImageView.widthAnchor),
-
-            // 堆疊視圖的約束
-            nameAndsubNameStackView.centerYAnchor.constraint(equalTo: drinkImageView.centerYAnchor),
-            nameAndsubNameStackView.leadingAnchor.constraint(equalTo: drinkImageView.trailingAnchor, constant: 20),
-            nameAndsubNameStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            nameAndsubNameStackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -10)
+            drinkImageView.heightAnchor.constraint(equalTo: drinkImageView.widthAnchor)
         ])
     }
     
@@ -149,8 +166,8 @@ class FavoriteDrinkCell: UICollectionViewCell {
     /// - Parameter drink: 包含飲品資訊的模型
     func configure(with favoriteDrink: FavoriteDrink) {
         drinkImageView.kf.setImage(with: favoriteDrink.imageUrl, placeholder: UIImage(named: "starbucksLogo"))
-        nameLabel.text = favoriteDrink.name
-        subNameLabel.text = favoriteDrink.subName
+        titleLabel.text = favoriteDrink.name
+        subtitleLabel.text = favoriteDrink.subName
     }
     
     // MARK: - Lifecycle Methods
@@ -159,8 +176,8 @@ class FavoriteDrinkCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         drinkImageView.image = nil
-        nameLabel.text = nil
-        subNameLabel.text = nil
+        titleLabel.text = nil
+        subtitleLabel.text = nil
     }
     
 }
