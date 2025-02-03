@@ -1494,6 +1494,15 @@
 			path = StoreSelection;
 			sourceTree = "<group>";
 		};
+		935B167E2D50CB2B007BB90B /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				936E099C2CED04010092F246 /* SearchNavigationBarManager.swift */,
+				936E099A2CE9FD000092F246 /* SearchControllerManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
 		936CFFB32C6BA81F004B8724 /* FirebaseTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -1540,8 +1549,6 @@
 		936E09A32CEE0BB20092F246 /* Handlers */ = {
 			isa = PBXGroup;
 			children = (
-				936E099C2CED04010092F246 /* SearchNavigationBarManager.swift */,
-				936E099A2CE9FD000092F246 /* SearchControllerManager.swift */,
 				938122502CE7760800ADFB7B /* SearchHandler.swift */,
 			);
 			path = Handlers;
@@ -2338,6 +2345,7 @@
 				936E09A62CEE0C0C0092F246 /* Models */,
 				936E09A72CEE0C1F0092F246 /* Services */,
 				936E09BA2CF4ABAF0092F246 /* Network */,
+				935B167E2D50CB2B007BB90B /* Managers */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -2581,20 +2589,20 @@
 				936E09C32CF610970092F246 /* Login */,
 				934FB5762CFA410200757C7C /* SignUp */,
 				934FB5912CFDAF2900757C7C /* ForgotPassword */,
-				9381224B2CE7666100ADFB7B /* Search */,
-				9381221D2CE2811400ADFB7B /* OrderHistoryDetail */,
-				93B7B5772CDBA58C00E0205A /* OrderHistory */,
-				93B7B54D2CD4DB2100E0205A /* OrderConfirmation */,
-				9375E2E42CD136DE002E3668 /* StoreInfo */,
-				9353746A2CCABD2300794A63 /* StoreSelection */,
-				9353743C2CB5145D00794A63 /* OrderCustomerDetails */,
-				93BD48B32C58DA0900144E7F /* OrderItem */,
-				938064452D19575800537F01 /* EditOrderItem */,
 				93755C382C83719A002570A5 /* Menu */,
 				9352913D2C88382D0018B060 /* DrinkSubcategory */,
 				935291482C8CA9E70018B060 /* DrinkDetail */,
+				9381224B2CE7666100ADFB7B /* Search */,
+				93BD48B32C58DA0900144E7F /* OrderItem */,
+				938064452D19575800537F01 /* EditOrderItem */,
+				9353743C2CB5145D00794A63 /* OrderCustomerDetails */,
+				93B7B54D2CD4DB2100E0205A /* OrderConfirmation */,
+				9353746A2CCABD2300794A63 /* StoreSelection */,
+				9375E2E42CD136DE002E3668 /* StoreInfo */,
 				936CFFC72C6C73F2004B8724 /* UserProfile */,
 				93755C192C80658B002570A5 /* EditProfile */,
+				93B7B5772CDBA58C00E0205A /* OrderHistory */,
+				9381221D2CE2811400ADFB7B /* OrderHistoryDetail */,
 				935374132C9C5C9400794A63 /* Favorites */,
 				93BD48B92C58DE3A00144E7F /* MainTab */,
 				93F9BB4F2C2916C400355A87 /* Models */,
@@ -2608,9 +2616,9 @@
 		939BDA6C2B2C200F00616D1C /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
+				93BD48C22C5CE5B500144E7F /* EmailSignInController.swift */,
 				937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */,
 				93BD48B12C57CB9000144E7F /* AppleSignInController.swift */,
-				93BD48C22C5CE5B500144E7F /* EmailSignInController.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";

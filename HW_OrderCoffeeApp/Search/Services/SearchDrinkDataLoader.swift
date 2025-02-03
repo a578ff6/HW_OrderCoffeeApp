@@ -143,10 +143,10 @@ class SearchDrinkDataLoader {
         var allDrinks: [SearchResult] = []
         
         // 加載所有 Categories 並遍歷每個 Category
-        let categoriesSnapshot = try await searchDrinkDataService.loadCategories()
+        let categoriesSnapshot = try await searchDrinkDataService.fetchSearchCategories()
         for categoryDocument in categoriesSnapshot.documents {
             let categoryId = categoryDocument.documentID
-            let subcategoriesSnapshot = try await searchDrinkDataService.loadSubcategories(for: categoryId)
+            let subcategoriesSnapshot = try await searchDrinkDataService.fetchSearchSubcategories(for: categoryId)
             let drinksForSubcategories = try await loadDrinksForSubcategories(subcategoriesSnapshot, categoryId: categoryId)
             allDrinks.append(contentsOf: drinksForSubcategories)
         }
@@ -164,7 +164,7 @@ class SearchDrinkDataLoader {
         var allDrinks: [SearchResult] = []
         for subcategoryDocument in subcategoriesSnapshot.documents {
             let subcategoryId = subcategoryDocument.documentID
-            let drinks = try await searchDrinkDataService.loadDrinks(for: categoryId, subcategoryId: subcategoryId)
+            let drinks = try await searchDrinkDataService.fetchSearchDrinks(for: categoryId, subcategoryId: subcategoryId)
             allDrinks.append(contentsOf: drinks)
         }
         return allDrinks
