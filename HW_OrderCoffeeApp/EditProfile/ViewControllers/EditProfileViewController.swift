@@ -147,7 +147,7 @@
  
  ```swift
  private func fetchCurrentUserDetails() {
-     HUDManager.shared.showLoading(text: "Loading Details...")
+     HUDManager.shared.showLoading(text: "EditProfile...")
      Task {
          do {
              let profile = try await EditUserProfileManager.shared.loadCurrentUserProfile()
@@ -267,7 +267,7 @@ class EditProfileViewController: UIViewController {
     /// - 該方法會顯示加載指示器，拉取用戶的個人資料後更新 `profileEditModel`，
     /// - 並刷新 TableView 的顯示。（資料驅動UI）
     private func fetchCurrentUserDetails() {
-        HUDManager.shared.showLoading(text: "Loading Details...")
+        HUDManager.shared.showLoading(text: "EditProfile...")
         Task {
             do {
                 let profile = try await EditUserProfileManager.shared.loadCurrentUserProfile()

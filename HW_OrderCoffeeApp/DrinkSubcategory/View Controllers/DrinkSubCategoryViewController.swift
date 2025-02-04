@@ -273,7 +273,7 @@
      ```swift
      private func loadDrinkSubcategories() {
          guard let categoryId = parentCategoryId else { return }
-         HUDManager.shared.showLoading(text: "Loading Drinks...")
+         HUDManager.shared.showLoading(text: "SubCategory...")
          
          Task {
              do {
@@ -518,7 +518,7 @@ class DrinkSubCategoryViewController: UIViewController {
     /// - UI 變更應交由 `DrinkSubCategoryViewManager` 透過 `initializeCollectionViewLayout` 或 `updateCollectionViewLayout` 處理
     private func loadDrinkSubcategories() {
         guard let categoryId = parentCategoryId else { return }
-        HUDManager.shared.showLoading(text: "Loading Drinks...")
+        HUDManager.shared.showLoading(text: "SubCategory...")
         Task {
             do {
                 drinkSubcategoryViewModels = try await drinkSubCategoryManager.fetchDrinkSubcategories(for: categoryId)

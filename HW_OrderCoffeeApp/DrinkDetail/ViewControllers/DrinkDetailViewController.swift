@@ -786,7 +786,7 @@ class DrinkDetailViewController: UIViewController {
     private func loadDrinkDetail() {
         guard let categoryId, let subcategoryId, let drinkId else { return }
         print("[DrinkDetailViewController] 開始加載飲品詳細資料 - categoryId: \(categoryId), subcategoryId: \(subcategoryId), drinkId: \(drinkId)")
-        HUDManager.shared.showLoading(text: "載入中...")
+        HUDManager.shared.showLoading(text: "Drink Detail...")
         
         Task {
             do {
