@@ -419,7 +419,7 @@ extension SignUpViewController: SignUpViewDelegate {
     func signUpViewDidTapGoogleSignUpButton() {
         dismissKeyboard()
         Task {
-            HUDManager.shared.showLoading(text: "Logging in...")
+            HUDManager.shared.showLoading(text: "Signing up...")
             do {
                 _ = try await GoogleSignInController.shared.signInWithGoogle(presentingViewController: self)
                 NavigationHelper.navigateToMainTabBar(from: self)
@@ -438,7 +438,7 @@ extension SignUpViewController: SignUpViewDelegate {
     func signUpViewDidTapAppleSignUpButton() {
         dismissKeyboard()
         Task {
-            HUDManager.shared.showLoading(text: "Logging in...")
+            HUDManager.shared.showLoading(text: "Signing up...")
             do {
                 _ = try await AppleSignInController.shared.signInWithApple(presentingViewController: self)
                 NavigationHelper.navigateToMainTabBar(from: self)

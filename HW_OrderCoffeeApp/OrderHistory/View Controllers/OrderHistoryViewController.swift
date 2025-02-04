@@ -660,7 +660,7 @@ class OrderHistoryViewController: UIViewController {
     /// - Parameter sortOption: 用戶選擇的排序方式
     private func fetchOrderHistory(sortOption: OrderHistorySortOption) {
         
-        HUDManager.shared.showLoading(text: "Loading History...")
+        HUDManager.shared.showLoading(text: "History...")
 
         Task {
             do {

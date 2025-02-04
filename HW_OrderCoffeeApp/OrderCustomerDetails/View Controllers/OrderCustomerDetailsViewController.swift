@@ -738,7 +738,7 @@
  
       ```swift
       private func fetchAndPopulateUserDetails() {
-          HUDManager.shared.showLoading(text: "Loading Details...")
+          HUDManager.shared.showLoading(text: "CustomerDetails...")
           Task {
               do {
                   let userDetails = try await FirebaseController.shared.getCurrentUserDetails()
@@ -886,7 +886,7 @@ class OrderCustomerDetailsViewController: UIViewController {
     /// 該方法異步從 Firebase 中獲取用戶詳細資料，並將其填充到 `CustomerDetailsManager` 中。
     /// 當資料填充完成後，初始化 `OrderCustomerDetailsHandler`，以確保表單配置正確顯示資料，最後刷新 collection view 來顯示填入的顧客資訊。
     private func fetchAndPopulateUserDetails() {
-        HUDManager.shared.showLoading(text: "Loading Details...")
+        HUDManager.shared.showLoading(text: "CustomerDetails...")
         Task {
             do {
                 let userDetails = try await FirebaseController.shared.getCurrentUserDetails()

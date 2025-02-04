@@ -918,7 +918,7 @@ class SearchViewController: UIViewController {
     /// - 使用網路狀態監控器來確保在網路可用時才進行資料加載，避免無效的請求
     private func reloadDrinkData() {
         let searchNetworkMonitor = SearchNetworkMonitor()
-        HUDManager.shared.showLoading(text: "加載中...")
+        HUDManager.shared.showLoading(text: "Reloading...")
         searchNetworkMonitor.onStatusChange = { [weak self] status in
             guard let self = self else { return }
 

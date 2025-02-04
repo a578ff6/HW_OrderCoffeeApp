@@ -110,6 +110,9 @@
 		9353747A2CCD6B7200794A63 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 935374792CCD6B7200794A63 /* CoreLocation.framework */; };
 		9353747C2CCD7C9A00794A63 /* LocationManagerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353747B2CCD7C9A00794A63 /* LocationManagerHandler.swift */; };
 		9353747E2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353747D2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift */; };
+		935B16812D50F039007BB90B /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935B16802D50F039007BB90B /* SplashViewController.swift */; };
+		935B168A2D51C8CC007BB90B /* SplashViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935B16892D51C8CC007BB90B /* SplashViewModel.swift */; };
+		935B168C2D51E733007BB90B /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935B168B2D51E733007BB90B /* SplashView.swift */; };
 		936CFFBD2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */; };
 		936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */; };
 		936CFFC62C6C71E7004B8724 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFC52C6C71E7004B8724 /* UserProfileViewController.swift */; };
@@ -424,6 +427,7 @@
 		93DB1D332C47696000BA2CC1 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DB1D322C47696000BA2CC1 /* LoginView.swift */; };
 		93DB1D352C47EE1900BA2CC1 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DB1D342C47EE1900BA2CC1 /* ForgotPasswordView.swift */; };
 		93DB1D3A2C49618C00BA2CC1 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DB1D392C49618C00BA2CC1 /* SignUpView.swift */; };
+		93DE1FCC2D5215FB00CFABE6 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 93DE1FCB2D5215FB00CFABE6 /* Lottie */; };
 		93F9BB3A2C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F9BB392C193CEA00355A87 /* DrinkInfoCollectionViewCell.swift */; };
 		93F9BB402C1C0DEA00355A87 /* DrinkSizeSelectionCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F9BB3F2C1C0DEA00355A87 /* DrinkSizeSelectionCollectionViewCell.swift */; };
 		93F9BB422C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F9BB412C1E0A8800355A87 /* DrinkPriceInfoCollectionViewCell.swift */; };
@@ -450,6 +454,19 @@
 			remoteInfo = HW_OrderCoffeeApp;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		935B16862D50F078007BB90B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		932258D22C9410F4004EA2D9 /* FavoriteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteManager.swift; sourceTree = "<group>"; };
@@ -554,6 +571,9 @@
 		935374792CCD6B7200794A63 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		9353747B2CCD7C9A00794A63 /* LocationManagerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerHandler.swift; sourceTree = "<group>"; };
 		9353747D2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerHandlerDelegate.swift; sourceTree = "<group>"; };
+		935B16802D50F039007BB90B /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
+		935B16892D51C8CC007BB90B /* SplashViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewModel.swift; sourceTree = "<group>"; };
+		935B168B2D51E733007BB90B /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		936CFFBA2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HW_OrderCoffeeAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITests.swift; sourceTree = "<group>"; };
 		936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -878,6 +898,7 @@
 				939BDA352B2ACB8300616D1C /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				939BDA3B2B2ACB8300616D1C /* FirebaseAuth in Frameworks */,
 				939BDA3F2B2ACB8300616D1C /* FirebaseCrashlytics in Frameworks */,
+				93DE1FCC2D5215FB00CFABE6 /* Lottie in Frameworks */,
 				939BDA5F2B2ACB8300616D1C /* FirebaseRemoteConfigSwift in Frameworks */,
 				939BDA512B2ACB8300616D1C /* FirebaseInAppMessaging-Beta in Frameworks */,
 				937605A22C4BB6BD00B1316C /* GoogleSignInSwift in Frameworks */,
@@ -1501,6 +1522,40 @@
 				936E099A2CE9FD000092F246 /* SearchControllerManager.swift */,
 			);
 			path = Managers;
+			sourceTree = "<group>";
+		};
+		935B16882D50F0B7007BB90B /* Splash */ = {
+			isa = PBXGroup;
+			children = (
+				935B168D2D51FDA0007BB90B /* Views */,
+				935B168F2D51FDB9007BB90B /* ViewModel */,
+				935B168E2D51FDB1007BB90B /* ViewController */,
+			);
+			path = Splash;
+			sourceTree = "<group>";
+		};
+		935B168D2D51FDA0007BB90B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				935B168B2D51E733007BB90B /* SplashView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		935B168E2D51FDB1007BB90B /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				935B16802D50F039007BB90B /* SplashViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		935B168F2D51FDB9007BB90B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				935B16892D51C8CC007BB90B /* SplashViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		936CFFB32C6BA81F004B8724 /* FirebaseTests */ = {
@@ -2584,6 +2639,7 @@
 				93BD48AF2C57CABF00144E7F /* GoogleService-Info.plist */,
 				9352915A2C91B3C40018B060 /* App */,
 				935291592C91B3AD0018B060 /* Resources */,
+				935B16882D50F0B7007BB90B /* Splash */,
 				93F9BB582C293E3E00355A87 /* Utilities */,
 				936E09BB2CF4F5DD0092F246 /* HomePage */,
 				936E09C32CF610970092F246 /* Login */,
@@ -2950,6 +3006,7 @@
 				939BD9C92B2A1B1700616D1C /* Frameworks */,
 				939BD9CA2B2A1B1700616D1C /* Resources */,
 				93DB1D382C49286800BA2CC1 /* ShellScript */,
+				935B16862D50F078007BB90B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2990,6 +3047,7 @@
 				93755C2E2C821F0F002570A5 /* JGProgressHUD */,
 				935374682CCA368700794A63 /* IQKeyboardManagerSwift */,
 				93B7B52E2CD1523C00E0205A /* FloatingPanel */,
+				93DE1FCB2D5215FB00CFABE6 /* Lottie */,
 			);
 			productName = HW_OrderCoffeeApp;
 			productReference = 939BD9CC2B2A1B1700616D1C /* HW_OrderCoffeeApp.app */;
@@ -3052,6 +3110,7 @@
 				93755C2C2C821E23002570A5 /* XCRemoteSwiftPackageReference "JGProgressHUD" */,
 				935374672CCA355A00794A63 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
 				93B7B52D2CD1522900E0205A /* XCRemoteSwiftPackageReference "FloatingPanel" */,
+				93DE1FCA2D52156200CFABE6 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			productRefGroup = 939BD9CD2B2A1B1700616D1C /* Products */;
 			projectDirPath = "";
@@ -3180,6 +3239,7 @@
 				93DB1D2D2C43D82200BA2CC1 /* OrderItemSectionHeaderView.swift in Sources */,
 				938122232CE286C300ADFB7B /* OrderHistoryDetailView.swift in Sources */,
 				934FB5A02CFDCF5800757C7C /* ForgotPasswordStackView.swift in Sources */,
+				935B168A2D51C8CC007BB90B /* SplashViewModel.swift in Sources */,
 				93B7B5672CD9066D00E0205A /* OrderConfirmationHandlerDelegate.swift in Sources */,
 				936E09AD2CF080AF0092F246 /* SearchDrinkDataLoader.swift in Sources */,
 				935374552CB93F6D00794A63 /* OrderCustomerDetailsSectionHeaderView.swift in Sources */,
@@ -3195,6 +3255,7 @@
 				93B7B5552CD5E28500E0205A /* OrderConfirmationHandler.swift in Sources */,
 				938064382D13B11300537F01 /* DrinkDetailShareManager.swift in Sources */,
 				939BA51D2D30FBBD004FD33E /* OrderrConfirmationBottomLineView.swift in Sources */,
+				935B16812D50F039007BB90B /* SplashViewController.swift in Sources */,
 				932258D32C9410F4004EA2D9 /* FavoriteManager.swift in Sources */,
 				934FB5A72CFDEF9F00757C7C /* ForgotPasswordDelegate.swift in Sources */,
 				935374782CCCCC7800794A63 /* StoreSelectionMapHandlerDelegate.swift in Sources */,
@@ -3243,6 +3304,7 @@
 				939BD9F12B2AB9C200616D1C /* SignUpViewController.swift in Sources */,
 				93DB1D2F2C461F9D00BA2CC1 /* KeychainManager.swift in Sources */,
 				93B492932C410A2E00E7B947 /* OrderItemSummaryCollectionViewCell.swift in Sources */,
+				935B168C2D51E733007BB90B /* SplashView.swift in Sources */,
 				937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */,
 				937F581E2D3F8EFA001C0EBF /* SearchLabel.swift in Sources */,
 				934FB5982CFDAFFC00757C7C /* ForgotPasswordLabel.swift in Sources */,
@@ -3729,11 +3791,14 @@
 				DEVELOPMENT_TEAM = P8FCS2FB8Z;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HW_OrderCoffeeApp/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "我們需要使用您的相機來讓您拍攝照片。";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "我們需要持續使用您的位置來提供最佳的店鋪導航服務。";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "我們需要訪問您的位置以顯示距離最近的店鋪。";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "我們需要訪問您的照片庫來讓您選擇大頭照。";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3759,11 +3824,14 @@
 				DEVELOPMENT_TEAM = P8FCS2FB8Z;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HW_OrderCoffeeApp/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "我們需要使用您的相機來讓您拍攝照片。";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "我們需要持續使用您的位置來提供最佳的店鋪導航服務。";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "我們需要訪問您的位置以顯示距離最近的店鋪。";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "我們需要訪問您的照片庫來讓您選擇大頭照。";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3904,6 +3972,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.8.6;
+			};
+		};
+		93DE1FCA2D52156200CFABE6 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -4073,6 +4149,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 93B7B52D2CD1522900E0205A /* XCRemoteSwiftPackageReference "FloatingPanel" */;
 			productName = FloatingPanel;
+		};
+		93DE1FCB2D5215FB00CFABE6 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 93DE1FCA2D52156200CFABE6 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

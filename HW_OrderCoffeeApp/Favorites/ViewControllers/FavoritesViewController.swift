@@ -328,7 +328,7 @@ class FavoritesViewController: UIViewController {
         configureNavigationBar()
         setupCollectionView()
         setupNoFavoritesViewManager()
-        HUDManager.shared.showLoading(text: "Loading Favorites...")     // 初次進入時顯示 HUD
+        HUDManager.shared.showLoading(text: "Favorites...")     // 初次進入時顯示 HUD
     }
     
     /// 當頁面即將顯示時觸發，負責刷新收藏數據並更新 UI。
