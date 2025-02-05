@@ -120,8 +120,9 @@ struct Constants {
     /// 表示在 Storyboard 中設定的視圖控制器的 Identifier，方便引用。
     struct Storyboard {
         
-        // MARK: - 主頁面、登入、註冊、忘記密碼相關
+        // MARK: - 主頁面導航、主頁面、登入、註冊、忘記密碼相關
         
+        static let homePageNavigationController = "HomePageNavigationController"
         static let homePageViewController = "HomePageViewController"
         static let loginViewController = "LoginViewController"
         static let signUpViewController = "SignUpViewController"
