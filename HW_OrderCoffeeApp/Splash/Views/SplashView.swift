@@ -55,7 +55,6 @@
 
      class SplashViewController: UIViewController {
          
-         private let splashViewModel = SplashViewModel()
          private let splashView = SplashView()
          
          override func loadView() {
@@ -69,9 +68,18 @@
          
          private func playAnimation() {
              splashView.playAnimation { [weak self] in
-                 self?.splashViewModel.switchToMainApp()
+                 self?.navigateToMainApp()
              }
          }
+         
+         /// `navigateToMainApp` 負責畫面轉場，通知 `SceneDelegate`
+         private func navigateToMainApp() {
+             guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else {
+                 return
+             }
+             sceneDelegate.switchToHomePageNavigation()
+         }
+         
      }
      ```
 

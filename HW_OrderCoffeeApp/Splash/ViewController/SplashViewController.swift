@@ -5,70 +5,69 @@
 //  Created by 曹家瑋 on 2025/2/3.
 //
 
-
 // MARK: - SplashViewController 筆記
 /**
  
- ## SplashViewController 筆記
- 
- `* What`
- 
- - `SplashViewController` 是應用程式的 **啟動畫面控制器**，負責顯示 `SplashView` 並控制動畫播放。
- - 它的主要職責是 **顯示動畫並在播放結束後執行畫面切換邏輯**，確保應用啟動時有流暢的過渡體驗。
+ ### SplashViewController 筆記
 
- - 在專案中，`SplashViewController` 負責：
  
-    - 設定 `SplashView` 作為主視圖，確保 UI 與邏輯分離。
-    - 觸發 Lottie 動畫播放，並在播放完畢後切換至主畫面。
-    - 透過 `SplashViewModel` 執行畫面切換，避免 `ViewController` 直接處理 `rootViewController` 變更，保持單一職責。
+` * What`
+ 
+ - `SplashViewController` **負責管理應用程式的啟動畫面**，顯示 `SplashView` 並播放 Lottie 動畫。
+ - 當動畫播放結束時，通知 `SceneDelegate` 來**切換 `rootViewController`**。
+ - `SplashViewController` 不直接變更 `rootViewController`，而是讓 `SceneDelegate` 負責畫面切換，確保 `ViewController` 只關注 UI 與動畫邏輯。
 
- -------
+ --------
 
  `* Why`
  
- - 若不使用 `SplashViewController`，啟動畫面邏輯可能會與其他業務邏輯混合在 `AppDelegate` 或 `SceneDelegate` 中，影響可讀性與可維護性。
- - 透過 `SplashViewController`，可以獲得以下優勢：
-
- 1. 符合單一職責原則（SRP）
+ 1. 職責架構
  
-    - `SplashViewController` **只專注於啟動畫面的動畫播放與畫面切換**，不負責 UI 細節或應用層邏輯。
-    - `SplashView` **專門負責 UI 顯示**，`SplashViewModel` 負責 `rootViewController` 切換，確保 MVC 架構清晰。
-
- 2. 提升可讀性與可維護性
+ - View（`SplashView`）
  
-    - `SplashViewController` 不直接控制動畫，而是呼叫 `SplashView.playAnimation()` 來播放動畫。
-    - `SplashViewModel` 負責 `rootViewController` 的切換，未來若有登入流程或其他變更，只需修改 `ViewModel`。
-
- 3. 提升可測試性
+   - 只負責 UI 顯示與動畫播放，不涉及業務邏輯。
  
-    - `SplashViewController` 只需要測試 **動畫觸發與畫面切換邏輯**，而 UI 測試可由 `SplashView` 單獨負責。
-    - **避免 `SceneDelegate` 直接處理 `rootViewController` 變更**，確保程式碼更模組化。
-
- 4. 符合 iOS UIKit 設計模式
+ - Controller（`SplashViewController`）
  
-    - `SplashViewController` 作為 `UIViewController`，負責 **管理視圖與用戶互動**，符合 UIKit 設計原則。
-    - 透過 `loadView()` 設定 `SplashView`，讓 UI 變更更獨立。
-
- -------
-
- `* How`
-
- 1.`SplashViewController` 設定 `SplashView` 作為主視圖
+   - 負責管理動畫邏輯，監聽動畫結束事件，不直接處理 `rootViewController` 切換。
  
-    - `loadView()` 會將 `SplashView` 設為 `SplashViewController` 的主視圖，確保 `ViewController` 內不直接處理 UI。
+ - App 管理層（`SceneDelegate`）
+ 
+   - 負責 `rootViewController` 的變更，確保畫面切換統一管理。
 
+ 2. 符合單一職責原則（SRP）
+ 
+ - `SplashViewController` 只專注於 UI 動畫邏輯，它不應該負責決定應用程式的 `rootViewController`。
+ - `SceneDelegate` 負責 `rootViewController` 切換，確保所有畫面轉場邏輯集中管理。
+
+ 3. 提高可維護性
+ 
+    - 未來若要更換 `HomePageViewController` 或 `MainTabBarController`，只需修改 `SceneDelegate`，不影響 `SplashViewController`。
+    - 確保 `SplashViewController` 只管理動畫，與畫面切換的業務邏輯解耦，降低耦合度，提高靈活性。
+
+ --------
+
+` * How`
+ 
+ 1. `SplashViewController` 只負責動畫播放
+ 
      ```swift
      import UIKit
 
+     /// `SplashViewController` 負責管理啟動畫面邏輯
+     ///
+     /// - 主要職責是顯示 `SplashView`，並在動畫播放完畢後執行轉場邏輯。
+     /// - `SplashViewController` 不直接變更 `rootViewController`，而是通知 `SceneDelegate` 來處理畫面切換。
      class SplashViewController: UIViewController {
          
-         /// `SplashViewModel` 負責處理畫面切換邏輯
-         private let splashViewModel = SplashViewModel()
+         // MARK: - UI Components
          
          /// `SplashView` 負責 UI 顯示與動畫播放
          private let splashView = SplashView()
          
-         /// 設定 `SplashView` 作為主視圖
+         // MARK: - Lifecycle Methods
+
+         /// `loadView()` 設定 `SplashView` 作為主視圖
          override func loadView() {
              self.view = splashView
          }
@@ -79,98 +78,63 @@
              playAnimation()
          }
          
-         /// 觸發 `SplashView` 的動畫播放，並在動畫結束後切換至主畫面
+         // MARK: - Private Methods
+         
+         /// 播放 Lottie 動畫，動畫結束後通知 `SceneDelegate` 切換畫面
          private func playAnimation() {
              splashView.playAnimation { [weak self] in
-                 self?.splashViewModel.switchToMainApp()
+                 self?.navigateToMainApp()
              }
          }
-     }
-     ```
-
- ---
-
- 2.`SplashViewModel` 處理畫面切換邏輯
- 
-    - 在動畫播放完成後，`SplashViewModel` 透過 `SceneDelegate` 切換 `rootViewController`。
-
-     ```swift
-     class SplashViewModel {
-         func switchToMainApp() {
+         
+         /// `navigateToMainApp()` 負責通知 `SceneDelegate` 切換 `rootViewController`
+         private func navigateToMainApp() {
              guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else {
                  return
              }
-             
-             let storyboard = UIStoryboard(name: "Main", bundle: nil)
-             let homeVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.homePageViewController)
-             let navigationController = UINavigationController(rootViewController: homeVC)
-             
-             sceneDelegate.switchToViewController(navigationController)
+             sceneDelegate.switchToHomePageNavigation()
          }
      }
      ```
 
  ---
 
- 3. `SplashView` 專門負責 UI 與動畫
+ 2.`SceneDelegate` 統一管理 `rootViewController` 切換
  
-    - 為了讓 `SplashViewController` 更輕量化，Lottie 動畫與 UI 設定都封裝在 `SplashView`。
-
      ```swift
-     class SplashView: UIView {
+     import UIKit
+
+     class SceneDelegate: UIResponder, UIWindowSceneDelegate {
          
-         private let starbucksAnimationView = LottieAnimationView(name: "StarbucksSplashAnimation")
-         
-         override init(frame: CGRect) {
-             super.init(frame: frame)
-             setupView()
-             setupConstraints()
-         }
-         
-         required init?(coder: NSCoder) {
-             super.init(coder: coder)
-             fatalError("init(coder:) has not been implemented")
-         }
-         
-         private func setupView() {
-             backgroundColor = .deepGreen
-             starbucksAnimationView.contentMode = .scaleAspectFit
-             starbucksAnimationView.loopMode = .playOnce
-             starbucksAnimationView.animationSpeed = 1.0
+         var window: UIWindow?
+
+         func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+             guard let windowScene = (scene as? UIWindowScene) else { return }
              
-             addSubview(starbucksAnimationView)
-             starbucksAnimationView.translatesAutoresizingMaskIntoConstraints = false
-         }
-         
-         private func setupConstraints() {
-             NSLayoutConstraint.activate([
-                 starbucksAnimationView.centerXAnchor.constraint(equalTo: centerXAnchor),
-                 starbucksAnimationView.centerYAnchor.constraint(equalTo: centerYAnchor),
-                 starbucksAnimationView.widthAnchor.constraint(equalToConstant: 280),
-                 starbucksAnimationView.heightAnchor.constraint(equalToConstant: 280)
-             ])
-         }
-         
-         func playAnimation(completion: @escaping () -> Void) {
-             starbucksAnimationView.play { finished in
-                 if finished {
-                     completion()
-                 }
+             window = UIWindow(windowScene: windowScene)
+             
+             if Auth.auth().currentUser != nil {
+                 // 使用者已登入，顯示 MainTabBarController
+                 switchToMainTabBar()
+             } else {
+                 // 未登入，顯示 SplashViewController
+                 let splashVC = SplashViewController()
+                 window?.rootViewController = splashVC
              }
+             
+             window?.makeKeyAndVisible()
          }
      }
      ```
 
- -------
+ --------
 
-` * 總結`
+ `* 結論`
  
- 1.`SplashViewController` 負責顯示動畫與畫面切換，但不直接處理 UI。
- 2. 符合 MVC 架構，讓 `SplashView` 處理 UI，`SplashViewModel` 負責轉場。
- 3. 提升可讀性與可維護性，讓 `SplashViewController` 更精簡。
- 4. 更好的可測試性，動畫邏輯與 UI 測試分離，提高測試覆蓋率。
+ 1. `SplashViewController` 只負責動畫播放，不直接處理 `rootViewController` 切換
+ 2. `SceneDelegate` 統一管理 `rootViewController` 變更，確保畫面切換的邏輯一致
+ 3. 這樣的架構符合 MVC 原則，確保 `ViewController` 責任單一，提高可維護性
 
- 這樣的架構讓 `SplashViewController`、`SplashViewModel` 和 `SplashView` 各司其職。
  */
 
 
@@ -179,23 +143,21 @@
 
 import UIKit
 
+
 /// `SplashViewController` 負責管理啟動畫面邏輯
 ///
 /// - 主要職責是顯示 `SplashView`，並在動畫播放完畢後執行轉場邏輯。
-/// - 透過 `SplashViewModel` 來切換 `rootViewController`，避免 `ViewController` 直接處理畫面轉換。
-/// - 使用 `loadView()` 設定 `SplashView` 作為主視圖。
+/// - `SplashViewController` 不負責 `rootViewController` 的切換，而是通知 `SceneDelegate` 來處理畫面變更。
+/// - 使用 `loadView()` 設定 `SplashView` 作為主視圖，確保 `ViewController` 只關注業務邏輯，而不處理 UI 細節。
 class SplashViewController: UIViewController {
     
     // MARK: - UI Components
-
-    /// `SplashViewModel` 負責處理畫面切換邏輯
-    private let splashViewModel = SplashViewModel()
     
     /// `SplashView` 負責 UI 顯示與動畫播放
     private let splashView = SplashView()
     
     // MARK: - Lifecycle Methods
-
+    
     /// 設定 `SplashView` 作為主視圖
     override func loadView() {
         self.view = splashView
@@ -209,11 +171,24 @@ class SplashViewController: UIViewController {
     
     // MARK: - Private Method
     
-    /// 觸發 `SplashView` 的動畫播放，並在動畫結束後切換至主畫面
+    /// `playAnimation()` 負責觸發 `SplashView` 的動畫播放
+    ///
+    /// - 當動畫播放結束時，會自動呼叫 `navigateToMainApp()` 進行畫面轉場。
     private func playAnimation() {
         splashView.playAnimation { [weak self] in
-            self?.splashViewModel.switchToMainApp()
+            self?.navigateToMainApp()
         }
+    }
+    
+    /// `navigateToMainApp()` 負責畫面轉場，通知 `SceneDelegate`
+    ///
+    /// - 這個方法不應該直接變更 `rootViewController`，而是交由 `SceneDelegate` 統一管理畫面切換。
+    /// - `SceneDelegate` 會決定應該進入 `HomePageViewController。
+    private func navigateToMainApp() {
+        guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else {
+            return
+        }
+        sceneDelegate.switchToHomePageNavigation()
     }
     
 }
