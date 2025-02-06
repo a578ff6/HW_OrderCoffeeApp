@@ -61,7 +61,7 @@
  - 在用戶完成登入或註冊後，通過 `NavigationHelper` 導航到 `MainTabBarController`。
  
  ```
- static func navigateToMainTabBar(from viewController: UIViewController) {
+ static func navigateToMainTabBar() {
  }
  ```
   
