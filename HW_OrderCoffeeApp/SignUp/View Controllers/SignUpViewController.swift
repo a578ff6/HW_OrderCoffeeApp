@@ -10,77 +10,239 @@
  
  ## 關於註冊要求的想法：
  
- 1. 在 SignUpViewController 中，設置全名、電子郵件和密碼，以及註冊須知。另外還有 google、apple 註冊部分
+ 1. 在 `SignUpViewController` 中，設置全名、電子郵件和密碼，以及註冊須知。另外還有 google、apple 註冊部分
     
-    * 使用 Google 或 Apple 進行註冊和登入時，通常無法直接獲取用戶的地址和電話等額外資訊。這些第三方登錄方式通常只提供用戶的基本資訊，如姓名和電子郵件。
-    * 因此，採取以下做法：
-        - 簡化註冊流程：在使用電子郵件註冊的部分，只要求用戶提供姓名、信箱和密碼。
-        - 延遲收集詳細資訊：在用戶完成註冊或登錄後，由在「訂單視圖控制器」讓使用者填寫額外的詳細資訊（地址和電話）。
-        - 藉此提高註冊率，同時確保在需要時獲取完整的用戶資訊！！
+ - 使用 Google 或 Apple 進行註冊和登入時，通常無法直接獲取用戶的地址和電話等額外資訊。這些第三方登錄方式通常只提供用戶的基本資訊，如姓名和電子郵件。
+ 
+ - 因此，採取以下做法：
+ 
+    - 簡化註冊流程：在使用電子郵件註冊的部分，只要求用戶提供姓名、信箱和密碼。
+    - 延遲收集詳細資訊：在用戶完成註冊或登錄後，由在「訂單視圖控制器」讓使用者填寫額外的詳細資訊（地址和電話）。
+    - 藉此提高註冊率，同時確保在需要時獲取完整的用戶資訊！！
  */
 
 
 // MARK: - SignUpViewController 筆記
 /**
  
- ## SignUpViewController 筆記
- 
-` * What`
- 
- - SignUpViewController 是註冊流程中的核心控制器，負責管理註冊頁面的初始化、UI 操作的配置、以及使用者的註冊動作。
+ ### SignUpViewController 筆記
 
- - 主要工作包括：
-    1. 使用 SignUpView 作為主要的 UI 視圖，將畫面配置和控制邏輯分開。
-    2. 初始化並使用 SignUpActionHandler 來處理按鈕的行為，解耦 UI 和邏輯操作。
-    3. 透過實作 SignUpViewDelegate 來處理來自 SignUpView 的用戶交互事件。
+
+ `* What`
  
- -------------------------------
+ `SignUpViewController` 負責 **管理註冊流程**，包括：
+ 
+ 1. 顯示 UI
+ 
+    - 採用 `SignUpView` 作為畫面主體，確保視圖與控制器分離。
+    
+ 2. 處理使用者輸入
+ 
+    - 透過 `SignUpValidationManager` 驗證輸入是否合法（Email 格式、密碼規範、勾選同意條款等）。
+    
+ 3. 處理使用者行為
+ 
+    - 透過 `SignUpActionHandler` 管理 `SignUpView` 中按鈕的點擊行為。
+    
+ 4. 呼叫 Firebase 註冊 API
+ 
+    - 透過 `EmailAuthController` 與 Firebase 進行註冊，成功後導向主畫面。
+
+ -  主要組件：
+ 
+    - `SignUpView`：**視圖層**，只負責 UI 顯示，不包含業務邏輯。
+    - `SignUpViewController`：**控制器層**，負責 UI 管理、輸入驗證、註冊 API 呼叫。
+    - `SignUpValidationManager`：**驗證層**，負責檢查輸入資料是否符合規則。
+    - `SignUpActionHandler`：**行為處理層**，處理 `SignUpView` 的按鈕操作。
+
+ ---------
 
  `* Why`
  
- - `分離 UI 與業務邏輯`：
-    - 將 UI 和行為邏輯分開，可以讓代碼結構更清晰、模組化，便於維護和擴展。具體來說，SignUpView 負責處理 UI 元件顯示，而 SignUpViewController 則專注於管理用戶交互的邏輯。
+ 1. 解耦 UI、業務邏輯與驗證
  
- - `提高程式碼的可讀性與可維護性`：
-    - 透過使用 SignUpActionHandler 和 SignUpViewDelegate，將不同的責任分開，有助於減少單一類別的職責過多，降低耦合度，提高程式碼的可讀性和維護性。
+ - 如果 `SignUpViewController` 直接處理驗證與註冊 API 呼叫，會導致：
+
+    - 可讀性下降：驗證、業務邏輯與 UI 操作混雜，難以維護。
+    - 重複性高：如果其他頁面（如 `ForgotPasswordViewController`）也需要驗證，則必須重寫相同邏輯。
+    - 單一職責違反（SRP）：控制器負責過多職責，導致耦合性增加。
+
+ - 最佳解法
  
- - `簡化控制邏輯的測試`：
-    - 將行為邏輯從 UI 中解耦合之後，可以更容易地對行為邏輯進行單元測試，而不需要模擬整個 UI，這使得測試過程更加輕鬆。
+    - UI 行為 交由 `SignUpActionHandler` 管理。
+    - 驗證邏輯 交由 `SignUpValidationManager` 處理。
+    - Firebase API 操作 交由 `EmailAuthController` 負責。
+
+ - 這樣 `SignUpViewController` **只專注於 UI 狀態管理與流程控制**，提高程式碼的 **可維護性、可讀性與模組化設計**。
+
+ ---
+
+ 2. 提升使用者體驗
  
- -------------------------------
+ - 透過 **本地端驗證** (`SignUpValidationManager`) 提供即時反饋，避免：
+ 
+    - 等待 Firebase 回應 才顯示錯誤。
+    - 不必要的 API 請求，減少網路流量。
+
+ - 此外，透過 **HUD 加載動畫 (`HUDManager`)**，可避免使用者頻繁點擊註冊按鈕造成多次請求。
+
+ ---
+
+ 3. 更好的測試性與可擴展性
+ 
+    - 驗證邏輯 可以獨立測試 (`SignUpValidationManager` 可寫單元測試)。
+    - 行為處理器 (`SignUpActionHandler`) 可以根據不同 UI 元件獨立測試，不影響 `SignUpViewController` 。
+    - Firebase API (`EmailAuthController`) 可以模擬不同的錯誤回應，提高測試覆蓋率。
+
+ ---------
 
  `* How`
  
-` 1.初始化 SignUpView：`
-
- - 在 loadView() 方法中，將 signUpView 設為主視圖，這樣所有顯示的 UI 元件都是來自 signUpView，確保控制器和畫面的職責清楚分離。
+ 1. UI 初始化
  
- `2. 設定 SignUpActionHandler：`
+    - 在 `loadView()` 中，將 `SignUpView` 設為畫面主體，確保 UI 和 `UIViewController` 分離。
 
- - 在 viewDidLoad() 方法中，初始化 SignUpActionHandler，並通過將 SignUpView 和 SignUpViewDelegate 作為參數傳入來處理 UI 中的行為。這樣可以確保按鈕行為由 SignUpActionHandler 集中管理。
- 
- `3. 設置初始狀態：`
+     ```swift
+     override func loadView() {
+         view = signUpView
+     }
+     ```
 
- - 使用 `setupInitialViewState() 方法`設置初始畫面狀態，例如將「同意條款」勾選框設為禁用，以確保用戶在閱讀條款之前不能勾選。
+    - 初始化 UI 狀態**（例如禁用「同意條款」按鈕）：
  
- `4. 實作 SignUpViewDelegate：`
+     ```swift
+     private func setupInitialViewState() {
+         signUpView.setTermsCheckBoxEnabled(false)
+     }
+     ```
 
- - 使用者點擊「閱讀條款」按鈕後，開啟條款的連結，如果成功開啟，則通過 signUpView.setTermsCheckBoxEnabled(true) 啟用「同意條款」的勾選框。
- - 在用戶點擊註冊按鈕時，首先進行輸入資料的驗證（包括確認框、必填欄位、電子郵件格式、密碼格式等），驗證成功後，通過 Firebase 進行註冊操作並導航至主頁面。
- 
- `5. 驗證輸入資料：`
+ ---
 
- - 將不同的驗證邏輯拆分為多個私有方法，例如 validateTermsCheckBox()、validateRequiredFields() 等，這樣可以讓 signUpViewDidTapSignUpButton() 方法更加簡潔且易於理解。
+ 2.設置 `SignUpActionHandler` 處理按鈕行為
  
- `6. 支援其他註冊方式：`
+    - 使用 `SignUpActionHandler` 來管理 UI 互動行為：
 
- - 實作 Google 與 Apple 的註冊邏輯，當使用者選擇使用第三方服務進行註冊時，控制器負責調用相應的第三方服務並完成註冊流程，然後導航至主頁面。
+     ```swift
+     private func setupActionHandler() {
+         signUpActionHandler = SignUpActionHandler(view: signUpView, delegate: self)
+     }
+     ```
+
+    - 這樣 `SignUpViewController` **不需要直接處理 UI 事件**，而是透過 `SignUpViewDelegate` 回應 `SignUpActionHandler` 的行為。
+
+ ---
+
+ 3. 處理註冊流程
  
- -------------------------------
+ - 當使用者點擊「註冊」按鈕：
+ 
+    1. 先收起鍵盤，確保 UI 乾淨。
+    2. 透過 `SignUpValidationManager` **本地驗證輸入**。
+    3. 驗證成功後，調用 `EmailAuthController` 註冊 Firebase。
+    4. 註冊成功後，導航至主頁 (`MainTabBar`)。
+
+     ```swift
+     func signUpViewDidTapSignUpButton() {
+         dismissKeyboard()
+         
+         let fullName = signUpView.fullName
+         let email = signUpView.email
+         let password = signUpView.password
+         let confirmPassword = signUpView.confirmPassword
+         let isChecked = signUpView.isTermsCheckBoxSelected
+         
+         // 進行輸入驗證
+         if let validationError = SignUpValidationManager.validateSignUpInput(
+             fullName: fullName,
+             email: email,
+             password: password,
+             confirmPassword: confirmPassword,
+             isChecked: isChecked
+         ) {
+             AlertService.showAlert(withTitle: "錯誤", message: validationError, inViewController: self)
+             return
+         }
+         
+         // 透過 Firebase 註冊
+         HUDManager.shared.showLoading(text: "Signing up...")
+         Task {
+             do {
+                 _ = try await EmailAuthController.shared.registerUser(withEmail: email, password: password, fullName: fullName)
+                 NavigationHelper.navigateToMainTabBar()
+             } catch let error as EmailAuthError {
+                 AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
+             } catch {
+                 AlertService.showAlert(withTitle: "錯誤", message: "發生未知錯誤，請稍後再試。", inViewController: self)
+             }
+             HUDManager.shared.dismiss()
+         }
+     }
+     ```
+
+ ---
+
+ 4. Google / Apple 註冊流程
+ 
+ 除了 Email 註冊，也支援 Google、Apple 登入：
+ 
+     - Google 註冊
+     
+     ```swift
+     func signUpViewDidTapGoogleSignUpButton() {
+         dismissKeyboard()
+         Task {
+             HUDManager.shared.showLoading(text: "Signing up...")
+             do {
+                 _ = try await GoogleSignInController.shared.signInWithGoogle(presentingViewController: self)
+                 NavigationHelper.navigateToMainTabBar()
+             } catch {
+                 handleGoogleSignInError(error)
+             }
+             HUDManager.shared.dismiss()
+         }
+     }
+     ```
+
+ ---
+ 
+     - Apple 註冊
+     
+     ```swift
+     func signUpViewDidTapAppleSignUpButton() {
+         dismissKeyboard()
+         Task {
+             HUDManager.shared.showLoading(text: "Signing up...")
+             do {
+                 _ = try await AppleSignInController.shared.signInWithApple(presentingViewController: self)
+                 NavigationHelper.navigateToMainTabBar()
+             } catch {
+                 handleAppleSignInError(error)
+             }
+             HUDManager.shared.dismiss()
+         }
+     }
+     ```
+
+ ---------
 
  `* 總結`
  
- - 這種設計方法將 UI 畫面、用戶操作邏輯、以及業務處理清晰地劃分，透過 SignUpView、SignUpActionHandler 和 SignUpViewDelegate 分別處理各自的責任。如此一來，SignUpViewController 的程式碼變得更簡潔，易於閱讀和測試，同時也有助於後續的擴展和維護。
+ - What
+ 
+    - `SignUpViewController` 負責 UI 顯示、輸入驗證、註冊請求，但不直接處理業務邏輯與驗證。
+    - 而是交由 `SignUpValidationManager` 和 `EmailAuthController` 處理。
+
+ -  Why
+ 
+    - 符合單一職責原則（SRP），不讓 `ViewController` 過於臃腫。
+    - 解耦 UI、驗證與 Firebase API，提高可維護性與測試性。
+    - 提供即時輸入驗證，提升使用者體驗並減少不必要的 API 呼叫。
+
+ - How
+ 
+    - 透過 `SignUpValidationManager` 驗證輸入，確保格式正確。
+    - 透過 `EmailAuthController` 註冊 Firebase，確保 `ViewController` 不直接操作 Firebase API。
+    - 透過 `SignUpActionHandler` 管理 UI 行為，提高模組化設計。
  */
 
 
@@ -106,13 +268,16 @@
  `* Why: 調整與優化的原因`
  
  `1. 提高效率：`
+ 
     - 將所有輸入值一次性提取，避免在每個驗證步驟中反覆調用 `signUpView` 的 getter 方法，減少視圖層的交互次數，提升代碼的執行效率。
 
  `2. 增加代碼可讀性與維護性：`
+ 
     - 每個驗證步驟單獨進行，並使用清晰的 `guard` 和 `if` 語句，使代碼條理分明，易於閱讀和理解。
     - 提取輸入值並統一檢查，能讓驗證邏輯更為集中，便於未來的功能修改或擴展。
 
  `3. 錯誤提示與用戶體驗：`
+ 
     - 在每個驗證步驟中給出具體的錯誤提示，例如「請同意並閱讀註冊須知」或「請輸入有效的電子郵件地址」，提供更佳的用戶體驗。
 
  -------------------------------
@@ -120,29 +285,34 @@
  `* How: 驗證邏輯的實現方式`
  
  `1. 提取用戶輸入：`
+ 
     - 將 `signUpView.fullName`、`email`、`password` 等方法調用集中到方法的最初始階段，減少重複調用。
 
  `2. 逐步進行驗證：`
+ 
     - 使用 `guard` 語句和 `if` 語句逐一檢查輸入的值。
     - 首先檢查是否同意條款，接著驗證每個輸入欄位是否有值。
     - 依序進行郵件格式、密碼規範的驗證，最後驗證密碼是否一致。
 
  `3. 錯誤處理與提示：`
+ 
     - 在每個驗證失敗的情況下，使用 `AlertService.showAlert` 顯示錯誤訊息，讓用戶知道具體的問題所在。
     - 當所有驗證通過後，顯示註冊中的加載提示，並進行用戶註冊操作。
 
  `4. 用戶註冊與導航：`
+ 
     - 使用 `HUDManager` 顯示註冊進行中的狀態，避免用戶重複點擊。
-    - 成功註冊後，使用 `FirebaseController` 獲取用戶詳細資料，並導航到主頁面。
+    - 成功註冊後，使用 `EmailAuthController` 獲取用戶詳細資料，並導航到主頁面。
 
  -------------------------------
 
  `* 總結`
  
- - What* 實現用戶註冊的數據驗證流程，包含多重檢查及提示。
- - Why: 提高代碼效率與可讀性，增強用戶體驗。
- - How: 使用集中提取輸入值、逐步驗證邏輯、錯誤提示及導航至主頁面的方法，實現完整的驗證和註冊流程。
+ - What： 實現用戶註冊的數據驗證流程，包含多重檢查及提示。
+ - Why：提高代碼效率與可讀性，增強用戶體驗。
+ - How：使用集中提取輸入值、逐步驗證邏輯、錯誤提示及導航至主頁面的方法，實現完整的驗證和註冊流程。
  */
+
 
 
 // MARK: - `dismissKeyboard()` 的設置筆記
@@ -220,16 +390,33 @@
  */
 
 
-
-// MARK: - 重構職責(v)
+// MARK: - (v)
 
 import UIKit
 
-/// 註冊介面：負責處理註冊相關的邏輯與畫面
-/// - 主要職責包括：
-///   1. 初始化並配置 `SignUpView` 作為主要的 UI 畫面。
-///   2. 通過 `SignUpActionHandler` 設置各按鈕的行為，將 UI 操作與邏輯處理解耦。
-///   3. 通過實現 `SignUpViewDelegate`，將使用者的操作行為進行相應的邏輯處理。
+/// `SignUpViewController`
+///
+/// - 負責管理註冊流程，包括 UI 顯示、使用者輸入處理、驗證邏輯、認證請求等。
+/// - 採用 `SignUpView` 作為 UI，並透過 `SignUpActionHandler` 來處理使用者行為，確保**UI 和業務邏輯解耦**。
+///
+/// ## 主要功能
+/// 1. 初始化 UI
+///    - 設置 `SignUpView` 作為主要畫面，並管理其 UI 狀態（如啟用/禁用「同意條款」按鈕）。
+///
+/// 2. 驗證使用者輸入
+///    - 透過 `SignUpValidationManager` 進行輸入檢查，確保格式正確並符合密碼規範。
+///
+/// 3. 處理使用者行為
+///    - 透過 `SignUpActionHandler` 處理 `SignUpView` 按鈕的點擊行為，並透過 `SignUpViewDelegate` 讓 `SignUpViewController` 負責應對使用者操作。
+///
+/// 4. 進行註冊請求
+///    - 若驗證成功，則調用 `EmailAuthController` 完成 Firebase 註冊並導航至主畫面。
+///
+/// ## 職責架構
+/// - SignUpView ：負責 UI 顯示，不包含業務邏輯
+/// - SignUpViewController：負責管理 UI、驗證輸入、呼叫註冊 API
+/// - SignUpValidationManager：負責驗證邏輯，確保輸入資料符合要求
+/// - SignUpActionHandler：負責處理 `SignUpView` 的按鈕行為
 class SignUpViewController: UIViewController {
     
     // MARK: - UI Components
@@ -240,6 +427,7 @@ class SignUpViewController: UIViewController {
     // MARK: - Handlers
     
     /// `SignUpActionHandler` 負責處理 `SignUpView` 中按鈕的行為
+    ///
     /// - 設定 `SignUpView` 和 `SignUpViewDelegate` 以實現事件與邏輯的分離
     private var signUpActionHandler: SignUpActionHandler?
     
@@ -251,7 +439,9 @@ class SignUpViewController: UIViewController {
     }
     
     /// 初始化畫面元件與行為處理器
-    /// - 初始化 `SignUpActionHandler` 並設定按鈕行為
+    ///
+    /// - 設定 `SignUpActionHandler` 負責按鈕行為
+    /// - 設定 `signUpView` 的初始 UI 狀態
     override func viewDidLoad() {
         super.viewDidLoad()
         setupActionHandler()
@@ -261,6 +451,7 @@ class SignUpViewController: UIViewController {
     // MARK: - Private Methods
     
     /// 初始化並設置 `SignUpActionHandler`
+    ///
     /// - `SignUpActionHandler` 負責處理 `SignUpView` 中的按鈕行為
     /// - 通過設置 view 與 delegate，將 UI 行為與邏輯解耦合，增加程式碼的模組化和可維護性
     private func setupActionHandler() {
@@ -268,12 +459,14 @@ class SignUpViewController: UIViewController {
     }
     
     /// 設置初始的畫面狀態
+    ///
     /// 初始設置「同意條款」勾選框為禁用狀態
     private func setupInitialViewState() {
         signUpView.setTermsCheckBoxEnabled(false)
     }
     
     /// 統一的鍵盤收起方法
+    ///
     /// - 收起當前視圖中活動的鍵盤
     /// - 使用於各種按鈕操作開始前，確保畫面整潔、避免鍵盤遮擋重要資訊或 HUD
     private func dismissKeyboard() {
@@ -282,13 +475,13 @@ class SignUpViewController: UIViewController {
     
 }
 
-
 // MARK: - SignUpViewDelegate
 extension SignUpViewController: SignUpViewDelegate {
     
     // MARK: - Terms & Conditions Actions
     
     /// 處理點擊「閱讀條款」按鈕的邏輯
+    ///
     /// - 成功打開條款連結後啟用「確認框」
     func signUpViewDidTapTermsButton() {
         guard let url = URL(string: "https://www.starbucks.com.tw/stores/allevent/show.jspx?n=1016") else {
@@ -306,6 +499,7 @@ extension SignUpViewController: SignUpViewDelegate {
     }
     
     /// 處理點擊「同意條款」勾選框的邏輯
+    ///
     /// - 使用者尚未點擊「註冊須知連結」，不允許勾選
     /// - 切換選中狀態
     func signUpViewDidTapTermsCheckBox() {
@@ -318,134 +512,156 @@ extension SignUpViewController: SignUpViewDelegate {
     
     // MARK: - Standard Login Actions
     
-    /// 當使用者點擊註冊按鈕時的處理邏輯
-    /// - 驗證輸入資料是否符合規範，若成功則進行註冊請求，並導向主頁面
+    /// 當使用者點擊「註冊」按鈕時執行的邏輯
+    ///
+    /// - 依序執行驗證邏輯，確保資料符合規範
+    /// - 若驗證成功則呼叫 `EmailAuthController` 進行註冊
     /// - 在註冊流程開始前先收起鍵盤，確保畫面整潔並避免影響 HUD 顯示
     func signUpViewDidTapSignUpButton() {
         dismissKeyboard()
+        
         let fullName = signUpView.fullName
         let email = signUpView.email
         let password = signUpView.password
         let confirmPassword = signUpView.confirmPassword
+        let isChecked = signUpView.isTermsCheckBoxSelected
         
-        // 驗證輸入資料
-        guard validateTermsCheckBox() &&
-                validateRequiredFields(fullName: fullName, email: email, password: password, confirmPassword: confirmPassword) &&
-                validateEmailFormat(email) &&
-                validatePasswordCriteria(password) &&
-                validatePasswordConfirmation(password, confirmPassword) else {
+        /// 使用 `SignUpValidationManager` 進行驗證
+        if let validationError = SignUpValidationManager.validateSignUpInput(
+            fullName: fullName,
+            email: email,
+            password: password,
+            confirmPassword: confirmPassword,
+            isChecked: isChecked
+        ) {
+            AlertService.showAlert(withTitle: "錯誤", message: validationError, inViewController: self)
             return
         }
         
+        /// 通過驗證後執行 Firebase 註冊
         HUDManager.shared.showLoading(text: "Signing up...")
         Task {
             do {
-                _ = try await EmailSignInController.shared.registerUser(withEmail: email, password: password, fullName: fullName)
-                NavigationHelper.navigateToMainTabBar(from: self)
-            } catch {
+                _ = try await EmailAuthController.shared.registerUser(withEmail: email, password: password, fullName: fullName)
+                NavigationHelper.navigateToMainTabBar()
+            } catch let error as EmailAuthError {
                 AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
+            } catch {
+                AlertService.showAlert(withTitle: "錯誤", message: "發生未知錯誤，請稍後再試。", inViewController: self)
             }
             HUDManager.shared.dismiss()
         }
+
     }
     
-    // MARK: - Helper Methods for SignUp Validation
-    
-    /// 驗證是否勾選了「同意條款」的勾選框
-    /// - Returns: 若已勾選返回 true，否則顯示錯誤並返回 false
-    private func validateTermsCheckBox() -> Bool {
-        guard signUpView.isTermsCheckBoxSelected else {
-            AlertService.showAlert(withTitle: "錯誤", message: "請同意並閱讀註冊須知", inViewController: self)
-            return false
-        }
-        return true
-    }
-    
-    /// 驗證必填欄位是否已填寫
-    /// - Parameters:
-    ///   - fullName: 全名
-    ///   - email: 電子郵件
-    ///   - password: 密碼
-    ///   - confirmPassword: 確認密碼
-    /// - Returns: 若所有欄位均不為空返回 true，否則顯示錯誤並返回 false
-    private func validateRequiredFields(fullName: String, email: String, password: String, confirmPassword: String) -> Bool {
-        guard !email.isEmpty, !password.isEmpty, !fullName.isEmpty, !confirmPassword.isEmpty else {
-            AlertService.showAlert(withTitle: "錯誤", message: "請填寫所有資料", inViewController: self)
-            return false
-        }
-        return true
-    }
-    
-    /// 驗證電子郵件格式是否有效
-    /// - Parameter email: 電子郵件地址
-    /// - Returns: 若格式有效返回 true，否則顯示錯誤並返回 false
-    private func validateEmailFormat(_ email: String) -> Bool {
-        if !EmailSignInController.isEmailvalid(email) {
-            AlertService.showAlert(withTitle: "錯誤", message: "請輸入有效的電子郵件地址，例如：example@example.com", inViewController: self)
-            return false
-        }
-        return true
-    }
-    
-    /// 驗證密碼是否符合規範
-    /// - Parameter password: 密碼
-    /// - Returns: 若符合規範返回 true，否則顯示錯誤並返回 false
-    private func validatePasswordCriteria(_ password: String) -> Bool {
-        if !EmailSignInController.isPasswordValid(password) {
-            AlertService.showAlert(withTitle: "錯誤", message: "密碼需至少包含8位字符，並包括至少一個小寫字母和一個特殊字符", inViewController: self)
-            return false
-        }
-        return true
-    }
-    
-    /// 驗證兩次密碼輸入是否相同
-    /// - Parameters:
-    ///   - password: 密碼
-    ///   - confirmPassword: 確認密碼
-    /// - Returns: 若兩次輸入相同返回 true，否則顯示錯誤並返回 false
-    private func validatePasswordConfirmation(_ password: String, _ confirmPassword: String) -> Bool {
-        if password != confirmPassword {
-            AlertService.showAlert(withTitle: "錯誤", message: "兩次輸入的密碼不一致", inViewController: self)
-            return false
-        }
-        return true
-    }
     
     // MARK: - Google SignUp Actions
     
     /// 當使用者點擊 Google 註冊按鈕時的處理邏輯
-    /// - 使用 Google 提供的方法進行註冊，若成功則導向主頁面
-    /// - 註冊過程開始前收起鍵盤，避免鍵盤遮擋 HUD
+    ///
+    /// - 流程:
+    ///   1. 收起鍵盤，確保 UI 整潔
+    ///   2. 顯示 HUD (載入動畫)，提供使用者即時反饋
+    ///   3. 調用 `GoogleSignInController.shared.signInWithGoogle` 進行 Google 註冊流程
+    ///   4. 若註冊成功，則導向主頁 (`MainTabBar`)
+    ///   5. 若註冊失敗，則統一交給 `handleGoogleSignInError` 處理錯誤
+    ///
+    /// - 錯誤處理:
+    ///   - 若為 `GoogleSignInError`，調用 `handleGoogleSignInError` 統一處理
+    ///   - 其他錯誤則顯示通用錯誤訊息
     func signUpViewDidTapGoogleSignUpButton() {
         dismissKeyboard()
         Task {
             HUDManager.shared.showLoading(text: "Signing up...")
             do {
                 _ = try await GoogleSignInController.shared.signInWithGoogle(presentingViewController: self)
-                NavigationHelper.navigateToMainTabBar(from: self)
+                NavigationHelper.navigateToMainTabBar()
             } catch {
-                AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
+                handleGoogleSignInError(error)
             }
             HUDManager.shared.dismiss()
+        }
+    }
+    
+    /// Google 登入錯誤處理
+    ///
+    /// - 依照錯誤類型決定應對策略:
+    ///   - `userCancelled`: 使用者主動取消登入，不需提示錯誤
+    ///   - `accessDenied`: 使用者拒絕授權，也不需彈出錯誤訊息
+    ///   - 其他錯誤: 顯示適當錯誤訊息，提示使用者
+    ///
+    /// - 設計考量:
+    ///   - 避免彈出多餘的錯誤警告，減少使用者困擾
+    ///
+    /// - 參數:
+    ///   - `error`: 錯誤資訊，可能是 `GoogleSignInError` 或其他 `Error`
+    private func handleGoogleSignInError(_ error: Error) {
+        if let googleError = error as? GoogleSignInError {
+            switch googleError {
+            case .userCancelled, .accessDenied:
+                print("[SignUpViewController]: 使用者取消或拒絕授權 Google 註冊，無需顯示錯誤訊息。")
+                return
+            default:
+                AlertService.showAlert(withTitle: "錯誤", message: googleError.localizedDescription ?? "發生未知錯誤", inViewController: self)
+            }
+        } else {
+            // 統一處理所有非 GoogleSignInError 的錯誤
+            AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
         }
     }
     
     // MARK: - Apple SignUp Actions
     
     /// 當使用者點擊 Apple 註冊按鈕時的處理邏輯
-    /// - 使用 Apple 提供的方法進行註冊，若成功則導向主頁面
-    /// - 註冊過程開始前收起鍵盤，避免鍵盤遮擋 HUD
+    ///
+    /// - 流程:
+    ///   1. 收起鍵盤，確保 UI 整潔
+    ///   2. 顯示 HUD (載入動畫)，提供使用者即時反饋
+    ///   3. 調用 `AppleSignInController.shared.signInWithApple` 進行 Apple 註冊流程
+    ///   4. 若註冊成功，則導向主頁 (`MainTabBar`)
+    ///   5. 若註冊失敗，則統一交給 `handleAppleSignInError` 處理錯誤
+    ///
+    /// - 錯誤處理:
+    ///   - 若為 `AppleSignInError`，調用 `handleAppleSignInError` 統一處理
+    ///   - 其他錯誤則顯示通用錯誤訊息
     func signUpViewDidTapAppleSignUpButton() {
         dismissKeyboard()
         Task {
             HUDManager.shared.showLoading(text: "Signing up...")
             do {
                 _ = try await AppleSignInController.shared.signInWithApple(presentingViewController: self)
-                NavigationHelper.navigateToMainTabBar(from: self)
+                NavigationHelper.navigateToMainTabBar()
             } catch {
-                AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
+                handleAppleSignInError(error)
             }
             HUDManager.shared.dismiss()
+        }
+    }
+    
+    /// Apple 登入錯誤處理
+    ///
+    /// - 依照錯誤類型決定應對策略:
+    ///   - `userCancelled`: 使用者主動取消登入，不需提示錯誤
+    ///   - `appleIDNotSignedIn`:未登入 Apple ID，無需顯示錯誤訊息
+    ///   - 其他錯誤: 顯示適當錯誤訊息，提示使用者
+    ///
+    /// - 設計考量:
+    ///   - 避免彈出多餘的錯誤警告，減少使用者困擾
+    ///
+    /// - 參數:
+    ///   - `error`: 錯誤資訊，可能是 `AppleSignInError` 或一般 `Error`
+    private func handleAppleSignInError(_ error: Error) {
+        if let appleError = error as? AppleSignInError {
+            switch appleError {
+            case .userCancelled, .appleIDNotSignedIn:
+                print("[LoginViewController]: 使用者取消或未登入 Apple ID，無需顯示錯誤訊息。")
+                return
+            default:
+                AlertService.showAlert(withTitle: "錯誤", message: appleError.localizedDescription ?? "發生未知錯誤", inViewController: self)
+            }
+        } else {
+            // 處理一般錯誤
+            AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
         }
     }
     
