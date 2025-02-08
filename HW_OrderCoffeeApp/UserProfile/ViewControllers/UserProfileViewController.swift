@@ -299,7 +299,7 @@ class UserProfileViewController: UIViewController {
     private func executeLogout() async {
         do {
             try FirebaseController.shared.signOut()
-            NavigationHelper.navigateToLogin(from: self)
+            NavigationHelper.navigateToHomePageNavigation()
         } catch {
             print("[UserProfileViewController]: 登出失敗 - \(error.localizedDescription)")
             AlertService.showAlert(withTitle: "登出失敗", message: "無法登出，請稍後再試。", inViewController: self)

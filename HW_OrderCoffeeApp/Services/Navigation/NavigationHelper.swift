@@ -6,7 +6,6 @@
 //
 
 // MARK: - 導航方式
-
 /**
 
  ## 根據使用者「體驗App邏輯」選擇適合的導航方式。只要「避免產生堆棧問題」和「不必要的內存佔用」，就可以使用不同的導航方式。
@@ -110,7 +109,7 @@
  - 當使用者完成註冊或登入時，透過 `NavigationHelper.navigateToMainTabBar()` 導航到 `MainTabBarController`。
 
     ```swift
-    static func navigateToMainTabBar(from viewController: UIViewController) {
+    static func navigateToMainTabBar() {
     }
     ```
 
@@ -136,11 +135,6 @@
     - 導航至 `MainTabBarController` 時，不需要包裹在 `UINavigationController` 中。
     - `MainTabBarController` 是應用的主容器，負責管理多個子頁面（如 Menu、Search、Order、UserProfile），並提供切換功能。
 
- 2. `navigateToLogin`：
- 
-    - 導航至 `HomePageViewController` 時，需要包裹在 `UINavigationController` 中。
-    - 登入頁面及其相關頁面（如註冊、忘記密碼）需要返回功能，因此需要導航容器進行管理。
-
  ---
 
  `* Why`
@@ -156,14 +150,6 @@
     - 標準設計：
       - `UITabBarController` 作為應用的主頁面，通常不被包裹在 `UINavigationController` 中。
 
- 2. `navigateToLogin` 需要 `UINavigationController` 的原因：
- 
-    - 支持堆疊導航：
-      - 登錄頁面通常會包含進一步的子頁面導航需求（如跳轉至註冊、忘記密碼頁面）。
- 
-    - 提供返回功能：
-      - `UINavigationController` 自帶返回按鈕，符合用戶習慣。
-
  ---
 
  `* How`
@@ -172,17 +158,269 @@
  
     - 將 `MainTabBarController` 設置為應用的主頁面，不包裹在 `UINavigationController` 中。
  
- 2. 設置 `navigateToLogin` 的邏輯：
- 
-    - 使用 `UINavigationController` 包裹 `HomePageViewController`，以支持子頁面的導航功能。
-
  ---
 
  `* 總結`
  
  1. `navigateToMainTabBar` 不需要設置 `UINavigationController`，因為每個子頁面會自行管理導航。
- 2. `navigateToLogin` 需要設置 `UINavigationController`，因為它需要支持進一步的堆疊導航和返回功能。
- 3. 設計的關鍵在於根據頁面的職責和功能需求，選擇是否使用 `UINavigationController`。
+ 2. 設計的關鍵在於根據頁面的職責和功能需求，選擇是否使用 `UINavigationController`。
+ */
+
+
+// MARK: - 記憶體釋放與 `navigateToHomePageNavigation` 的實踐
+/**
+ 
+ ###  記憶體釋放與 `navigateToHomePageNavigation` 的最佳實踐
+
+
+` * What`
+ 
+ - `navigateToHomePageNavigation(from:)` 方法負責將應用的 `rootViewController` 切換為 `HomePageNavigationController`，並確保登出後 `MainTabBarController` 及其所有子視圖控制器`完全被移除，釋放記憶體`。
+
+ - 主要功能：
+ 
+   - 確保 `MainTabBarController` 完全從記憶體釋放，避免佔用多餘的資源。
+   - 使用 `CATransition.fade` 提供更平滑的畫面轉場，比 `transitionCrossDissolve` 更自然。
+   - 確保 `window.rootViewController` 的替換正確執行，避免 `present` 堆疊問題。
+
+ ---------
+
+ `* Why `
+
+ 1.確保 `MainTabBarController` 及其子控制器完全移除
+ 
+    - `window.rootViewController = homeNavController` **完全替換** `MainTabBarController`，`UIKit` 會自動釋放 `MainTabBarController` 及其所有子視圖控制器。
+    - 避免**殘留的 `UIViewController` 導致的記憶體洩漏**。
+
+ 2. `present` 方法不適合登出後的場景
+ 
+    - 使用 `present` 只是疊加新畫面，不會釋放 `MainTabBarController`，可能造成 記憶體佔用過高。
+    - 登出應該「重置應用的 `rootViewController`」，而不是讓新頁面覆蓋舊頁面，確保應用回到乾淨狀態。
+
+ 3. `transitionCrossDissolve` 過渡效果不夠自然
+ 
+    - `transitionCrossDissolve` 在某些設備上會導致畫面閃爍，或者切換時「過渡不流暢」。
+    - 改用 `CATransition.fade` 可以讓畫面平滑過渡。
+
+ ---------
+
+ `* How`
+
+ 1. `navigateToHomePageNavigation`
+ 
+    - 使用 `CATransition.fade` 替換 `transitionCrossDissolve`，確保畫面平滑過渡：
+ 
+     ```swift
+     static func navigateToHomePageNavigation(from viewController: UIViewController) {
+         let storyboard = UIStoryboard(name: "Main", bundle: nil)
+
+         guard let homeNavController = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.homePageNavigationController) as? UINavigationController else {
+             print("無法實例化 HomePageNavigationController")
+             return
+         }
+
+         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first else {
+             print("無法取得有效的 UIWindow")
+             return
+         }
+
+         // 設定 CATransition 讓過渡更平滑
+         let transition = CATransition()
+         transition.type = .fade // 💡 改為 fade，讓畫面自然淡入淡出
+         transition.duration = 0.4 // 動畫時間
+         transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+
+         // 加入動畫
+         window.layer.add(transition, forKey: kCATransition)
+         window.rootViewController = homeNavController
+     }
+     ```
+
+ ---------
+
+ `* 總結`
+ 
+ 1. 使用 `window.rootViewController = homeNavController` 確保 `MainTabBarController` **完全從記憶體移除**，避免記憶體洩漏。
+ 2. 避免 `present` 方法，確保 `rootViewController` 正確切換，防止畫面堆疊。
+ 3. 使用 `CATransition.fade` 取代 `transitionCrossDissolve`，提升動畫流暢度。
+ 4. 檢查 `MainTabBarController` 釋放狀況，確保 UI 元件正確回收，避免資源浪費。
+ 
+ */
+
+
+// MARK: - NavigationHelper 筆記
+/**
+ 
+ ### NavigationHelper 筆記
+
+
+` * What`
+ 
+ - `NavigationHelper` 是一個 **導航管理工具類別**，用來統一處理應用內的頁面切換，例如：
+ 
+    - 進入 `MainTabBarController`（登入成功或註冊後）
+    - 跳轉 `ForgotPasswordViewController`（忘記密碼頁面）
+    - 跳轉 `SignUpViewController`（註冊頁面）
+    - 返回 `HomePageNavigationController`（登出後回到首頁）
+
+ - 它提供 `統一的 API` 來處理 `rootViewController` 的變更，以及 `push`、`present` 操作，確保導航體驗的一致性。
+
+ --------
+
+ `* Why`
+ 
+ 1. 統一管理導航邏輯，提升可維護性
+ 
+ - 在 App 中，導航（頁面切換）會發生在不同的情境，例如：
+ 
+   - 登入 / 註冊成功 → 進入 `MainTabBarController`
+   - 忘記密碼 → 彈出 `ForgotPasswordViewController`
+   - 登出 → 返回 `HomePageNavigationController`
+ 
+ - 若在 **各個 `ViewController` 內部** 分別處理導航邏輯，會導致 **重複程式碼** 和 **難以維護**。
+
+ - 解決方案：
+ 
+    - `NavigationHelper` 將主要 導航操作集中在一個地方，確保頁面切換邏輯可重用、易維護。
+
+ ---
+
+ 2.確保 rootViewController 切換時釋放記憶體
+ 
+ - `navigateToMainTabBar()` 和 `navigateToHomePageNavigation()` 會 **切換 `rootViewController`**，確保舊的 `ViewController` 完全移除，釋放記憶體，避免 **內存泄漏**。
+
+ - 解決方案：
+ 
+    - `window.rootViewController = newViewController` 確保舊畫面完全移除
+    - 登出時，完全移除 `MainTabBarController`，避免仍然在記憶體中占用資源。
+
+ ---
+
+ 3. 提供一致的過場動畫，提升使用者體驗
+ 
+    - 頁面切換時，使用 `CATransition`  來提供更平滑的體驗，提升 UI 過渡效果。
+
+ - 解決方案：
+ 
+    - 登入 / 註冊成功後：`navigateToMainTabBar()` 使用 `fade` 過場動畫
+    - 登出後返回首頁：`navigateToHomePageNavigation()` 也使用 `fade` 過場動畫
+
+ --------
+
+ `* How`
+ 
+ 1. 切換至 `MainTabBarController`
+ 
+    - 登入或註冊成功後
+     
+     ```swift
+     static func navigateToMainTabBar() {
+         let storyboard = UIStoryboard(name: "Main", bundle: nil)
+         
+         guard let mainTabBarController = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.mainTabBarController) as? MainTabBarController else {
+             print("無法實例化 MainTabBarController")
+             return
+         }
+
+         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first else {
+             print("無法取得有效的 UIWindow")
+             return
+         }
+
+         let transition = CATransition()
+         transition.type = .fade
+         transition.duration = 0.5
+         transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+
+         window.layer.add(transition, forKey: kCATransition)
+         window.rootViewController = mainTabBarController
+     }
+     ```
+ 
+ -  關鍵點：
+ 
+    - `fade` 動畫提供更流暢的過場效果
+    - 完全移除 `HomePageNavigationController`，釋放記憶體
+
+ ---
+
+ 2. 跳轉至 `ForgotPasswordViewController`
+ 
+    - 需要 `UINavigationController` 來提供返回按鈕
+ 
+     ```swift
+     static func navigateToForgotPassword(from viewController: UIViewController) {
+         let storyboard = UIStoryboard(name: "Main", bundle: nil)
+         
+         guard let forgotPasswordVC = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.forgotPasswordViewController) as? ForgotPasswordViewController else {
+             print("無法實例化 ForgotPasswordViewController")
+             return
+         }
+         
+         forgotPasswordVC.modalPresentationStyle = .pageSheet
+         let navController = UINavigationController(rootViewController: forgotPasswordVC)
+
+         if let sheet = navController.sheetPresentationController {
+             sheet.detents = [.large()]
+         }
+
+         viewController.present(navController, animated: true, completion: nil)
+     }
+     ```
+ 
+ - 為什麼使用 `UINavigationController`？
+ 
+    - `ForgotPasswordViewController` 內 **有關閉按鈕**，所以包在 `UINavigationController` 裡，讓 `NavigationBar` 提供返回功能。
+    - `.pageSheet` 模式符合 iOS **標準 UI 規範**，不會影響當前頁面狀態。
+
+ ---
+
+ 3. 切換回 `HomePageNavigationController`
+ 
+    - 登出時完全重置 `rootViewController`
+ 
+     ```swift
+     static func navigateToHomePageNavigation() {
+         let storyboard = UIStoryboard(name: "Main", bundle: nil)
+         
+         guard let homeNavController = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.homePageNavigationController) as? UINavigationController else {
+             print("無法實例化 HomePageNavigationController")
+             return
+         }
+
+         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first else {
+             print("無法取得有效的 UIWindow")
+             return
+         }
+
+         let transition = CATransition()
+         transition.type = .fade
+         transition.duration = 0.4
+         transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+
+         window.layer.add(transition, forKey: kCATransition)
+         window.rootViewController = homeNavController
+     }
+ ```
+ 
+ - 關鍵點：
+ 
+    - 登出時，完全移除 `MainTabBarController`
+    - 確保 `HomePageNavigationController` 內部畫面是新的
+
+ --------
+
+ `* 總結`
+ 
+ - `NavigationHelper` 設計的三大目標
+ 
+    1. 統一導航邏輯，減少重複代碼，提升可維護性
+    2. 確保 `rootViewController` 切換時釋放記憶體，避免內存泄漏
+    3. 使用 `fade` 動畫提升 UI 過渡體驗
+
  */
 
 
@@ -191,18 +429,23 @@
 
 import UIKit
 
-/// 負責處理 App 內的各種導航操作，如登入、登出、頁面跳轉等。
+/// `NavigationHelper`
+///
+/// - 負責管理應用內的導航邏輯，如登入、登出、頁面跳轉等操作。
+/// - 提供統一的方法來切換 `rootViewController` 或執行 `push` / `present` 操作，確保導航體驗的一致性。
 class NavigationHelper {
     
     // MARK: - navigateToMainTabBar
     
-    /// 用戶登入或註冊成功後，導航到主頁面 MainTabBarController。
+    /// 用戶登入或註冊成功後，導航至 `MainTabBarController`
     ///
-    /// - Parameters:
-    ///   - viewController: 當前的視圖控制器，作為導航的起點。
+    /// - 用途:
+    ///   - 當用戶成功登入或註冊後，進入 `MainTabBarController`，讓使用者可切換不同功能頁面。
     ///
-    /// 此方法將 MainTabBarController 設置為應用的主頁面，並使用淡入淡出的動畫效果切換畫面。
-    static func navigateToMainTabBar(from viewController: UIViewController) {
+    /// - 實作細節:
+    ///   - 透過 `Storyboard` 取得 `MainTabBarController`，確保 UI 配置正確。
+    ///   - 使用 `CATransition` 的 `fade` 動畫，確保畫面過渡流暢。
+    static func navigateToMainTabBar() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         
         guard let mainTabBarController = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.mainTabBarController) as? MainTabBarController else {
@@ -210,31 +453,37 @@ class NavigationHelper {
             return
         }
         
-        mainTabBarController.modalPresentationStyle = .fullScreen
-        
-        // 嘗試取得 windowScene 和 window
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else {
             print("無法取得有效的 UIWindow")
             return
         }
         
-        // 使用系統預設動畫：淡入淡出
-        UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve, animations: {
-            window.rootViewController = mainTabBarController
-        }, completion: nil)
+        let transition = CATransition()
+        transition.type = .fade
+        transition.duration = 0.5
+        transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
         
+        window.layer.add(transition, forKey: kCATransition)
+        window.rootViewController = mainTabBarController
     }
+    
     
     // MARK: - navigateToForgotPassword
     
-    /// 跳轉到 ForgotPasswordViewController，並包裹於 UINavigationController 中。
+    /// 導航至 `ForgotPasswordViewController`，並包裹於 `UINavigationController` 中
     ///
-    /// - Parameters:
-    ///   - viewController: 當前的視圖控制器，作為導航的起點。
+    /// - 用途:
+    ///   - 讓使用者可以透過獨立頁面進行密碼重置。
+    ///   - 由於 `ForgotPasswordViewController` 需要提供 **關閉按鈕**，因此使用 `UINavigationController` 來確保返回按鈕的可用性。
     ///
-    /// 此方法顯示 ForgotPasswordViewController，並設置為 `.pageSheet` 模式。使用 `UINavigationController` 方便用戶`關閉頁面`或進行後續操作。
-    /// 將其坎 入UINavigationController，因為有設置關閉按鈕在 Navigationbar
+    /// - 實作細節:
+    ///   - 透過 `Storyboard` 取得 `ForgotPasswordViewController`，確保頁面配置正確。
+    ///   - 設置為 `.pageSheet` 模式，符合 iOS 預設的彈出視窗體驗。
+    ///   - 透過 `UINavigationController` 提供 `NavigationBar`，確保使用者可以透過按鈕關閉頁面。
+    ///
+    /// - 參數:
+    ///   - `viewController`: 當前的視圖控制器，作為 `present` 的起點。
     static func navigateToForgotPassword(from viewController: UIViewController) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         
@@ -245,7 +494,7 @@ class NavigationHelper {
         
         forgotPasswordVC.modalPresentationStyle = .pageSheet
         let navController = UINavigationController(rootViewController: forgotPasswordVC)
-
+        
         if let sheet = navController.sheetPresentationController {
             sheet.detents = [.large()]
         }
@@ -253,14 +502,19 @@ class NavigationHelper {
         viewController.present(navController, animated: true, completion: nil)
     }
     
+    
     // MARK: - navigateToSignUp
     
-    /// 跳轉到 SignUpViewController，使用 UINavigationController 的 push 方法。
+    /// 導航至 `SignUpViewController`，使用 `push` 方式
     ///
-    /// - Parameters:
-    ///   - viewController: 當前的視圖控制器，應為 UINavigationController 的子控制器。
+    /// - 用途:
+    ///   - 讓使用者透過 NavigationController 進入註冊頁面，以便之後返回登入頁面。
     ///
-    /// 此方法透過 push 導航，確保用戶可以返回到先前的頁面，符合導航設計的使用體驗。
+    /// - 實作細節:
+    ///   - `SignUpViewController` 需要透過 `push` 方法進入，確保 `NavigationController` 的返回按鈕可用。
+    ///
+    /// - 參數:
+    ///   - `viewController`: 當前的視圖控制器，應該是 `UINavigationController` 的子控制器。
     static func navigateToSignUp(from viewController: UIViewController) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         
@@ -271,25 +525,25 @@ class NavigationHelper {
         
         viewController.navigationController?.pushViewController(signUpViewController, animated: true)
     }
-
-    // MARK: - navigateToLogin
     
-    /// 登出後，導航至 HomePageViewController，並設置為應用的主頁面。
+    // MARK: - navigateToHomePageNavigation
+    
+    /// 導航至 `HomePageNavigationController`（登出後返回首頁）
     ///
-    /// - Parameters:
-    ///   - viewController: 當前的視圖控制器，作為導航的起點。
+    /// - 用途:
+    ///   - 當使用者**登出**時，應用應該返回 `HomePageNavigationController`，讓使用者可以重新登入或註冊。
     ///
-    /// 此方法將 HomePageViewController 包裹於 UINavigationController 中，並使用淡入淡出的動畫效果切換畫面。
-    static func navigateToLogin(from viewController: UIViewController) {
+    /// - 實作細節:
+    ///   - 透過 `Storyboard` 取得 `HomePageNavigationController`，確保首頁導航可用。
+    ///   - 使用 `CATransition` 設置 `fade` 動畫，確保畫面切換平滑。
+    ///   - 直接切換 `rootViewController`，確保 `MainTabBarController` 及其所有子視圖完全移除，釋放記憶體。
+    static func navigateToHomePageNavigation() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         
-        guard let homePageViewController = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.homePageViewController) as? HomePageViewController else {
-            print("無法實例化 HomePageViewController")
+        guard let homeNavController = storyboard.instantiateViewController(withIdentifier: Constants.Storyboard.homePageNavigationController) as? UINavigationController else {
+            print("無法實例化 HomePageNavigationController")
             return
         }
-        
-        // 設置 rootViewController
-        let navigationController = UINavigationController(rootViewController: homePageViewController)
         
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else {
@@ -297,12 +551,14 @@ class NavigationHelper {
             return
         }
         
-        // 使用系統預設動畫：淡入淡出
-        UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve, animations: {
-            window.rootViewController = navigationController
-        }, completion: nil)
+        let transition = CATransition()
+        transition.type = .fade
+        transition.duration = 0.4
+        transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        
+        // 加入動畫
+        window.layer.add(transition, forKey: kCATransition)
+        window.rootViewController = homeNavController
     }
-
+    
 }
-
-

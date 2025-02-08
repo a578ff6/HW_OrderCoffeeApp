@@ -5,113 +5,6 @@
 //  Created by 曹家瑋 on 2023/12/14.
 //
 
-/*
- A.實現用戶登入、註冊後跳轉到其他視圖：
-    * 設置 RootViewController：
-        - 常用的方式，特別是在登入、註冊成功後。確保登入前的ViewController（登入、註冊頁面）不再存在於「ViewController堆棧」中，從而避免用戶通過Navigation返回到這些頁面。
-        - 優點：
-        - 確保App的狀態一致性。
-        - 使用者無法通過Navigation回到登入、註冊頁面。
-        - 適合用於MainNavigation的切換，像是從登入頁面到App的主頁面。
- 
-    * 使用 NavigationController：
-        -如果App的結構是基於NavigtaionController，那麼可以通過push、modalPresent展示新的ViewController。不過這種發誓通常用於在同一個 「Navigation堆棧」中添加新的 ViewController，而不是替換整個 RootViewController。
-        - 優點：
-        - 間單直接，適用於非 RootViewController 的跳轉。
-        - 在同一個「Navigation堆棧」中管理 ViewController。
- 
-    * 選擇的方式：
-        - 設置 RootViewController 方式，特別是在登入、註冊成功後。
-        - 原因：
-            - 清除「Navigation堆棧」中不需要的 ViewController ，確保App的一致性。
-            - 更適合用於主視圖的切換，例如登入、註冊頁面到App主頁面。
-            - 只有在特定的場境下（EX：在同一個「Navigation堆棧」中添加新的 ViewController ），使用 NavigationController 進行視圖跳轉才會更適合。
- 
- ---------------------------------------- ---------------------------------------- ----------------------------------------
- 
- B. 處理「Remember Me」按鈕的流程：
-    * 當用戶點擊 "Remember Me" 按鈕時，會將當前的電子郵件和密碼存儲到 Keychain 中。
- 
-    * 先檢查TextField是否有填寫：
-        - 原本如果用戶先點擊 "Remember Me" 按鈕再輸入帳號密碼，那麼之前的空數據或錯誤的數據就會被存儲。
-        - 因此我後來改成：用戶點擊 "Remember Me" 按鈕後檢查當前的電子郵件和密碼是否已經填寫好。如果未填寫好，提示用戶先完成輸入。
- 
-    * Remember Me 按鈕的邏輯和 loginButtonTapped 的關聯性：
-        - Remember Me 按鈕的作用是在用戶選中時記住電子郵件和密碼，而 loginButtonTapped 則是在用戶點擊登錄按鈕後執行登錄操作。
- 
-    * 工作流程（確保這個流程的關鍵在於順序的控制和條件的檢查。）：
-        - 用戶輸入電子郵件和密碼。
-        -  用戶點擊 Remember Me 按鈕（可選）。
-        -  用戶點擊 Login 按鈕，執行登錄操作。
-        -  如果用戶選中了 Remember Me，則會將電子郵件和密碼存儲到 Keychain 中。
-        -  在下一次 App 啟動時，如果檢測到 Remember Me 被選中，則自動填充電子郵件和密碼。
-
- 
- ---------------------------------------- ---------------------------------------- ----------------------------------------
-
- C. googleLoginButtonTapped：
-    * Google 登入或註冊成功後會調用 signInWithGoogle 。
- 
-    * 在 signInWithGoogle 成功後，會使用 Firebase 的憑證登入，並在 authResult 成功後調用 FirebaseController.shared.getCurrentUserDetails 獲取用戶的資訊。
-   
-    * 在獲取用戶資訊時：
-        - 如果用戶數據存在（成功獲取用戶資訊），則會進入到主界面，並傳遞 userDetails。
-        - 如果用戶數據不存在（獲取用戶資訊失敗），顯示錯誤資訊。）
- 
-    * 藉此確保在用戶首次通過 Google 登入、註冊時，正確存取用戶資訊，並在之後每次登入時能夠正確獲取用戶資訊，而不會重複建立或覆蓋已有資訊。
-        -  GoogleSignInController：負責處理所有 Google 登入相關的邏輯。
-        -  FirebaseController：負責處理 Firebase 認證和使用者資料相關的邏輯。
-        -  這樣的設計可以讓 GoogleSignInController 專注於 Google 登入，而 FirebaseController 則負責處理從 Firebase 獲取用戶資訊的邏輯。
- 
- ---------------------------------------- ---------------------------------------- ----------------------------------------
- 
- C_1. Google 登入流程：
-    * 點擊 Google 登入按鈕：
-        - 觸發 googleLoginButtonTapped。
-    
-    * 調用 GoogleSignInController 進行 Google 登入：
-        - 在 googleLoginButtonTapped 中，調用 GoogleSignInController.shared.signInWithGoogle ，傳入目前的視圖控制器（presentingViewController）和一個完成的回調。
-        - GoogleSignInController 負責處理 Google 登入邏輯。
-    
-    * Google登入介面：
-        - GoogleSignInController 調用 GIDSignIn.sharedInstance.signIn(withPresenting:)，顯示 Google 登入介面，用戶可以選擇或輸入 Google 帳號進行登入。
-
-    * 獲取 Google 登入結果：
-        - 用戶完成登入後，Google 登入介面結束，GoogleSignInController 的完成回調被調用。
-        - 如果登入成功 Google 返回用戶資訊、身份驗證Token。
- 
-    * 使用 Google 憑證登入 Firebase：
-        - GoogleSignInController 使用 GoogleAuthProvider.credential(withIDToken:accessToken:) 建立一個 Firebase 憑證。
-        - 使用 Auth.auth().signIn(with:) 將 Google 憑證傳遞給 Firebase 進行身份驗證。
- 
-    * 處理 Firebase 登入結果：
-        - 如果 Firebase 登入成功，將調用完成回調，並傳遞 AuthDataResult 對象。
-        - 在 googleLoginButtonTapped 的回調中，根據結果更新 UI。
-
-    * 獲取用戶詳細資訊：
-        - 如果登入成功，調用 FirebaseController.shared.getCurrentUserDetails 從 Firestore 獲取當前用戶的詳細資訊。
-    
-    * 更新 UI：
-        - 根據獲取的用戶詳細資訊，調用 NavigationHelper.navigateToMainTabBar ，導航到主介面。
- 
- ---------------------------------------- ---------------------------------------- ----------------------------------------
- 
- D. 關於顯示 HUD 的時機：
-    
-    - 原先在使用 Google 、 Apple 登入時，在「Google 或 Apple 提供的登錄介面」的時候就會出現 HUD，為了避免讓使用者困惑，因此進行修正。
- 
-    * 在 GoogleSignInController.shared.signInWithGoogle 和 AppleSignInController.shared.signInWithApple 的場景中。
-        - 通常情況下，使用者會先看到 Google 或 Apple 提供的登錄介面（例如 Google 的選擇帳號頁面或 Apple 的輸入密碼頁面）。這些介面本身是系統級別的彈出視窗，它們會遮蓋 App 畫面。
- 
-    * HUD 的顯示邏輯
-        - 不要在調用 Google 或 Apple 登錄時立即顯示 HUD：因為這樣會讓用戶誤以為系統正在進行某種操作，而實際上他們需要進行選擇帳號或輸入憑證的操作。
-        - 改在獲得 Google 或 Apple 憑證後顯示 HUD：這樣當 HUD 出現時，確保用戶已經完成了帳號選擇或密碼輸入的過程，然後可以顯示“登入中...”來指示正在處理憑證並與 Firebase 進行認證。
- 
-    * 結論
-        - 避免在用戶需要交互時顯示 HUD，比如選擇 Google 帳號或輸入 Apple 密碼。
-        - 在完成用戶交互並開始後台處理時顯示 HUD，這樣可以更好地指示正在進行的操作，並避免用戶誤解。
- */
-
 
 // MARK: - LoginViewController 重點筆記
 /**
@@ -174,12 +67,15 @@
  `* 職責劃分明確`
 
  - `LoginView 負責 UI 呈現`：
+ 
    - `LoginView` 包含所有登入相關的視圖元件，統一管理 UI 佈局，並簡化主控制器的視圖配置代碼。
 
  - `LoginActionHandler 處理按鈕行為`：
+ 
    - `LoginActionHandler` 為 `LoginView` 的按鈕配置具體的交互行為，保持視圖邏輯與控制器邏輯的分離。
 
  - `LoginViewDelegate 處理用戶行為邏輯`：
+ 
    - 透過實現 `LoginViewDelegate`，`LoginViewController` 可以集中處理與用戶操作有關的邏輯，例如登入操作、頁面跳轉等。
 
  ----------------------------------------------
@@ -207,7 +103,6 @@
  */
 
 
-
 // MARK: - LoginViewController 的角色和設計
 /**
 
@@ -218,6 +113,7 @@
  - `LoginViewController` 是整個登入畫面的主控制器，負責處理使用者與登入畫面的互動，並實作具體的登入邏輯。
  
  - 它主要與三個組件交互：
+ 
     - `LoginActionHandler`: 負責處理 `LoginView` 中按鈕的行為。
     - `LoginView`: 視圖組件，包含了所有的 UI 元件，負責顯示登入頁面。
     - `LoginViewDelegate`: 定義登入操作後的回調，用於將使用者的行為從 `LoginView` 傳遞給 `LoginViewController`，讓控制器執行具體的業務邏輯。
@@ -237,29 +133,43 @@
  `1. LoginView`
  
  - `職責`: 顯示登入頁面的所有 UI 元件，如標題、輸入框、登入按鈕等。
+ 
  - `關聯性`:
+ 
    - `LoginActionHandler`: `LoginActionHandler` 透過 `getter` 方法取得 `LoginView` 的各個按鈕，然後綁定點擊事件。`LoginView` 不直接處理按鈕的點擊行為。
    - `LoginViewController`: 被 `LoginViewController` 初始化並設為主視圖。
 
+ ---
+ 
  `2. LoginActionHandler`
  
  - `職責`: 設置 `LoginView` 各個按鈕的點擊行為，並處理與按鈕的互動。
+ 
  - `關聯性`:
+ 
    - `LoginView`: 在初始化時，將 `LoginView` 傳入 `LoginActionHandler` 中，並透過 getter 取得按鈕，進而設置行為。
    - `LoginViewDelegate`: `LoginActionHandler` 透過 delegate 通知 `LoginViewController` 使用者點擊了哪個按鈕。
    - `LoginViewController`: `LoginViewController` 初始化 `LoginActionHandler`，並把 `LoginView` 和 `LoginViewDelegate` 傳入。
 
+ ---
+
  `3. LoginViewDelegate`
  
  - `職責`: 用於定義登入頁面上的所有互動行為的回調方法。
+ 
  - `關聯性`:
+ 
    - `LoginActionHandler`: 當按鈕被點擊時，`LoginActionHandler` 透過 `delegate` 呼叫相應的回調方法。
    - `LoginViewController`: 實作了 `LoginViewDelegate`，以便在使用者點擊按鈕時執行具體的邏輯。
+
+ ---
 
  `4. LoginViewController`
  
  - `職責`: 控制整個登入頁面，負責實作登入、第三方登入、註冊跳轉等業務邏輯。
+ 
  - `關聯性`:
+ 
    - `LoginView`: 初始化並設為 `view`，用於展示 UI。
    - `LoginActionHandler`: 初始化並設置 `view` 和 `delegate`，用於處理 `LoginView` 中的按鈕行為。
    - `LoginViewDelegate`: `LoginViewController` 自身實作 `LoginViewDelegate`，接收來自 `LoginActionHandler` 的事件回調，並執行相應的業務邏輯。
@@ -269,9 +179,11 @@
 ` * Summary: LoginViewController 的設計關係與原因`
  
  - `模組化與責任劃分`：
+ 
     - `LoginViewController` 的設計將顯示邏輯（`LoginView`）、行為邏輯（`LoginActionHandler`）、事件回調（`LoginViewDelegate`）和業務邏輯（`LoginViewController` 本身）進行了清晰的模組化和責任劃分。
  
  - `高內聚、低耦合`：
+ 
     - `LoginView` 專注於 UI，`LoginActionHandler` 專注於使用者行為處理，`LoginViewDelegate` 用於事件的傳遞。
     - 而 `LoginViewController` 集中處理具體的業務邏輯，從而達成高內聚低耦合的效果，易於維護和擴展。
  */
@@ -284,49 +196,62 @@
 
  `* What：`
  
- - `loginViewDidTapRememberMeButton` 是用來處理當使用者點擊「記住我」按鈕時的操作邏輯。它會根據使用者是否選中「記住我」選項，進行保存或刪除帳號密碼的操作。
-
- ----------------------------------------
+ - `loginViewDidTapRememberMeButton` 用於處理當使用者點擊「記住我」按鈕時的操作邏輯。
+ - 根據「記住我」的狀態 (`isSelected`)，決定是否 **保存** 或 **刪除** 使用者的帳號與密碼。
+ 
+ ------
 
  `* Why：`
  
- - 此方法的目的是幫助使用者在下次登入時自動填入先前的帳號和密碼。當選中「記住我」時，會保存使用者輸入的帳號和密碼；當取消選中時，則刪除之前保存的帳號密碼，保證數據的安全和隱私。
-
- ----------------------------------------
+ - 目的是 **提升使用者體驗**，讓已勾選「記住我」的使用者，在下次登入時自動填入帳號與密碼，無需重複輸入。
+ - **確保安全性與隱私**，當使用者取消「記住我」時，會刪除已儲存的憑證，防止帳號資料留存於裝置中。
+ 
+ ------
 
  `* How：`
  
- `1. 取得用戶的 Email 和密碼：`
+ `1. 取得當前使用者的 Email 和密碼：`
  
-    - 使用 `loginView.email` 和 `loginView.password` 方法來取得用戶當前輸入的 Email 和密碼。
-
- ----------------------------------------
-
- `2. 檢查「記住我」按鈕是否被選中：`
+    - 透過 `loginView.email` 和 `loginView.password` 取得使用者輸入的登入資訊。
  
-    - `若選中（isSelected 為 true）`：
-      - 檢查用戶是否輸入了有效的帳號和密碼。
-      - `如果有輸入`：
-        - 使用 `KeychainManager` 保存帳號和密碼，確保它們安全存儲。
-        - 將「記住我」按鈕的狀態設置為選中 (`true`)。
-        - 將 `UserDefaults` 中的 `RememberMe` 設為 `true`，以記錄用戶選中「記住我」的狀態。
-      - `如果沒有輸入`：
-        - 顯示警告，提示用戶必須輸入電子郵件和密碼。
-        - 將「記住我」按鈕的狀態設置為未選中 (`false`)。
-        - 確保 `UserDefaults` 中的 `RememberMe` 狀態為 `false`，避免錯誤保存選中狀態。
+ ---
+ 
+ `2. 根據「記住我」的狀態 (`isSelected`) 進行不同處理：`
+ 
+ - `isSelected == true`（選中「記住我」）：
+ 
+   1. 驗證 Email 和密碼是否為有效輸入
+ 
+      - 若 **未輸入** Email 或密碼，則：
+        - 顯示警告 (`AlertService`)，提示用戶必須輸入電子郵件與密碼。
+        - 取消「記住我」的選中狀態 (`setRememberMeState(false)`)。
+        - `return`，避免存入無效資料。
+ 
+   2. 存入帳號密碼
+ 
+      - 使用 `KeychainManager` 將 Email & 密碼安全存儲。
+      - 將 `UserDefaults` 設定 `RememberMe = true`，記錄使用者的選擇。
+ 
+ ---
+ 
+ - `isSelected == false`（取消「記住我」）：
+ 
+   1. 刪除帳號密碼
+ 
+      - 使用 `KeychainManager` **刪除** 先前存儲的 Email & 密碼，確保裝置中不再留存憑證。
+ 
+   2. 更新「記住我」狀態
+ 
+      - 將 `UserDefaults` 設為 `false`，確保使用者的選擇被記錄。
+      - 將「記住我」按鈕狀態設為 `false`，避免 UI 顯示錯誤資訊。
 
-    - `若未選中（isSelected 為 false）`：
-      - 使用 `KeychainManager` 刪除之前保存的帳號和密碼。
-      - 將「記住我」按鈕的狀態設置為未選中 (`false`)。
-      - 將 `UserDefaults` 中的 `RememberMe` 設為 `false`，以清除「記住我」的狀態。
-
- ----------------------------------------
+ ------
 
  `* 總結：`
  
- - `選中「記住我」時`，必須輸入有效的帳號和密碼，才會保存這些信息，並將「記住我」狀態設為選中。
- - `未輸入有效資料，或 取消選中「記住我」時`，將確保刪除所有保存的帳號和密碼信息，並將狀態設為未選中。
- - 此邏輯確保只有在符合條件（即有有效帳號和密碼）時，才能選中「記住我」，避免在不正確情況下保存錯誤的狀態。
+ - 「記住我」功能只有在使用者輸入有效帳號 & 密碼時才會生效，確保不會存入無效憑證。
+ - 安全性考量：當使用者取消選取時，會**完全刪除**帳號與密碼，避免資料殘留。
+ - 使用者體驗最佳化：允許下次登入時自動填入憑證，但確保用戶能自由開關此功能。
  */
 
 
@@ -405,14 +330,54 @@
  */
 
 
+// MARK: - 處理「Remember Me」按鈕的流程
+/**
+ 
+ ## 處理「Remember Me」按鈕的流程：
+ 
+ - 當用戶點擊 "Remember Me" 按鈕時，會將當前的電子郵件和密碼存儲到 `Keychain` 中。
+ 
+ `1.先檢查TextField是否有填寫：`
+ 
+    - 原本如果用戶先點擊 "`Remember Me`" 按鈕再輸入帳號密碼，那麼之前的空數據或錯誤的數據就會被存儲。
+    - 因此我後來改成：用戶點擊 "`Remember Me`" 按鈕後檢查當前的電子郵件和密碼是否已經填寫好。如果未填寫好，提示用戶先完成輸入。
+ 
+ ---
+ 
+ `2. Remember Me 按鈕的邏輯和 loginButtonTapped 的關聯性：`
+ 
+    - `Remember Me` 按鈕的作用是在用戶選中時記住電子郵件和密碼，而 `loginButtonTapped` 則是在用戶點擊登錄按鈕後執行登錄操作。
+ 
+ ---
+
+ 3.作業流程（確保這個流程的關鍵在於順序的控制和條件的檢查。）：
+ 
+    - 用戶輸入電子郵件和密碼。
+    -  用戶點擊 Remember Me 按鈕（可選）。
+    -  用戶點擊 Login 按鈕，執行登錄操作。
+    -  如果用戶選中了 Remember Me，則會將電子郵件和密碼存儲到 Keychain 中。
+    -  在下一次 App 啟動時，如果檢測到 Remember Me 被選中，則自動填充電子郵件和密碼。
+ 
+ */
+
+
+
 
 // MARK: - (v)
 
 import UIKit
 import FirebaseAuth
 
-/// 登入介面：負責處理登入相關的邏輯與畫面
-/// - 主要職責包括：
+/// `LoginViewController`
+/// - 負責管理登入流程，包括 UI 顯示、使用者輸入處理、認證邏輯等。
+/// - 採用 `LoginView` 作為 UI，並透過 `LoginActionHandler` 來處理使用者行為，確保**UI 和業務邏輯解耦**。
+///
+/// - 主要功能：
+///   1. 初始化 `LoginView`，顯示登入頁面
+///   2. 處理登入行為（Email、Google、Apple 登入）
+///   3. 管理「記住我」的功能，從 `Keychain` 加載/儲存登入資訊
+///
+/// - 職責架構：
 ///   1. 初始化並配置 `LoginView` 作為主要的 UI 畫面。
 ///   2. 通過 `LoginActionHandler` 設置各按鈕的行為，將 UI 操作與邏輯處理解耦。
 ///   3. 通過實現 `LoginViewDelegate`，將使用者的操作行為進行相應的邏輯處理。
@@ -426,8 +391,9 @@ class LoginViewController: UIViewController {
     // MARK: - Handlers
     
     /// `LoginActionHandler` 負責處理 `LoginView` 中按鈕的行為
+    ///
     /// - 設定 `LoginView` 和 `LoginViewDelegate` 以實現事件與邏輯的分離
-    private var actionHandler: LoginActionHandler?
+    private var loginActionHandler: LoginActionHandler?
     
     // MARK: - Lifecycle Methods
     
@@ -436,9 +402,10 @@ class LoginViewController: UIViewController {
         view = loginView
     }
     
-    /// 設置 `畫面元件` 與 `actionHandler`
-    /// - 初始化 `LoginActionHandler` 並設定按鈕行為
-    /// - 如果有記住的用戶資料，則嘗試加載用戶的登入資訊
+    /// 初始化登入頁面
+    ///
+    /// - 設定按鈕行為 (`LoginActionHandler`)
+    /// - 檢查是否需要加載記住的登入資訊
     override func viewDidLoad() {
         super.viewDidLoad()
         setupActionHandler()
@@ -448,15 +415,17 @@ class LoginViewController: UIViewController {
     // MARK: - Action Handler
     
     /// 初始化並設置 `LoginActionHandler`
+    ///
     /// - `LoginActionHandler` 負責處理 `LoginView` 中的按鈕行為
     /// - 通過設置 view 與 delegate，將 UI 行為與邏輯解耦合，增加程式碼的模組化和可維護性
     private func setupActionHandler() {
-        actionHandler = LoginActionHandler(view: loginView, delegate: self)
+        loginActionHandler = LoginActionHandler(view: loginView, delegate: self)
     }
     
     // MARK: - Dismiss Keyboard
     
     /// 統一的鍵盤收起方法
+    ///
     /// - 收起當前視圖中活動的鍵盤
     /// - 使用於各種按鈕操作開始前，確保畫面整潔、避免鍵盤遮擋重要資訊或 HUD
     private func dismissKeyboard() {
@@ -465,43 +434,44 @@ class LoginViewController: UIViewController {
     
     // MARK: - User Data Management
     
-    /// 在 App 啟動時存取並加載用戶資訊（若有記住我選項被勾選）
-    /// - 首先檢查 UserDefaults 中是否有勾選 "記住我" 選項
-    /// - 如果 "記住我" 選項被勾選，則設置 `RememberMe` 按鈕狀態為選中
-    /// - 隨後，從 Keychain 加載用戶的電子郵件和密碼，並填入到 `LoginView` 的相應輸入框中
+    /// 嘗試載入已記住的使用者登入資訊（若啟用了「記住我」）
+    ///
+    /// - 先檢查 `UserDefaults` 是否啟用了「記住我」選項
+    /// - 若已啟用，則嘗試從 `Keychain` 加載電子郵件和密碼
+    /// - 若成功載入，則填入 `LoginView` 的輸入框，並更新「記住我」按鈕狀態
     private func loadRememberedUser() {
-        guard shouldLoadRememberedUser() else { return }
-        loginView.setRememberMeButtonSelected(true)
+        guard UserDefaults.standard.value(forKey: "RememberMe") as? Bool ?? false else { return }
         loadUserCredentials()
     }
     
-    /// 判斷是否應加載用戶信息
-    /// - Returns: 若應該加載用戶信息則返回 true，否則返回 false
-    private func shouldLoadRememberedUser() -> Bool {
-        return UserDefaults.standard.value(forKey: "RememberMe") as? Bool ?? false
-    }
-    
-    /// 從 Keychain 中加載用戶憑證並填入相應的輸入框
+    /// 從 `Keychain` 載入使用者憑證並填入登入輸入框
+    ///
+    /// - 功能:
+    ///   1. 嘗試從 Keychain 加載已存儲的使用者帳號與密碼
+    ///   2. 若成功載入，則填入 `LoginView` 的輸入框
+    ///   3. 更新「記住我」的按鈕狀態，以確保 UI 與資料同步
+    ///
+    /// - 設計考量:
+    ///   - 提高使用者體驗: 若 `Remember Me` 選項啟用，則使用者無需重新輸入帳密
+    ///   - 確保安全性: 資料存儲於 `Keychain`，不會被 iOS 自動清除
+    ///   - 避免 UI 失配: 只有成功載入 Keychain 資料後，才更新「記住我」按鈕狀態
     private func loadUserCredentials() {
-        if let emailData = KeychainManager.load(key: "userEmail"),
-           let passwordData = KeychainManager.load(key: "userPassword") {
-            setEmailAndPassword(emailData: emailData, passwordData: passwordData)
-        }
+        
+        /// 嘗試從 `KeychainManager` 讀取使用者的 Email & 密碼
+        guard let emailData = KeychainManager.load(key: "userEmail"),
+              let passwordData = KeychainManager.load(key: "userPassword"),
+              let email = String(data: emailData, encoding: .utf8),
+              let password = String(data: passwordData, encoding: .utf8) else { return }
+        
+        /// 將讀取到的帳號與密碼填入 UI
+        loginView.setEmail(email)
+        loginView.setPassword(password)
+        
+        /// 確保「記住我」按鈕與 Keychain 資料同步
+        /// - 只有成功載入 Email & 密碼後，才設定 `Remember Me` 為開啟狀態
+        setRememberMeState(isSelected: true)
     }
     
-    /// 將加載的電子郵件和密碼設置到 loginView 中
-    /// - Parameters:
-    ///   - emailData: 加載的電子郵件數據
-    ///   - passwordData: 加載的密碼數據
-    private func setEmailAndPassword(emailData: Data, passwordData: Data) {
-        if let email = String(data: emailData, encoding: .utf8) {
-            loginView.setEmail(email)
-        }
-        
-        if let password = String(data: passwordData, encoding: .utf8) {
-            loginView.setPassword(password)
-        }
-    }
 }
 
 // MARK: - LoginViewDelegate
@@ -509,15 +479,26 @@ extension LoginViewController: LoginViewDelegate {
     
     // MARK: - Standard Login Actions
     
-    /// 當使用者點擊登入按鈕時的處理邏輯
-    /// - 檢查電子郵件和密碼是否輸入
-    /// - 進行登入請求，若成功則導向主頁面
-    /// - 在登入流程開始前先收起鍵盤，確保畫面整潔並避免影響 HUD 顯示
+    /// 處理使用者點擊登入按鈕的行為
+    ///
+    /// - 功能:
+    ///   1.檢查電子郵件與密碼是否輸入
+    ///   2.顯示 HUD (載入動畫)，提供即時反饋
+    ///   3.透過 `EmailAuthController` 進行 Firebase 登入
+    ///   4.登入成功後，導航至主頁面
+    ///   5.若發生錯誤，則根據錯誤類型提供適當的錯誤提示
+    ///
+    /// - 錯誤處理:
+    ///   - 若 `email` 或 `password` 為空，則彈出警告視窗 (`AlertService`)
+    ///   - 若 `EmailAuthController` 拋出 `EmailAuthError`，則顯示對應的錯誤訊息
+    ///   - 若發生未知錯誤，則顯示通用錯誤訊息
     func loginViewDidTapLoginButton() {
         dismissKeyboard()
+        
         let email = loginView.email
         let password = loginView.password
         
+        /// 檢查是否輸入帳號與密碼
         guard !email.isEmpty, !password.isEmpty else {
             AlertService.showAlert(withTitle: "錯誤", message: "請輸入電子郵件和密碼", inViewController: self)
             return
@@ -526,50 +507,126 @@ extension LoginViewController: LoginViewDelegate {
         HUDManager.shared.showLoading(text: "Logging in...")
         Task {
             do {
-                _ = try await EmailSignInController.shared.loginUser(withEmail: email, password: password)
-                NavigationHelper.navigateToMainTabBar(from: self)
-            } catch {
+                _ = try await EmailAuthController.shared.loginUser(withEmail: email, password: password)
+                NavigationHelper.navigateToMainTabBar()
+            } catch let error as EmailAuthError {
                 AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
+            } catch {
+                AlertService.showAlert(withTitle: "錯誤", message: "發生未知錯誤，請稍後再試。", inViewController: self)
             }
+            
             HUDManager.shared.dismiss()
         }
     }
     
+    
     // MARK: - Google Login Actions
     
-    /// 當使用者點擊 Google 登入按鈕時的處理邏輯
-    /// - 使用 Google 提供的方法進行登入，若成功則導向主頁面
-    /// - 登入過程開始前收起鍵盤，避免鍵盤遮擋 HUD
+    /// 當使用者點擊 Google 登入按鈕時，處理登入流程
+    ///
+    /// - 行為:
+    ///   1. 先關閉鍵盤，避免影響登入 UI 顯示
+    ///   2. 顯示載入動畫（HUD），提供使用者即時反饋
+    ///   3. 調用 `GoogleSignInController.shared.signInWithGoogle` 進行 Google 登入
+    ///   4. 登入成功後，導向主頁面 (`MainTabBar`)
+    ///   5. 若登入失敗，則根據錯誤類型進行適當處理
+    ///
+    /// - 錯誤處理:
+    ///   - 若為 `GoogleSignInError`，調用 `handleGoogleSignInError` 統一處理
+    ///   - 其他錯誤則顯示通用錯誤訊息
     func loginViewDidTapGoogleLoginButton() {
         dismissKeyboard()
         Task {
             HUDManager.shared.showLoading(text: "Logging in...")
             do {
                 _ = try await GoogleSignInController.shared.signInWithGoogle(presentingViewController: self)
-                NavigationHelper.navigateToMainTabBar(from: self)
+                NavigationHelper.navigateToMainTabBar()
             } catch {
-                AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
+                handleGoogleSignInError(error)
             }
             HUDManager.shared.dismiss()
+        }
+    }
+    
+    /// Google 登入錯誤處理
+    ///
+    /// - 依照錯誤類型決定應對策略:
+    ///   - `userCancelled`: 使用者主動取消登入，不需提示錯誤
+    ///   - `accessDenied`: 使用者拒絕授權，也不需彈出錯誤訊息
+    ///   - 其他錯誤: 顯示適當錯誤訊息，提示使用者
+    ///
+    /// - 設計考量:
+    ///   - 避免彈出多餘的錯誤警告，減少使用者困擾
+    ///
+    /// - 參數:
+    ///   - `error`: 錯誤資訊，可能是 `GoogleSignInError` 或其他 `Error`
+    private func handleGoogleSignInError(_ error: Error) {
+        if let googleError = error as? GoogleSignInError {
+            switch googleError {
+            case .userCancelled, .accessDenied:
+                print("[LoginViewController]: 使用者取消或拒絕授權 Google 登入，無需顯示錯誤訊息。")
+                return
+            default:
+                AlertService.showAlert(withTitle: "錯誤", message: googleError.localizedDescription ?? "發生未知錯誤", inViewController: self)
+            }
+        } else {
+            // 處理一般錯誤
+            AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
         }
     }
     
     // MARK: - Apple Login Actions
     
     /// 當使用者點擊 Apple 登入按鈕時的處理邏輯
-    /// - 使用 Apple 提供的方法進行登入，若成功則導向主頁面
-    /// - 登入過程開始前收起鍵盤，避免鍵盤遮擋 HUD
+    ///
+    /// - 行為:
+    ///   1. 收起鍵盤，確保 UI 整潔
+    ///   2. 顯示 HUD (載入動畫)，提供使用者即時反饋
+    ///   3. 調用 `AppleSignInController.shared.signInWithApple` 進行 Apple 登入
+    ///   4. 若登入成功，則導向主頁 (`MainTabBar`)
+    ///   5. 若登入失敗，則統一交給 `handleAppleSignInError` 處理錯誤
+    ///
+    /// - 錯誤處理:
+    ///   - 若為 `AppleSignInError.userCancelled`，則不彈出錯誤訊息
+    ///   - 其他錯誤則顯示 `AlertService`
     func loginViewDidTapAppleLoginButton() {
         dismissKeyboard()
         Task {
             HUDManager.shared.showLoading(text: "Logging in...")
             do {
                 _ = try await AppleSignInController.shared.signInWithApple(presentingViewController: self)
-                NavigationHelper.navigateToMainTabBar(from: self)
+                NavigationHelper.navigateToMainTabBar()
             } catch {
-                AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
+                handleAppleSignInError(error)
             }
             HUDManager.shared.dismiss()
+        }
+    }
+    
+    /// Apple 登入錯誤處理
+    ///
+    /// - 依照錯誤類型決定應對策略:
+    ///   - `userCancelled`: 使用者主動取消登入，不需提示錯誤
+    ///   - `appleIDNotSignedIn`:未登入 Apple ID，無需顯示錯誤訊息
+    ///   - 其他錯誤: 顯示適當錯誤訊息，提示使用者
+    ///
+    /// - 設計考量:
+    ///   - 避免彈出多餘的錯誤警告，減少使用者困擾
+    ///
+    /// - 參數:
+    ///   - `error`: 錯誤資訊，可能是 `AppleSignInError` 或一般 `Error`
+    private func handleAppleSignInError(_ error: Error) {
+        if let appleError = error as? AppleSignInError {
+            switch appleError {
+            case .userCancelled, .appleIDNotSignedIn:
+                print("[LoginViewController]: 使用者取消或未登入 Apple ID，無需顯示錯誤訊息。")
+                return
+            default:
+                AlertService.showAlert(withTitle: "錯誤", message: appleError.localizedDescription ?? "發生未知錯誤", inViewController: self)
+            }
+        } else {
+            // 處理一般錯誤
+            AlertService.showAlert(withTitle: "錯誤", message: error.localizedDescription, inViewController: self)
         }
     }
     
@@ -587,46 +644,38 @@ extension LoginViewController: LoginViewDelegate {
     
     // MARK: - Remember Me Functionality
     
-    /// 當使用者點擊 "記住我" 按鈕時的處理邏輯
-    /// - 根據用戶選擇是否保存電子郵件和密碼
+    /// 「記住我」邏輯
+    ///
+    /// - 若勾選「記住我」，則儲存 Email & 密碼至 `Keychain`
+    /// - 若取消勾選，則刪除 `Keychain` 中的登入資訊
     func loginViewDidTapRememberMeButton(isSelected: Bool) {
         let email = loginView.email
         let password = loginView.password
-        
-        if isSelected {
-            handleRememberMeSelected(email: email, password: password)
-        } else {
-            handleRememberMeDeselected()
-        }
+        handleRememberMe(isSelected: isSelected, email: email, password: password)
     }
     
     // MARK: - Private Remember Me Methods
     
-    /// 處理選中「記住我」的邏輯
-    private func handleRememberMeSelected(email: String, password: String) {
-        /// 若未輸入有效的帳號和密碼，顯示錯誤提示
-        guard !email.isEmpty, !password.isEmpty else {
-            AlertService.showAlert(withTitle: "錯誤", message: "請輸入電子郵件和密碼", inViewController: self)
-            setRememberMeState(isSelected: false)
-            return
+    /// 處理「記住我」行為
+    private func handleRememberMe(isSelected: Bool, email: String, password: String) {
+        if isSelected {
+            /// 若未輸入有效的帳號和密碼，顯示錯誤提示
+            guard !email.isEmpty, !password.isEmpty else {
+                AlertService.showAlert(withTitle: "錯誤", message: "請輸入電子郵件和密碼", inViewController: self)
+                setRememberMeState(isSelected: false)
+                return
+            }
+            /// 保存用戶的帳號和密碼
+            KeychainManager.save(key: "userEmail", data: Data(email.utf8))
+            KeychainManager.save(key: "userPassword", data: Data(password.utf8))
+            
+        } else {
+            /// 處理取消選中「記住我」的邏輯
+            KeychainManager.delete(key: "userEmail")
+            KeychainManager.delete(key: "userPassword")
         }
         
-        /// 保存用戶的帳號和密碼
-        KeychainManager.save(key: "userEmail", data: Data(email.utf8))
-        KeychainManager.save(key: "userPassword", data: Data(password.utf8))
-        
-        /// 將「記住我」的狀態設置為`選中`
-        setRememberMeState(isSelected: true)
-    }
-    
-    /// 處理取消選中「記住我」的邏輯
-    private func handleRememberMeDeselected() {
-        /// 刪除已保存的帳號和密碼
-        KeychainManager.delete(key: "userEmail")
-        KeychainManager.delete(key: "userPassword")
-        
-        /// 將「記住我」的狀態設置為`未選中`
-        setRememberMeState(isSelected: false)
+        setRememberMeState(isSelected: isSelected)
     }
     
     /// 設置「記住我」按鈕的狀態和 UserDefaults 的狀態

@@ -1,5 +1,5 @@
 //
-//  EmailSignInControllerTests.swift
+//  EmailAuthControllerTests.swift
 //  HW_OrderCoffeeAppTests
 //
 //  Created by 曹家瑋 on 2024/8/19.
@@ -11,7 +11,7 @@
  import Firebase
  @testable import HW_OrderCoffeeApp
 
-class EmailSignInControllerTests: XCTestCase {
+class EmailAuthControllerTests: XCTestCase {
     
     override class func setUp() {
         super.setUp()
@@ -48,7 +48,7 @@ class EmailSignInControllerTests: XCTestCase {
         let fullName = "Test User"
         
         do {
-            let authResult = try await EmailSignInController.shared.registerUser(withEmail: email, password: password, fullName: fullName)
+            let authResult = try await EmailAuthController.shared.registerUser(withEmail: email, password: password, fullName: fullName)
             XCTAssertEqual(authResult.user.email, email)
         } catch {
             XCTFail("Registration should succeed, but failed with error: \(error.localizedDescription)")
@@ -63,7 +63,7 @@ class EmailSignInControllerTests: XCTestCase {
         
         // 先註冊一個用戶
         do {
-            _ = try await EmailSignInController.shared.registerUser(withEmail: email, password: password, fullName: "Test User")
+            _ = try await EmailAuthController.shared.registerUser(withEmail: email, password: password, fullName: "Test User")
         } catch {
             XCTFail("Failed to register user for login test: \(error.localizedDescription)")
             return
@@ -71,7 +71,7 @@ class EmailSignInControllerTests: XCTestCase {
         
         // 測試登入
         do {
-            let authResult = try await EmailSignInController.shared.loginUser(withEmail: email, password: password)
+            let authResult = try await EmailAuthController.shared.loginUser(withEmail: email, password: password)
             XCTAssertEqual(authResult.user.email, email)
         } catch {
             XCTFail("Login should succeed with valid credentials, but failed with error: \(error.localizedDescription)")
@@ -84,7 +84,7 @@ class EmailSignInControllerTests: XCTestCase {
         let password = "WrongPassword"
         
         do {
-            _ = try await EmailSignInController.shared.loginUser(withEmail: email, password: password)
+            _ = try await EmailAuthController.shared.loginUser(withEmail: email, password: password)
             XCTFail("Login should fail with invalid credentials, but succeeded")
         } catch let error as NSError {
             XCTAssertEqual(error.code, AuthErrorCode.userNotFound.rawValue)

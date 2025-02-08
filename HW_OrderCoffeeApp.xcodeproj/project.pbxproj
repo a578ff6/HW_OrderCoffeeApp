@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		931B428D2D539411008D5505 /* SignUpValidationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931B428C2D539411008D5505 /* SignUpValidationManager.swift */; };
+		931B428F2D55E026008D5505 /* EmailAuthError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931B428E2D55E026008D5505 /* EmailAuthError.swift */; };
+		931B42932D564C07008D5505 /* GoogleSignInError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931B42922D564C07008D5505 /* GoogleSignInError.swift */; };
+		931B42952D564DC7008D5505 /* AppleSignInError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931B42942D564DC7008D5505 /* AppleSignInError.swift */; };
 		932258D32C9410F4004EA2D9 /* FavoriteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 932258D22C9410F4004EA2D9 /* FavoriteManager.swift */; };
 		934FB54E2CF749B500757C7C /* LoginViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB54D2CF749B500757C7C /* LoginViewDelegate.swift */; };
 		934FB5582CF8A6FA00757C7C /* LoginSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934FB5572CF8A6FA00757C7C /* LoginSeparatorView.swift */; };
@@ -111,7 +115,6 @@
 		9353747C2CCD7C9A00794A63 /* LocationManagerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353747B2CCD7C9A00794A63 /* LocationManagerHandler.swift */; };
 		9353747E2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9353747D2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift */; };
 		935B16812D50F039007BB90B /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935B16802D50F039007BB90B /* SplashViewController.swift */; };
-		935B168A2D51C8CC007BB90B /* SplashViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935B16892D51C8CC007BB90B /* SplashViewModel.swift */; };
 		935B168C2D51E733007BB90B /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935B168B2D51E733007BB90B /* SplashView.swift */; };
 		936CFFBD2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */; };
 		936CFFBF2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936CFFBE2C6BBBED004B8724 /* HW_OrderCoffeeAppUITestsLaunchTests.swift */; };
@@ -127,7 +130,7 @@
 		936E09B92CF4910A0092F246 /* SearchStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E09B82CF4910A0092F246 /* SearchStatusView.swift */; };
 		936E09BD2CF4F6310092F246 /* HomePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E09BC2CF4F6310092F246 /* HomePageView.swift */; };
 		936E09BF2CF5D7990092F246 /* HomePageViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936E09BE2CF5D7990092F246 /* HomePageViewDelegate.swift */; };
-		93755BF52C738D77002570A5 /* EmailSignInControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BF42C738D77002570A5 /* EmailSignInControllerTests.swift */; };
+		93755BF52C738D77002570A5 /* EmailAuthControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BF42C738D77002570A5 /* EmailAuthControllerTests.swift */; };
 		93755BFA2C7700FD002570A5 /* PhotoPickerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */; };
 		93755BFC2C79D20C002570A5 /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BFB2C79D20C002570A5 /* EditProfileViewController.swift */; };
 		93755BFE2C79DEAA002570A5 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93755BFD2C79DEAA002570A5 /* EditProfileView.swift */; };
@@ -418,7 +421,7 @@
 		93B9DC892C368DA80050BC3F /* OrderItemCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B9DC882C368DA80050BC3F /* OrderItemCollectionViewCell.swift */; };
 		93BD48B02C57CABF00144E7F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 93BD48AF2C57CABF00144E7F /* GoogleService-Info.plist */; };
 		93BD48B22C57CB9000144E7F /* AppleSignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD48B12C57CB9000144E7F /* AppleSignInController.swift */; };
-		93BD48C32C5CE5B500144E7F /* EmailSignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD48C22C5CE5B500144E7F /* EmailSignInController.swift */; };
+		93BD48C32C5CE5B500144E7F /* EmailAuthController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD48C22C5CE5B500144E7F /* EmailAuthController.swift */; };
 		93BD48CD2C662A9700144E7F /* HW_OrderCoffeeAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD48CC2C662A9700144E7F /* HW_OrderCoffeeAppTests.swift */; };
 		93BD48D62C6751BB00144E7F /* FirebaseControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD48D52C6751BB00144E7F /* FirebaseControllerTests.swift */; };
 		93DB1D2B2C439F8900BA2CC1 /* NavigationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DB1D2A2C439F8900BA2CC1 /* NavigationHelper.swift */; };
@@ -469,6 +472,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		931B428C2D539411008D5505 /* SignUpValidationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpValidationManager.swift; sourceTree = "<group>"; };
+		931B428E2D55E026008D5505 /* EmailAuthError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailAuthError.swift; sourceTree = "<group>"; };
+		931B42922D564C07008D5505 /* GoogleSignInError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInError.swift; sourceTree = "<group>"; };
+		931B42942D564DC7008D5505 /* AppleSignInError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInError.swift; sourceTree = "<group>"; };
 		932258D22C9410F4004EA2D9 /* FavoriteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteManager.swift; sourceTree = "<group>"; };
 		934FB54D2CF749B500757C7C /* LoginViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewDelegate.swift; sourceTree = "<group>"; };
 		934FB5572CF8A6FA00757C7C /* LoginSeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginSeparatorView.swift; sourceTree = "<group>"; };
@@ -572,7 +579,6 @@
 		9353747B2CCD7C9A00794A63 /* LocationManagerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerHandler.swift; sourceTree = "<group>"; };
 		9353747D2CCD7CB200794A63 /* LocationManagerHandlerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerHandlerDelegate.swift; sourceTree = "<group>"; };
 		935B16802D50F039007BB90B /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
-		935B16892D51C8CC007BB90B /* SplashViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewModel.swift; sourceTree = "<group>"; };
 		935B168B2D51E733007BB90B /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		936CFFBA2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HW_OrderCoffeeAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		936CFFBC2C6BBBED004B8724 /* HW_OrderCoffeeAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppUITests.swift; sourceTree = "<group>"; };
@@ -589,7 +595,7 @@
 		936E09B82CF4910A0092F246 /* SearchStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchStatusView.swift; sourceTree = "<group>"; };
 		936E09BC2CF4F6310092F246 /* HomePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageView.swift; sourceTree = "<group>"; };
 		936E09BE2CF5D7990092F246 /* HomePageViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageViewDelegate.swift; sourceTree = "<group>"; };
-		93755BF42C738D77002570A5 /* EmailSignInControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSignInControllerTests.swift; sourceTree = "<group>"; };
+		93755BF42C738D77002570A5 /* EmailAuthControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailAuthControllerTests.swift; sourceTree = "<group>"; };
 		93755BF92C7700FD002570A5 /* PhotoPickerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerManager.swift; sourceTree = "<group>"; };
 		93755BFB2C79D20C002570A5 /* EditProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		93755BFD2C79DEAA002570A5 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
@@ -851,7 +857,7 @@
 		93BD48AE2C57CA3100144E7F /* HW_OrderCoffeeApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HW_OrderCoffeeApp.entitlements; sourceTree = "<group>"; };
 		93BD48AF2C57CABF00144E7F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		93BD48B12C57CB9000144E7F /* AppleSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInController.swift; sourceTree = "<group>"; };
-		93BD48C22C5CE5B500144E7F /* EmailSignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSignInController.swift; sourceTree = "<group>"; };
+		93BD48C22C5CE5B500144E7F /* EmailAuthController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailAuthController.swift; sourceTree = "<group>"; };
 		93BD48CA2C662A9700144E7F /* HW_OrderCoffeeAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HW_OrderCoffeeAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		93BD48CC2C662A9700144E7F /* HW_OrderCoffeeAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HW_OrderCoffeeAppTests.swift; sourceTree = "<group>"; };
 		93BD48D52C6751BB00144E7F /* FirebaseControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseControllerTests.swift; sourceTree = "<group>"; };
@@ -931,6 +937,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		931B42882D536E2F008D5505 /* Tool */ = {
+			isa = PBXGroup;
+			children = (
+				939BA4F82D2CD63E004FD33E /* PhoneNumberFormatter.swift */,
+				939BA5072D2E7D62004FD33E /* DateUtility.swift */,
+			);
+			path = Tool;
+			sourceTree = "<group>";
+		};
+		931B42892D539268008D5505 /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				931B428C2D539411008D5505 /* SignUpValidationManager.swift */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
 		934FB5712CFA37E600757C7C /* Delegates */ = {
 			isa = PBXGroup;
 			children = (
@@ -988,6 +1011,7 @@
 				934FB57B2CFA527100757C7C /* Handlers */,
 				934FB57A2CFA526700757C7C /* Delegates */,
 				934FB5782CFA522400757C7C /* View Controllers */,
+				931B42892D539268008D5505 /* Manager */,
 			);
 			path = SignUp;
 			sourceTree = "<group>";
@@ -1528,7 +1552,6 @@
 			isa = PBXGroup;
 			children = (
 				935B168D2D51FDA0007BB90B /* Views */,
-				935B168F2D51FDB9007BB90B /* ViewModel */,
 				935B168E2D51FDB1007BB90B /* ViewController */,
 			);
 			path = Splash;
@@ -1548,14 +1571,6 @@
 				935B16802D50F039007BB90B /* SplashViewController.swift */,
 			);
 			path = ViewController;
-			sourceTree = "<group>";
-		};
-		935B168F2D51FDB9007BB90B /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				935B16892D51C8CC007BB90B /* SplashViewModel.swift */,
-			);
-			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		936CFFB32C6BA81F004B8724 /* FirebaseTests */ = {
@@ -1705,7 +1720,7 @@
 		93755BF62C738DA3002570A5 /* AuthenticationTests */ = {
 			isa = PBXGroup;
 			children = (
-				93755BF42C738D77002570A5 /* EmailSignInControllerTests.swift */,
+				93755BF42C738D77002570A5 /* EmailAuthControllerTests.swift */,
 			);
 			path = AuthenticationTests;
 			sourceTree = "<group>";
@@ -2426,6 +2441,8 @@
 			isa = PBXGroup;
 			children = (
 				934FB5AB2CFE36F200757C7C /* TabIndex.swift */,
+				939BDA6E2B2C211200616D1C /* Constants.swift */,
+				935374202CA2F02000794A63 /* Notifications.swift */,
 			);
 			path = Constants;
 			sourceTree = "<group>";
@@ -2436,6 +2453,11 @@
 				939BDA682B2B82BC00616D1C /* AlertService.swift */,
 				93755C302C82F6CF002570A5 /* HUDManager.swift */,
 				9353740D2C9AD6E100794A63 /* ButtonEffectManager.swift */,
+				937605982C4A6B0300B1316C /* BottomLineTextField.swift */,
+				9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */,
+				93B9DC792C3181910050BC3F /* UIView+SpringAnimation.swift */,
+				9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */,
+				937F582C2D40BAD9001C0EBF /* UIImage+ColorPlaceholder.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -2640,7 +2662,6 @@
 				9352915A2C91B3C40018B060 /* App */,
 				935291592C91B3AD0018B060 /* Resources */,
 				935B16882D50F0B7007BB90B /* Splash */,
-				93F9BB582C293E3E00355A87 /* Utilities */,
 				936E09BB2CF4F5DD0092F246 /* HomePage */,
 				936E09C32CF610970092F246 /* Login */,
 				934FB5762CFA410200757C7C /* SignUp */,
@@ -2672,9 +2693,12 @@
 		939BDA6C2B2C200F00616D1C /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
-				93BD48C22C5CE5B500144E7F /* EmailSignInController.swift */,
+				93BD48C22C5CE5B500144E7F /* EmailAuthController.swift */,
 				937605A72C4BFA9F00B1316C /* GoogleSignInController.swift */,
 				93BD48B12C57CB9000144E7F /* AppleSignInController.swift */,
+				931B428E2D55E026008D5505 /* EmailAuthError.swift */,
+				931B42922D564C07008D5505 /* GoogleSignInError.swift */,
+				931B42942D564DC7008D5505 /* AppleSignInError.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -2683,9 +2707,10 @@
 			isa = PBXGroup;
 			children = (
 				9389D1942D20CDFA00EFAA41 /* Core */,
+				931B42882D536E2F008D5505 /* Tool */,
+				9389D1972D20CE2D00EFAA41 /* UI */,
 				9389D1952D20CE0900EFAA41 /* Navigation */,
 				9389D1962D20CE1900EFAA41 /* Constants */,
-				9389D1972D20CE2D00EFAA41 /* UI */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -2961,22 +2986,6 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		93F9BB582C293E3E00355A87 /* Utilities */ = {
-			isa = PBXGroup;
-			children = (
-				939BDA6E2B2C211200616D1C /* Constants.swift */,
-				935374202CA2F02000794A63 /* Notifications.swift */,
-				9376059A2C4AAA9C00B1316C /* UIColor+CustomColors.swift */,
-				93B9DC792C3181910050BC3F /* UIView+SpringAnimation.swift */,
-				9352912F2C875DA30018B060 /* UIView+ScaleAnimation.swift */,
-				937605982C4A6B0300B1316C /* BottomLineTextField.swift */,
-				939BA4F82D2CD63E004FD33E /* PhoneNumberFormatter.swift */,
-				939BA5072D2E7D62004FD33E /* DateUtility.swift */,
-				937F582C2D40BAD9001C0EBF /* UIImage+ColorPlaceholder.swift */,
-			);
-			path = Utilities;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -3239,7 +3248,6 @@
 				93DB1D2D2C43D82200BA2CC1 /* OrderItemSectionHeaderView.swift in Sources */,
 				938122232CE286C300ADFB7B /* OrderHistoryDetailView.swift in Sources */,
 				934FB5A02CFDCF5800757C7C /* ForgotPasswordStackView.swift in Sources */,
-				935B168A2D51C8CC007BB90B /* SplashViewModel.swift in Sources */,
 				93B7B5672CD9066D00E0205A /* OrderConfirmationHandlerDelegate.swift in Sources */,
 				936E09AD2CF080AF0092F246 /* SearchDrinkDataLoader.swift in Sources */,
 				935374552CB93F6D00794A63 /* OrderCustomerDetailsSectionHeaderView.swift in Sources */,
@@ -3305,6 +3313,7 @@
 				93DB1D2F2C461F9D00BA2CC1 /* KeychainManager.swift in Sources */,
 				93B492932C410A2E00E7B947 /* OrderItemSummaryCollectionViewCell.swift in Sources */,
 				935B168C2D51E733007BB90B /* SplashView.swift in Sources */,
+				931B42932D564C07008D5505 /* GoogleSignInError.swift in Sources */,
 				937605992C4A6B0300B1316C /* BottomLineTextField.swift in Sources */,
 				937F581E2D3F8EFA001C0EBF /* SearchLabel.swift in Sources */,
 				934FB5982CFDAFFC00757C7C /* ForgotPasswordLabel.swift in Sources */,
@@ -3348,6 +3357,7 @@
 				9353740E2C9AD6E100794A63 /* ButtonEffectManager.swift in Sources */,
 				93B9DC872C3661DF0050BC3F /* MainTabBarController.swift in Sources */,
 				9353743B2CB2BAB800794A63 /* OrderItemActionButtonsCell.swift in Sources */,
+				931B428F2D55E026008D5505 /* EmailAuthError.swift in Sources */,
 				934FB58E2CFB02C500757C7C /* SignUpViewDelegate.swift in Sources */,
 				9352913F2C8843E40018B060 /* DrinkSubCategoryHandler.swift in Sources */,
 				938122532CE7761E00ADFB7B /* SearchResultsDelegate.swift in Sources */,
@@ -3468,10 +3478,12 @@
 				938063F12D07B50600537F01 /* UserProfileDataSource.swift in Sources */,
 				934FB5842CFA936B00757C7C /* SignUpSeparatorView.swift in Sources */,
 				9380640F2D0E4C2100537F01 /* NoFavoritesViewManager.swift in Sources */,
+				931B428D2D539411008D5505 /* SignUpValidationManager.swift in Sources */,
 				934FB59E2CFDCC2300757C7C /* ForgotPasswordAttributedButton.swift in Sources */,
 				935374192C9C601200794A63 /* FavoriteDrinkCell.swift in Sources */,
 				93F9BB4A2C269AC600355A87 /* DrinkDetailSeparatorView.swift in Sources */,
 				938122272CE2870800ADFB7B /* OrderHistoryDetailHandlerDelegate.swift in Sources */,
+				931B42952D564DC7008D5505 /* AppleSignInError.swift in Sources */,
 				938064572D1A94EB00537F01 /* EditOrderItemDottedLineView.swift in Sources */,
 				934FB5702CF9007C00757C7C /* LoginActionHandler.swift in Sources */,
 				93DB1D352C47EE1900BA2CC1 /* ForgotPasswordView.swift in Sources */,
@@ -3538,7 +3550,7 @@
 				93755BFA2C7700FD002570A5 /* PhotoPickerManager.swift in Sources */,
 				939BA4EE2D28A3EF004FD33E /* OrderCustomerDetailsSeparatorView.swift in Sources */,
 				934FB5D42D0121B800757C7C /* EditProfileLabel.swift in Sources */,
-				93BD48C32C5CE5B500144E7F /* EmailSignInController.swift in Sources */,
+				93BD48C32C5CE5B500144E7F /* EmailAuthController.swift in Sources */,
 				937F582F2D40C68D001C0EBF /* MenuLabel.swift in Sources */,
 				938064502D1A841A00537F01 /* EditOrderItemCollectionView.swift in Sources */,
 				93B9DC892C368DA80050BC3F /* OrderItemCollectionViewCell.swift in Sources */,
@@ -3582,7 +3594,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93755BF52C738D77002570A5 /* EmailSignInControllerTests.swift in Sources */,
+				93755BF52C738D77002570A5 /* EmailAuthControllerTests.swift in Sources */,
 				93BD48D62C6751BB00144E7F /* FirebaseControllerTests.swift in Sources */,
 				9353744A2CB7B40A00794A63 /* CustomerDetailsManagerTests.swift in Sources */,
 				93BD48CD2C662A9700144E7F /* HW_OrderCoffeeAppTests.swift in Sources */,
@@ -3791,6 +3803,7 @@
 				DEVELOPMENT_TEAM = P8FCS2FB8Z;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HW_OrderCoffeeApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Starbucks;
 				INFOPLIST_KEY_NSCameraUsageDescription = "我們需要使用您的相機來讓您拍攝照片。";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "我們需要持續使用您的位置來提供最佳的店鋪導航服務。";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "我們需要訪問您的位置以顯示距離最近的店鋪。";
@@ -3824,6 +3837,7 @@
 				DEVELOPMENT_TEAM = P8FCS2FB8Z;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HW_OrderCoffeeApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Starbucks;
 				INFOPLIST_KEY_NSCameraUsageDescription = "我們需要使用您的相機來讓您拍攝照片。";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "我們需要持續使用您的位置來提供最佳的店鋪導航服務。";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "我們需要訪問您的位置以顯示距離最近的店鋪。";
