@@ -120,7 +120,7 @@ class DrinkSubcategoryGridItemCell: UICollectionViewCell {
     ///
     /// - Parameter drinkViewModel: 包含飲品資料的 `DrinkViewModel` 實例。
     func configure(with drinkViewModel: DrinkViewModel) {
-        subcategoryImageView.kf.setImage(with: drinkViewModel.imageUrl, placeholder: UIImage(named: "placeholderImage"))
+        subcategoryImageView.kf.setImage(with: drinkViewModel.imageUrl, placeholder: UIImage(named: "starbucksLogo"))
         titleLabel.text = drinkViewModel.name
         subtitleLabel.text = drinkViewModel.subName
     }
