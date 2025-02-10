@@ -189,7 +189,7 @@ struct StoreInfoViewModel {
     var formattedTodayHours: String {
         guard let hours = store.todayOpeningHours() else { return "No hours provided" }
         let today = DateUtility.getWeekday()
-        return "\(today): \(hours)"
+        return "\(today)： \(hours)"
     }
     
 }
