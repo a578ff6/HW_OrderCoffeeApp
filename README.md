@@ -392,10 +392,10 @@
 
 ## 👤 Maintainer
 
-HW_OrderCoffeeApp 是由 [Wei Tsao/a578ff6] 開發。  
+HW_OrderCoffeeApp 是由 [Wei Tsao](https://github.com/a578ff6) 開發。  
 如有問題或建議，歡迎聯繫：
-- 📧 Email: [a578ff6@gmail.com]
-- 🔗 GitHub: [your_github_username](https://github.com/a578ff6)
+- 📧 Email: [a578ff6@gmail.com](mailto:a578ff6@gmail.com)
+- 🔗 GitHub: [a578ff6](https://github.com/a578ff6)
 
 ## 📚 延伸閱讀（Medium 文章）
 
