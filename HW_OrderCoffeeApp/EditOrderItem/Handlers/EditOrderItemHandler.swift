@@ -203,7 +203,7 @@ extension EditOrderItemHandler: UICollectionViewDataSource {
             // 確保傳遞數量
             cell.configure(with: editOrderItemModel.quantity)
             cell.editOrderItem = { quantity in
-                delegate.didChangeQuantity(to: quantity)
+                delegate.didConfirmQuantityChange(to: quantity)
             }
             return cell
         }
