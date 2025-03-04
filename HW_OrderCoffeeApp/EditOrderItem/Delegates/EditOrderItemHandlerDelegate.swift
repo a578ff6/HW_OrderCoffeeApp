@@ -38,8 +38,8 @@
  - `didChangeSize(_:)`：
    當使用者在 UI 中選擇不同的尺寸時，會觸發這個方法，並更新 `EditOrderItemModel` 中的 `selectedSize` 屬性。該方法通知控制器，並且控制器需要更新相關的 UI（例如刷新尺寸選擇按鈕的選中狀態）。
 
- - `didChangeQuantity(to:)`：
-   當使用者調整訂單的數量時，這個方法被觸發，並會更新 `EditOrderItemModel` 中的 `quantity` 屬性。方法內會同步更新 `OrderItemManager` 中的訂單數據，確保數據保持一致。
+ - `didConfirmQuantityChange(to:)`：
+   當使用者調整訂單的數量，並且點擊「修改訂單」按鈕後，這個方法被觸發，並會更新 `EditOrderItemModel` 中的 `quantity` 屬性。方法內會同步更新 `OrderItemManager` 中的訂單數據，確保數據保持一致。
  
  -----------------------
 
@@ -69,8 +69,11 @@ protocol EditOrderItemHandlerDelegate: AnyObject {
     /// - Parameter newSize: 新選擇的尺寸。
     func didChangeSize(_ newSize: String)
     
-    /// 當訂單數量發生變更時觸發。
-    /// - Parameter quantity: 新的數量。
-    func didChangeQuantity(to quantity: Int)
+    /// 當使用者**確認變更數量**時觸發（點擊「修改訂單」按鈕後）。
+    ///
+    /// 此方法不會在 **Stepper** 變更時立即觸發，而是使用者點擊「修改訂單」按鈕後，才會正式更新數量並通知控制器處理訂單更新。
+    ///
+    /// - Parameter quantity: 確認後的數量。
+    func didConfirmQuantityChange(to quantity: Int)
     
 }

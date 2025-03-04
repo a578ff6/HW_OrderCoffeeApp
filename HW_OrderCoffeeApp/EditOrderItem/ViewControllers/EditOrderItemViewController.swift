@@ -91,10 +91,10 @@
 
  `3. 處理數量變更`
  
-    - 當使用者調整飲品數量後，更新模型並同步至全域訂單管理（`OrderItemManager`）。
+    - 當使用者調整飲品數量，並且點擊「修改按鈕」後，更新模型並同步至全域訂單管理（`OrderItemManager`）。
 
     ```swift
-    func didChangeQuantity(to quantity: Int) {
+    func didConfirmQuantityChange(to quantity: Int) {
         guard var editOrderItemModel = editOrderItemModel else { return }
         editOrderItemModel.quantity = quantity
         self.editOrderItemModel = editOrderItemModel
@@ -367,9 +367,9 @@ extension EditOrderItemViewController: EditOrderItemHandlerDelegate {
         editOrderItemView.editOrderItemCollectionView.reloadSections(IndexSet(integer: EditOrderItemSection.priceInfo.rawValue))
     }
     
-    /// 當飲品數量改變時觸發。
+    /// 當使確認變更數量時觸發（點擊「修改訂單」按鈕後）。
     /// - Parameter quantity: 使用者調整後的新數量。
-    func didChangeQuantity(to quantity: Int) {
+    func didConfirmQuantityChange(to quantity: Int) {
         
         // 更新模型中的數量
         guard var editOrderItemModel = editOrderItemModel else { return }
