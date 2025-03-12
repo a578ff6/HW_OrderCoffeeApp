@@ -211,7 +211,7 @@
  ```swift
  cell.onTextChanged = { [weak self] updatedText in
      guard let self = self, let updatedText = updatedText else { return }
-     var updatedModel = model
+     guard var updatedModel = self.delegate?.getProfileEditModel() else { return }
      updatedModel.fullName = updatedText
      self.delegate?.updateProfileEditModel(updatedModel)
  }
@@ -235,7 +235,7 @@
      // 配置 BirthdayDatePickerCell，支援日期變更通知
      cell.onDateChanged = { [weak self] newDate in
          guard let self = self else { return }
-         var updatedModel = model
+         guard var updatedModel = self.delegate?.getProfileEditModel() else { return }
          updatedModel.birthday = newDate
          self.delegate?.updateProfileEditModel(updatedModel)
      }
@@ -288,6 +288,7 @@
 
 
 
+// MARK: - (v)
 
 import UIKit
 
@@ -320,6 +321,7 @@ class EditProfileTableHandler: NSObject {
     // MARK: - Initialization
     
     /// 初始化表格處理器
+    ///
     /// - Parameters:
     ///   - delegate: 負責數據處理的協定。
     ///   - photoDelegate: 負責照片更改行為的協定。
@@ -331,6 +333,7 @@ class EditProfileTableHandler: NSObject {
     // MARK: - Section Enum
     
     /// 定義表格的各個區域
+    ///
     /// - 每個區域對應一種個人資料欄位（如大頭照、姓名、電話等）。
     enum Section: Int, CaseIterable {
         case profileImage, name, phoneNumber, address, gender, birthday
@@ -339,6 +342,8 @@ class EditProfileTableHandler: NSObject {
     // MARK: - Cell Configuration Methods
     
     /// 配置表格的每個欄位
+    ///
+    /// - `configureCell` 根據 `Section` 選擇適當的屬性來傳遞，而不是整個 `ProfileEditModel`。
     /// - Parameters:
     ///   - indexPath: 表格的索引位置。
     ///   - tableView: 表格視圖。
@@ -351,33 +356,34 @@ class EditProfileTableHandler: NSObject {
         
         switch section {
         case .profileImage:
-            return configureProfileImageCell(for: indexPath, in: tableView, model: profileEditModel)
+            return configureProfileImageCell(for: indexPath, in: tableView, profileImageURL: profileEditModel.profileImageURL)
         case .name:
-            return configureTextFieldCell(for: indexPath, in: tableView, model: profileEditModel, fieldType: .name, text: profileEditModel.fullName)
+            return configureTextFieldCell(for: indexPath, in: tableView, fieldType: .name, text: profileEditModel.fullName)
         case .phoneNumber:
-            return configureTextFieldCell(for: indexPath, in: tableView, model: profileEditModel, fieldType: .phoneNumber, text: profileEditModel.phoneNumber)
+            return configureTextFieldCell(for: indexPath, in: tableView, fieldType: .phoneNumber, text: profileEditModel.phoneNumber)
         case .address:
-            return configureTextFieldCell(for: indexPath, in: tableView, model: profileEditModel, fieldType: .address, text: profileEditModel.address)
+            return configureTextFieldCell(for: indexPath, in: tableView, fieldType: .address, text: profileEditModel.address)
         case .gender:
-            return configureGenderCell(for: indexPath, in: tableView, model: profileEditModel)
+            return configureGenderCell(for: indexPath, in: tableView, gender: profileEditModel.gender)
         case .birthday:
-            return configureBirthdayCell(for: indexPath, in: tableView, model: profileEditModel)
+            return configureBirthdayCell(for: indexPath, in: tableView, birthday: profileEditModel.birthday)
         }
     }
     
     // MARK: - Private Cell Configuration
     
     /// 配置大頭照欄位的 Cell
+    ///
     /// - Parameters:
     ///   - indexPath: 表格的索引位置。
     ///   - tableView: 表格視圖。
-    ///   - model: 用於配置的資料模型。
+    ///   - profileImageURL: 用戶的大頭照 URL。
     /// - Returns: 配置完成的單元格。
-    private func configureProfileImageCell(for indexPath: IndexPath, in tableView: UITableView, model: ProfileEditModel) -> UITableViewCell {
+    private func configureProfileImageCell(for indexPath: IndexPath, in tableView: UITableView, profileImageURL: String?) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ProfileImageViewCell.reuseIdentifier, for: indexPath) as? ProfileImageViewCell else {
             fatalError("Cannot create ProfileImageViewCell")
         }
-        cell.updateProfileImageFromURL(with: model.profileImageURL)
+        cell.updateProfileImageFromURL(with: profileImageURL)
         cell.onChangePhotoButtonTapped = { [weak self] in
             self?.photoDelegate?.didTapChangePhoto()
         }
@@ -385,30 +391,40 @@ class EditProfileTableHandler: NSObject {
     }
     
     /// 配置文字欄位的 Cell（例如姓名、電話、地址）
+    ///
+    /// - `行為`:
+    ///   - 設置 `ProfileTextFieldCell` 的初始值。
+    ///   - 監聽用戶輸入變更 (`onTextChanged`)，並自動去除前後空格後更新 `ProfileEditModel`。
+    ///   - 若輸入的內容僅包含空格，則會轉換為空字串 ("")，確保儲存數據的正確性。
+    ///
     /// - Parameters:
     ///   - indexPath: 表格的索引位置。
     ///   - tableView: 表格視圖。
-    ///   - model: 用於配置的資料模型。
     ///   - fieldType: 欄位類型（例如姓名或電話）。
     ///   - text: 預設文字。
     /// - Returns: 配置完成的單元格。
-    private func configureTextFieldCell(for indexPath: IndexPath, in tableView: UITableView, model: ProfileEditModel, fieldType: EditProfileTextField.FieldType, text: String?) -> UITableViewCell {
+    private func configureTextFieldCell(for indexPath: IndexPath, in tableView: UITableView, fieldType: EditProfileTextField.FieldType, text: String?) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ProfileTextFieldCell.reuseIdentifier, for: indexPath) as? ProfileTextFieldCell else {
             fatalError("Cannot create ProfileTextFieldCell")
         }
         cell.configure(fieldType: fieldType, text: text)
+        
         cell.onTextChanged = { [weak self] updatedText in
-            guard let self = self, let updatedText = updatedText else { return }
-            var updatedModel = model
+            guard let self = self else { return }
+            guard var updatedModel = self.delegate?.getProfileEditModel() else { return }
+            
+            /// 移除用戶輸入的前後空格，確保不會存入無效數據
+            let trimmedText = updatedText?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            
             switch fieldType {
             case .name:
-                updatedModel.fullName = updatedText
+                updatedModel.fullName = trimmedText
             case .phoneNumber:
-                updatedModel.phoneNumber = updatedText
+                updatedModel.phoneNumber = trimmedText
             case .address:
-                updatedModel.address = updatedText
+                updatedModel.address = trimmedText
             case .none:
-                fatalError("FieldType .none should not be used in configureTextFieldCell")
+                return
             }
             self.delegate?.updateProfileEditModel(updatedModel)
         }
@@ -416,19 +432,22 @@ class EditProfileTableHandler: NSObject {
     }
     
     /// 配置性別欄位的 Cell
+    ///
     /// - Parameters:
     ///   - indexPath: 表格的索引位置。
     ///   - tableView: 表格視圖。
-    ///   - model: 用於配置的資料模型。
+    ///   - gender: 用戶的性別。
     /// - Returns: 配置完成的單元格。
-    private func configureGenderCell(for indexPath: IndexPath, in tableView: UITableView, model: ProfileEditModel) -> UITableViewCell {
+    private func configureGenderCell(for indexPath: IndexPath, in tableView: UITableView, gender: String) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: GenderSelectionCell.reuseIdentifier, for: indexPath) as? GenderSelectionCell else {
             fatalError("Cannot create GenderSelectionCell")
         }
-        cell.configure(withGender: model.gender)
+        cell.configure(withGender: gender)
+        
         cell.onGenderChanged = { [weak self] updatedGender in
             guard let self = self else { return }
-            var updatedModel = model
+            guard var updatedModel = self.delegate?.getProfileEditModel() else { return }
+            
             updatedModel.gender = updatedGender
             self.delegate?.updateProfileEditModel(updatedModel)
         }
@@ -436,26 +455,29 @@ class EditProfileTableHandler: NSObject {
     }
     
     /// 配置生日欄位的 Cell
+    ///
     /// - Parameters:
     ///   - indexPath: 表格的索引位置。
     ///   - tableView: 表格視圖。
-    ///   - model: 用於配置的資料模型。
+    ///   - birthday: 用戶的生日日期。
     /// - Returns: 配置完成的單元格。
-    private func configureBirthdayCell(for indexPath: IndexPath, in tableView: UITableView, model: ProfileEditModel) -> UITableViewCell {
+    private func configureBirthdayCell(for indexPath: IndexPath, in tableView: UITableView, birthday: Date?) -> UITableViewCell {
         if indexPath.row == 0 {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: BirthdaySelectionCell.reuseIdentifier, for: indexPath) as? BirthdaySelectionCell else {
                 fatalError("Cannot create BirthdaySelectionCell")
             }
-            cell.configure(with: model.birthday)
+            cell.configure(with: birthday)
             return cell
         } else {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: BirthdayDatePickerCell.reuseIdentifier, for: indexPath) as? BirthdayDatePickerCell else {
                 fatalError("Cannot create BirthdayDatePickerCell")
             }
-            cell.configure(with: model.birthday)
+            cell.configure(with: birthday)
+            
             cell.onDateChanged = { [weak self] newDate in
                 guard let self = self, let birthdayCell = tableView.cellForRow(at: IndexPath(row: 0, section: Section.birthday.rawValue)) as? BirthdaySelectionCell else { return }
-                var updatedModel = model
+                guard var updatedModel = self.delegate?.getProfileEditModel() else { return }
+                
                 updatedModel.birthday = newDate
                 self.delegate?.updateProfileEditModel(updatedModel)
                 birthdayCell.configure(with: newDate)
