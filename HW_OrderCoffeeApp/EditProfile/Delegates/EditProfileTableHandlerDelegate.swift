@@ -56,8 +56,8 @@
 
  ```swift
  cell.onTextChanged = { [weak self] updatedText in
-     guard let self = self else { return }
-     var updatedModel = profileEditModel
+     guard let self = self, let updatedText = updatedText else { return }
+     guard var updatedModel = self.delegate?.getProfileEditModel() else { return }
      updatedModel.fullName = updatedText
      self.delegate?.updateProfileEditModel(updatedModel)
  }
