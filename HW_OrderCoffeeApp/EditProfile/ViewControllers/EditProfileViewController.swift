@@ -313,10 +313,18 @@ class EditProfileViewController: UIViewController {
     
     // MARK: - Helper Methods ( saveButtonTapped )
 
-    /// 驗證必填欄位
+    /// 驗證必填欄位，確保 `fullName` 不是空值或只有空格。
+    ///
+    /// - 會自動移除 `fullName` 前後的空格後再進行驗證。
+    /// - 若 `fullName` 為空字串 (`""`) 或只包含空格，則會顯示錯誤提示並禁止存取。
+    ///
+    /// - Parameter profile: 目前的 `ProfileEditModel`，用於檢查 `fullName` 是否有效。
+    /// - Returns: `true` 表示驗證通過，`false` 則表示 `fullName` 無效並顯示錯誤提示。    
     private func validateRequiredFields(for profile: ProfileEditModel) -> Bool {
-        if profile.fullName.isEmpty {
-            AlertService.showAlert(withTitle: "錯誤", message: "Full Name cannot be empty.", inViewController: self)
+        let trimmedFullName = profile.fullName.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if trimmedFullName.isEmpty {
+            AlertService.showAlert(withTitle: "錯誤", message: "Full Name cannot be empty or spaces.", inViewController: self)
             return false
         }
         return true
