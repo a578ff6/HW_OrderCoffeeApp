@@ -40,7 +40,7 @@
  `* What`
  
  - `GenderSelectionCell` 是一個專用於表單中性別選擇的通用 Cell。
- - 使用 `GenericSegmentedControl` 來實現性別選擇邏輯。
+ - 使用 `EditProfileSegmentedControl` 來實現性別選擇邏輯。
  - 支援三個選項：Male、Female、Other。
  - 當用戶改變選項時，透過閉包 onGenderChanged 即時回傳選擇的結果。
  
@@ -50,7 +50,7 @@
  
  `1.高可重用性：`
 
- - `GenericSegmentedControl` 提供了通用邏輯，無需重複開發性別選擇功能。
+ - `EditProfileSegmentedControl` 提供了通用邏輯，無需重複開發性別選擇功能。
  - `Cell` 可以用於多種需要性別選擇的場景。
  
  `2.降低耦合性：`
@@ -72,7 +72,7 @@
  
  `1.初始化與佈局：`
 
- - 使用 `GenericSegmentedControl` 初始化選項列表。
+ - 使用 `EditProfileSegmentedControl` 初始化選項列表。
  - 配置佈局，使控制元件水平置中，並與左右邊緣保持間距。
  
  `2.配置性別值：`
@@ -104,7 +104,7 @@
 
  - 確保性別屬性始終有值，並且在存取數據時進行容錯處理。
 
- `2. UI 層級（GenderSelectionCell、GenericSegmentedControl）：`
+ `2. UI 層級（GenderSelectionCell、EditProfileSegmentedControl）：`
  
  - 在 UI 組件中對性別選項提供預設顯示，並支援未選擇狀態。
 
@@ -169,7 +169,7 @@
       }
       ```
 
- - `GenericSegmentedControl`：
+ - `EditProfileSegmentedControl`：
 
  - 支援動態設置與獲取當前選項。
  - 若`未選中`任何選項，則`返回空字串`，交由資料層`處理預設值`。（重要）
@@ -233,7 +233,7 @@ import UIKit
 
 /// 表單中用於性別選擇的 UITableViewCell。
 /// - 提供選擇 `Male`、`Female` 或 `Other` 的功能，並支援即時回傳用戶選擇的性別。
-/// - 使用通用元件 `GenericSegmentedControl` 來實現選擇邏輯與視覺效果。
+/// - 使用通用元件 `EditProfileSegmentedControl` 來實現選擇邏輯與視覺效果。
 class GenderSelectionCell: UITableViewCell {
     
     // MARK: - Properties
@@ -246,9 +246,9 @@ class GenderSelectionCell: UITableViewCell {
     
     // MARK: - UI Elements
     
-    /// 使用 `GenericSegmentedControl` 實現性別選擇功能。
+    /// 使用 `EditProfileSegmentedControl` 實現性別選擇功能。
     /// - 提供 `Male`、`Female`、`Other` 三個選項。
-    private let genderControl = GenericSegmentedControl(items: ["Male", "Female", "Other"])
+    private let genderControl = EditProfileSegmentedControl(items: ["Male", "Female", "Other"])
     
     // MARK: - Initializer
     
@@ -267,7 +267,7 @@ class GenderSelectionCell: UITableViewCell {
     
     // MARK: - Layout Setup
     
-    /// 設置 `GenericSegmentedControl` 的佈局。
+    /// 設置 `EditProfileSegmentedControl` 的佈局。
     private func setupLayout() {
         contentView.addSubview(genderControl)
         
