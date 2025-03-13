@@ -5,14 +5,14 @@
 //  Created by 曹家瑋 on 2024/12/5.
 //
 
-// MARK: - GenericSegmentedControl 筆記
+// MARK: - EditProfileSegmentedControl 筆記
 /**
  
- ## GenericSegmentedControl 筆記
+ ## EditProfileSegmentedControl 筆記
  
  `* What`
  
- - `GenericSegmentedControl` 是一個通用的選擇控制元件，繼承自 `UISegmentedControl`。
+ - `EditProfileSegmentedControl` 是一個通用的選擇控制元件，繼承自 `UISegmentedControl`。
  - 支援接收選項列表 (`items`)，允許多場景中自定義選項。
  
  - `提供兩個核心方法`：
@@ -68,7 +68,7 @@ import UIKit
 
 /// 通用選擇控制元件，繼承自 `UISegmentedControl`，支持多種選項配置。
 /// - 支援設置與獲取當前選中的選項，並提供容錯機制。
-class GenericSegmentedControl: UISegmentedControl {
+class EditProfileSegmentedControl: UISegmentedControl {
 
     // MARK: - Initializer
     

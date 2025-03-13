@@ -140,7 +140,7 @@
  `3.在 UI 層級處理：`
 
  - 初始化性別選擇元件：
- - 在 GenderSelectionCell 中，使用 GenericSegmentedControl 初始化時設置預設值：
+ - 在 GenderSelectionCell 中，使用 EditProfileSegmentedControl 初始化時設置預設值：
  
  ```swift
  func configure(withGender gender: String) {
