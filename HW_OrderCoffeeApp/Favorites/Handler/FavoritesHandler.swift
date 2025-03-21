@@ -130,7 +130,7 @@
          snapshot.appendSections([.subcategory(subcategory)])
          snapshot.appendItems(drinks, toSection: .subcategory(subcategory))
      }
-     dataSource.apply(snapshot, animatingDifferences: true)
+     dataSource.apply(snapshot, animatingDifferences: false)
  }
  ```
 
@@ -222,7 +222,7 @@
  - 將生成的快照應用到 `UICollectionView`，完成資料更新。
 
  ```swift
- dataSource.apply(snapshot, animatingDifferences: true)
+ dataSource.apply(snapshot, animatingDifferences: false)
  ```
 
  --------------------
@@ -472,7 +472,7 @@ class FavoritesHandler: NSObject {
             snapshot.appendItems(drinks, toSection: .subcategory(subcategory))
         }
         // 4. 應用快照
-        dataSource.apply(snapshot, animatingDifferences: true)
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
     
 }
