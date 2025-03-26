@@ -1,31 +1,44 @@
-# HW_OrderCoffeeApp ☕️
+# OrderCoffeeApp ☕️
 
-**HW_OrderCoffeeApp** 是一款模擬 **星巴克點餐體驗** 的 iOS 應用程式，讓使用者可以 **快速瀏覽飲品、選擇門市、完成訂單並追蹤歷史紀錄**。  
+**OrderCoffeeApp** 是一款模擬 **星巴克點餐體驗** 的 iOS 應用程式，讓使用者可以 **快速瀏覽飲品、選擇門市、完成訂單並追蹤歷史紀錄**。  
 支援 **Apple Sign-In、Google Sign-In、Email 登入**，並整合 **Firebase** 以確保順暢的訂單處理與個人帳戶管理。  
 透過 **即時搜尋、收藏最愛飲品、個人化設定**，提供更便利的咖啡購買體驗。
 
 ## 📖 目錄
 
-1. [📌 主要功能](#主要功能)
-2. [🛠 主要技術 & 第三方套件](#主要技術--第三方套件)
-3. [🖥️ 介面預覽](#介面預覽)
-   - [🔑 登入、註冊、忘記密碼](#登入註冊忘記密碼)
-   - [☕ 飲品菜單](#飲品菜單)
-   - [🛒 訂單購物車](#訂單購物車)
-   - [📝 訂單資訊填寫](#訂單資訊填寫)
-   - [📍 門市選擇](#門市選擇)
-   - [✅ 訂單確認](#訂單確認)
-   - [🔍 搜尋](#搜尋)
-   - [❤️ 收藏](#收藏)
-   - [👤 個人頁面 & 設定](#個人頁面--設定)
-   - [✏️ 個人資訊編輯](#個人資訊編輯)
-   - [📜 訂單歷史紀錄](#訂單歷史紀錄)
-   - [📄 歷史訂單詳細資訊](#歷史訂單詳細資訊)
-4. [📋 Requirements](#requirements)
-5. [👤 Maintainer](#maintainer)
-6. [📚 延伸閱讀](#延伸閱讀medium文章)
+1. [📌 主要功能](#📌-主要功能)
+   - [🎬 操作影片](#📌-主要功能)
+2. [🛠 主要技術 & 第三方套件](#🛠-主要技術--第三方套件)
+3. [🖥️ 介面預覽](#🖥️-介面預覽)
+   - [🔑 登入、註冊、忘記密碼](#-登入註冊忘記密碼)
+   - [☕ 飲品菜單](#-飲品菜單)
+   - [🛒 訂單購物車](#-訂單購物車)
+   - [📝 訂單資訊填寫](#-訂單資訊填寫)
+   - [📍 門市選擇](#-門市選擇)
+   - [✅ 訂單確認](#-訂單確認)
+   - [🔍 搜尋](#-搜尋)
+   - [❤️ 收藏](#-收藏)
+   - [👤 個人頁面 & 設定](#-個人頁面--設定)
+   - [✏️ 個人資訊編輯](#-個人資訊編輯)
+   - [📜 訂單歷史紀錄](#-訂單歷史紀錄)
+   - [📄 歷史訂單詳細資訊](#-歷史訂單詳細資訊)
+4. [📋 Requirements](#📋-requirements)
+5. [👤 Maintainer](#👤-maintainer)
+6. [📚 延伸閱讀（Medium 系列完整教學）](#📚-延伸閱讀medium-系列完整教學)
+
+
 
 ## 📌 主要功能
+
+🎬 **App 操作展示影片**（點擊預覽圖可觀看完整操作流程）：
+
+[![OrderCoffeeApp Demo Video](https://img.youtube.com/vi/LXBmJX9aTqE/0.jpg)](https://www.youtube.com/watch?v=LXBmJX9aTqE)
+
+---
+
+本專案涵蓋以下功能模組與互動流程，從使用者登入 → 飲品瀏覽 → 購物車 → 訂單提交 → 訂單歷史與個人資料編輯，完整模擬星巴克點餐體驗。
+
+---
 
 ### 🚀 登入與使用者管理
 - ✅ **快速登入**：支援 **Apple Sign-In、Google Sign-In、Email 註冊與登入**，確保帳戶安全性。
@@ -390,19 +403,78 @@
 
 > ⚠️ **注意**：請確保 Firebase 設定檔 (`GoogleService-Info.plist`) 已正確配置，否則無法登入與存取飲品資料。
 
+
 ## 👤 Maintainer
 
-HW_OrderCoffeeApp 是由 [Wei Tsao](https://github.com/a578ff6) 開發。  
+**OrderCoffeeApp** 是由 [Wei Tsao](https://github.com/a578ff6) 開發。  
 如有問題或建議，歡迎聯繫：
 - 📧 Email: [a578ff6@gmail.com](mailto:a578ff6@gmail.com)
 - 🔗 GitHub: [a578ff6](https://github.com/a578ff6)
 
-## 📚 延伸閱讀（Medium 文章）
 
-若想深入了解本專案的技術架構、Firebase 資料結構、UI 設計思路等，請參考以下 Medium 文章（持續更新中）：
+## 📚 延伸閱讀（Medium 系列完整教學）
 
-- 📖 [如何設計 Firebase 資料結構](#)（待補充）
-- 📖 [iOS 即時搜尋最佳實踐 - 本地快取與 Firebase](#)（待補充）
-- 📖 [如何使用 Lottie 動畫優化 iOS 啟動畫面](#)（待補充）
+如果你想深入了解本 App 專案的技術架構、Firebase 整合、UI 與訂單流程實作，歡迎參考以下 Medium 系列文章：
 
-📌 **最新文章將持續補充，請關注 Medium！**
+### 📘 系列總覽
+- [OrderCoffeeApp 系列總覽｜iOS Firebase 點餐 App 完整開發指南](https://medium.com/@a578ff6/ordercoffeeapp-%E7%B3%BB%E5%88%97%E7%B8%BD%E8%A6%BD-ios-firebase-%E9%BB%9E%E9%A4%90-app-%E5%AE%8C%E6%95%B4%E9%96%8B%E7%99%BC%E6%8C%87%E5%8D%97-85019f23c130)
+
+---
+
+### 🔑 使用者登入與驗證
+
+- [#2：在專案中整合 Firebase Auth（Email、Google、Apple 登入）](https://medium.com/@a578ff6/ordercoffeeapp-2-%E5%9C%A8%E5%B0%88%E6%A1%88%E4%B8%AD%E6%95%B4%E5%90%88-firebase-auth-email-google-apple-%E7%99%BB%E5%85%A5-70f4f18c2657)
+- [#3：設計 LoginViewController，結合 Firebase 登入](https://medium.com/@a578ff6/ordercoffeeapp-3-%E8%A8%AD%E8%A8%88-loginviewcontroller-%E7%B5%90%E5%90%88-firebase-%E7%99%BB%E5%85%A5-aa06ea50c6a4)
+- [#4：設計 SignUpViewController，實作 Firebase 註冊](https://medium.com/@a578ff6/ordercoffeeapp-4-%E8%A8%AD%E8%A8%88-signupviewcontroller-%E5%AF%A6%E4%BD%9C-firebase-%E8%A8%BB%E5%86%8A-92db6f369100)
+- [#5：ForgotPasswordViewController 設計與 Firebase 密碼重設](https://medium.com/@a578ff6/ordercoffeeapp-5-forgotpasswordviewcontroller-%E8%A8%AD%E8%A8%88%E8%88%87-firebase-%E5%AF%86%E7%A2%BC%E9%87%8D%E8%A8%AD-07da6e016cb9)
+
+---
+
+### ☕ 菜單與飲品顯示
+
+- [#8：菜單數據模型與 Firestore 整合（Data Layer）](https://medium.com/@a578ff6/ordercoffeeapp-8-%E8%8F%9C%E5%96%AE%E6%95%B8%E6%93%9A%E6%A8%A1%E5%9E%8B%E8%88%87-firestore-%E6%95%B4%E5%90%88-data-layer-99e1f3266545)
+- [#9：MenuViewController — 顯示飲品分類](https://medium.com/@a578ff6/ordercoffeeapp-9-menuviewcontroller-%E9%A1%AF%E7%A4%BA%E9%A3%B2%E5%93%81%E5%88%86%E9%A1%9E-a2cf64cc0f72)
+- [#10：DrinkSubCategoryViewController — 子分類與飲品清單](https://medium.com/@a578ff6/ordercoffeeapp-10-drinksubcategoryviewcontroller-%E5%AD%90%E5%88%86%E9%A1%9E%E8%88%87%E9%A3%B2%E5%93%81%E6%B8%85%E5%96%AE-73b74d63b6b7)
+- [#11：DrinkDetailViewController — 顯示單一飲品詳情](https://medium.com/@a578ff6/ordercoffeeapp-11-drinkdetailviewcontroller-%E9%A1%AF%E7%A4%BA%E5%96%AE%E4%B8%80%E9%A3%B2%E5%93%81%E8%A9%B3%E6%83%85-d2d5a98f994d)
+
+---
+
+### 🔍 搜尋與收藏
+
+- [#12：設計搜尋功能 — 本地快取與 Firebase 整合](https://medium.com/@a578ff6/ordercoffeeapp-12-%E8%A8%AD%E8%A8%88%E6%90%9C%E5%B0%8B%E5%8A%9F%E8%83%BD-%E6%9C%AC%E5%9C%B0%E5%BF%AB%E5%8F%96%E8%88%87-firebase-%E6%95%B4%E5%90%88-66b616c28a6c)
+- [#23：我的最愛頁面 - 收藏管理、跨頁同步與動態 UI](https://medium.com/@a578ff6/ordercoffeeapp-23-%E6%88%91%E7%9A%84%E6%9C%80%E6%84%9B%E9%A0%81%E9%9D%A2-%E6%94%B6%E8%97%8F%E7%AE%A1%E7%90%86-%E8%B7%A8%E9%A0%81%E5%90%8C%E6%AD%A5%E8%88%87%E5%8B%95%E6%85%8B-ui-2ad97de47bf4)
+
+---
+
+### 🛒 訂單流程與顧客資料
+
+- [#13：訂單飲品項目 - 設計與管理](https://medium.com/@a578ff6/ordercoffeeapp-13-%E8%A8%82%E5%96%AE%E9%A3%B2%E5%93%81%E9%A0%85%E7%9B%AE-%E8%A8%AD%E8%A8%88%E8%88%87%E7%AE%A1%E7%90%86-c9dd2057f863)
+- [#14：編輯訂單項目 - 調整飲品尺寸與數量](https://medium.com/@a578ff6/ordercoffeeapp-14-%E7%B7%A8%E8%BC%AF%E8%A8%82%E5%96%AE%E9%A0%85%E7%9B%AE-%E8%AA%BF%E6%95%B4%E9%A3%B2%E5%93%81%E5%B0%BA%E5%AF%B8%E8%88%87%E6%95%B8%E9%87%8F-d306385be9de)
+- [#15：訂單顧客資料 - 訂單填寫與驗證](https://medium.com/@a578ff6/ordercoffeeapp-15-%E8%A8%82%E5%96%AE%E9%A1%A7%E5%AE%A2%E8%B3%87%E6%96%99-%E8%A8%82%E5%96%AE%E5%A1%AB%E5%AF%AB%E8%88%87%E9%A9%97%E8%AD%89-4ceba22d2f13)
+- [#16：確認訂單完成 - 顯示訂單資訊與返回主畫面](https://medium.com/@a578ff6/ordercoffeeapp-16-%E7%A2%BA%E8%AA%8D%E8%A8%82%E5%96%AE%E5%AE%8C%E6%88%90-%E9%A1%AF%E7%A4%BA%E8%A8%82%E5%96%AE%E8%B3%87%E8%A8%8A%E8%88%87%E8%BF%94%E5%9B%9E%E4%B8%BB%E7%95%AB%E9%9D%A2-1806a8ab2fdf)
+
+---
+
+### 📍 店鋪選擇與門市資訊
+
+- [#17：店鋪選擇頁面（StoreSelectionViewController）](https://medium.com/@a578ff6/ordercoffeeapp-17-%E5%BA%97%E9%8B%AA%E9%81%B8%E6%93%87%E9%A0%81%E9%9D%A2-storeselectionviewcontroller-cf5807f20ca7)
+- [#18：店鋪詳情頁面（StoreInfoViewController）](https://medium.com/@a578ff6/ordercoffeeapp-18-%E5%BA%97%E9%8B%AA%E8%A9%B3%E6%83%85%E9%A0%81%E9%9D%A2-storeinfoviewcontroller-547358dd70a6)
+
+---
+
+### 👤 個人資料與訂單歷史
+
+- [#19：個人資料頁面 - 顯示與管理使用者資訊](https://medium.com/@a578ff6/ordercoffeeapp-19-%E5%80%8B%E4%BA%BA%E8%B3%87%E6%96%99%E9%A0%81%E9%9D%A2-%E9%A1%AF%E7%A4%BA%E8%88%87%E7%AE%A1%E7%90%86%E4%BD%BF%E7%94%A8%E8%80%85%E8%B3%87%E8%A8%8A-ff78ed0d061b)
+- [#20：個人資料編輯 - 顯示與更新](https://medium.com/@a578ff6/ordercoffeeapp-20-%E5%80%8B%E4%BA%BA%E8%B3%87%E6%96%99%E7%B7%A8%E8%BC%AF-%E9%A1%AF%E7%A4%BA%E8%88%87%E6%9B%B4%E6%96%B0-3c9599c38138)
+- [#21：訂單歷史頁面 - 顯示、管理與排序歷史訂單](https://medium.com/@a578ff6/ordercoffeeapp-21-%E8%A8%82%E5%96%AE%E6%AD%B7%E5%8F%B2%E9%A0%81%E9%9D%A2-%E9%A1%AF%E7%A4%BA-%E7%AE%A1%E7%90%86%E8%88%87%E6%8E%92%E5%BA%8F%E6%AD%B7%E5%8F%B2%E8%A8%82%E5%96%AE-0ee828e7854d)
+- [#22：訂單歷史詳情頁 - 顯示訂單詳情、顧客資訊與分享功能](https://medium.com/@a578ff6/ordercoffeeapp-22-%E8%A8%82%E5%96%AE%E6%AD%B7%E5%8F%B2%E8%A9%B3%E6%83%85%E9%A0%81-%E9%A1%AF%E7%A4%BA%E8%A8%82%E5%96%AE%E8%A9%B3%E6%83%85-%E9%A1%A7%E5%AE%A2%E8%B3%87%E8%A8%8A%E8%88%87%E5%88%86%E4%BA%AB%E5%8A%9F%E8%83%BD-109619427373)
+
+---
+
+### 🏗️ 架構與專案初始化
+
+- [#1：專案架構與 Firebase 設計](https://medium.com/@a578ff6/ordercoffeeapp-1-%E5%B0%88%E6%A1%88%E6%9E%B6%E6%A7%8B%E8%88%87-firebase-%E8%A8%AD%E8%A8%88-32be1ec0e669)
+- [#6：設計啟動畫面_使用 Lottie 與 Firebase Auth](https://medium.com/@a578ff6/ordercoffeeapp-6-%E8%A8%AD%E8%A8%88%E5%95%9F%E5%8B%95%E7%95%AB%E9%9D%A2-%E4%BD%BF%E7%94%A8-lottie-%E8%88%87-firebase-auth-14dee312e139)
+- [#7：Firebase 鉗套結構下的模型設計](https://medium.com/@a578ff6/ordercoffeeapp-7-firebase-%E9%89%97%E5%A5%97%E7%B5%90%E6%A7%8B%E4%B8%8B%E7%9A%84%E6%A8%A1%E5%9E%8B%E8%A8%AD%E8%A8%88-f3b538a74d86)
+
+> 📌 所有文章皆可在系列總覽文中依章節導覽閱讀。
